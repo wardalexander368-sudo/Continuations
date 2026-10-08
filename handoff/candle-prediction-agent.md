@@ -1,5 +1,8 @@
 # Handoff: TARTAR, the live next-candle predictor for new Solana tokens
 
+> **Two sessions share this repo. Read `handoff/STATUS.md` first**: the
+> protocol, who is active, and the ranked task queue.
+
 This document lets a new Claude session continue the work without the previous
 conversation. Everything here was true when it was written (2026-10-08, ~20:30
 UTC). The code is in this repository; `handoff/code/` holds a snapshot copy of
