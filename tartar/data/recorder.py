@@ -64,13 +64,19 @@ class Recorder:
         self.total_tokens = 0
         self.trades = 0
         self.connected = False
+        self.on_event: Callable[[dict], None] | None = None  # sees every event written (the fast loop)
+
+    def _emit(self, event: dict) -> None:
+        self.writer.write(event)
+        if self.on_event is not None:
+            self.on_event(event)
 
     def stats(self) -> RecorderStats:
         return RecorderStats(len(self.tracked), self.total_tokens, self.writer.events, self.trades, self.connected)
 
     def _session(self, state: str) -> None:
         self.connected = state == "connected"
-        self.writer.write({"e": "session", "t": self.clock(), "state": state})
+        self._emit({"e": "session", "t": self.clock(), "state": state})
 
     def handle(self, msg: dict) -> None:
         now = self.clock()
@@ -79,13 +85,13 @@ class Recorder:
             return
         mint = event["mint"]
         if event["e"] == "create":
-            self.writer.write(event)
+            self._emit(event)
             self.total_tokens += 1
             if len(self.tracked) < self.max_tokens:
                 self.tracked[mint] = _Tracked(now, now)
                 self._pending.append(mint)
         elif mint in self.tracked:
-            self.writer.write(event)
+            self._emit(event)
             if event["e"] == "trade":
                 self.trades += 1
                 self.tracked[mint].last = now
@@ -96,7 +102,7 @@ class Recorder:
         now = self.clock()
         for mint in mints:
             if self.tracked.pop(mint, None) is not None:
-                self.writer.write({"e": "untrack", "t": now, "mint": mint, "reason": reason})
+                self._emit({"e": "untrack", "t": now, "mint": mint, "reason": reason})
         return mints
 
     async def _maintain(self, ws) -> None:
@@ -107,7 +113,7 @@ class Recorder:
                 batch, self._pending = self._pending, []
                 await ws.send(json.dumps({"method": "subscribeTokenTrade", "keys": batch}))
                 for mint in batch:
-                    self.writer.write({"e": "track", "t": now, "mint": mint})
+                    self._emit({"e": "track", "t": now, "mint": mint})
             expired = [m for m, s in self.tracked.items() if now - s.created > self.track_seconds]
             idle = [m for m, s in self.tracked.items() if m not in expired and now - s.last > self.idle_seconds]
             done = self._untrack(expired, "age") + self._untrack(idle, "idle")
@@ -146,7 +152,7 @@ class Recorder:
                 await asyncio.sleep(backoff)
                 backoff = min(backoff * 2, 30.0)
         finally:
-            self.writer.write({"e": "session", "t": self.clock(), "state": "stopped"})
+            self._emit({"e": "session", "t": self.clock(), "state": "stopped"})
             self.writer.close()
         return self.stats()
 
@@ -197,7 +203,7 @@ class ChainRecorder(Recorder):
         finally:
             if self.connected:
                 self._session("disconnected")
-            self.writer.write({"e": "session", "t": self.clock(), "state": "stopped"})
+            self._emit({"e": "session", "t": self.clock(), "state": "stopped"})
             self.writer.close()
         return self.stats()
 
@@ -236,7 +242,7 @@ class ChainRecorder(Recorder):
                     if isinstance(event, ChainCreate):
                         self.handle(create_to_message(event, first_buys.get(event.mint)))
                         if event.mint in self.tracked:
-                            self.writer.write({"e": "track", "t": now, "mint": event.mint})
+                            self._emit({"e": "track", "t": now, "mint": event.mint})
                     elif isinstance(event, ChainTrade):
                         if first_buys.get(event.mint) is not event:
                             self.handle(trade_to_message(event))

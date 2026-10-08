@@ -14,11 +14,13 @@ from __future__ import annotations
 import json
 import math
 import os
+from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Callable, Protocol
 
 import numpy as np
 
+from .candles import Tick
 from .profit import Costs, Curve, Exit, run_policy, summarize
 from .scam import CreatorIndex, WalletTracker, assess
 
@@ -30,93 +32,150 @@ NUMERIC = (
 )  # fmt: skip
 
 
-def _rugged(curve: Curve, ticks) -> bool:
-    """Creator sold at least half of what they bought and the price ended 80%+ below its peak."""
-    if not len(curve):
-        return False
-    bought = sum(t.volume for t in ticks if t.creator and t.buys)
-    sold = sum(t.volume for t in ticks if t.creator and t.sells)
-    return bought > 0 and sold >= 0.5 * bought and curve.price[-1] <= 0.2 * curve.price.max()
+@dataclass
+class _Launch:
+    mint: str
+    created: float
+    creator: str
+    name: str
+    symbol: str
+    uri: str
+    tracker: WalletTracker
+    buyers: set = field(default_factory=set)
+    buy_sol: float = 0.0
+    sell_sol: float = 0.0
+    trades: int = 0
+    raised: float = 0.0
+    first_price: float = 0.0
+    last_price: float = 0.0
+    peak: float = 0.0
+    creator_bought: float = 0.0  # SOL
+    creator_sold: float = 0.0  # SOL
+
+
+class LaunchStateBuilder:
+    """Launch states built from a stream of launches and trades, in time order.
+
+    The same code serves the live fast loop and the offline evaluation
+    (`launch_states` replays recorded tokens through it), so a decision is
+    judged on exactly the state it would see live. Creator history only uses
+    launches that were closed (their outcome known) before the moment of the
+    decision.
+    """
+
+    def __init__(self, creators: CreatorIndex | None = None):
+        self.index = creators or CreatorIndex()
+        self.launches: dict[str, _Launch] = {}
+
+    def create(self, mint: str, t: float, creator: str, name: str = "", symbol: str = "", uri: str = "") -> None:
+        self.launches[mint] = _Launch(mint, t, creator, name, symbol, uri, WalletTracker(t))
+        self.index.note_launch(creator, name, symbol, uri, mint)
+        self.index.creators[creator].tokens[mint] = False  # rugged or not is known when it closes
+
+    def tick(self, mint: str, tick: Tick) -> None:
+        launch = self.launches.get(mint)
+        if launch is None:
+            return
+        launch.tracker.update(tick)
+        launch.trades += 1
+        launch.raised = tick.liquidity
+        launch.first_price = launch.first_price or tick.price
+        launch.last_price = tick.price
+        launch.peak = max(launch.peak, tick.price)
+        if tick.creator:
+            if tick.buys:
+                launch.creator_bought += tick.volume
+            else:
+                launch.creator_sold += tick.volume
+        else:
+            launch.buy_sol += tick.buy_volume
+            launch.sell_sol += tick.sell_volume
+            if tick.buys and tick.trader:
+                launch.buyers.add(tick.trader)
+
+    def close(self, mint: str) -> None:
+        """The launch is no longer followed: record whether it was rugged
+        (creator sold half of what they bought and the price ended 80%+ below its peak)."""
+        launch = self.launches.pop(mint, None)
+        if launch is None:
+            return
+        rugged = (
+            launch.creator_bought > 0
+            and launch.creator_sold >= 0.5 * launch.creator_bought
+            and launch.peak > 0
+            and launch.last_price <= 0.2 * launch.peak
+        )
+        self.index.creators[launch.creator].tokens[mint] = rugged
+
+    def state(self, mint: str, now: float) -> dict | None:
+        launch = self.launches.get(mint)
+        if launch is None:
+            return None
+        tracker = launch.tracker
+        report = assess(tracker, None, self.index, mint=mint, creator=launch.creator, name=launch.name, symbol=launch.symbol, uri=launch.uri)
+        record = self.index.creators.get(launch.creator)
+        launches, rugs, _ = record.excluding(mint) if record else (0, 0, 0)
+        snap = tracker.snapshot()
+        sold, drawdown = tracker.creator_sold_share, tracker.drawdown
+        return {
+            "mint": mint,
+            "decide_at": now,
+            "name": launch.name,
+            "symbol": launch.symbol,
+            "seconds": now - launch.created,
+            "buyers": len(launch.buyers),
+            "trades": launch.trades,
+            "buy_sol": launch.buy_sol,
+            "sell_sol": launch.sell_sol,
+            "rise_pct": 100 * (launch.last_price / launch.first_price - 1) if launch.first_price else math.nan,
+            "raised_sol": launch.raised,
+            "creator_sold_share": math.nan if sold is None else sold,
+            "creator_launches": launches,
+            "creator_rugs": rugs,
+            "drawdown_pct": math.nan if drawdown is None else 100 * drawdown,
+            "top10_share": snap["top10_share"],
+            "holders": tracker.holders,
+            "creator_share": snap["creator_share"],
+            "sniper_share": snap["sniper_share"],
+            "wash_share": snap["wash_share"],
+            "trades_per_wallet": snap["trades_per_wallet"],
+            "nonstandard_curve": snap["nonstandard_curve"],
+            "risk": report.level,
+            "risk_rank": LEVEL_RANK[report.level],
+            "flags": sorted({f.code for f in report.flags}),
+        }
 
 
 def launch_states(tokens, curves: list[Curve], seconds: float = 20.0) -> list[dict]:
-    """What each launch looked like `seconds` after it was seen, in launch order.
+    """Each recorded launch's state `seconds` after it was seen, in launch order,
+    built by replaying the recorded tokens through `LaunchStateBuilder`.
 
-    Creator history only counts earlier launches whose outcome was already
-    known (their recorded window ended at least 10 minutes before), so no
-    state uses information from its own future.
+    Each token closes at the end of its recorded window (`TokenData.end`).
     """
-    index = CreatorIndex()
-    pending: list[tuple[float, str, str, bool]] = []  # (known at, mint, creator, rugged)
+    CREATE, TICK, DECIDE, CLOSE = range(4)  # order of simultaneous events
+    events: list[tuple[float, int, int, object]] = []
+    for k, token in enumerate(tokens):
+        events.append((token.created, CREATE, k, None))
+        for group in token.ticks.values():
+            events.extend((tick.ts, TICK, k, tick) for tick, _ in group)
+        events.append((token.created + seconds, DECIDE, k, None))
+        end = token.end or (curves[k].end if len(curves[k]) else token.created)
+        events.append((max(end, token.created + seconds), CLOSE, k, None))
+    events.sort(key=lambda e: (e[0], e[1]))
+    builder = LaunchStateBuilder()
     states = []
-    for k in sorted(range(len(tokens)), key=lambda i: tokens[i].created):
-        token, curve = tokens[k], curves[k]
-        decide_at = token.created + seconds
-        keep = []
-        for known_at, mint, creator, rugged in pending:
-            if known_at <= decide_at:
-                index.creators[creator].tokens[mint] = rugged
-            else:
-                keep.append((known_at, mint, creator, rugged))
-        pending = keep
-
-        ticks = sorted((t for group in token.ticks.values() for t, _ in group), key=lambda t: t.ts)
-        tracker = WalletTracker(token.created)
-        buyers: set[str] = set()
-        buy_sol = sell_sol = 0.0
-        n = 0
-        raised = 0.0
-        for tick in ticks:
-            if tick.ts > decide_at:
-                break
-            tracker.update(tick)
-            n += 1
-            raised = tick.liquidity
-            if tick.buys and not tick.creator and tick.trader:
-                buyers.add(tick.trader)
-            if not tick.creator:
-                buy_sol += tick.buy_volume
-                sell_sol += tick.sell_volume
-        report = assess(tracker, None, index, mint=token.mint, creator=token.creator, name=token.name, symbol=token.symbol, uri=token.uri)
-        index.note_launch(token.creator, token.name, token.symbol, token.uri, token.mint)
-        pending.append(((curve.end if len(curve) else token.created) + 600.0, token.mint, token.creator, _rugged(curve, ticks)))
-
-        record = index.creators.get(token.creator)
-        launches, rugs, _ = record.excluding(token.mint) if record else (0, 0, 0)
-        i = curve.index_at(decide_at)
-        snap = tracker.snapshot()
-        sold = tracker.creator_sold_share
-        drawdown = tracker.drawdown
-        states.append(
-            {
-                "token": k,
-                "mint": token.mint,
-                "decide_at": decide_at,
-                "name": token.name,
-                "symbol": token.symbol,
-                "seconds": seconds,
-                "buyers": len(buyers),
-                "trades": n,
-                "buy_sol": buy_sol,
-                "sell_sol": sell_sol,
-                "rise_pct": 100 * (curve.price[i] / curve.price[0] - 1) if i >= 0 else math.nan,
-                "raised_sol": raised,
-                "creator_sold_share": math.nan if sold is None else sold,
-                "creator_launches": launches,
-                "creator_rugs": rugs,
-                "drawdown_pct": math.nan if drawdown is None else 100 * drawdown,
-                "top10_share": snap["top10_share"],
-                "holders": tracker.holders,
-                "creator_share": snap["creator_share"],
-                "sniper_share": snap["sniper_share"],
-                "wash_share": snap["wash_share"],
-                "trades_per_wallet": snap["trades_per_wallet"],
-                "nonstandard_curve": snap["nonstandard_curve"],
-                "risk": report.level,
-                "risk_rank": LEVEL_RANK[report.level],
-                "flags": sorted({f.code for f in report.flags}),
-            }
-        )
+    for t, kind, k, payload in events:
+        token = tokens[k]
+        if kind == CREATE:
+            builder.create(token.mint, t, token.creator, token.name, token.symbol, token.uri)
+        elif kind == TICK:
+            builder.tick(token.mint, payload)
+        elif kind == DECIDE:
+            state = builder.state(token.mint, t)
+            state["token"] = k
+            states.append(state)
+        else:
+            builder.close(token.mint)
     return states
 
 

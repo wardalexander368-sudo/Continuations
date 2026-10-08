@@ -91,6 +91,30 @@ def _real_sol(event: dict) -> float:
     return max(vsol - VIRTUAL_SOL, 0.0) if vsol else 0.0
 
 
+def tick_from_event(event: dict, creator: str) -> Tick | None:
+    """A recorded create (with the creator's first buy) or trade as a tick; None without a price."""
+    price = event_price(event)
+    if price is None:
+        return None
+    sol = event.get("sol") or 0.0
+    buy = event["e"] == "create" or event.get("side") == "b"
+    trader = event.get("creator") if event["e"] == "create" else event.get("trader") or ""
+    return Tick(
+        event["t"],
+        price,
+        volume=sol,
+        buy_volume=sol if buy else 0.0,
+        sell_volume=0.0 if buy else sol,
+        buys=int(buy),
+        sells=int(not buy),
+        trader=trader,
+        creator=bool(trader) and trader == creator,
+        liquidity=_real_sol(event),
+        tokens=event.get("tok") or 0.0,
+        virtual_sol=event.get("vsol") or 0.0,
+    )
+
+
 def load_trade_tokens(raw_dir: str | Path, timeframe: int, max_gap: float = 10.0) -> list[TokenData]:
     """Group recorded events by token and rebuild each token's candles over the
     window in which its trades were completely recorded."""
@@ -168,27 +192,10 @@ def load_trade_tokens(raw_dir: str | Path, timeframe: int, max_gap: float = 10.0
         )
         book = CandleBook(timeframe, grace=0.0)
         for event in events:
-            price = event_price(event)
-            if price is None:
+            tick = tick_from_event(event, token.creator)
+            if tick is None:
                 continue
-            sol = event.get("sol") or 0.0
-            buy = event["e"] == "create" or event.get("side") == "b"
-            trader = event.get("creator") if event["e"] == "create" else event.get("trader") or ""
-            tick = Tick(
-                event["t"],
-                price,
-                volume=sol,
-                buy_volume=sol if buy else 0.0,
-                sell_volume=0.0 if buy else sol,
-                buys=int(buy),
-                sells=int(not buy),
-                trader=trader,
-                creator=bool(trader) and trader == token.creator,
-                liquidity=_real_sol(event),
-                tokens=event.get("tok") or 0.0,
-                virtual_sol=event.get("vsol") or 0.0,
-            )
-            new_trader = bool(trader) and trader not in book.wallets
+            new_trader = bool(tick.trader) and tick.trader not in book.wallets
             token.ticks.setdefault(book.period(tick.ts), []).append((tick, new_trader))
             token.candles += book.add_tick(tick)
         token.candles += book.advance(end)
