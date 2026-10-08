@@ -55,7 +55,7 @@ def event_from_message(msg: dict, t: float) -> dict | None:
     if kind == "create":
         if event["tok"] is None:
             event["tok"] = _num(msg.get("initialBuy"))  # PumpPortal names the dev's token amount this way
-        event.update(creator=msg.get("traderPublicKey") or "", name=msg.get("name") or "", symbol=msg.get("symbol") or "")
+        event.update(creator=msg.get("traderPublicKey") or "", name=msg.get("name") or "", symbol=msg.get("symbol") or "", uri=msg.get("uri") or "")
     else:
         event.update(side="b" if kind == "buy" else "s", trader=msg.get("traderPublicKey") or "")
     return event

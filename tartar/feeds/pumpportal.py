@@ -68,6 +68,8 @@ def tick_from_message(msg: dict, now: float, creator: str | None = None) -> Tick
         trader=trader,
         creator=side == "create" or (bool(creator) and trader == creator),
         liquidity=real_sol(msg),
+        tokens=_float(msg.get("tokenAmount")) or _float(msg.get("initialBuy")) or 0.0,
+        virtual_sol=_float(msg.get("vSolInBondingCurve")) or 0.0,
     )
 
 

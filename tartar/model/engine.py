@@ -43,7 +43,9 @@ PARTIAL_FEATURES = (
     "f", "x0", "p_trades", "p_activity", "p_flow_imb", "p_range", "p_new_traders", "p_creator_sell", "p_idle",
 )  # fmt: skip
 
-FEATURES = BASE_FEATURES + PARTIAL_FEATURES
+from ..scam import RISK_FEATURES  # noqa: E402  (holder/scam behaviour, see tartar/scam.py)
+
+FEATURES = BASE_FEATURES + PARTIAL_FEATURES + RISK_FEATURES
 
 
 def _ratio(a: float, b: float) -> float:
@@ -110,12 +112,16 @@ class FeatureEngine:
             self.liquidity = candle.liquidity
         self._base = None
 
-    def features(self, partial: Candle | None = None, now: float | None = None) -> np.ndarray:
+    def features(self, partial: Candle | None = None, now: float | None = None, risk: dict[str, float] | None = None) -> np.ndarray:
         """Feature vector for predicting the close of the candle after the last closed one.
 
-        `partial` is that candle as formed so far (None = predicting at its open).
+        `partial` is that candle as formed so far (None = predicting at its open);
+        `risk` is the token's WalletTracker snapshot at that moment.
         """
-        return np.concatenate([self.base_features(), self._partial(partial, now)])
+        risk_values = np.array([(risk or {}).get(name, NAN) for name in RISK_FEATURES], dtype=float)
+        if not self.creator_known:
+            risk_values[RISK_FEATURES.index("creator_share")] = NAN
+        return np.concatenate([self.base_features(), self._partial(partial, now), risk_values])
 
     def base_features(self) -> np.ndarray:
         if self._base is None:

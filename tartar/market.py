@@ -41,6 +41,7 @@ class MarketInfo:
     notes: list[str] = field(default_factory=list)
     launched_at: float | None = None
     creator: str | None = None
+    uri: str = ""  # token metadata URI, when known (copycat detection)
 
     @property
     def domain(self) -> str:
@@ -229,6 +230,7 @@ def launch_market(
     name: str = "",
     creator: str | None = None,
     launched_at: float | None = None,
+    uri: str = "",
     initial=(),
     stream=None,
 ) -> Market:
@@ -247,6 +249,7 @@ def launch_market(
         dex="pumpfun",
         launched_at=launched_at,
         creator=creator,
+        uri=uri,
     )
     return Market(info, feed, None, clock)
 

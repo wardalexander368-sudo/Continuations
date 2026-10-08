@@ -22,6 +22,8 @@ from .output import ARROWS, call_text, fmt_duration, fmt_pct, fmt_price, fmt_pro
 from .scoreboard import Scoreboard
 
 DIRECTION_STYLE = {"up": "bold green", "down": "bold red", "flat": "bold white"}
+RISK_STYLE = {"ok": "bold black on green", "caution": "bold black on yellow", "danger": "bold white on red", "scam": "bold white on red blink"}
+RISK_BORDER = {"caution": "yellow", "danger": "red", "scam": "red"}
 
 
 def render_chart(
@@ -191,7 +193,7 @@ class Dashboard(Sink):
     def render(self) -> Layout:
         layout = Layout()
         layout.split_column(
-            Layout(self._header(), name="header", size=3),
+            Layout(self._header(), name="header", size=4),
             Layout(name="body", ratio=1),
             Layout(self._footer(), name="footer", size=self.recent + 6),
         )
@@ -219,7 +221,12 @@ class Dashboard(Sink):
         if v is not None:
             age = f"{v.now - v.last_tick_at:.0f}s ago" if v.last_tick_at else "—"
             text.append(f"  ·  {v.ticks} trades seen, last {age}", style="dim")
-        return Panel(text, box=box.ROUNDED, border_style="magenta")
+        risk = v.risk if v is not None else None
+        if risk is not None and risk.level != "unknown":
+            text.append("\n")
+            text.append(f" RISK {risk.level.upper()} ", style=RISK_STYLE[risk.level])
+            text.append(f"  {risk.summary()}", style="dim" if risk.level == "ok" else "")
+        return Panel(text, box=box.ROUNDED, border_style=RISK_BORDER.get(risk.level if risk else "", "magenta"))
 
     def _prediction(self) -> Panel:
         v = self.view

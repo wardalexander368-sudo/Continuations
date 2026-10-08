@@ -30,6 +30,7 @@ from tartar.model.global_model import (
 )
 from tartar.model.predictive import Mixture
 from tartar.model.volatility import ActivityEstimator
+from tartar.scam import WalletTracker
 from tartar.train import evaluate, train_global
 
 from conftest import gecko_pool, gecko_tokens
@@ -84,6 +85,7 @@ def test_train_serve_parity(sim_tokens, sim_dataset):
     known_creator = _hash_unit(token.mint, "creator") >= 0.3
     launched = token.created if _hash_unit(token.mint, "launch") >= 0.15 else None
     engine = FeatureEngine(60, launched, known_creator)
+    tracker = WalletTracker(launched)
     book = CandleBook(60, grace=0.0)
     ticks = sorted((tick for group in token.ticks.values() for tick, _ in group), key=lambda t: t.ts)
     checked, i = 0, 0
@@ -91,14 +93,15 @@ def test_train_serve_parity(sim_tokens, sim_dataset):
         for f in (0.0, 0.2, 0.4, 0.6, 0.8, 0.95):
             cutoff = candle.start + f * 60
             while i < len(ticks) and ticks[i].ts < cutoff:
-                for closed in book.add_tick(ticks[i]):
+                for closed in book.add_tick(ticks[i]):  # as the agent does: close candles first,
                     engine.update(closed)
+                tracker.update(ticks[i])  # then apply the trade to wallet state
                 i += 1
             for closed in book.advance(cutoff):
                 engine.update(closed)
             if engine.count == 0:
                 continue
-            live = engine.features(book.view() if f > 0 else None, cutoff)
+            live = engine.features(book.view() if f > 0 else None, cutoff, tracker.snapshot())
             key = (f, int(round(engine.history[-1].close * 1e15)))
             if key in expected:
                 np.testing.assert_allclose(live.astype(np.float32), expected[key], rtol=1e-5, atol=1e-6, equal_nan=True)

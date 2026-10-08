@@ -7,7 +7,8 @@ from dataclasses import dataclass
 
 import numpy as np
 
-from ..candles import Candle
+from ..candles import Candle, Tick
+from ..scam import WalletTracker
 from .engine import FeatureEngine
 from .ensemble import Ensemble, default_ensemble
 from .features import build_features
@@ -170,6 +171,7 @@ class Forecaster:
         self.timeframe = timeframe
         self.coverage = coverage
         self.engine = FeatureEngine(timeframe, launched_at, creator_known)
+        self.wallets = WalletTracker(launched_at)
         self.activity = ActivityEstimator()
         self.ensemble = ensemble or default_ensemble()
         self.residuals = ResidualDistribution()
@@ -217,6 +219,10 @@ class Forecaster:
             weights = {"global model": w, **weights}
         return weights
 
+    def on_tick(self, tick: Tick) -> None:
+        """Every trade, after any candle it closed has been observed (keeps wallet state causal)."""
+        self.wallets.update(tick)
+
     def observe(self, candle: Candle) -> Outcome | None:
         """Ingest a closed candle; score and learn from the forecast made for it."""
         outcome = None
@@ -242,7 +248,7 @@ class Forecaster:
             return f
         gdist, g_mass = self._global, None
         if self.model is not None and self.model.nowcast:
-            gdist = self.model.distribution(self.engine.features(current, now))
+            gdist = self.model.distribution(self.engine.features(current, now, self.wallets.snapshot()))
             g_mass = gdist.p_still
         return self._predict(
             f.target_start, f.ref_price, current.close, elapsed, current.active, f.sigma, f.signal, now, gdist, g_mass
@@ -282,7 +288,7 @@ class Forecaster:
         self._x = build_features(history, sigma)
         self._raw_signal, self._preds = self.ensemble.predict(self._x)
         signal = self._raw_signal * self.reliability
-        self._global = self.model.distribution(self.engine.features()) if self.model is not None else None
+        self._global = self.model.distribution(self.engine.features(risk=self.wallets.snapshot())) if self.model is not None else None
         self._online_mass = self.activity.no_trade_prob(1.0, False)
         start = last.start + self.timeframe
         g_mass = self._global.p_still if self._global is not None else None

@@ -22,6 +22,7 @@ from ..candles import Candle, CandleBook, Tick, fill_gaps
 from ..feeds.pumpportal import VIRTUAL_SOL
 from ..model.engine import FEATURES, FeatureEngine
 from ..model.global_model import z_to_class
+from ..scam import WalletTracker
 from .collect import load_ohlcv_file
 from .rawlog import event_price, raw_files, read_events
 
@@ -136,6 +137,8 @@ def load_trade_tokens(raw_dir: str | Path, timeframe: int) -> list[TokenData]:
                 trader=trader,
                 creator=bool(trader) and trader == token.creator,
                 liquidity=_real_sol(event),
+                tokens=event.get("tok") or 0.0,
+                virtual_sol=event.get("vsol") or 0.0,
             )
             new_trader = bool(trader) and trader not in book.wallets
             token.ticks.setdefault(book.period(tick.ts), []).append((tick, new_trader))
@@ -218,6 +221,16 @@ def build_dataset(
             candles, tick_groups, first_target = late_join_view(token, timeframe)
             known_creator = False
         engine = FeatureEngine(timeframe, token.created if known_launch else None, known_creator)
+        tracker = WalletTracker(token.created if known_launch else None)
+        stream = sorted((tick for group in tick_groups.values() for tick, _ in group), key=lambda t: t.ts)
+        pos = 0
+
+        def advance(until: float) -> None:
+            nonlocal pos
+            while pos < len(stream) and stream[pos].ts < until:
+                tracker.update(stream[pos])
+                pos += 1
+
         for i, candle in enumerate(candles[:-1]):
             engine.update(candle)
             if i + 1 < first_target:
@@ -243,7 +256,8 @@ def build_dataset(
                     price = partial.close
                 moved = nxt.close != price
                 z = math.log(nxt.close / price) / (sigma * math.sqrt(1.0 - f)) if moved else 0.0
-                xs.append(engine.features(partial, now))
+                advance(now)
+                xs.append(engine.features(partial, now, tracker.snapshot()))
                 for key, value in (
                     ("z", z), ("moved", moved), ("f", f), ("x0", math.log(price / ref) / sigma), ("sigma", sigma),
                     ("ref", ref), ("price", price), ("close", nxt.close), ("weight", weight), ("token", index),

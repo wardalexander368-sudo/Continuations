@@ -82,6 +82,7 @@ class ChainCreate:
     symbol: str
     creator: str
     block_time: int | None
+    uri: str = ""
 
 
 @dataclass(frozen=True)
@@ -137,14 +138,14 @@ def decode_event(data: bytes) -> ChainTrade | ChainCreate | ChainComplete | None
             return ChainTrade(mint, sol / LAMPORTS, tokens / TOKEN_UNITS, is_buy, user, ts, vsol / LAMPORTS, vtok / TOKEN_UNITS, creator, real_sol)
         if head == CREATE:
             r = _Reader(data)
-            name, symbol, _uri = r.string(), r.string(), r.string()
+            name, symbol, uri = r.string(), r.string(), r.string()
             mint, _curve, user = r.key(), r.key(), r.key()
             creator, ts = user, None
             try:
                 creator, ts = r.key(), r.i64()
             except ValueError:
                 pass
-            return ChainCreate(mint, name, symbol, creator, ts)
+            return ChainCreate(mint, name, symbol, creator, ts, uri)
         if head == COMPLETE:
             r = _Reader(data)
             r.key()  # user
@@ -186,7 +187,7 @@ def trade_to_message(trade: ChainTrade) -> dict:
 
 
 def create_to_message(create: ChainCreate, first_trade: ChainTrade | None = None) -> dict:
-    msg = {"mint": create.mint, "traderPublicKey": create.creator, "txType": "create", "name": create.name, "symbol": create.symbol, "pool": "pump"}
+    msg = {"mint": create.mint, "traderPublicKey": create.creator, "txType": "create", "name": create.name, "symbol": create.symbol, "uri": create.uri, "pool": "pump"}
     if first_trade is not None and first_trade.mint == create.mint:
         msg.update(
             solAmount=first_trade.sol,

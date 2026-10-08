@@ -119,7 +119,7 @@ def test_pumpportal_messages():
         "pool": "pump",
     }
     tick = tick_from_message(trade, now=5.0)
-    assert tick == Tick(5.0, 3e-8, volume=0.1, buy_volume=0.1, sell_volume=0.0, buys=1, trader="trader", liquidity=0.0)
+    assert tick == Tick(5.0, 3e-8, volume=0.1, buy_volume=0.1, sell_volume=0.0, buys=1, trader="trader", liquidity=0.0, tokens=3_500_000.0, virtual_sol=30.0)
     assert tick_from_message({**trade, "vSolInBondingCurve": 40.0, "vTokensInBondingCurve": 8e8}, 5.0).liquidity == 10.0
     assert tick_from_message({**trade, "realSolReserves": 12.5}, 5.0).liquidity == 12.5
     no_curve = {**trade, "txType": "sell", "vSolInBondingCurve": None, "vTokensInBondingCurve": None}

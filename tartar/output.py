@@ -148,6 +148,10 @@ class PlainPrinter(Sink):
     def status(self, message: str, level: str) -> None:
         self._print(f"  {'!' if level != 'info' else '·'} {message}")
 
+    def risk(self, report) -> None:
+        if report.level != "unknown":
+            self._print(f"  risk {report.level.upper()}: {report.summary(limit=5)}")
+
     def stop(self, board: Scoreboard) -> None:
         for line in summary_lines(board):
             self._print(line)
@@ -210,6 +214,9 @@ class JsonLines(Sink):
 
     def status(self, message: str, level: str) -> None:
         self._write({"type": "status", "level": level, "message": message})
+
+    def risk(self, report) -> None:
+        self._write({"type": "risk", **report.to_dict()})
 
     def stop(self, board: Scoreboard) -> None:
         self._write({"type": "summary", "live": board.live.to_dict(), "history": board.history.to_dict()})

@@ -28,6 +28,45 @@ tartar watch --next-launch  # wait for the next pump.fun launch and watch it
 tartar new                  # list the newest Solana pools
 ```
 
+## Scam filtering
+
+Most new launches are scams or dead on arrival, and they move differently from
+organic tokens. Every watched token gets a live **risk level** (ok, caution,
+danger or scam) with its reasons. It appears in the dashboard header, as a
+line in plain output, and as a `risk` event in JSON. Three kinds of evidence
+feed it:
+
+* **Behaviour**, from the token's own trades:
+  * the creator selling their tokens
+  * supply sniped in the first seconds (bundled launches)
+  * the top 10 wallets holding most of the supply
+  * the creator's remaining bag
+  * wash trading (quick buy/sell round trips by the same wallets)
+  * a handful of wallets doing all the trading
+  * a non-standard bonding curve
+  * a collapse of 90% or more from the peak
+* **The mint**, via Solana RPC:
+  * mint or freeze authority not revoked
+  * dangerous Token-2022 extensions: permanent delegate, transfer hook,
+    transfer fees, pausable, frozen by default, non-transferable
+* **Reputation**:
+  * [RugCheck](https://rugcheck.xyz)'s report: its risks, insider-wallet
+    networks, rugged flag, and holders (pools and lockers excluded)
+  * the creator's record in your recordings: past rugs and serial launches
+  * copycat launches that reuse a name or metadata
+
+```bash
+tartar scan <TOKEN_MINT>             # one-off report (exit code 3 if danger/scam)
+tartar watch --next-launch           # watches the first launch that passes screening
+tartar new --safe                    # newest pools with scam-flagged ones hidden
+```
+
+`--next-launch` follows each new launch for 20 seconds (`--screen`). It skips
+launches with fewer than 3 real buyers (`--min-buyers`), and any flagged danger
+or scam (`--allow-risky` to keep them). The behavioural signals are also inputs
+to the global model, so a dev dump or a bundled launch shapes the price
+prediction as well as the warning.
+
 ## Getting the most accurate predictions: train the global model
 
 Out of the box, the agent learns each token from scratch while it watches.
@@ -81,6 +120,7 @@ Useful options:
 | `--source auto\|pumpportal\|dexscreener\|gecko` | force a data source |
 | `--history 500` | historical candles to warm up on (max 1000) |
 | `--candles N` | stop after N candles |
+| `--no-scam-check` | skip the RugCheck/mint lookups (behavioural flags still shown) |
 
 ## What the numbers mean
 
@@ -112,14 +152,17 @@ watching price action, not as trading advice.
 
 | source | used for | latency | key |
 |---|---|---|---|
-| [PumpPortal](https://pumpportal.fun) websocket | every trade on pump.fun bonding-curve tokens, plus new launches | real time | none (set `PUMPPORTAL_API_KEY` if your account needs one, e.g. for PumpSwap trades) |
+| Solana RPC (`logsSubscribe` on the pump.fun program) | every pump.fun launch and trade, decoded straight from the chain; live watch, launch screening, recording | real time | none (public endpoints; set `SOLANA_RPC_WS` to use your own) |
 | [DexScreener](https://docs.dexscreener.com) API | token/pair lookup; price polled every 3s for all other tokens | a few seconds | none |
 | [GeckoTerminal](https://www.geckoterminal.com/dex-api) API | historical OHLCV for warm-up; fallback live polling; new pools list | up to ~1 min | none (30 req/min) |
+| [RugCheck](https://rugcheck.xyz) API | scam checks | — | none |
+| [PumpPortal](https://pumpportal.fun) websocket | optional alternative for pump.fun trades | real time | its per-token trade stream needs `PUMPPORTAL_API_KEY` funded with SOL |
 
 `--source auto` (the default) picks a source like this:
 
-1. A pump.fun mint still on its bonding curve, or not yet listed anywhere, uses
-   PumpPortal. Prices are in SOL.
+1. A pump.fun mint still on its bonding curve, or not yet listed anywhere, is
+   read straight from the chain (`--source chain`; PumpPortal instead if
+   `PUMPPORTAL_API_KEY` is set). Prices are in SOL.
 2. Any other token with a DexScreener pair uses DexScreener. Prices are in USD.
 3. Otherwise it falls back to GeckoTerminal polling. Use `-t 5m` or longer with
    this source because of its lag.

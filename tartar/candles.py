@@ -46,7 +46,9 @@ class Tick:
     sells: int = 0
     trader: str = ""
     creator: bool = False  # trade made by the token's creator (dev wallet)
-    liquidity: float = 0.0  # quote reserve after the trade (pump.fun: virtual SOL in the curve)
+    liquidity: float = 0.0  # SOL raised in the bonding curve after the trade
+    tokens: float = 0.0  # token amount traded
+    virtual_sol: float = 0.0  # virtual SOL reserves after the trade (pump.fun curve)
 
 
 @dataclass

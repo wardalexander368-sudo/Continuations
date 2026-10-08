@@ -12,6 +12,7 @@ from .feeds.base import Snapshot, Status
 from .market import Market, MarketInfo
 from .model import Forecast, Forecaster, Outcome
 from .model.global_model import GlobalModel
+from .scam import CreatorIndex, ScamReport, StaticReport, assess, static_checks
 from .scoreboard import Scoreboard
 
 
@@ -31,6 +32,7 @@ class View:
     last_tick_at: float | None
     status: str
     weights: dict[str, float]
+    risk: ScamReport | None = None
 
 
 class Sink:
@@ -45,6 +47,9 @@ class Sink:
     def update(self, view: View) -> None: ...
 
     def status(self, message: str, level: str) -> None: ...
+
+    def risk(self, report: ScamReport) -> None:
+        """Called when the token's risk level or red flags change."""
 
     def stop(self, board: Scoreboard) -> None: ...
 
@@ -66,6 +71,9 @@ class CandleAgent:
         sinks: Sequence[Sink] = (),
         update_interval: float = 0.5,
         model: GlobalModel | None = None,
+        scam_checks: bool = True,
+        creators: CreatorIndex | None = None,
+        static_refresh: float = 600.0,
     ):
         self.market = market
         self.timeframe = timeframe
@@ -85,6 +93,11 @@ class CandleAgent:
         self.board = Scoreboard()
         self.live_candles = 0
         self.status_message = "starting"
+        self.scam_checks = scam_checks
+        self.creators = creators
+        self.static: StaticReport | None = None
+        self.static_refresh = static_refresh
+        self.risk_report: ScamReport | None = None
 
     def _emit(self, method: str, *args) -> None:
         for sink in self.sinks:
@@ -116,6 +129,33 @@ class CandleAgent:
             self.board.record(outcome, live)
         return outcome
 
+    def assess_risk(self) -> ScamReport:
+        info = self.market.info
+        report = assess(
+            self.forecaster.wallets,
+            self.static,
+            self.creators,
+            mint=info.address,
+            creator=info.creator,
+            name=info.name,
+            symbol=info.symbol,
+            uri=info.uri,
+        )
+        previous = self.risk_report
+        if previous is None or previous.level != report.level or {f.code for f in previous.flags} != {f.code for f in report.flags}:
+            self._emit("risk", report)
+        self.risk_report = report
+        return report
+
+    async def _refresh_static(self) -> None:
+        """Mint checks and RugCheck in the background; never blocks predictions."""
+        while True:
+            self.static = await static_checks(self.market.info.address)
+            for error in self.static.errors:
+                self._status(f"scam check: {error}", "warn")
+            # New launches are often not on RugCheck yet: look again soon.
+            await asyncio.sleep(self.static_refresh if self.static.rugcheck else min(60.0, self.static_refresh))
+
     def view(self) -> View:
         now = self.clock.now()
         current = self.book.view()
@@ -132,6 +172,7 @@ class CandleAgent:
             last_tick_at=self.book.last_tick_at,
             status=self.status_message,
             weights=self.forecaster.describe(),
+            risk=self.assess_risk(),
         )
 
     async def _pump(self, queue: asyncio.Queue) -> None:
@@ -157,6 +198,20 @@ class CandleAgent:
             raise event
         return []
 
+    def _process(self, event) -> int:
+        """Handle one feed event fully: close any candles it ends, then apply the trade."""
+        closed = self._ingest(event)
+        self._close_live(closed)
+        if isinstance(event, Tick):
+            self.forecaster.on_tick(event)
+        return len(closed)
+
+    def _close_live(self, closed: list[Candle]) -> None:
+        for candle in closed:
+            outcome = self._observe(candle, live=True)
+            self.live_candles += 1
+            self._emit("candle_closed", candle, outcome, self.forecaster.locked)
+
     def _wait_time(self, next_update: float) -> float:
         wait = next_update - time.monotonic()
         deadline = self.book.deadline()
@@ -168,32 +223,31 @@ class CandleAgent:
         """Run until cancelled (or until `max_candles` live candles have closed)."""
         self._emit("start", self.market.info, self.timeframe)
         queue: asyncio.Queue = asyncio.Queue()
-        pump = None
+        tasks: list[asyncio.Task] = []
         try:
+            if self.scam_checks:
+                tasks.append(asyncio.create_task(self._refresh_static()))
             await self.warm_up()
             self._status(f"streaming from {self.market.feed.name}")
-            pump = asyncio.create_task(self._pump(queue))
+            tasks.append(asyncio.create_task(self._pump(queue)))
             next_update = 0.0
             while max_candles is None or self.live_candles < max_candles:
-                closed: list[Candle] = []
+                closed = 0
                 try:
                     event = await asyncio.wait_for(queue.get(), self._wait_time(next_update))
-                    closed += self._ingest(event)
+                    closed += self._process(event)
                     while not queue.empty():
-                        closed += self._ingest(queue.get_nowait())
+                        closed += self._process(queue.get_nowait())
                 except asyncio.TimeoutError:
                     pass
-                closed += self.book.advance(self.clock.now())
-                for candle in closed:
-                    outcome = self._observe(candle, live=True)
-                    self.live_candles += 1
-                    self._emit("candle_closed", candle, outcome, self.forecaster.locked)
-                if closed or time.monotonic() >= next_update:
+                timed_out = self.book.advance(self.clock.now())
+                self._close_live(timed_out)
+                if closed or timed_out or time.monotonic() >= next_update:
                     self._emit("update", self.view())
                     next_update = time.monotonic() + self.update_interval
         finally:
-            if pump is not None:
-                pump.cancel()
-                await asyncio.gather(pump, return_exceptions=True)
+            for task in tasks:
+                task.cancel()
+            await asyncio.gather(*tasks, return_exceptions=True)
             self._emit("stop", self.board)
         return self.board

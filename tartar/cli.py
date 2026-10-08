@@ -8,6 +8,7 @@ import sys
 import time
 from contextlib import aclosing
 from datetime import datetime, timezone
+from pathlib import Path
 
 from rich import box
 from rich.console import Console
@@ -21,8 +22,10 @@ from .clock import SimClock
 from .dashboard import Dashboard
 from .feeds.geckoterminal import GeckoTerminal
 from .feeds.http import ApiError
-from .feeds.pumpchain import ChainCreate, ChainTrade, create_to_message, stream_program_events
-from .feeds.pumpportal import stream_new_tokens, tick_from_message
+from .feeds.pumpchain import stream_program_events
+from .feeds.pumpportal import stream_new_tokens
+from .scam import CreatorIndex, assess, static_checks, static_checks_many
+from .screen import next_clean_launch
 from .feeds.synthetic import SimulatedToken, SyntheticFeed
 from .model.global_model import MODEL_DIR, GlobalModel, find_model, model_name
 from .market import SOURCES, Market, MarketInfo, MarketNotFound, launch_market, open_market, short
@@ -61,12 +64,18 @@ def build_parser() -> argparse.ArgumentParser:
     watch.add_argument("--history", type=int, default=500, help="historical candles to warm up on (max 1000)")
     watch.add_argument("--poll", type=float, help="seconds between polls for polled sources")
     watch.add_argument("--grace", type=float, help="seconds after a candle ends before it is closed")
+    watch.add_argument("--screen", type=float, default=20.0, help="--next-launch: seconds to observe each launch before choosing (default 20)")
+    watch.add_argument("--min-buyers", type=int, default=3, help="--next-launch: buyers besides the creator needed during screening")
+    watch.add_argument("--allow-risky", action="store_true", help="--next-launch: don't skip launches flagged danger/scam")
+    watch.add_argument("--no-scam-check", action="store_true", help="skip the RugCheck/mint checks (behavioural flags still shown)")
+    watch.add_argument("--creators", default="data/raw", help="recorded raw logs used for creator history (default data/raw, if present)")
     _add_output_args(watch)
     watch.set_defaults(func=cmd_watch)
 
     new = sub.add_parser("new", help="list newly launched Solana tokens")
     new.add_argument("--source", choices=("gecko", "pumpportal"), default="gecko", help="gecko: newest pools; pumpportal: live pump.fun launches")
     new.add_argument("--limit", type=int, default=20)
+    new.add_argument("--safe", action="store_true", help="gecko: run scam checks and hide tokens flagged danger/scam")
     new.set_defaults(func=cmd_new)
 
     bt = sub.add_parser("backtest", help="walk-forward test of the model on a token's history")
@@ -83,6 +92,11 @@ def build_parser() -> argparse.ArgumentParser:
     demo.add_argument("--history", type=int, default=200, help="simulated warm-up candles")
     _add_output_args(demo)
     demo.set_defaults(func=cmd_demo)
+
+    scan = sub.add_parser("scan", help="scam check a token: mint, RugCheck, creator history and recorded trading")
+    scan.add_argument("address")
+    scan.add_argument("--creators", default="data/raw", help="recorded raw logs for creator history and trading (default data/raw)")
+    scan.set_defaults(func=cmd_scan)
 
     resolve = sub.add_parser("resolve", help="show which pool, source and history 'watch' would use")
     resolve.add_argument("address")
@@ -184,11 +198,29 @@ def _load_model(market: Market, args, timeframe: int) -> GlobalModel | None:
     return model
 
 
-async def _run_agent(market: Market, args, timeframe: int) -> None:
+def _creator_index(path: str | None) -> CreatorIndex | None:
+    if not path or not Path(path).exists():
+        return None
+    return CreatorIndex.from_raw(path)
+
+
+async def _run_agent(market: Market, args, timeframe: int, creators: CreatorIndex | None = None) -> None:
     console = Console()
     model = _load_model(market, args, timeframe)
     sinks, interval = _make_sinks(args, console)
-    agent = CandleAgent(market, timeframe, coverage=args.band, sinks=sinks, update_interval=interval, model=model)
+    simulated = market.info.source == "simulated"
+    if creators is None and not simulated:
+        creators = _creator_index(getattr(args, "creators", None))
+    agent = CandleAgent(
+        market,
+        timeframe,
+        coverage=args.band,
+        sinks=sinks,
+        update_interval=interval,
+        model=model,
+        scam_checks=not simulated and not getattr(args, "no_scam_check", False),
+        creators=creators,
+    )
     try:
         await agent.run(max_candles=args.candles)
     finally:
@@ -202,24 +234,35 @@ async def cmd_watch(args) -> int:
     timeframe = parse_timeframe(args.timeframe)
     if args.next_launch:
         err = Console(stderr=True)
-        err.print("Waiting for the next pump.fun launch on-chain…")
-        stream = stream_program_events()
-        create = first = None
-        async for item in stream:
-            if isinstance(item, tuple):
-                events = item[2]
-                create = next((e for e in events if isinstance(e, ChainCreate)), None)
-                if create is not None:
-                    first = next((e for e in events if isinstance(e, ChainTrade) and e.mint == create.mint), None)
-                    break
-        err.print(f"New launch: [bold]{create.symbol}[/bold] {create.name} {create.mint}")
-        launched = time.time()
-        initial = []
-        if first is not None:
-            initial.append(tick_from_message(create_to_message(create, first), launched, create.creator))
-        market = launch_market(
-            create.mint, symbol=create.symbol, name=create.name, creator=create.creator, launched_at=launched, initial=initial, stream=stream
+        creators = _creator_index(args.creators) or CreatorIndex()
+        err.print(
+            f"Waiting for the next pump.fun launch that passes scam screening "
+            f"({args.screen:g}s observation, ≥{args.min_buyers} buyers{', risky allowed' if args.allow_risky else ''})…"
         )
+
+        def show(verdict) -> None:
+            c = verdict.candidate.create
+            mark = "[green]✓[/green]" if verdict.passed else "[dim]✗[/dim]"
+            err.print(f"{mark} {c.symbol[:12]:<12} {c.mint[:6]}…  {verdict.reason}", highlight=False)
+
+        stream = stream_program_events()
+        verdict = await next_clean_launch(
+            stream, screen_seconds=args.screen, min_buyers=args.min_buyers, allow_risky=args.allow_risky, creators=creators, on_verdict=show
+        )
+        c = verdict.candidate.create
+        err.print(f"Watching [bold]{c.symbol}[/bold] {c.name} {c.mint}")
+        market = launch_market(
+            c.mint,
+            symbol=c.symbol,
+            name=c.name,
+            creator=c.creator,
+            launched_at=verdict.candidate.seen_at,
+            uri=c.uri,
+            initial=verdict.candidate.ticks,
+            stream=stream,
+        )
+        await _run_agent(market, args, timeframe, creators)
+        return 0
     elif args.address:
         market = await open_market(
             args.address, timeframe, args.source, history_limit=args.history, poll=args.poll, grace=args.grace
@@ -290,14 +333,30 @@ async def cmd_new(args) -> int:
         pools = await gecko.new_pools()
     finally:
         await gecko.aclose()
+    pools = pools[: args.limit]
+    risks = {}
+    if args.safe:
+        console.print(f"scam-checking {len(pools)} tokens…")
+        creators = _creator_index("data/raw")
+        statics = await static_checks_many([p.base_token for p in pools])
+        risks = {mint: assess(None, static, creators, mint=mint) for mint, static in statics.items()}
     table = Table(title="Newest Solana pools (GeckoTerminal)", box=box.SIMPLE_HEAD)
-    for col in ("age", "symbol", "name", "token mint", "dex", "liquidity", "24h vol"):
+    cols = ("age", "symbol", "name", "token mint", "dex", "liquidity", "24h vol") + (("risk",) if args.safe else ())
+    for col in cols:
         table.add_column(col, justify="right" if col in ("age", "liquidity", "24h vol") else "left", no_wrap=col == "token mint")
-    for pool in pools[: args.limit]:
-        table.add_row(
-            _age(pool.created_at), pool.base_symbol, pool.base_name[:24], pool.base_token, pool.dex, _usd(pool.reserve_usd), _usd(pool.volume_24h_usd)
-        )
+    hidden = 0
+    for pool in pools:
+        risk = risks.get(pool.base_token)
+        if risk is not None and risk.is_scam_or_danger:
+            hidden += 1
+            continue
+        row = [_age(pool.created_at), pool.base_symbol, pool.base_name[:24], pool.base_token, pool.dex, _usd(pool.reserve_usd), _usd(pool.volume_24h_usd)]
+        if args.safe:
+            row.append(f"{risk.level}: {risk.summary(2)}" if risk else "—")
+        table.add_row(*row)
     console.print(table)
+    if hidden:
+        console.print(f"hid {hidden} token(s) flagged danger or scam")
     console.print("Watch one with: [bold]tartar watch <token mint>[/bold]")
     return 0
 
@@ -515,3 +574,48 @@ async def cmd_learn(args) -> int:
     finally:
         record_task.cancel()
         await asyncio.gather(record_task, return_exceptions=True)
+
+
+async def cmd_scan(args) -> int:
+    """Everything known about a token's scam risk, without watching it."""
+    from .data.dataset import load_trade_tokens
+    from .scam import WalletTracker
+
+    console = Console()
+    mint = args.address.strip()
+    console.print(f"Scanning {mint}…")
+    static = await static_checks(mint)
+    creators = _creator_index(args.creators)
+    tracker = None
+    creator = name = symbol = uri = ""
+    if creators is not None and mint in creators.mint_creator:
+        creator = creators.mint_creator[mint]
+        for token in load_trade_tokens(args.creators, 60):
+            if token.mint == mint:
+                tracker = WalletTracker(token.created)
+                for tick in sorted((t for group in token.ticks.values() for t, _ in group), key=lambda t: t.ts):
+                    tracker.update(tick)
+                break
+    rc = static.rugcheck or {}
+    meta = (rc.get("tokenMeta") or {})
+    name, symbol = meta.get("name") or "", meta.get("symbol") or ""
+    uri = meta.get("uri") or ""
+    report = assess(tracker, static, creators, mint=mint, creator=creator or rc.get("creator"), name=name, symbol=symbol, uri=uri)
+    style = {"ok": "green", "caution": "yellow", "danger": "red", "scam": "bold red", "unknown": "dim"}[report.level]
+    console.print(f"[{style}]{report.level.upper()}[/{style}]  {symbol} {name}")
+    for f in report.flags:
+        console.print(f"  [{'red' if f.severity != 'caution' else 'yellow'}]{f.severity:>7}[/] {f.message}")
+    if not report.flags:
+        console.print("  no red flags found")
+    facts = []
+    if static.token_program:
+        facts.append(f"mint authority {'set' if static.mint_authority else 'revoked'}, freeze authority {'set' if static.freeze_authority else 'revoked'}")
+    if rc:
+        facts.append(f"RugCheck score {rc.get('score_normalised')}, holders {rc.get('totalHolders')}, insiders {rc.get('graphInsidersDetected') or 0}")
+    if tracker is not None:
+        facts.append(f"recorded: {tracker.trades} trades, {tracker.holders} holders")
+    for fact in facts:
+        console.print(f"  [dim]{fact}[/dim]")
+    for error in static.errors:
+        console.print(f"  [yellow]note: {error}[/yellow]")
+    return 0 if report.level not in ("danger", "scam") else 3
