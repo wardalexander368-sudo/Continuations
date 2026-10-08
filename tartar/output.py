@@ -84,7 +84,8 @@ def tally_line(t: Tally) -> str:
         return "no scored predictions yet"
     return (
         f"n={t.n} · direction hit {fmt_prob(t.hit_rate)} (stated {fmt_prob(t.avg_confidence)})"
-        f" · band coverage {fmt_prob(t.coverage)} · error {100 * t.mae:.2f}% vs naive {100 * t.naive_mae:.2f}%"
+        f" · band coverage {fmt_prob(t.coverage)} (stated {fmt_prob(t.band_stated)})"
+        f" · error {100 * t.mae:.2f}% vs naive {100 * t.naive_mae:.2f}%"
         f" (edge {fmt_pct(t.edge, 1)})"
     )
 

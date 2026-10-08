@@ -129,8 +129,33 @@ def train_global(
         "trained_at": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
         "train_seconds": round(time.time() - started, 1),
     }
+    model = GlobalModel(booster, meta)
+    meta["median_shrink"] = fit_median_shrink(model, ds, valid)
     log(f"trained {meta['best_iteration']} rounds in {meta['train_seconds']}s, temperature {temperature:.3f}")
-    return GlobalModel(booster, meta)
+    return model
+
+
+def fit_median_shrink(model: GlobalModel, ds: Dataset, mask: np.ndarray) -> list[list[float]]:
+    """[[f, s], ...]: how far to move the point forecast from the price now toward the model's
+    median, per fraction of the candle elapsed, chosen to minimize absolute error on `mask` (validation).
+
+    Late in a candle the median's small, mostly downward shifts lost to the current price on
+    held-out launches, while early on the full median helped; the fitted factor falls with f.
+    """
+    if not mask.any():
+        return []
+    probs = model.predict_proba(ds.X[mask])
+    tl, th = model.meta.get("tail_low", 1.0), model.meta.get("tail_high", 1.0)
+    f, x0, sigma, ref, close, w = ds.f[mask], ds.x0[mask], ds.sigma[mask], ds.ref[mask], ds.close[mask], ds.weight[mask]
+    q = batch_quantile(probs, 0.5, tl, th) * np.sqrt(1.0 - f)
+    grid = np.linspace(0.0, 1.0, 11)
+    out = []
+    for frac in sorted(set(f.tolist())):
+        m = f == frac
+        target = np.log(close[m] / ref[m]) / sigma[m] - x0[m]  # the remaining move, in sigma units
+        errors = [float((np.abs(target - s * q[m]) * sigma[m] * w[m]).sum()) for s in grid]
+        out.append([frac, float(grid[int(np.argmin(errors))])])
+    return out
 
 
 def evaluate_rows(
@@ -144,10 +169,16 @@ def evaluate_rows(
     scale = np.sqrt(1.0 - f)
     alpha = 1.0 - coverage
 
-    def price_at(q: float) -> np.ndarray:
-        return ref * np.exp(sigma * (x0 + scale * batch_quantile(probs, q, tl, th)))
+    q_mid, q_low, q_high = (batch_quantile(probs, q, tl, th) for q in (0.5, alpha / 2, 1 - alpha / 2))
+    q_mid = q_mid * np.array([model.median_shrink(v) for v in f])
 
-    pred, low, high = price_at(0.5), price_at(alpha / 2), price_at(1 - alpha / 2)
+    def price_at(qz: np.ndarray) -> np.ndarray:
+        return ref * np.exp(sigma * (x0 + scale * qz))
+
+    pred, low, high = price_at(q_mid), price_at(q_low), price_at(q_high)
+    # Probability the model itself puts inside the band. The no-move mass makes it exceed
+    # `coverage` whenever "no further trade" alone is likelier than `coverage`.
+    band_mass = batch_cdf(probs, q_high, tl, th) - batch_cdf(probs, q_low - 1e-9, tl, th)
     below = batch_cdf(probs, -x0 / np.maximum(scale, 1e-9), tl, th)
     p_up = 1.0 - below
     p_flat = np.where(x0 == 0, probs[:, 0], 0.0)
@@ -172,6 +203,7 @@ def evaluate_rows(
             "hit_rate": avg((call == actual).astype(float)),
             "avg_confidence": avg(P.max(axis=1)),
             "band_coverage": avg(in_band.astype(float)),
+            "band_stated": avg(band_mass),
             "band_width_pct": 100 * avg(np.log(high / low)),
             "mae_pct": 100 * mae,
             "naive_mae_pct": 100 * naive_mae,
