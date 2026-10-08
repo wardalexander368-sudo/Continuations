@@ -34,6 +34,8 @@ next. Topic documents hold the detail:
 
 * **Jev session** (session_012ZRs9FUggpEkx65Rw7K7fU, started 22:43 UTC): waiting for the user's confirmation; it will own the **live fast loop + slow loop** (queue item 1, steps 3–4). Steps 1–2 were done by the profitability session (below).
 
+* **Predictor session** (session_01UeZ4ho5y38qR1iNxnShtwF, started 23:40 UTC): queue item 6, predictor open problems 3–5 (band over-coverage, in-candle median worse than "price now", blend underconfidence). Branch `claude/solana-candle-predictor-s95qjr`. Touches `tartar/model/`, `tartar/train.py` only.
+
 ## Blockers (need the user)
 
 * ~~Network~~: **resolved 22:35 UTC**, the user enabled full network access.
@@ -74,6 +76,16 @@ next. Topic documents hold the detail:
 
 ## Rules that hold across sessions
 
+* **Background processes die when a session goes idle.** On 2026-10-08 the
+  predictor session's container was suspended ~12 min after its last turn:
+  the recorder was killed, files on disk survived, and the local HTTPS
+  proxy came back on a new port (a process still running would get
+  `ConnectionRefusedError` to `127.0.0.1:<old port>` until restarted).
+  Whoever owns the live fast loop must keep its session active (a `/loop`
+  wake every ~5–10 min that checks the process and restarts it) or accept
+  gaps; restart, don't wait, after any `ConnectionRefusedError` to
+  127.0.0.1.
+
 * Judge every model and strategy by `tartar profit` on the **latest**
   launches. Pick thresholds on validation only, and quote 90% intervals by
   token.
@@ -88,6 +100,17 @@ next. Topic documents hold the detail:
   branch `claude/profitability-backtest`, on `main`).
 
 ## Log (newest first)
+
+* **2026-10-08 23:40 UTC, predictor session:** Back after a usage limit.
+  Claimed queue item 6. The user asked this session to install the TypeSafe
+  plugin too; `claude plugin install typesafe@typesafe-ai` was blocked by
+  auto mode's safety check here as well (the user can run
+  `/plugin install typesafe@typesafe-ai`). Read the skill directly; it is
+  guidance only (read docs.typesafe.ai before Jev code). Dropped a
+  dedicated-recorder job brief: the fast loop records. Since 23:40 this
+  session's own recorder is off (container suspension killed it at 20:34
+  and again later); its local raw data (14:06–20:34 and 21:42–~22:00 UTC)
+  is beyond the `handoff/data/raw` snapshot only by ~30 min.
 
 * **2026-10-08 23:35 UTC, profitability session:** Added Jev shadow mode to
   the fast loop and its review section. A replay over 5,598 recorded launches
