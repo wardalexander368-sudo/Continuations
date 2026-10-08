@@ -85,7 +85,7 @@ def _real_sol(event: dict) -> float:
     return max(vsol - VIRTUAL_SOL, 0.0) if vsol else 0.0
 
 
-def load_trade_tokens(raw_dir: str | Path, timeframe: int) -> list[TokenData]:
+def load_trade_tokens(raw_dir: str | Path, timeframe: int, max_gap: float = 10.0) -> list[TokenData]:
     """Group recorded events by token and rebuild each token's candles over the
     window in which its trades were completely recorded."""
     creates: dict[str, dict] = {}
@@ -97,16 +97,26 @@ def load_trade_tokens(raw_dir: str | Path, timeframe: int) -> list[TokenData]:
     simulated = False
     started = False
     seen_trades: set[tuple] = set()
+    down_since: float | None = None
     for event in sorted(read_events(raw_files(raw_dir)), key=lambda e: e["t"]):
         kind = event["e"]
         if kind == "session":
             state = event.get("state")
-            if state in ("disconnected", "stopped"):
+            if state == "stopped":
                 interruptions.append(event["t"])
+                down_since = None
+            elif state == "disconnected":
+                down_since = event["t"] if down_since is None else down_since
             elif state == "connected" and started:
-                # A (re)connection means data stopped somewhere before it: after a clean
-                # stop that is already cut; after a kill, cut where the data ends.
-                interruptions.append(last_seen)
+                if down_since is None:
+                    # Connected again without a recorded drop: the recorder was killed;
+                    # cut where its data ends.
+                    interruptions.append(last_seen)
+                elif event["t"] - down_since > max_gap:
+                    interruptions.append(down_since)
+                # A reconnect within `max_gap` seconds only loses those seconds of trades,
+                # comparable to the stream's usual drop rate, so the token continues.
+                down_since = None
             started = True
             simulated = simulated or bool(event.get("simulated"))
         last_seen = max(last_seen, event["t"])
@@ -122,6 +132,8 @@ def load_trade_tokens(raw_dir: str | Path, timeframe: int) -> list[TokenData]:
             tracked.setdefault(event["mint"], event["t"])
         elif kind in ("untrack", "migrate"):
             untracked[event["mint"]] = min(untracked.get(event["mint"], event["t"]), event["t"])
+    if down_since is not None:
+        interruptions.append(down_since)
     interruptions.append(last_seen)  # a recording that was killed has no "stopped" event
     interruptions.sort()
 
@@ -241,7 +253,7 @@ def build_dataset(
         if domain == "trades" and is_late_join(token, late_join):
             candles, tick_groups, first_target = late_join_view(token, timeframe)
             known_creator = False
-        engine = FeatureEngine(timeframe, token.created if known_launch else None, known_creator)
+        engine = FeatureEngine(timeframe, token.created if known_launch else None, known_creator, domain=domain)
         tracker = WalletTracker(token.created if known_launch else None)
         stream = sorted((tick for group in tick_groups.values() for tick, _ in group), key=lambda t: t.ts)
         pos = 0

@@ -183,6 +183,7 @@ class ChainRecorder(Recorder):
         kwargs.pop("api_key", None)
         super().__init__(out_dir, **kwargs)
         self.urls = urls
+        self.on_status = None  # optional callback for connection problems
 
     async def run(self, duration: float | None = None, on_stats: Callable[[RecorderStats], None] | None = None) -> RecorderStats:
         try:
@@ -216,6 +217,8 @@ class ChainRecorder(Recorder):
             async for item in stream:
                 now = self.clock()
                 if isinstance(item, Status):
+                    if item.kind == "disconnected" and self.on_status is not None:
+                        self.on_status(item.message)
                     if item.kind == "connected":
                         if self.connected:
                             self._session("disconnected")

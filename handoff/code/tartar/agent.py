@@ -102,6 +102,7 @@ class CandleAgent:
         self._coverage = coverage
         # Feed health: candles the feed did not fully see are never scored or learned from.
         self.outage_from: float | None = None  # feed currently down since this time
+        self.max_gap = 10.0  # reconnects faster than this don't break observation
         self.observed_from: float | None = None  # first candle start fully seen after an outage
         self.unobserved = 0
 
@@ -218,12 +219,15 @@ class CandleAgent:
         if status.kind == "disconnected" and self.outage_from is None:
             self.outage_from = now
         elif status.kind == "connected" and self.outage_from is not None:
-            # Data is complete again from the next candle boundary on.
+            if now - self.outage_from > self.max_gap:
+                # Data is complete again from the next candle boundary on.
+                self.observed_from = self.book.period(now) + self.timeframe
+            # A blip of a few seconds only loses those seconds' trades (as in training).
             self.outage_from = None
-            self.observed_from = self.book.period(now) + self.timeframe
 
     def _seen(self, candle: Candle) -> bool:
-        if self.outage_from is not None and candle.start + self.timeframe > self.outage_from:
+        now = self.clock.now()
+        if self.outage_from is not None and candle.start + self.timeframe > self.outage_from and now - self.outage_from > self.max_gap:
             return False
         return self.observed_from is None or candle.start >= self.observed_from
 

@@ -1,9 +1,10 @@
 # Handoff: TARTAR, the live next-candle predictor for new Solana tokens
 
 This document lets a new Claude session continue the work without the previous
-conversation. Everything here was true when it was written (2026-10-08, ~19:00
+conversation. Everything here was true when it was written (2026-10-08, ~20:30
 UTC). The code is in this repository; `handoff/code/` holds a snapshot copy of
-every source file. `handoff/data/` holds the real data recorded so far.
+every source file. `handoff/data/` holds the real data recorded so far (the exact
+snapshot v1 was trained on).
 
 ---
 
@@ -40,18 +41,19 @@ split by launch), plus a candle-by-candle replay of the live forecaster.
 |---|---|
 | Repo / branch / PR | `StaticPush7217/TARTAR`, branch `claude/solana-candle-predictor-s95qjr`, PR #1 (open) |
 | Live agent (`tartar watch`) | Works end to end against real tokens (pump.fun via chain, others via DexScreener/GeckoTerminal) |
-| Global model | **v0 installed**: `tartar/models/trades-60s.*`, trained on 786 real pump.fun launches (about 1.5h of recording) |
-| Real-data result (v0) | At candle open: hit 81.5% vs stated 81.7%, error 3.7% below naive, 80% band covers 88% (too wide). Live replay with the global model: edge +1.8%; without it (online only) −2.4% and overconfident |
+| Global model | **v1 installed**: `tartar/models/trades-60s.*`, trained on 3,523 real pump.fun launches (~2.7h of recording, 154k rows) |
+| Real-data result (v1, held-out later launches) | At candle open: hit 85.3% vs stated 85.2%, error **4.9% below naive**, 0.61 bits/row of information over the base rate; 80% band covers 92% (too wide). Live replay (global + online): **edge +7.0%** on all candles, +7.3% on candles where the token is trading; hit 69.0% vs stated 64.8% there (slightly underconfident) |
+| Online-only fallback | Fixed by the online-model review (section 11.1): now calibrated on real tokens (hit 79.3% vs stated 78.8%; trading 46.0% vs 45.1%), edge 0 (was −5.3%, and 23% hit at 52% stated on trading candles) |
 | Data recording | `tartar record` running in this container into `data/raw` (not in git; snapshot in `handoff/data/raw`) |
-| Biggest open problem | The free public Solana RPC drops ~35–60% of trade notifications (median 63% of a token's trades captured). Fix with a private RPC (section 10) |
-| Tests | 75 passing (`pytest`) |
+| Biggest open problem | The free public Solana RPC drops trade notifications (median capture 93% per token in the v1 data, much lower on busy tokens) and now closes the connection every ~30 s. Fix with a private RPC (section 12) |
+| Tests | 81 passing (`pytest`) |
 | Scam filtering | Built and live-tested (section 9); signals not yet validated statistically |
 
 ## 3. Running it
 
 ```bash
 pip install -e ".[dev]"     # Python 3.10+; numpy, httpx, websockets, rich, lightgbm
-pytest                      # 75 tests, ~40s
+pytest                      # 81 tests, ~1-3 min (one CLI training test is slow)
 
 tartar demo                                   # simulated pump.fun token, offline
 tartar watch <MINT>                           # dashboard; -o plain / -o json
@@ -100,10 +102,10 @@ default the official public one), `SOLANA_RPC_HTTP` (for mint checks),
 | `tartar/candles.py` | `Tick`, `Candle` (with trades, buys/sells, wallets, new traders, creator flow, liquidity), `CandleBook` (live candle assembly, gap fill, clock close), CSV loading |
 | `tartar/agent.py` | `CandleAgent` main loop. Each event is processed fully (close candles first, then apply the trade to wallet state, which keeps features causal). Feed-outage handling (unobserved candles, resync like a mid-life join), risk reporting, `View` for outputs |
 | `tartar/model/engine.py` | `FeatureEngine`: ~55 features (base + partial-candle + risk), identical live and offline |
-| `tartar/model/forecaster.py` | `Forecaster`: blends the global and online distributions, ACI band, direction calibration, `nowcast()` during the candle, `Forecast`/`Outcome` |
+| `tartar/model/forecaster.py` | `Forecaster`: blends the global and online distributions, ACI band (skips flat closes it covered; target adjusted for the flat share), signal reliability (shrunk toward 0, never above 1), direction calibration, `nowcast()` during the candle, `Forecast`/`Outcome`. Domain-specific priors (`domain="trades"` vs `"ohlcv"`) |
 | `tartar/model/global_model.py` | `GlobalModel` (LightGBM multiclass distribution: class 0 = no further move + 24 z-bins), `BinnedDistribution`, vectorized CDF/quantiles, atomic save/load, `find_model`, `model_dir` |
-| `tartar/model/predictive.py` | `ResidualDistribution` (kernel-smoothed empirical + Laplace prior), `Mixture` (point mass + continuous; quantiles), `DirectionCalibrator` |
-| `tartar/model/volatility.py` | `VolatilityEstimator` (EWMA of Parkinson + close-to-close), `ActivityEstimator` (zero-inflated Poisson "no more trades" probability) |
+| `tartar/model/predictive.py` | `ResidualDistribution` (kernel-smoothed empirical + unit-normal prior; location of few residuals partly reflected about 0), `Mixture` (point mass + continuous; quantiles), `DirectionCalibrator` (discounted logistic slope fit, prior at 1, capped at 1) |
+| `tartar/model/volatility.py` | `prior_sigma(tf, domain)`, `VolatilityEstimator` (EWMA of Parkinson + close-to-close, traded candles only), `ActivityEstimator` (flat odds from a two-state Markov chain on traded/flat candles; within-candle arrivals gamma-mixed Poisson) |
 | `tartar/model/ensemble.py`, `features.py` | Online experts (random walk, drift, 3 ridge regressions) mixed by an exponentially weighted forecaster; their 10 features |
 | `tartar/scam.py` | `WalletTracker` (behavioural signals; also model features), `assess` → `ScamReport`, `static_checks` (RPC mint + RugCheck), `CreatorIndex` (creator history/copycats from recordings) |
 | `tartar/screen.py` | `--next-launch` screening (`next_clean_launch`, `judge`) |
@@ -118,13 +120,13 @@ default the official public one), `SOLANA_RPC_HTTP` (for mint checks),
 | `tartar/train.py` | `train_global`, temperature fit, `evaluate_rows`, `replay`, `evaluate`, `test_log_loss` |
 | `tartar/cli.py` | All commands |
 | `tartar/dashboard.py`, `output.py` | Rich full-screen dashboard; plain and JSON-lines outputs; formatting |
-| `tests/` | 75 tests: candles, model calibration, feeds (mocked HTTP, local websocket servers), market selection, agent loop, pipeline (incl. train/serve parity), scam, review regressions |
+| `tests/` | 81 tests: candles, model calibration, feeds (mocked HTTP, local websocket servers), market selection, agent loop, pipeline (incl. train/serve parity), scam, review regressions |
 
 ## 5. Data sources: what works, what doesn't
 
 | Source | Used for | Finding |
 |---|---|---|
-| **Solana public RPC `logsSubscribe`** on pump.fun program `6EF8rrecthR5Dkzon8Nwu78hRvfCKubJ14M5uBEwF6P` | Live pump.fun trades, launch discovery, recording | Free, no key, real time. Decoding verified: trade SOL equals the curve reserve change exactly. **But it drops notifications under load**: one busy token had 38% of its on-chain trades captured; median capture across 695 tokens is **63%**. Notifications also arrive **out of execution order** (~25–38% of consecutive trades of a token out of sequence). publicnode's free websocket delivered even less (removed from defaults). A second simultaneous connection from this container is often refused (`1002 protocol error`) |
+| **Solana public RPC `logsSubscribe`** on pump.fun program `6EF8rrecthR5Dkzon8Nwu78hRvfCKubJ14M5uBEwF6P` | Live pump.fun trades, launch discovery, recording | Free, no key, real time. Decoding verified: trade SOL equals the curve reserve change exactly. **But it drops notifications under load**: one busy token had 38% of its on-chain trades captured; median capture across 695 tokens of the first run was **63%**; across the 3,180 measurable tokens of the v1 data it is 93% median, 84% mean (most tokens have few trades; busy tokens lose the most). Notifications also arrive **out of execution order** (~25–38% of consecutive trades of a token out of sequence). publicnode's free websocket delivered even less (removed from defaults). A second simultaneous connection from this container is often refused (`1002 protocol error`). **During the second recording run (from 18:32 UTC on 2026-10-08) the server closed the one connection 187 times in 1.6 h, every 10–30 s** (`ConnectionClosedError: sent 1002 (protocol error) invalid status code; no close frame received`); the client reconnects in 1.3 s (median; max 1.7 s) and keeps going, losing ~4% of wall time. Pings are off (`ping_interval=None`) and the receive queue is unbounded (`max_queue=None`) |
 | **PumpPortal** websocket | Was the original source | `subscribeTokenTrade` now **requires an API key funded with ≥0.02 SOL**. `subscribeNewToken` is still free. Supported if `PUMPPORTAL_API_KEY` is set |
 | **DexScreener** API | Lookup; live price polls (3s) for non-pump tokens | Works. Volume and trade counts come from deltas of the h24 totals (exact only for tokens under 24h old) |
 | **GeckoTerminal** API | Warm-up history (up to 1000 candles), fallback live polling, new pools | Works (500 BONK candles fetched), but this container's shared egress IP hits **HTTP 429** constantly, so OHLCV collection got only 1 token. Data can lag ~1 min |
@@ -163,8 +165,12 @@ each launch for 90 minutes (idle cut after 20 minutes) in the current run.
 **Dataset** (`tartar/data/dataset.py`):
 
 - **Windows.** A token's data runs from its create to the first of: untrack,
-  migrate, disconnect/stop, or the last event before any later `connected` (an
-  unclean kill leaves no stop event). Launches without a `track` event within 2s
+  migrate, stop, a disconnect that lasted more than `max_gap` (10 s) before
+  the next `connected`, or the last event before a `connected` that follows no
+  recorded drop (an unclean kill leaves no stop event). Short reconnects only
+  lose a few seconds of trades, comparable to the stream's usual drop rate, so
+  they no longer end the window; cutting at every one of the server's 10–30 s
+  disconnects had shrunk the usable data to almost nothing. Launches without a `track` event within 2s
   are skipped. Trades are de-duplicated on (mint, side, trader, sol, reserves),
   in case two recorders overlap.
 - **Candles** are built with the live `CandleBook` from ticks; flat candles fill
@@ -223,19 +229,23 @@ polls whose ranges are about half the true range.
 **Online model features** (`tartar/model/features.py`): 10 scale-free features
 for the ridge experts.
 
-**v0 feature importance (gain):** `p_idle` 25%, `curve_progress` 6%, `idle` 5%,
-`age` 3%, `range` 3%, `f` 3%, `rise` 3%, `log_sigma` 2%, `creator_share` 2%,
-`trade_trend` 2%.
+**v1 feature importance (gain):** `p_idle` 31%, `curve_progress` 8%, `idle` 4%,
+`range` 4%, `f` 3%, `log_price` 2%, `rise` 2%, `sniper_share` 2%, `age` 2%,
+`wash_share` 2%, `log_volume` 2%, `creator_share` 2%, `trades_per_wallet` 2%.
+(v0: `p_idle` 25%, `curve_progress` 6%, `idle` 5%.) Time since the last trade
+dominates: whether anything else trades before the close is the first question.
 
 ## 8. Models tried, and results
 
-### 8.1 Online per-token model (first version)
+### 8.1 Online per-token model
 
 - **Components:** EWMA volatility (Parkinson + close-to-close), an ensemble of
   experts (random walk, drift, momentum ridge, order-flow ridge, full ridge)
   weighted by an exponentially weighted forecaster that starts on the random
-  walk, an empirical residual distribution with a Laplace prior, an
-  adaptive-conformal (ACI) band, and flat odds.
+  walk, an empirical residual distribution with a prior (Laplace at first,
+  unit normal since 11.1), an adaptive-conformal (ACI) band, and flat odds.
+  The synthetic table and the decisions below describe the first version;
+  section 11.1 changed several parts.
 - **Synthetic calibration** (1500 candles each; `tests/test_model.py`):
 
 | Series | Before fixes (hit / stated) | After reliability slope + direction calibrator | Band coverage | Edge |
@@ -254,11 +264,24 @@ for the ridge experts.
   - The **zero-inflated activity model** replaced a Poisson model: bursty tokens
     were under-predicted as flat. On simulated data online-only went from 44.6%
     hit / 51.3% stated to 47.9% / 50.8%.
-- **Real data (v0 replay, 117 test tokens): poor.** Hit 28.4% vs 45.7% stated,
-  edge −2.4%; on tokens trading in the previous candle, 18.8% vs 52.1%. Probably
-  its flat-probability prior (3%) is far from reality (~58% of candles are
-  flat), and it needs many candles to learn that. The online-model review
-  (section 11) investigates this.
+- **Real data, first version (v0 replay, 117 test tokens): poor.** Hit 28.4%
+  vs 45.7% stated, edge −2.4%; on tokens trading in the previous candle,
+  18.8% vs 52.1%.
+- **Real data after the online-model review (section 11.1).** Online-only
+  replay on the same 300 held-out test tokens of the v1 data, forecasts
+  locked at the open, each row adding to the one above:
+
+| Online model | All: hit / stated | All: 80% band | All: edge | Trading: hit / stated | Trading: 80% band | Trading: edge |
+|---|---|---|---|---|---|---|
+| Before the review | 50.3% / 49.2% | 90.9% | −5.3% | 23.4% / 51.9% | 74.9% | −5.5% |
+| + Markov flat odds, bursty arrivals, ACI fix, traded-only σ, launch σ prior | 76.3% / 65.9% | 93.6% | −2.3% | 39.4% / 47.1% | 82.8% | −2.4% |
+| + flat-odds priors measured on the training split | 79.2% / 79.0% | 91.4% | −1.3% | 45.6% / 45.7% | 82.1% | −1.3% |
+| + direction-odds fixes (final) | **79.3% / 78.8%** | 92.4% | **0.0%** | **46.0% / 45.1%** | 85.0% | **0.0%** |
+
+  The online model is now honest but adds no point accuracy on these
+  short-lived tokens: the signal ensemble never earns reliability, so its
+  median stays at the last price. It is the fallback for every source and
+  timeframe without a trained global model.
 
 ### 8.2 Global distributional model (LightGBM)
 
@@ -271,33 +294,51 @@ for the ridge experts.
   80% band 80–81%. Live replay with the blend: +4.1–4.9% edge and calibrated;
   online-only −3.2%.
 - **Real data, v0** (786 tokens, 28,884 rows, 22,044 train; 33 boosting rounds;
-  temperature 1.045):
+  temperature 1.045). At the open: hit 81.5% vs stated 81.7%, 80% band 88.1%,
+  edge +3.7%, info gain 0.340 bits. Live replay (117 tokens): global + online
+  edge +1.8% (all) / +2.0% (trading).
+- **Real data, v1 (installed)**: 3,523 tokens, 154,038 rows (115,338 train /
+  22,554 validation / 16,146 test from the latest 15% of launches); 54
+  boosting rounds; temperature 1.128; 8.9 MB. The data grew because short
+  reconnects no longer end a token's window (section 6) and because of a
+  second recording run. Test split, raw global model:
 
 | Candle elapsed | Hit | Stated | 80% band | Band width | Error | Naive | Edge | Info gain (bits/row, vs same-f prior) |
 |---|---|---|---|---|---|---|---|---|
-| 0% | 81.5% | 81.7% | 88.1% | 23.2% | 9.05% | 9.39% | **+3.7%** | 0.340 |
-| 20% | 90.5% | 87.9% | 90.9% | 16.6% | 6.53% | 6.53% | −0.1% | 0.314 |
-| 40% | 93.1% | 91.1% | 91.9% | 12.3% | 5.69% | 5.73% | +0.6% | 0.329 |
-| 60% | 95.0% | 93.5% | 93.5% | 8.0% | 3.76% | 3.77% | +0.5% | 0.274 |
-| 80% | 97.8% | 95.9% | 95.2% | 4.4% | 2.04% | 2.07% | +1.3% | 0.223 |
-| 95% | 100.0% | 97.7% | 98.0% | 1.2% | 0.69% | 0.70% | +1.5% | 0.096 |
+| 0% | 85.3% | 85.2% | 91.9% | 19.6% | 7.42% | 7.80% | **+4.9%** | 0.615 |
+| 20% | 89.4% | 89.8% | 92.3% | 16.0% | 5.57% | 5.76% | +3.3% | 0.548 |
+| 40% | 92.3% | 92.5% | 92.9% | 12.3% | 4.38% | 4.52% | +3.0% | 0.458 |
+| 60% | 95.7% | 94.6% | 94.9% | 8.7% | 2.90% | 2.84% | −2.2% | 0.355 |
+| 80% | 97.8% | 96.7% | 95.9% | 5.3% | 1.83% | 1.83% | −0.4% | 0.284 |
+| 95% | 99.3% | 98.6% | 98.0% | 2.1% | 0.59% | 0.57% | −3.0% | 0.181 |
 
-- **Live forecaster replayed on 117 test tokens** (forecasts locked at the open):
+- **Live forecaster replayed on 300 test tokens** (v1 + the final online
+  model; forecasts locked at the open):
 
 | | Candles | Hit | Stated | 80% band | Edge |
 |---|---|---|---|---|---|
-| Online only, all | 497 | 28.4% | 45.7% | 86.7% | −2.4% |
-| Online only, trading | 213 | 18.8% | 52.1% | 73.7% | −2.4% |
-| Global + online, all | 497 | 80.9% | 77.6% | 89.3% | **+1.8%** |
-| Global + online, trading | 213 | 63.4% | 58.3% | 82.6% | **+2.0%** |
+| Online only, all | 2214 | 79.3% | 78.8% | 92.4% | 0.0% |
+| Online only, trading | 709 | 46.0% | 45.1% | 85.0% | 0.0% |
+| Global + online, all | 2214 | 86.6% | 85.5% | 93.5% | **+7.0%** |
+| Global + online, trading | 709 | 69.0% | 64.8% | 87.5% | **+7.3%** |
 
-- **Reading the v0 results:**
-  - High hit rates come mostly from correctly calling "flat" on dead tokens.
-  - The band over-covers: 88–98% instead of 80%, so it is too wide. Note that
-    `evaluate_rows` reports the raw model band; ACI narrows it live.
-  - It stopped after 33 rounds because the data is small.
-  - During the candle, edge over "close = current price" is small: the current
-    price is already a strong predictor, and the gain is in calibrated odds.
+- **Reading the results:**
+  - v0 → v1 on comparable measures: edge at the open +3.7% → +4.9%; info
+    gain 0.34 → 0.61 bits; live blended edge +1.8% → +7.0%. Different test
+    tokens, so treat the size of the gain as approximate, not the direction.
+  - High hit rates come mostly from correctly calling "flat" on quiet tokens.
+    On candles where the token is trading, the blend is right 69% of the
+    time, stating 65%: slightly **underconfident** (the calibrator only
+    tempers, see 11.1).
+  - The band over-covers: 92–98% instead of 80%, so it is too wide, also in
+    the live replay (93.5%) where ACI should narrow it. Open problem 3.
+  - **During the candle (f ≥ 0.6) the median is slightly worse than "close =
+    price now"** (−0.4% to −3.0%), although the odds and log loss improve. The
+    median should never be worse than the current price late in a candle; open
+    problem 4.
+  - v0 was replaced with `--force` without the keep-better comparison, because
+    v1 changes σ (volatility from traded candles only, launch prior), which
+    shifts the features v0 was trained on.
 - **Earlier experiment notes:**
   - The "active candles" subset was replaced by "trading" (the previous candle
     traded), because conditioning on the outcome biased hit rates against flat
@@ -368,6 +409,20 @@ the global model.
   (`meta.simulated`).
 - **LightGBM text models with atomic saves and a size check**, and keep-better
   installs.
+- **σ is the scale of a candle that trades.** Whether anything trades is
+  modelled separately (the point mass / flat odds), so flat candles must not
+  pull σ toward zero. Both the global model's z-bins and the online model use
+  this σ.
+- **Priors come from the training split of real data, never from the test
+  split:** σ ≈ 0.25 per traded candle for pump.fun trade streams; flat odds
+  0.5 after a traded candle, 0.95 after a flat one.
+- **The direction calibrator and the reliability slope only temper, never
+  amplify.** Early in a token's life a few lucky outcomes looked like skill and
+  produced "UP 80%" calls that hit ~55%. The price is mild underconfidence
+  where a real signal exists (open problem 5).
+- **Short reconnects keep a token's data.** With the server dropping the
+  connection every ~30 s, cutting at every reconnect left almost nothing;
+  gaps up to 10 s lose fewer trades than the stream already drops.
 
 ## 11. Accuracy review (multi-agent) and what was fixed
 
@@ -396,68 +451,140 @@ Rejected by verifiers: "DirectionCalibrator shrinks calibrated confident odds"
 (effect ≤1 point, conservative), and "mid-life GeckoTerminal history creates fake
 zero-trade candles".
 
-The **online-model lens** could not run then (usage limit). It was re-run as a
-separate workflow; its outcome is recorded in the "Online model review"
-subsection at the end of this document.
+The **online-model lens** could not run then (usage limit). It was re-run
+separately (section 11.1).
+
+### 11.1 Online-model review
+
+A second review targeted the per-token online model, which is the whole
+predictor for any source or timeframe without a trained global model, and part
+of the blend otherwise. All **7 findings were confirmed** by adversarial
+verifiers on real recorded data and synthetic series (0 rejected). All are fixed,
+with regression tests in `tests/test_review_fixes.py` and `tests/test_model.py`:
+
+1. **Flat odds had no memory (high).** P(flat) at the open was a slow EWMA of
+   the overall flat share (prior 3%), blind to whether the token is trading
+   now. After one quiet minute it said 22% flat where 88% were flat; after a
+   revival it kept calling "flat" for dozens of candles. Fix: a two-state
+   Markov chain, P(flat | last candle flat) and P(flat | last candle traded),
+   EWMA halflife 25. Measured on the training split: 0.92–0.98 after flat,
+   ~0.5 after traded at every age; those are the trades-domain priors
+   (weight 4). The reviewer's patch alone cut 3-way log loss from 1.004 to
+   0.442 at 1m.
+2. **Within-candle arrivals assumed Poisson (high).** Bursty trades plus a
+   zero-truncated mean rate made a short quiet start read as ~100% "no more
+   trades" with a zero-width band (synthetic: stated 98–100% vs true 56–67%).
+   Fix: a gamma-mixed (negative binomial) rate with dispersion from the
+   observed count variance; once a candle has traded, the rate posterior uses
+   the number of trades seen so far.
+3. **ACI wind-up (high).** Flat closes always count as "in band", so during
+   quiet spells α grew and after a revival the "80%" band covered almost
+   nothing. Fix: skip the update when the close is flat and the band contained
+   it; for moves, target miss rate (1 − coverage)/(1 − p_flat), capped at 1.
+4. **σ collapsed on flat candles (medium).** Fix: only traded candles update
+   σ. Retraining was required (v1).
+5. **Startup σ prior too narrow (medium).** 3%/min with an outlier cap tied to
+   it; real early traded candles move ~28%. Fix: `prior_sigma(tf, "trades")` ≈
+   0.25, and no cap for the first 5 updates.
+6. **Early up/down odds overconfident (medium).** On a pure random walk 11% of
+   calls stated ≥60% and hit 52%; on real 1m tokens, calls ≥70% stated 80% and
+   hit 62%. No single lever fixed it; together:
+   - reliability slope shrunk toward 0 with 10 pseudo-candles, capped at 1
+   - residual location: blend in the reflected CDF with weight k/(n+k), k = 20
+   - unit-normal prior instead of Laplace (the Laplace cusp turned a
+     0.18σ shift into 61%)
+   - calibrator slope capped at 1
+
+   The regression test bins calls instead of averaging them.
+   60%+ calls on noise drop from 11.3% to under 5%.
+7. **DirectionCalibrator fit biased low (low).** The linearized least squares
+   settles near 0.83 on perfectly calibrated odds (sd 1). Fix: discounted
+   logistic regression (Newton steps), same prior. The "no intercept" half of
+   this finding was refuted: the residual distribution and the global model
+   already carry the down-skew of pump.fun moves (P(up | move) ≈ 0.38–0.41).
+
+The measured effect on held-out real tokens is the table in section 8.1. The
+reviewers' scripts are in the session scratchpad (not persisted).
 
 ## 12. Open problems (ranked)
 
-1. **Incomplete trade stream** (public RPC drops ~35–60% of notifications). It
-   affects volume, wallets, holder concentration and sometimes the true close.
+1. **Incomplete, interrupted trade stream.** The public RPC drops
+   notifications (median 93% / mean 84% per token in the v1 data; 38% on one
+   busy token; 63% median in the first run), delivers them out of order, and
+   since the second run closes the connection every ~30 s.
+   - Effects: volume, wallets, holder concentration, and sometimes the true
+     close are wrong.
    - Fix: a private RPC websocket in `SOLANA_RPC_WS` (Helius, QuickNode,
-     Triton) or `PUMPPORTAL_API_KEY` (funded with ≥0.02 SOL).
-   - Then re-record and retrain, and compare capture (should be ~100%).
-   - Also order trades within a candle by reserves, not receive time (out-of-order
-     delivery). The close should be the post-trade price of the last trade
-     *in execution order*. Reserve chaining can reconstruct the order.
-2. **Too little real data.** v0 used ~1.5h; train on 12–48h. Expect more
-   boosting rounds and better edge. Check calibration per token age and per
-   capture bucket.
-3. **Band over-coverage** in the raw model (88% vs 80%). Live ACI corrects it
-   per token. Consider conformal calibration of the global quantiles on
-   validation (per f).
-4. **The online-only fallback is miscalibrated on real tokens.**
-   - Its flat prior is 3% versus ~58% real; it learns slowly.
-   - Options: set priors from real data (flat rate, σ by age), or seed online
-     components from the global model.
-   - Also apply the online-model review's confirmed findings (end of this
-     document).
-5. **No validation of scam signals.** Label tokens (rug = creator dumped + ≥80%
-   drawdown, or price dead within N minutes), measure each flag's precision and
-   recall, and fit a calibrated P(rug) from recorded data to replace the
-   hand-set thresholds.
-6. **Graduated tokens** (PumpSwap) are only followed through DexScreener price
-   polls. A PumpSwap event decoder (program `pAMMBay6oceH9fJKBRHGP5D4bD4sWpmSwMn52FMfXEA`)
-   would give full trade data.
-7. **Candle-only (OHLCV) model untrained.** GeckoTerminal returns 429 from this
-   container; collect from another IP. Live DexScreener-polled candles differ
-   from GeckoTerminal OHLC (ranges ~45% narrower); high/low features are already
-   dropped, but σ still uses Parkinson ranges.
-8. **Timeframes.** Only a 1m model exists. Train 15s, 30s and 5m models
+     Triton), or `PUMPPORTAL_API_KEY` funded with ≥0.02 SOL. Then re-record and
+     retrain, and compare capture (should be ~100%).
+   - Also order trades within a candle by reserves, not receive time. The close
+     should be the post-trade price of the last trade *in execution order*, and
+     reserve chaining can reconstruct that order.
+2. **Too little real data.** v1 used ~2.7h (3,523 launches), and early stopping
+   picks 54 rounds. Train on 12–48h, and check calibration per token age and
+   per capture bucket.
+3. **Bands over-cover.** The raw model covers 92% at the open where 80% is the
+   target, and 93.5% in the live blend. ACI should correct the blend; it does
+   not yet.
+   - Options: conformal calibration of the global quantiles per f on
+     validation, or a faster ACI rate at the start.
+   - Note that "all candles" coverage includes flat closes that any band
+     containing the price covers.
+4. **The in-candle median is worse than "price now" at f ≥ 0.6** (−0.4% to
+   −3.0%), while odds and log loss improve.
+   - Likely cause: when P(still) < 0.5, the median comes from the continuous
+     part, whose down-skew moves it off the current price.
+   - Options: shrink the median to the current price by the point-mass
+     weight, or pick the point forecast that minimises expected absolute error
+     under the mixture. Check per f on validation.
+5. **The blend is underconfident on trading candles** (69.0% hit vs 64.8%
+   stated). The calibrator now only tempers.
+   - Options: temperature per f on validation for the global model, or let the
+     calibrator exceed 1 once the evidence count is large.
+6. **No validation of scam signals.**
+   - Label tokens: rug = creator dumped + ≥80% drawdown, or price dead within
+     N minutes.
+   - Measure each flag's precision and recall.
+   - Fit a calibrated P(rug) from recorded data to replace the hand-set
+     thresholds.
+7. **Graduated tokens** (PumpSwap) are only followed through DexScreener price
+   polls. A PumpSwap event decoder (program
+   `pAMMBay6oceH9fJKBRHGP5D4bD4sWpmSwMn52FMfXEA`) would give full trade data.
+8. **The candle-only (OHLCV) model is untrained.**
+   - GeckoTerminal returns 429 from this container; collect from another IP.
+   - Live DexScreener-polled candles differ from GeckoTerminal OHLC: ranges
+     are ~45% narrower. High/low features are already dropped, but σ still uses
+     Parkinson ranges.
+   - Until it is trained, the (now calibrated) online model is the only
+     predictor for those tokens.
+9. **Timeframes.** Only a 1m model exists. Train 15s, 30s and 5m models
    (`tartar train -t 30s` works for trade data).
-9. **GeckoTerminal live polling closes candles 75s after their end**, so
-   predictions for that source are locked late. Prefer DexScreener for live.
+   - The trades-domain σ prior grows as (tf/60)^0.25 above 1m; that is a guess
+     beyond the measured 15s and 60s.
+10. **GeckoTerminal live polling closes candles 75s after their end**, so
+    predictions for that source are locked late. Prefer DexScreener for live.
 
 ## 13. Next steps (in order)
 
 1. **Get a complete stream.** Ask the user for a private RPC URL or a funded
-   PumpPortal key, then:
-   `SOLANA_RPC_WS=wss://... tartar record --hours 24` and confirm the capture
-   line in `tartar train` reads ~100%.
-2. **Record ≥24h, then train** (`tartar train --raw data/raw`). Compare against
-   v0 on the same test tokens: `train` keeps the better one automatically.
-3. **Run experiments on the real test split; adopt only what holds:**
+   PumpPortal key, then run
+   `SOLANA_RPC_WS=wss://... tartar record --hours 24`, and confirm that the
+   capture line in `tartar train` reads ~100%.
+2. **Record ≥24h, then train** (`tartar train --raw data/raw`). The
+   keep-better check compares against v1 on the same test tokens.
+3. **Fix the point forecast and calibration of the blend** (open problems 3–5).
+   All three can be measured with `tartar train` (report) and the replay.
+4. **Run experiments on the real test split, and adopt only what holds:**
    - hyperparameters (leaves 15–127, min rows per leaf 50–500, lr 0.03–0.1)
    - bin edges
    - an extra fraction near the close (0.99)
    - per-age models
    - dropping noisy features
    - Weight evaluation by "trading" candles, which matter to users.
-4. **Fix the online fallback** (problem 4) and re-measure the online-only replay.
-5. **Validate scam flags** on recorded data (problem 5); add P(rug) as a model
+5. **Validate scam flags** on recorded data (problem 6). Add P(rug) as a model
    feature or output.
 6. **Reserve-ordered candle closes** (problem 1).
-7. Add models for other timeframes.
+7. **Other timeframes and the OHLCV model** (problems 8–9).
 
 ## 14. Operational notes and gotchas
 
@@ -467,6 +594,23 @@ subsection at the end of this document.
     to `data/raw` to train.
   - Restart recording after any container restart:
     `setsid nohup tartar record --out data/raw --hours 20 --track-minutes 90 --idle-minutes 20 >> data/logs/record.log 2>&1 < /dev/null &`
+  - The current recorder was started at 18:32 UTC on 2026-10-08 with
+    `--hours 20`. It logs every disconnect to `data/logs/record.log` (expect one
+    every 10–30 s on the public RPC). Stop it with SIGTERM; SIGINT does not.
+- **Train into a scratch directory first, then install.** For example
+  `tartar train --raw <snapshot> --out /tmp/m --force`, read the table, then
+  copy `trades-60s.{txt,json,report.json}` into `tartar/models/`. Train on a
+  copy of `data/raw`, not the live directory: the recorder appends to the
+  current hour's file, so cut it at the last complete line.
+- **A/B a code change on the same tokens.** Run `git worktree add --detach
+  /tmp/old HEAD`, then run the same script from both trees. The script puts
+  the tree first on `sys.path`, loads `load_trade_tokens(raw, 60)`, takes the
+  last 15% of launches by `created` (the test split), and calls
+  `tartar.train.replay(tokens[:300], 60, "trades", None)`. Section 8.1's
+  table was made this way.
+- **Always pass `domain="trades"`** to `Forecaster`/`FeatureEngine` for pump.fun
+  trade streams. The default is `"ohlcv"`, and the domain now selects the σ and
+  flat-odds priors. The parity tests would catch a mismatch.
 - **`pgrep -f "tartar record"` matches your own shell.** Its command line
   contains the pattern, so `kill $(pgrep -f ...)` can kill the shell running it.
   Use `ps -eo pid,cmd | grep "[t]artar record --out" | grep python`.
@@ -487,5 +631,6 @@ subsection at the end of this document.
 Every source file is in the repo (authoritative) and copied to
 `handoff/code/` with the same paths (`handoff/code/tartar/...`,
 `handoff/code/tests/...`, `pyproject.toml`, `README.md`). Installed model:
-`tartar/models/trades-60s.{txt,json,report.json}`. Size: ~7,700 lines of
-Python across 37 modules and 9 test files.
+`tartar/models/trades-60s.{txt,json,report.json}` (v1; the 8.9 MB `.txt` is not
+duplicated under `handoff/code/`). Size: ~7,850 lines of Python across 36
+modules and 9 test files.

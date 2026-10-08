@@ -69,12 +69,13 @@ class FeatureEngine:
         launched_at: float | None = None,
         creator_known: bool = False,
         window: int = 64,
+        domain: str = "ohlcv",
     ):
         self.timeframe = timeframe
         self.launched_at = launched_at
         self.creator_known = creator_known
-        self.vol = VolatilityEstimator(prior_sigma(timeframe))
-        self.fast_vol = VolatilityEstimator(prior_sigma(timeframe), halflife=4.0)
+        self.vol = VolatilityEstimator(prior_sigma(timeframe, domain))
+        self.fast_vol = VolatilityEstimator(prior_sigma(timeframe, domain), halflife=4.0)
         self.history: deque[Candle] = deque(maxlen=window)
         self.count = 0
         self.ath = 0.0

@@ -8,16 +8,23 @@ from typing import Callable, Sequence
 
 import numpy as np
 
-_LAPLACE_B = 1.0 / math.sqrt(2.0)  # unit-variance Laplace scale
+_ERFC = np.frompyfunc(math.erfc, 1, 1)
+
+
+def _normal_cdf(u: np.ndarray) -> np.ndarray:
+    return 0.5 * _ERFC(-u / math.sqrt(2.0)).astype(float)
 
 
 class ResidualDistribution:
     """Distribution of forecast errors (normalized), learned online.
 
-    Kernel-smoothed empirical CDF of past residuals, shrunk toward a fat-tailed,
-    unit-variance Laplace prior while there are only a few of them. Because it is
-    built from this token's own realized errors, stated probabilities track how
-    the model has actually been doing.
+    Kernel-smoothed empirical CDF of past residuals, shrunk toward a unit normal
+    prior while there are only a few of them. Because it is built from this
+    token's own realized errors, stated probabilities track how the model has
+    actually been doing. The prior has no cusp at zero (a Laplace prior turned a
+    0.18-sigma shift into 61% odds), and the location of a few residuals is
+    partly reflected about zero until there are enough of them, so a chance
+    sign imbalance does not read as direction.
     """
 
     def __init__(self, window: int = 400, prior_strength: float = 20.0, bandwidth: float = 0.15, cap: float = 12.0):
@@ -42,27 +49,31 @@ class ResidualDistribution:
         if scale < 1e-6:
             return (t >= 0).astype(float)
         u = t / scale
-        prior = np.where(u < 0, 0.5 * np.exp(np.minimum(u, 0) / _LAPLACE_B), 1.0 - 0.5 * np.exp(-np.maximum(u, 0) / _LAPLACE_B))
+        prior = _normal_cdf(u)
         n = len(self._res)
         if n == 0:
             return prior
         if self._arr is None:
             self._arr = np.fromiter(self._res, float, n)
-        empirical = np.mean(0.5 * (1.0 + np.tanh(0.5 * (u[:, None] - self._arr[None, :]) / self._h)), axis=1)
+        both = np.concatenate([u, -u])
+        smooth = np.mean(0.5 * (1.0 + np.tanh(0.5 * (both[:, None] - self._arr[None, :]) / self._h)), axis=1)
+        empirical, mirrored = smooth[: len(u)], 1.0 - smooth[len(u) :]
+        ws = self._k / (n + self._k)
+        empirical = ws * 0.5 * (empirical + mirrored) + (1.0 - ws) * empirical
         w = n / (n + self._k)
         return w * empirical + (1.0 - w) * prior
 
-
     def pdf(self, t: float) -> float:
         """Density of the error at t (unit scale)."""
-        prior = math.exp(-abs(t) / _LAPLACE_B) / (2.0 * _LAPLACE_B)
+        prior = math.exp(-0.5 * t * t) / math.sqrt(2.0 * math.pi)
         n = len(self._res)
         if n == 0:
             return prior
         if self._arr is None:
             self._arr = np.fromiter(self._res, float, n)
-        x = 0.5 * (t - self._arr) / self._h
-        empirical = float(np.mean(0.25 / np.cosh(x) ** 2) / self._h)
+        dens = np.mean(0.25 / np.cosh(0.5 * (np.array([[t], [-t]]) - self._arr[None, :]) / self._h) ** 2, axis=1) / self._h
+        ws = self._k / (n + self._k)
+        empirical = float(ws * 0.5 * (dens[0] + dens[1]) + (1.0 - ws) * dens[0])
         w = n / (n + self._k)
         return w * empirical + (1.0 - w) * prior
 
@@ -117,32 +128,38 @@ def sigmoid(x: float) -> float:
 class DirectionCalibrator:
     """Recalibrates 'up vs down' odds against realized moves.
 
-    Fits a slope `a` in p = sigmoid(a * logit(q)) by discounted least squares
-    on the linearized model y - 1/2 ~ a * logit(q) / 4, shrunk toward a = 1 with
+    Fits a slope `a` in p = sigmoid(a * logit(q)) by discounted logistic
+    regression (a few Newton steps from the last fit), shrunk toward a = 1 by
     `prior_count` pseudo-observations. If stated odds carry no information about
-    what actually happens, `a` falls toward 0 and confidence toward 50%.
+    what actually happens, `a` falls toward 0 and confidence toward 50%; on
+    calibrated odds it stays at 1 (a least-squares fit on the linearized model
+    settled near 0.83). It only ever tempers: a few lucky outcomes on near-50%
+    odds would otherwise inflate the slope early in a token's life.
     """
 
-    def __init__(self, prior_count: float = 50.0, discount: float = 0.995):
+    def __init__(self, prior_count: float = 50.0, discount: float = 0.995, window: int = 1000):
         self._k = prior_count
         self._discount = discount
-        self._sly = 0.0
-        self._sll = 0.0
-        self._n = 0.0
+        self._obs: deque[tuple[float, float]] = deque(maxlen=window)
+        self._a = 1.0
 
     @property
     def slope(self) -> float:
-        if self._n == 0 or self._sll == 0:
-            return 1.0
-        prior = self._k * self._sll / self._n
-        return min(2.0, max(0.0, (4.0 * self._sly + prior) / (self._sll + prior)))
+        return self._a
 
     def update(self, log_odds: float, up: bool) -> None:
-        log_odds = min(max(log_odds, -3.0), 3.0)
-        d = self._discount
-        self._sly = d * self._sly + log_odds * ((1.0 if up else 0.0) - 0.5)
-        self._sll = d * self._sll + log_odds * log_odds
-        self._n = d * self._n + 1.0
+        self._obs.append((min(max(log_odds, -3.0), 3.0), 1.0 if up else 0.0))
+        L, Y = np.array(self._obs).T
+        W = self._discount ** np.arange(len(L) - 1, -1, -1)
+        m = max(float(np.sum(W * L * L) / np.sum(W)), 1e-2)
+        h0 = self._k * m / 4.0  # Fisher information of the pseudo-observations at a = 1
+        a = self._a
+        for _ in range(3):
+            p = 0.5 * (1.0 + np.tanh(0.5 * a * L))
+            g = float(np.sum(W * (Y - p) * L)) - h0 * (a - 1.0)
+            h = float(np.sum(W * p * (1.0 - p) * L * L)) + h0
+            a += g / h
+        self._a = min(1.0, max(0.0, a))
 
     def apply(self, q: float, weight: float = 1.0) -> float:
         """Calibrated P(up | price moves); `weight` in [0, 1] phases the correction in."""

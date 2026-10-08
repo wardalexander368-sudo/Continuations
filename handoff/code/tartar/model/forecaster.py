@@ -172,9 +172,14 @@ class Forecaster:
             raise ValueError("coverage must be in [0.5, 1)")
         self.timeframe = timeframe
         self.coverage = coverage
-        self.engine = FeatureEngine(timeframe, launched_at, creator_known)
+        self.engine = FeatureEngine(timeframe, launched_at, creator_known, domain=domain)
         self.wallets = WalletTracker(launched_at)
-        self.activity = ActivityEstimator()
+        if domain == "trades":
+            # Recorded pump.fun launches (training split): after a candle that traded the next is flat
+            # ~50% of the time at every age; after a flat one, 92-98%.
+            self.activity = ActivityEstimator(prior_flat=0.5, prior_flat_after_flat=0.95, prior_weight=4.0)
+        else:  # aggregated candles of established pools are rarely flat
+            self.activity = ActivityEstimator()
         self.ensemble = ensemble or default_ensemble()
         self.residuals = ResidualDistribution()
         self.calibrator = DirectionCalibrator()
@@ -189,6 +194,7 @@ class Forecaster:
         # Discounted moments for the reliability slope of the raw ensemble signal.
         self._sxy = 0.0
         self._sxx = 0.0
+        self._nrel = 0.0
         # Global-vs-online mixing: prior log-odds plus discounted log-score difference.
         self._prior_logit = logit(model_prior)
         self._score_diff = 0.0
@@ -205,9 +211,14 @@ class Forecaster:
 
     @property
     def reliability(self) -> float:
-        """Least-squares slope of realized move on the raw signal, shrunk toward 1 when unproven."""
-        prior = 0.5
-        return min(1.5, max(0.0, (self._sxy + prior) / (self._sxx + prior)))
+        """Least-squares slope of realized move on the raw signal, shrunk toward 0 while unproven.
+
+        The shrinkage counts candles (10 pseudo-candles at slope 0), and the slope never
+        exceeds 1, so a signal fades in only as it earns it and is never amplified.
+        """
+        if self._sxx <= 0:
+            return 0.0
+        return min(1.0, max(0.0, self._sxy / self._sxx * self._nrel / (self._nrel + 10.0)))
 
     @property
     def global_weight(self) -> float:
@@ -245,7 +256,7 @@ class Forecaster:
         if f is None:
             # No closed candle yet (brand-new token): anchor on this candle's open.
             sigma = self.engine.sigma
-            return self._predict(current.start, current.open, current.close, elapsed, current.active, sigma, 0.0, now)[0]
+            return self._predict(current.start, current.open, current.close, elapsed, current.active, sigma, 0.0, now, trades=current.trades)[0]
         if current.start != f.target_start:
             return f
         gdist, g_mass = self._global, None
@@ -253,7 +264,8 @@ class Forecaster:
             gdist = self.model.distribution(self.engine.features(current, now, self.wallets.snapshot()))
             g_mass = gdist.p_still
         return self._predict(
-            f.target_start, f.ref_price, current.close, elapsed, current.active, f.sigma, f.signal, now, gdist, g_mass
+            f.target_start, f.ref_price, current.close, elapsed, current.active, f.sigma, f.signal, now, gdist, g_mass,
+            trades=current.trades,
         )[0]
 
     def _learn(self, outcome: Outcome) -> None:
@@ -266,11 +278,18 @@ class Forecaster:
         clipped = min(max(z, -3.0), 3.0)
         self._sxy = 0.995 * self._sxy + self._raw_signal * clipped
         self._sxx = 0.995 * self._sxx + self._raw_signal**2
+        self._nrel = 0.995 * self._nrel + 1.0
         if r != 0.0:
             self.residuals.add(z - f.signal)
             self.calibrator.update(self._raw_log_odds, r > 0)
+        flat = outcome.actual == f.ref_price
+        if flat and f.low <= f.ref_price <= f.high:
+            return  # the band could not have missed: no evidence about its width
         miss = 0.0 if outcome.in_band else 1.0
-        self._alpha = min(0.95, max(0.002, self._alpha + self._aci_rate * ((1.0 - self.coverage) - miss)))
+        target = 1.0 - self.coverage
+        if not flat:  # the flat share is covered for free, so moves may be missed more often
+            target = min(target / max(1.0 - f.p_flat, 1e-9), 1.0)
+        self._alpha = min(0.95, max(0.002, self._alpha + self._aci_rate * (target - miss)))
 
     def _log_score_diff(self, z: float, signal: float) -> float:
         """log p_global(outcome) - log p_online(outcome) for the forecast locked at the open."""
@@ -310,13 +329,14 @@ class Forecaster:
         made_at: float,
         gdist: BinnedDistribution | None = None,
         g_mass: float | None = None,
+        trades: int | None = None,
     ) -> tuple[Forecast, float]:
         """Forecast plus the uncalibrated P(up | price moves)."""
         remaining = 1.0 - elapsed
         x0 = math.log(price / ref) / sigma
         scale = math.sqrt(remaining)
         center = x0 + signal * remaining
-        online_mass = self.activity.no_trade_prob(remaining, active)
+        online_mass = self.activity.no_trade_prob(remaining, active, trades or 1)
         if g_mass is not None and elapsed > LAST_TRAINED_FRACTION:
             # Beyond the last trained snapshot, the chance of another move shrinks with the time left.
             g_mass = g_mass ** (remaining / (1.0 - LAST_TRAINED_FRACTION))
