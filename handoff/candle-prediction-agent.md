@@ -39,7 +39,7 @@ split by launch), plus a candle-by-candle replay of the live forecaster.
 
 | Item | State |
 |---|---|
-| Repo / branch / PR | `StaticPush7217/TARTAR`, branch `claude/solana-candle-predictor-s95qjr`, PR #1 (open) |
+| Repo / branch / PR | `StaticPush7217/TARTAR`. All work is on `main` (fast-forwarded from branch `claude/solana-candle-predictor-s95qjr`, PR #1) |
 | Live agent (`tartar watch`) | Works end to end against real tokens (pump.fun via chain, others via DexScreener/GeckoTerminal) |
 | Global model | **v1 installed**: `tartar/models/trades-60s.*`, trained on 3,523 real pump.fun launches (~2.7h of recording, 154k rows) |
 | Real-data result (v1, held-out later launches) | At candle open: hit 85.3% vs stated 85.2%, error **4.9% below naive**, 0.61 bits/row of information over the base rate; 80% band covers 92% (too wide). Live replay (global + online): **edge +7.0%** on all candles, +7.3% on candles where the token is trading; hit 69.0% vs stated 64.8% there (slightly underconfident) |
@@ -624,7 +624,9 @@ reviewers' scripts are in the session scratchpad (not persisted).
   `api.dexscreener.com`, `api.mainnet-beta.solana.com` and `api.rugcheck.xyz`.
   The user enabled full access.
 - Commits end with the session attribution lines; push to
-  `claude/solana-candle-predictor-s95qjr` (PR #1).
+  `claude/solana-candle-predictor-s95qjr`; `main` was fast-forwarded to it
+  at the user's request, so PR #1 shows as merged. New work goes on a fresh
+  branch from `main` and a new PR.
 
 ## 15. Full code
 
