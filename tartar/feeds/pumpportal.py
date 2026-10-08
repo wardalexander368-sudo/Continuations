@@ -45,20 +45,28 @@ def message_price(msg: dict) -> float | None:
     return None
 
 
-def tick_from_message(msg: dict, now: float) -> Tick | None:
+def tick_from_message(msg: dict, now: float, creator: str | None = None) -> Tick | None:
+    """A trade (or the creation, which includes the creator's first buy) as a tick."""
     side = msg.get("txType")
-    if side not in ("buy", "sell"):
+    if side not in ("buy", "sell", "create"):
         return None
     price = message_price(msg)
     if price is None:
         return None
     sol = _float(msg.get("solAmount")) or 0.0
+    buy = side != "sell"
+    trader = str(msg.get("traderPublicKey") or "")
     return Tick(
         now,
         price,
         volume=sol,
-        buy_volume=sol if side == "buy" else 0.0,
-        sell_volume=sol if side == "sell" else 0.0,
+        buy_volume=sol if buy else 0.0,
+        sell_volume=0.0 if buy else sol,
+        buys=int(buy),
+        sells=int(not buy),
+        trader=trader,
+        creator=side == "create" or (bool(creator) and trader == creator),
+        liquidity=_float(msg.get("vSolInBondingCurve")) or 0.0,
     )
 
 
@@ -72,6 +80,7 @@ class NewToken:
     initial_buy_sol: float | None
     creator: str
     pool: str
+    liquidity: float | None = None
 
 
 def new_token_from_message(msg: dict) -> NewToken | None:
@@ -86,6 +95,7 @@ def new_token_from_message(msg: dict) -> NewToken | None:
         initial_buy_sol=_float(msg.get("solAmount")),
         creator=str(msg.get("traderPublicKey") or ""),
         pool=str(msg.get("pool") or "pump"),
+        liquidity=_float(msg.get("vSolInBondingCurve")),
     )
 
 
@@ -109,8 +119,10 @@ class PumpPortalFeed(LiveFeed):
         clock: Clock | None = None,
         initial: Iterable[Tick] = (),
         max_backoff: float = 30.0,
+        creator: str | None = None,
     ):
         self.mint = mint
+        self.creator = creator
         self.url = _url(url, api_key)
         self.clock = clock or Clock()
         self._initial = list(initial)
@@ -134,7 +146,7 @@ class PumpPortalFeed(LiveFeed):
                         if not isinstance(msg, dict):
                             continue
                         if msg.get("mint") == self.mint:
-                            tick = tick_from_message(msg, self.clock.now())
+                            tick = tick_from_message(msg, self.clock.now(), self.creator)
                             if tick is not None:
                                 yield tick
                         elif msg.get("errors") or msg.get("error"):

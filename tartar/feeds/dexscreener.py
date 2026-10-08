@@ -183,4 +183,6 @@ class DexScreenerFeed(LiveFeed):
             buy_volume=volume * share,
             sell_volume=volume * (1.0 - share),
             trades=max(buys + sells, 1),
+            buys=buys,
+            sells=sells,
         )

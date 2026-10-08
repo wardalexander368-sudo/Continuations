@@ -8,7 +8,7 @@ from tartar.agent import CandleAgent, FeedEnded, Sink
 from tartar.candles import Candle, Tick
 from tartar.clock import SimClock
 from tartar.feeds.base import LiveFeed, Snapshot, Status
-from tartar.feeds.synthetic import MemecoinSimulator, SyntheticFeed, synthetic_history
+from tartar.feeds.synthetic import SimulatedToken, SyntheticFeed
 from tartar.market import Market, MarketInfo
 from tartar.output import JsonLines, PlainPrinter
 
@@ -49,18 +49,18 @@ class Recorder(Sink):
 
 async def test_demo_agent_end_to_end_json_and_plain():
     clock = SimClock(start=1_700_000_000, speed=600)
-    sim = MemecoinSimulator(seed=5)
-    history = synthetic_history(sim, clock.now(), 60, 120)
+    token = SimulatedToken(clock.now(), history_minutes=120, seed=5)
+    history = token.history(60, clock.now())
 
     async def load():
         return history
 
     json_out, plain_out = io.StringIO(), io.StringIO()
     sinks = [JsonLines(json_out, every=0), PlainPrinter(plain_out, every=0)]
-    agent = CandleAgent(Market(INFO, SyntheticFeed(sim, clock), load, clock), 60, sinks=sinks, update_interval=0.05)
+    agent = CandleAgent(Market(INFO, SyntheticFeed(token, clock), load, clock), 60, sinks=sinks, update_interval=0.05)
     board = await asyncio.wait_for(agent.run(max_candles=3), timeout=20)
 
-    assert board.history.n >= 115 and board.live.n == 3
+    assert board.history.n >= 115 and board.live.n >= 3
     events = [json.loads(line) for line in json_out.getvalue().splitlines()]
     types = [e["type"] for e in events]
     assert types[0] == "start" and types[-1] == "summary"

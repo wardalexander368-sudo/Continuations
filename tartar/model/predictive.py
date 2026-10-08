@@ -11,12 +11,6 @@ import numpy as np
 _LAPLACE_B = 1.0 / math.sqrt(2.0)  # unit-variance Laplace scale
 
 
-def laplace_cdf(t: float) -> float:
-    if t < 0:
-        return 0.5 * math.exp(t / _LAPLACE_B)
-    return 1.0 - 0.5 * math.exp(-t / _LAPLACE_B)
-
-
 class ResidualDistribution:
     """Distribution of forecast errors (normalized), learned online.
 
@@ -55,6 +49,20 @@ class ResidualDistribution:
         if self._arr is None:
             self._arr = np.fromiter(self._res, float, n)
         empirical = np.mean(0.5 * (1.0 + np.tanh(0.5 * (u[:, None] - self._arr[None, :]) / self._h)), axis=1)
+        w = n / (n + self._k)
+        return w * empirical + (1.0 - w) * prior
+
+
+    def pdf(self, t: float) -> float:
+        """Density of the error at t (unit scale)."""
+        prior = math.exp(-abs(t) / _LAPLACE_B) / (2.0 * _LAPLACE_B)
+        n = len(self._res)
+        if n == 0:
+            return prior
+        if self._arr is None:
+            self._arr = np.fromiter(self._res, float, n)
+        x = 0.5 * (t - self._arr) / self._h
+        empirical = float(np.mean(0.25 / np.cosh(x) ** 2) / self._h)
         w = n / (n + self._k)
         return w * empirical + (1.0 - w) * prior
 

@@ -1,4 +1,4 @@
-"""Command line: tartar watch | new | backtest | demo | resolve."""
+"""Command line: tartar watch | new | backtest | demo | resolve | record | collect | simulate | train."""
 
 from __future__ import annotations
 
@@ -14,7 +14,7 @@ from rich.console import Console
 from rich.table import Table
 
 from . import __version__
-from .agent import CandleAgent, Sink
+from .agent import CandleAgent, FeedEnded, Sink
 from .backtest import backtest
 from .candles import Tick, format_timeframe, load_csv, parse_timeframe
 from .clock import SimClock
@@ -22,7 +22,8 @@ from .dashboard import Dashboard
 from .feeds.geckoterminal import GeckoTerminal
 from .feeds.http import ApiError
 from .feeds.pumpportal import stream_new_tokens
-from .feeds.synthetic import MemecoinSimulator, SyntheticFeed, synthetic_history
+from .feeds.synthetic import SimulatedToken, SyntheticFeed
+from .model.global_model import MODEL_DIR, GlobalModel, find_model, model_name
 from .market import SOURCES, Market, MarketInfo, MarketNotFound, open_market, pumpportal_market, short
 from .output import JsonLines, PlainPrinter, fmt_pct, fmt_price, fmt_prob, summary_lines, tally_line
 
@@ -40,6 +41,8 @@ def _add_output_args(p: argparse.ArgumentParser) -> None:
     p.add_argument("--every", type=float, help="seconds between live updates in plain/json output (default 10 / 1)")
     p.add_argument("--log", metavar="FILE", help="also append every event as JSON lines to FILE")
     p.add_argument("--candles", type=int, metavar="N", help="stop after N live candles have closed")
+    p.add_argument("--model-dir", help=f"where trained global models live (default {MODEL_DIR})")
+    p.add_argument("--no-model", action="store_true", help="ignore trained global models; online model only")
 
 
 def build_parser() -> argparse.ArgumentParser:
@@ -85,6 +88,45 @@ def build_parser() -> argparse.ArgumentParser:
     resolve.add_argument("-t", "--timeframe", default="1m")
     resolve.add_argument("--source", choices=SOURCES, default="auto")
     resolve.set_defaults(func=cmd_resolve)
+
+    record = sub.add_parser("record", help="record every new pump.fun launch and its trades (training data)")
+    record.add_argument("--out", default="data/raw", help="directory for raw logs (default data/raw)")
+    record.add_argument("--hours", type=float, help="stop after this many hours (default: until Ctrl+C)")
+    record.add_argument("--track-minutes", type=float, default=60.0, help="record each token for this long (default 60)")
+    record.add_argument("--idle-minutes", type=float, default=10.0, help="stop recording a token after this long without trades")
+    record.add_argument("--max-tokens", type=int, default=1500, help="most tokens tracked at once")
+    record.set_defaults(func=cmd_record)
+
+    collect = sub.add_parser("collect", help="download OHLCV histories of new Solana pools (training data)")
+    collect.add_argument("--out", default="data/ohlcv", help="directory (default data/ohlcv; a subfolder per timeframe)")
+    collect.add_argument("-t", "--timeframe", default="1m")
+    collect.add_argument("--pages", type=int, default=10, help="pages of 20 new pools (default 10)")
+    collect.set_defaults(func=cmd_collect)
+
+    simulate = sub.add_parser("simulate", help="write simulated pump.fun launches in the recorder's format")
+    simulate.add_argument("--out", default="data/sim")
+    simulate.add_argument("--tokens", type=int, default=500)
+    simulate.add_argument("--seed", type=int, default=0)
+    simulate.set_defaults(func=cmd_simulate)
+
+    train = sub.add_parser("train", help="train and evaluate the global model on recorded data")
+    data = train.add_mutually_exclusive_group(required=True)
+    data.add_argument("--raw", help="raw trade logs from `tartar record` (or `tartar simulate`)")
+    data.add_argument("--ohlcv", help="OHLCV files from `tartar collect` (the timeframe's subfolder)")
+    train.add_argument("-t", "--timeframe", default="1m")
+    train.add_argument("--out", help=f"model directory (default {MODEL_DIR}, where `watch` looks)")
+    train.add_argument("--rounds", type=int, default=3000, help="max boosting rounds (early stopping decides)")
+    train.add_argument("--replay-tokens", type=int, default=300, help="test tokens to replay through the live forecaster")
+    train.add_argument("--force", action="store_true", help="replace the installed model even if it scores better")
+    train.set_defaults(func=cmd_train)
+
+    learn = sub.add_parser("learn", help="record continuously and retrain the global model on a schedule")
+    learn.add_argument("--out", default="data/raw", help="directory for raw logs (default data/raw)")
+    learn.add_argument("-t", "--timeframe", default="1m")
+    learn.add_argument("--first-train-hours", type=float, default=3.0, help="hours of recording before the first training")
+    learn.add_argument("--retrain-hours", type=float, default=6.0, help="hours between retrainings")
+    learn.add_argument("--model-dir", help=f"where to install models (default {MODEL_DIR})")
+    learn.set_defaults(func=cmd_learn)
     return parser
 
 
@@ -117,10 +159,28 @@ class _SummaryDashboard(Dashboard):
             self.console.print(line)
 
 
+def _load_model(market: Market, args, timeframe: int) -> GlobalModel | None:
+    if args.no_model:
+        return None
+    model = find_model(market.info.domain, timeframe, args.model_dir, allow_simulated=market.info.source == "simulated")
+    if model is None:
+        market.info.notes.append(
+            f"no trained global model for {market.info.domain} data at {format_timeframe(timeframe)} "
+            "(see `tartar record` / `tartar train`); using the per-token online model only"
+        )
+    else:
+        meta = model.meta
+        market.info.notes.append(
+            f"global model {model_name(model.domain, model.timeframe)}: trained on {meta.get('tokens', '?')} tokens, {meta.get('trained_at', '?')}"
+        )
+    return model
+
+
 async def _run_agent(market: Market, args, timeframe: int) -> None:
     console = Console()
+    model = _load_model(market, args, timeframe)
     sinks, interval = _make_sinks(args, console)
-    agent = CandleAgent(market, timeframe, coverage=args.band, sinks=sinks, update_interval=interval)
+    agent = CandleAgent(market, timeframe, coverage=args.band, sinks=sinks, update_interval=interval, model=model)
     try:
         await agent.run(max_candles=args.candles)
     finally:
@@ -142,11 +202,16 @@ async def cmd_watch(args) -> int:
         if token is None:
             raise SystemExit("PumpPortal closed the launch stream before a token appeared")
         err.print(f"New launch: [bold]{token.symbol}[/bold] {token.name} {token.mint}")
+        launched = time.time()
         initial = []
         if token.price:
             sol = token.initial_buy_sol or 0.0
-            initial.append(Tick(time.time(), token.price, volume=sol, buy_volume=sol))
-        market = pumpportal_market(token.mint, symbol=token.symbol, name=token.name, initial=initial)
+            initial.append(
+                Tick(launched, token.price, volume=sol, buy_volume=sol, buys=1, trader=token.creator, creator=True, liquidity=token.liquidity or 0.0)
+            )
+        market = pumpportal_market(
+            token.mint, symbol=token.symbol, name=token.name, creator=token.creator or None, launched_at=launched, initial=initial
+        )
     elif args.address:
         market = await open_market(
             args.address, timeframe, args.source, history_limit=args.history, poll=args.poll, grace=args.grace
@@ -160,21 +225,27 @@ async def cmd_watch(args) -> int:
 async def cmd_demo(args) -> int:
     timeframe = parse_timeframe(args.timeframe)
     clock = SimClock(speed=args.speed)
-    sim = MemecoinSimulator(seed=args.seed)
-    history = synthetic_history(sim, clock.now(), timeframe, args.history)
+    token = SimulatedToken(clock.now(), history_minutes=args.history * timeframe / 60, seed=args.seed)
+    history = token.history(timeframe, clock.now())
 
     async def load_history():
         return history
 
     info = MarketInfo(
-        address="DEMoSimuLated1111111111111111111111111pump",
-        symbol="DEMO",
-        name="simulated memecoin",
+        address=token.mint,
+        symbol=token.symbol,
+        name="simulated pump.fun token",
         quote="SOL",
         source="simulated",
-        notes=[f"simulated trades at {args.speed:g}x speed, not real market data"],
+        dex="pumpfun",
+        notes=[f"simulated bonding-curve trades at {args.speed:g}x speed, not real market data"],
+        launched_at=token.created,
+        creator=token.creator,
     )
-    await _run_agent(Market(info, SyntheticFeed(sim, clock), load_history, clock), args, timeframe)
+    try:
+        await _run_agent(Market(info, SyntheticFeed(token, clock), load_history, clock), args, timeframe)
+    except FeedEnded:
+        Console(stderr=True).print("The simulated token stopped trading (died or graduated). Run the demo again for another.")
     return 0
 
 
@@ -289,3 +360,149 @@ def main(argv: list[str] | None = None) -> int:
     except (MarketNotFound, ApiError, ValueError) as exc:
         print(f"tartar: {exc}", file=sys.stderr)
         return 2
+
+
+async def cmd_record(args) -> int:
+    from .data.recorder import Recorder
+
+    console = Console()
+    recorder = Recorder(args.out, track_minutes=args.track_minutes, idle_minutes=args.idle_minutes, max_tokens=args.max_tokens)
+    console.print(f"Recording pump.fun launches and trades to {args.out} (Ctrl+C to stop)…")
+
+    def report(stats) -> None:
+        state = "connected" if stats.connected else "reconnecting"
+        console.print(f"{datetime.now():%H:%M:%S}  {state} · {stats.tracked} tokens tracked · {stats.total_tokens} launches · {stats.trades} trades")
+
+    stats = await recorder.run(None if args.hours is None else args.hours * 3600, on_stats=report)
+    report(stats)
+    return 0
+
+
+async def cmd_collect(args) -> int:
+    from .data.collect import collect_ohlcv
+
+    timeframe = parse_timeframe(args.timeframe)
+    out = f"{args.out}/{format_timeframe(timeframe)}"
+    console = Console()
+    written = await collect_ohlcv(out, timeframe, pages=args.pages, progress=console.print)
+    console.print(f"saved {written} token histories to {out}")
+    return 0
+
+
+async def cmd_simulate(args) -> int:
+    from .data.simulate import simulate_raw
+
+    path = simulate_raw(args.out, args.tokens, seed=args.seed)
+    Console().print(f"wrote {path} (simulated data: useful for testing the pipeline, not for real accuracy)")
+    return 0
+
+
+def _metric(v, pct: bool = False, signed: bool = False) -> str:
+    if v is None:
+        return "—"
+    if signed:
+        return f"{100 * v:+.1f}%"
+    return f"{100 * v:.1f}%" if pct else f"{v:.2f}"
+
+
+async def cmd_train(args) -> int:
+    import json
+    from pathlib import Path
+
+    from .data.dataset import build_dataset, load_ohlcv_tokens, load_trade_tokens
+    from .train import evaluate, test_log_loss, train_global
+
+    timeframe = parse_timeframe(args.timeframe)
+    console = Console()
+    domain = "trades" if args.raw else "ohlcv"
+    console.print(f"loading {domain} data…")
+    tokens = load_trade_tokens(args.raw, timeframe) if args.raw else load_ohlcv_tokens(args.ohlcv, timeframe)
+    if len(tokens) < 20:
+        raise SystemExit(f"only {len(tokens)} usable tokens; record more data first")
+    ds = build_dataset(tokens, timeframe, domain)
+    console.print(f"{len(tokens)} tokens → {len(ds)} rows")
+    if len(tokens) < 500:
+        console.print("[yellow]fewer than 500 tokens: expect noisy estimates; keep recording for a better model[/yellow]")
+    if ds.simulated and args.out is None:
+        raise SystemExit("this is simulated data; pass --out DIR so the model is not used for real tokens")
+
+    model = train_global(ds, rounds=args.rounds, log=console.print)
+    report = evaluate(model, ds, replay_tokens=args.replay_tokens, log=console.print)
+    out_dir = Path(args.out) if args.out else MODEL_DIR
+    target = out_dir / model_name(domain, timeframe)
+    report["test_log_loss"] = new_loss = test_log_loss(model, ds)
+    if target.with_suffix(".txt").exists() and not args.force:
+        try:
+            old_loss = test_log_loss(GlobalModel.load(target), ds)
+        except (ValueError, OSError):
+            old_loss = None
+        if old_loss is not None and old_loss <= new_loss:
+            console.print(
+                f"[yellow]kept the installed model: it scores better on these test tokens "
+                f"(log loss {old_loss:.4f} vs {new_loss:.4f}); use --force to replace it[/yellow]"
+            )
+            return 0
+        if old_loss is not None:
+            console.print(f"new model beats the installed one (log loss {new_loss:.4f} vs {old_loss:.4f})")
+    path = model.save(target)
+    path.with_suffix(".report.json").write_text(json.dumps(report, indent=2))
+
+    table = Table(title=f"Test set: {report['test_rows']} rows from the latest-launched tokens", box=box.SIMPLE_HEAD)
+    for col in ("candle elapsed", "hit", "stated", "80% band", "band width", "error", "naive", "edge", "info gain"):
+        table.add_column(col, justify="right")
+    for row in report["test_by_fraction"]:
+        table.add_row(
+            f"{row['f']:.0%}",
+            _metric(row["hit_rate"], pct=True),
+            _metric(row["avg_confidence"], pct=True),
+            _metric(row["band_coverage"], pct=True),
+            f"{row['band_width_pct']:.2f}%",
+            f"{row['mae_pct']:.2f}%",
+            f"{row['naive_mae_pct']:.2f}%",
+            _metric(row["edge"], signed=True),
+            f"{row.get('info_gain_bits', 0):.3f} bits",
+        )
+    console.print(table)
+    live = report["live_at_open"]
+    cmp = Table(title=f"Live forecaster replayed on {live['tokens']} test tokens (forecasts locked at candle open)", box=box.SIMPLE_HEAD)
+    for col in ("", "candles", "hit", "stated", "80% band", "edge vs naive"):
+        cmp.add_column(col, justify="right")
+    for name, key in (("online only", "online_only"), ("global + online", "global_plus_online")):
+        for subset in ("all", "trading"):
+            t = live[key][subset]
+            cmp.add_row(f"{name} · {subset}", str(t["n"]), _metric(t["hit_rate"], pct=True), _metric(t["avg_confidence"], pct=True), _metric(t["band_coverage"], pct=True), _metric(t["edge"], signed=True))
+    console.print(cmp)
+    top = ", ".join(f"{k} {v:.0%}" for k, v in list(report["feature_importance"].items())[:10])
+    console.print(f"top features: {top}")
+    console.print(f"saved {path} (+ .json metadata, .report.json)")
+    return 0
+
+
+async def cmd_learn(args) -> int:
+    """Record without pause; retrain in a separate process so recording never stalls."""
+    from .data.recorder import Recorder
+
+    console = Console()
+    recorder = Recorder(args.out)
+    record_task = asyncio.create_task(recorder.run(on_stats=lambda st: console.print(
+        f"{datetime.now():%H:%M:%S}  recording · {st.tracked} tracked · {st.total_tokens} launches · {st.trades} trades"
+    )))
+    console.print(f"Learning: recording to {args.out}; first training in {args.first_train_hours:g}h, then every {args.retrain_hours:g}h.")
+    wait = args.first_train_hours * 3600
+    try:
+        while True:
+            done, _ = await asyncio.wait({record_task}, timeout=wait)
+            if done:
+                record_task.result()
+                return 1
+            cmd = [sys.executable, "-m", "tartar", "train", "--raw", args.out, "-t", args.timeframe]
+            if args.model_dir:
+                cmd += ["--out", args.model_dir]
+            console.print(f"{datetime.now():%H:%M:%S}  retraining…")
+            proc = await asyncio.create_subprocess_exec(*cmd)
+            await proc.wait()
+            console.print(f"{datetime.now():%H:%M:%S}  training finished (exit {proc.returncode})")
+            wait = args.retrain_hours * 3600
+    finally:
+        record_task.cancel()
+        await asyncio.gather(record_task, return_exceptions=True)

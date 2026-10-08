@@ -5,6 +5,7 @@ from __future__ import annotations
 import asyncio
 import re
 from dataclasses import dataclass, field
+from datetime import datetime
 from typing import Awaitable, Callable
 
 from .candles import Candle, format_timeframe
@@ -35,6 +36,13 @@ class MarketInfo:
     pool: str | None = None
     dex: str | None = None
     notes: list[str] = field(default_factory=list)
+    launched_at: float | None = None
+    creator: str | None = None
+
+    @property
+    def domain(self) -> str:
+        """Which kind of global model fits this data: 'trades' (pump.fun trade stream) or 'ohlcv'."""
+        return "trades" if self.source in ("pumpportal", "simulated") else "ohlcv"
 
 
 @dataclass
@@ -189,6 +197,8 @@ async def _resolve(
     else:
         notes.append(f"no warm-up history: GeckoTerminal has no {format_timeframe(timeframe)} candles")
 
+    launched = [p.created_ms / 1000 for p in pairs if p.created_ms] + [_iso_ts(p.created_at) for p in pools]
+    launched = [t for t in launched if t]
     info = MarketInfo(
         address=mint,
         symbol=symbol or short(mint),
@@ -198,13 +208,41 @@ async def _resolve(
         pool=(pair.address if source == "dexscreener" and pair else pool.address if pool else None),
         dex=(pair.dex if pair else pool.dex if pool else ("pumpfun" if pump else None)),
         notes=notes,
+        launched_at=min(launched) if launched else None,
     )
     return Market(info, feed, history, clock, closers=[gecko.aclose, dex.aclose])
 
 
-def pumpportal_market(mint: str, *, symbol: str = "", name: str = "", initial=(), api_key: str | None = None) -> Market:
+def pumpportal_market(
+    mint: str,
+    *,
+    symbol: str = "",
+    name: str = "",
+    creator: str | None = None,
+    launched_at: float | None = None,
+    initial=(),
+    api_key: str | None = None,
+) -> Market:
     """A market for a token too new to be indexed anywhere: live PumpPortal trades only."""
     clock = Clock()
-    feed = PumpPortalFeed(mint, clock=clock, initial=initial, api_key=api_key)
-    info = MarketInfo(address=mint, symbol=symbol or short(mint), name=name, quote="SOL", source=feed.name, dex="pumpfun")
+    feed = PumpPortalFeed(mint, clock=clock, initial=initial, api_key=api_key, creator=creator)
+    info = MarketInfo(
+        address=mint,
+        symbol=symbol or short(mint),
+        name=name,
+        quote="SOL",
+        source=feed.name,
+        dex="pumpfun",
+        launched_at=launched_at,
+        creator=creator,
+    )
     return Market(info, feed, None, clock)
+
+
+def _iso_ts(text: str | None) -> float | None:
+    if not text:
+        return None
+    try:
+        return datetime.fromisoformat(text.replace("Z", "+00:00")).timestamp()
+    except ValueError:
+        return None

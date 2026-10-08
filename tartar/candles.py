@@ -5,7 +5,7 @@ from __future__ import annotations
 import csv
 import re
 from collections import deque
-from dataclasses import dataclass, replace
+from dataclasses import dataclass, field, replace
 from datetime import datetime
 from pathlib import Path
 from typing import Iterable
@@ -42,6 +42,11 @@ class Tick:
     buy_volume: float = 0.0
     sell_volume: float = 0.0
     trades: int = 1
+    buys: int = 0
+    sells: int = 0
+    trader: str = ""
+    creator: bool = False  # trade made by the token's creator (dev wallet)
+    liquidity: float = 0.0  # quote reserve after the trade (pump.fun: virtual SOL in the curve)
 
 
 @dataclass
@@ -56,6 +61,16 @@ class Candle:
     sell_volume: float = 0.0
     # None when the source does not report trade counts (e.g. REST OHLCV).
     trades: int | None = None
+    buys: int = 0
+    sells: int = 0
+    traders: int = 0  # distinct wallets trading in this candle
+    new_traders: int = 0  # wallets trading this token for the first time
+    max_trade: float = 0.0
+    creator_buy: float = 0.0
+    creator_sell: float = 0.0
+    liquidity: float = 0.0
+    last_trade: float = 0.0  # timestamp of the candle's last trade (0 if unknown)
+    _wallets: set = field(default_factory=set, init=False, repr=False, compare=False)
 
     @classmethod
     def flat(cls, start: int, price: float, trades: int | None = 0) -> Candle:
@@ -67,7 +82,7 @@ class Candle:
         """Whether anything traded during this candle."""
         return bool(self.trades) or self.volume > 0
 
-    def add(self, tick: Tick) -> None:
+    def add(self, tick: Tick, new_trader: bool = False) -> None:
         if not self.active:
             self.open = self.high = self.low = tick.price
         self.high = max(self.high, tick.price)
@@ -77,6 +92,21 @@ class Candle:
         self.buy_volume += tick.buy_volume
         self.sell_volume += tick.sell_volume
         self.trades = (self.trades or 0) + tick.trades
+        self.buys += tick.buys
+        self.sells += tick.sells
+        if tick.trades:
+            self.last_trade = tick.ts
+        if tick.trades == 1:
+            self.max_trade = max(self.max_trade, tick.volume)
+        if tick.trader and tick.trader not in self._wallets:
+            self._wallets.add(tick.trader)
+            self.traders += 1
+        self.new_traders += new_trader
+        if tick.creator:
+            self.creator_buy += tick.buy_volume
+            self.creator_sell += tick.sell_volume
+        if tick.liquidity:
+            self.liquidity = tick.liquidity
 
 
 class CandleBook:
@@ -95,6 +125,7 @@ class CandleBook:
         self.current: Candle | None = None
         self.ticks = 0
         self.last_tick_at: float | None = None
+        self.wallets: set[str] = set()  # every wallet seen trading this token
 
     def period(self, ts: float) -> int:
         return int(ts // self.timeframe) * self.timeframe
@@ -126,7 +157,10 @@ class CandleBook:
                 return closed
             closed += self._fill_until(start, self._fill_trades)
             self.current = Candle.flat(start, tick.price, 0)
-        self.current.add(tick)
+        new_trader = bool(tick.trader) and tick.trader not in self.wallets
+        if new_trader:
+            self.wallets.add(tick.trader)
+        self.current.add(tick, new_trader)
         self.ticks += 1
         self.last_tick_at = tick.ts
         return closed

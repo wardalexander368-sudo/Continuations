@@ -22,11 +22,49 @@ and shows whether its stated confidence matched what actually happened.
 ```bash
 pip install -e .            # Python 3.10+
 
-tartar demo                 # simulated memecoin, no network needed
+tartar demo                 # simulated pump.fun token, no network needed
 tartar watch <TOKEN_MINT>   # watch a real token (mint or pool address)
 tartar watch --next-launch  # wait for the next pump.fun launch and watch it
 tartar new                  # list the newest Solana pools
 ```
+
+## Getting the most accurate predictions: train the global model
+
+Out of the box, the agent learns each token from scratch while it watches.
+Accuracy improves a lot with a **global model** trained on thousands of real
+launches. It learns patterns that repeat across tokens, which a single young
+token can't show. Collecting the data and training take three commands:
+
+```bash
+tartar record --hours 12          # record every pump.fun launch and its trades
+tartar train --raw data/raw       # train, evaluate on later launches, install
+tartar watch <TOKEN_MINT>         # now uses the global model automatically
+```
+
+Or let it run unattended. `learn` records continuously and retrains every few
+hours; a new model is only installed if it beats the current one on the newest
+launches:
+
+```bash
+tartar learn --first-train-hours 3 --retrain-hours 6
+```
+
+More data makes a better model. A few hours (several hundred launches) gives a
+first model; a day or more is better. For tokens that aren't streamed from
+PumpPortal (DexScreener/GeckoTerminal sources), train a candle-only model with
+`tartar collect -t 1m` then `tartar train --ohlcv data/ohlcv/1m`.
+
+`tartar train` prints an honest report on tokens launched after everything it
+trained on:
+
+* error versus the naive "close = current price", direction hit rate against
+  stated confidence, and band coverage, at the candle open and at points during
+  the candle
+* the live forecaster replayed candle by candle on those tokens, with and
+  without the global model
+* the most useful features
+
+The full report is saved next to the model as `.report.json`.
 
 `watch` opens a full-screen dashboard with the candle chart, the predicted close
 (◆) and its band (┊) next to the forming candle, the current prediction, the track
@@ -95,7 +133,40 @@ start. A token too new to be indexed starts cold and learns as candles close.
 
 ## How the prediction works
 
-All of these components are online and learned per token (`tartar/model/`):
+Two predictive distributions are blended. The weight follows each one's recent
+log score on the token being watched, so whichever predicts this token better
+takes over.
+
+**Global model** (`tartar/model/global_model.py`, trained by `tartar train`): a
+LightGBM classifier that outputs a full distribution for the rest of the
+candle. That is the probability the price doesn't move again, plus the
+probabilities of the remaining move landing in 24 volatility-scaled bins. The
+median, band and direction odds all come from that one distribution. It sees
+about 50 features (`tartar/model/engine.py`):
+
+* price action: returns, momentum, candle shape, EMAs, drawdown from the
+  all-time high
+* activity: trade counts and volume against the token's normal, quiet streaks,
+  time since the last trade
+* order flow: buy/sell count and SOL imbalance, whale share
+* wallets: unique and first-time traders, holder growth
+* the creator (dev) wallet: sells this candle, total sold, share of the bag left
+* lifecycle: token age, bonding-curve progress, market cap
+* the forming candle so far: elapsed time, move, trades, flow, range, new
+  wallets, dev sells
+
+It is trained on snapshots taken at the open and at 20/40/60/80/95% through each
+candle, so the live estimate is a model prediction at every moment. Training
+also mimics live conditions. For some tokens the creator or launch time is
+hidden. For about 30%, the model "starts watching" mid-life: only candle history
+before that point (like the GeckoTerminal warm-up), then trades with wallets
+tracked from scratch. That way the model still works on tokens you join after
+launch. The same
+code computes features in training and live, and a test checks they match
+exactly. The model's probabilities are calibrated with temperature scaling on
+held-out tokens.
+
+**Online model**, learned per token while watching (`tartar/model/`):
 
 1. **Volatility**: an EWMA of per-candle log-return variance that blends
    close-to-close moves with the high/low range (the Parkinson estimator), so a
@@ -111,7 +182,8 @@ All of these components are online and learned per token (`tartar/model/`):
    while there is little data. The band uses adaptive conformal inference to
    hold its target coverage.
 4. **Flat odds**: the chance that nothing trades in the rest of the candle,
-   estimated from trade arrival rates, which pins the close to the current price.
+   which pins the close to the current price. Trade arrivals are modelled as
+   bursty (quiet spells, then busy ones).
 5. **Calibration**: up/down probabilities are recalibrated against realized
    directions, so a 60% call is right about 60% of the time.
 
@@ -151,5 +223,12 @@ pytest
 
 The tests cover candle assembly, model calibration on synthetic series (random
 walk, momentum, mean reversion, dead tokens), API parsing against mocked
-responses, a local websocket server standing in for PumpPortal, source
-selection, and the agent loop end to end.
+responses, local websocket servers standing in for PumpPortal (live feed and
+recorder), source selection, the agent loop end to end, and the training
+pipeline. That includes the check that features computed live equal the
+training rows exactly.
+
+`tartar simulate` writes pump.fun-style launches (real bonding-curve math,
+invented trader behaviour) in the recorder's format, for exercising the pipeline
+without network access. Models trained on simulated data are only ever loaded
+by `tartar demo`, never for real tokens.

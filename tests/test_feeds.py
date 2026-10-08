@@ -119,11 +119,14 @@ def test_pumpportal_messages():
         "pool": "pump",
     }
     tick = tick_from_message(trade, now=5.0)
-    assert tick == Tick(5.0, 3e-8, volume=0.1, buy_volume=0.1, sell_volume=0.0)
+    assert tick == Tick(5.0, 3e-8, volume=0.1, buy_volume=0.1, sell_volume=0.0, buys=1, trader="trader", liquidity=30.0)
     no_curve = {**trade, "txType": "sell", "vSolInBondingCurve": None, "vTokensInBondingCurve": None}
-    tick = tick_from_message(no_curve, now=6.0)
+    tick = tick_from_message(no_curve, now=6.0, creator="trader")
     assert tick.price == pytest.approx(0.1 / 3_500_000) and tick.sell_volume == 0.1
+    assert tick.sells == 1 and tick.creator
     assert tick_from_message({"message": "Successfully subscribed"}, 0) is None
+    created = tick_from_message({**trade, "txType": "create"}, now=1.0)
+    assert created.creator and created.buys == 1
 
     create = {**trade, "txType": "create", "name": "Meme Coin", "symbol": "MEME", "solAmount": 1.5}
     token = new_token_from_message(create)

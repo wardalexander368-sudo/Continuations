@@ -13,6 +13,7 @@ dependencies = [
     "httpx>=0.25",
     "websockets>=13",
     "rich>=13",
+    "lightgbm>=4",
 ]
 
 [project.optional-dependencies]
@@ -23,6 +24,9 @@ tartar = "tartar.cli:main"
 
 [tool.setuptools.packages.find]
 include = ["tartar*"]
+
+[tool.setuptools.package-data]
+tartar = ["models/*.txt", "models/*.json"]
 
 [tool.pytest.ini_options]
 asyncio_mode = "auto"

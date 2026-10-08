@@ -11,6 +11,7 @@ from .candles import Candle, CandleBook, Tick
 from .feeds.base import Snapshot, Status
 from .market import Market, MarketInfo
 from .model import Forecast, Forecaster, Outcome
+from .model.global_model import GlobalModel
 from .scoreboard import Scoreboard
 
 
@@ -64,6 +65,7 @@ class CandleAgent:
         coverage: float = 0.8,
         sinks: Sequence[Sink] = (),
         update_interval: float = 0.5,
+        model: GlobalModel | None = None,
     ):
         self.market = market
         self.timeframe = timeframe
@@ -71,7 +73,15 @@ class CandleAgent:
         self.sinks = list(sinks)
         self.update_interval = update_interval
         self.book = CandleBook(timeframe, grace=market.feed.close_grace, counts_trades=market.feed.counts_trades)
-        self.forecaster = Forecaster(timeframe, coverage)
+        info = market.info
+        self.forecaster = Forecaster(
+            timeframe,
+            coverage,
+            model=model,
+            domain=info.domain,
+            launched_at=info.launched_at,
+            creator_known=bool(info.creator),
+        )
         self.board = Scoreboard()
         self.live_candles = 0
         self.status_message = "starting"
@@ -121,7 +131,7 @@ class CandleAgent:
             ticks=self.book.ticks,
             last_tick_at=self.book.last_tick_at,
             status=self.status_message,
-            weights=self.forecaster.ensemble.describe(),
+            weights=self.forecaster.describe(),
         )
 
     async def _pump(self, queue: asyncio.Queue) -> None:
