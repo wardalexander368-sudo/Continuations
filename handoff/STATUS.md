@@ -32,7 +32,7 @@ next. Topic documents hold the detail:
 
 ## Active
 
-_(nobody)_
+* profitability session (https://claude.ai/code/session_01U4x5qUJYMStcujpyLJgQ8N), since 2026-10-08 22:50 UTC: queue item 2 (scam flags as a skip filter), branch `claude/scam-filter-profit`
 
 ## Blockers (need the user)
 
