@@ -69,7 +69,10 @@ prediction as well as the warning.
 
 ## Getting the most accurate predictions: train the global model
 
-Out of the box, the agent learns each token from scratch while it watches.
+A first model (`tartar/models/trades-60s`, trained on 786 real pump.fun
+launches) ships with the repo and is used automatically for 1-minute candles of
+pump.fun tokens. Without a trained model, the agent learns each token from
+scratch while it watches.
 Accuracy improves a lot with a **global model** trained on thousands of real
 launches. It learns patterns that repeat across tokens, which a single young
 token can't show. Collecting the data and training take three commands:
@@ -173,6 +176,16 @@ only the candles before it. That gives each token a real track record from the
 start. A token too new to be indexed starts cold and learns as candles close.
 
 `tartar resolve <mint>` shows which pool, source and history `watch` would use.
+
+**Data quality.** The free public Solana RPC drops a share of websocket
+notifications under load. In our recordings, a median of about 63% of a token's
+trades arrived, and less for the busiest tokens. Prices stay exact, because
+every trade carries the curve's state, but volume, trade counts and wallet
+statistics are undercounted, and a candle's close can miss its last trade.
+Training and live use the same stream, so they stay consistent, and
+`tartar train` reports the capture rate. For complete data, point
+`SOLANA_RPC_WS` at a private RPC websocket (Helius, QuickNode, Triton, …) or set
+a funded `PUMPPORTAL_API_KEY`.
 
 ## How the prediction works
 

@@ -96,6 +96,7 @@ def load_trade_tokens(raw_dir: str | Path, timeframe: int) -> list[TokenData]:
     last_seen = 0.0
     simulated = False
     started = False
+    seen_trades: set[tuple] = set()
     for event in sorted(read_events(raw_files(raw_dir)), key=lambda e: e["t"]):
         kind = event["e"]
         if kind == "session":
@@ -112,7 +113,11 @@ def load_trade_tokens(raw_dir: str | Path, timeframe: int) -> list[TokenData]:
         if kind == "create":
             creates[event["mint"]] = event
         elif kind == "trade":
-            trades[event["mint"]].append(event)
+            # Post-trade reserves identify a trade; two overlapping recorders write it twice.
+            ident = (event["mint"], event.get("side"), event.get("trader"), event.get("sol"), event.get("vsol"), event.get("rsol"))
+            if ident not in seen_trades:
+                seen_trades.add(ident)
+                trades[event["mint"]].append(event)
         elif kind == "track":
             tracked.setdefault(event["mint"], event["t"])
         elif kind in ("untrack", "migrate"):
