@@ -17,10 +17,8 @@ from .volatility import VolatilityEstimator, prior_sigma
 
 NAN = float("nan")
 
-# pump.fun bonding curve: virtual SOL reserves start at 30 and the token
-# graduates to an AMM at roughly 115.
-CURVE_START = 30.0
-CURVE_END = 115.0
+# pump.fun tokens graduate to an AMM once roughly 85 SOL has been raised in the curve.
+GRADUATION_SOL = 85.0
 
 BASE_FEATURES = (
     # price action, in units of per-candle volatility
@@ -199,7 +197,7 @@ class FeatureEngine:
             v["age"] = math.log1p(max(t_now - self.launched_at, 0.0) / 60.0)
         v["n_candles"] = math.log1p(self.count)
         if self.liquidity > 0:
-            v["curve_progress"] = (self.liquidity - CURVE_START) / (CURVE_END - CURVE_START)
+            v["curve_progress"] = self.liquidity / GRADUATION_SOL
         v["log_price"] = math.log(last.close)
         return v
 

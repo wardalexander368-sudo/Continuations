@@ -2,8 +2,8 @@
 
 Event types (short keys keep files small):
 
-    {"e": "create",  "t": ts, "mint", "creator", "name", "symbol", "sol", "tok", "vsol", "vtok"}
-    {"e": "trade",   "t": ts, "mint", "side": "b"|"s", "trader", "sol", "tok", "vsol", "vtok"}
+    {"e": "create",  "t": ts, "mint", "creator", "name", "symbol", "sol", "tok", "vsol", "vtok", "rsol"?}
+    {"e": "trade",   "t": ts, "mint", "side": "b"|"s", "trader", "sol", "tok", "vsol", "vtok", "rsol"?}
     {"e": "migrate", "t": ts, "mint"}                      # graduated off the bonding curve
     {"e": "track",   "t": ts, "mint"}                      # trades are being recorded from here
     {"e": "untrack", "t": ts, "mint", "reason"}            # ...until here
@@ -50,7 +50,11 @@ def event_from_message(msg: dict, t: float) -> dict | None:
         "vsol": _num(msg.get("vSolInBondingCurve")),
         "vtok": _num(msg.get("vTokensInBondingCurve")),
     }
+    if msg.get("realSolReserves") is not None:
+        event["rsol"] = _num(msg.get("realSolReserves"))
     if kind == "create":
+        if event["tok"] is None:
+            event["tok"] = _num(msg.get("initialBuy"))  # PumpPortal names the dev's token amount this way
         event.update(creator=msg.get("traderPublicKey") or "", name=msg.get("name") or "", symbol=msg.get("symbol") or "")
     else:
         event.update(side="b" if kind == "buy" else "s", trader=msg.get("traderPublicKey") or "")

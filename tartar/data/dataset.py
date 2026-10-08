@@ -19,6 +19,7 @@ from typing import Callable
 import numpy as np
 
 from ..candles import Candle, CandleBook, Tick, fill_gaps
+from ..feeds.pumpportal import VIRTUAL_SOL
 from ..model.engine import FEATURES, FeatureEngine
 from ..model.global_model import z_to_class
 from .collect import load_ohlcv_file
@@ -74,6 +75,13 @@ def _hash_unit(text: str, salt: str) -> float:
     return int.from_bytes(digest, "big") / 2**64
 
 
+def _real_sol(event: dict) -> float:
+    if event.get("rsol") is not None:
+        return max(event["rsol"], 0.0)
+    vsol = event.get("vsol")
+    return max(vsol - VIRTUAL_SOL, 0.0) if vsol else 0.0
+
+
 def load_trade_tokens(raw_dir: str | Path, timeframe: int) -> list[TokenData]:
     """Group recorded events by token and rebuild each token's candles over the
     window in which its trades were completely recorded."""
@@ -127,7 +135,7 @@ def load_trade_tokens(raw_dir: str | Path, timeframe: int) -> list[TokenData]:
                 sells=int(not buy),
                 trader=trader,
                 creator=bool(trader) and trader == token.creator,
-                liquidity=event.get("vsol") or 0.0,
+                liquidity=_real_sol(event),
             )
             new_trader = bool(trader) and trader not in book.wallets
             token.ticks.setdefault(book.period(tick.ts), []).append((tick, new_trader))

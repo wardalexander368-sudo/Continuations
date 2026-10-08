@@ -22,6 +22,7 @@ from .base import Event, LiveFeed, Status
 
 WS_URL = "wss://pumpportal.fun/api/data"
 PUMP_TOTAL_SUPPLY = 1_000_000_000
+VIRTUAL_SOL = 30.0  # virtual SOL in the standard pump.fun curve
 
 
 def _float(value: Any) -> float | None:
@@ -66,8 +67,17 @@ def tick_from_message(msg: dict, now: float, creator: str | None = None) -> Tick
         sells=int(not buy),
         trader=trader,
         creator=side == "create" or (bool(creator) and trader == creator),
-        liquidity=_float(msg.get("vSolInBondingCurve")) or 0.0,
+        liquidity=real_sol(msg),
     )
+
+
+def real_sol(msg: dict) -> float:
+    """SOL actually raised in the bonding curve (the standard curve holds 30 virtual SOL on top)."""
+    real = _float(msg.get("realSolReserves"))
+    if real is not None:
+        return max(real, 0.0)
+    v_sol = _float(msg.get("vSolInBondingCurve"))
+    return max(v_sol - VIRTUAL_SOL, 0.0) if v_sol else 0.0
 
 
 @dataclass(frozen=True)
@@ -95,7 +105,7 @@ def new_token_from_message(msg: dict) -> NewToken | None:
         initial_buy_sol=_float(msg.get("solAmount")),
         creator=str(msg.get("traderPublicKey") or ""),
         pool=str(msg.get("pool") or "pump"),
-        liquidity=_float(msg.get("vSolInBondingCurve")),
+        liquidity=real_sol(msg),
     )
 
 

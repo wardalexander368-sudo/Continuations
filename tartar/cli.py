@@ -21,10 +21,11 @@ from .clock import SimClock
 from .dashboard import Dashboard
 from .feeds.geckoterminal import GeckoTerminal
 from .feeds.http import ApiError
-from .feeds.pumpportal import stream_new_tokens
+from .feeds.pumpchain import ChainCreate, ChainTrade, create_to_message, stream_program_events
+from .feeds.pumpportal import stream_new_tokens, tick_from_message
 from .feeds.synthetic import SimulatedToken, SyntheticFeed
 from .model.global_model import MODEL_DIR, GlobalModel, find_model, model_name
-from .market import SOURCES, Market, MarketInfo, MarketNotFound, open_market, pumpportal_market, short
+from .market import SOURCES, Market, MarketInfo, MarketNotFound, launch_market, open_market, short
 from .output import JsonLines, PlainPrinter, fmt_pct, fmt_price, fmt_prob, summary_lines, tally_line
 
 
@@ -94,13 +95,20 @@ def build_parser() -> argparse.ArgumentParser:
     record.add_argument("--hours", type=float, help="stop after this many hours (default: until Ctrl+C)")
     record.add_argument("--track-minutes", type=float, default=60.0, help="record each token for this long (default 60)")
     record.add_argument("--idle-minutes", type=float, default=10.0, help="stop recording a token after this long without trades")
-    record.add_argument("--max-tokens", type=int, default=1500, help="most tokens tracked at once")
+    record.add_argument("--max-tokens", type=int, default=3000, help="most tokens tracked at once")
+    record.add_argument(
+        "--source",
+        choices=("chain", "pumpportal"),
+        default="chain",
+        help="chain: Solana RPC logs (free, default); pumpportal: needs PUMPPORTAL_API_KEY funded with SOL",
+    )
     record.set_defaults(func=cmd_record)
 
     collect = sub.add_parser("collect", help="download OHLCV histories of new Solana pools (training data)")
     collect.add_argument("--out", default="data/ohlcv", help="directory (default data/ohlcv; a subfolder per timeframe)")
     collect.add_argument("-t", "--timeframe", default="1m")
     collect.add_argument("--pages", type=int, default=10, help="pages of 20 new pools (default 10)")
+    collect.add_argument("--interval", type=float, default=6.5, help="seconds between API requests (default 6.5)")
     collect.set_defaults(func=cmd_collect)
 
     simulate = sub.add_parser("simulate", help="write simulated pump.fun launches in the recorder's format")
@@ -194,23 +202,23 @@ async def cmd_watch(args) -> int:
     timeframe = parse_timeframe(args.timeframe)
     if args.next_launch:
         err = Console(stderr=True)
-        err.print("Waiting for the next pump.fun launch…")
-        token = None
-        async with aclosing(stream_new_tokens()) as launches:
-            async for token in launches:
-                break
-        if token is None:
-            raise SystemExit("PumpPortal closed the launch stream before a token appeared")
-        err.print(f"New launch: [bold]{token.symbol}[/bold] {token.name} {token.mint}")
+        err.print("Waiting for the next pump.fun launch on-chain…")
+        stream = stream_program_events()
+        create = first = None
+        async for item in stream:
+            if isinstance(item, tuple):
+                events = item[2]
+                create = next((e for e in events if isinstance(e, ChainCreate)), None)
+                if create is not None:
+                    first = next((e for e in events if isinstance(e, ChainTrade) and e.mint == create.mint), None)
+                    break
+        err.print(f"New launch: [bold]{create.symbol}[/bold] {create.name} {create.mint}")
         launched = time.time()
         initial = []
-        if token.price:
-            sol = token.initial_buy_sol or 0.0
-            initial.append(
-                Tick(launched, token.price, volume=sol, buy_volume=sol, buys=1, trader=token.creator, creator=True, liquidity=token.liquidity or 0.0)
-            )
-        market = pumpportal_market(
-            token.mint, symbol=token.symbol, name=token.name, creator=token.creator or None, launched_at=launched, initial=initial
+        if first is not None:
+            initial.append(tick_from_message(create_to_message(create, first), launched, create.creator))
+        market = launch_market(
+            create.mint, symbol=create.symbol, name=create.name, creator=create.creator, launched_at=launched, initial=initial, stream=stream
         )
     elif args.address:
         market = await open_market(
@@ -363,10 +371,11 @@ def main(argv: list[str] | None = None) -> int:
 
 
 async def cmd_record(args) -> int:
-    from .data.recorder import Recorder
+    from .data.recorder import ChainRecorder, Recorder
 
     console = Console()
-    recorder = Recorder(args.out, track_minutes=args.track_minutes, idle_minutes=args.idle_minutes, max_tokens=args.max_tokens)
+    kind = ChainRecorder if args.source == "chain" else Recorder
+    recorder = kind(args.out, track_minutes=args.track_minutes, idle_minutes=args.idle_minutes, max_tokens=args.max_tokens)
     console.print(f"Recording pump.fun launches and trades to {args.out} (Ctrl+C to stop)…")
 
     def report(stats) -> None:
@@ -384,7 +393,7 @@ async def cmd_collect(args) -> int:
     timeframe = parse_timeframe(args.timeframe)
     out = f"{args.out}/{format_timeframe(timeframe)}"
     console = Console()
-    written = await collect_ohlcv(out, timeframe, pages=args.pages, progress=console.print)
+    written = await collect_ohlcv(out, timeframe, pages=args.pages, interval=args.interval, progress=console.print)
     console.print(f"saved {written} token histories to {out}")
     return 0
 
@@ -480,10 +489,10 @@ async def cmd_train(args) -> int:
 
 async def cmd_learn(args) -> int:
     """Record without pause; retrain in a separate process so recording never stalls."""
-    from .data.recorder import Recorder
+    from .data.recorder import ChainRecorder
 
     console = Console()
-    recorder = Recorder(args.out)
+    recorder = ChainRecorder(args.out, max_tokens=3000)
     record_task = asyncio.create_task(recorder.run(on_stats=lambda st: console.print(
         f"{datetime.now():%H:%M:%S}  recording · {st.tracked} tracked · {st.total_tokens} launches · {st.trades} trades"
     )))

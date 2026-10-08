@@ -58,7 +58,7 @@ def test_simulated_tokens_follow_the_bonding_curve(sim_tokens):
     assert ticks[0].creator and ticks[0].buys == 1
     for tick in ticks:
         # pump.fun spot price is vSol / vTokens with vSol * vTokens fixed
-        assert tick.price == pytest.approx(tick.liquidity**2 / (30.0 * 1_073_000_000.0), rel=1e-9)
+        assert tick.price == pytest.approx((tick.liquidity + 30.0) ** 2 / (30.0 * 1_073_000_000.0), rel=1e-9)
     assert all(t.simulated for t in sim_tokens)
 
 
@@ -129,7 +129,7 @@ def test_engine_partial_features_and_unknowns():
     names = dict(zip(FEATURES, x))
     assert names["f"] == 0 and names["x0"] == 0
     assert math.isnan(names["creator_sell"]) and math.isnan(names["age"])
-    assert names["curve_progress"] == pytest.approx((40 - 30) / 85)
+    assert names["curve_progress"] == pytest.approx(40 / 85)
     partial = Candle(300, 1.04, 1.2, 1.04, 1.15, volume=1, trades=4, buy_volume=1)
     x = dict(zip(FEATURES, engine.features(partial, 330)))
     assert x["f"] == 0.5 and x["x0"] == pytest.approx(math.log(1.15 / 1.04) / engine.sigma)

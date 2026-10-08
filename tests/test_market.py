@@ -12,7 +12,8 @@ def gecko_token_route(mint, pools):
     return {f"/api/v2/networks/solana/tokens/{mint}/pools": {"data": pools, "included": gecko_tokens((mint, "MEME", "Meme Coin"))}}
 
 
-async def test_pump_token_on_bonding_curve_streams_from_pumpportal(make_apis):
+async def test_pump_token_on_bonding_curve_streams_from_chain(make_apis, monkeypatch):
+    monkeypatch.delenv("PUMPPORTAL_API_KEY", raising=False)
     routes = {
         **gecko_token_route(PUMP_MINT, [gecko_pool("SMALL", PUMP_MINT, reserve="10"), gecko_pool("CURVE", PUMP_MINT, reserve="9000", dex="pump-fun")]),
         f"/tokens/v1/solana/{PUMP_MINT}": [dex_pair("CURVE", PUMP_MINT, dex="pumpfun")],
@@ -20,7 +21,7 @@ async def test_pump_token_on_bonding_curve_streams_from_pumpportal(make_apis):
     }
     gecko, dex, router = make_apis(routes)
     market = await open_market(PUMP_MINT, 60, gecko=gecko, dex=dex)
-    assert market.info.source == "pumpportal" and market.info.quote == "SOL"
+    assert market.info.source == "solana-rpc" and market.info.quote == "SOL"
     assert market.info.symbol == "MEME" and market.info.pool == "CURVE"
     candles = await market.history()
     assert len(candles) == 2
@@ -56,7 +57,7 @@ async def test_pool_address_resolves_to_its_base_token(make_apis):
 async def test_unindexed_pump_token_starts_cold(make_apis):
     gecko, dex, _ = make_apis({})
     market = await open_market(PUMP_MINT, 60, gecko=gecko, dex=dex)
-    assert market.info.source == "pumpportal" and market.history is None
+    assert market.info.source == "solana-rpc" and market.history is None
     assert any("starting cold" in note for note in market.info.notes)
 
 
@@ -77,7 +78,7 @@ async def test_lookup_failures_are_reported_not_called_missing(make_apis):
 async def test_api_failures_become_notes(make_apis):
     gecko, dex, _ = make_apis({f"/tokens/v1/solana/{PUMP_MINT}": 500, f"/latest/dex/pairs/solana/{PUMP_MINT}": 500})
     market = await open_market(PUMP_MINT, 60, gecko=gecko, dex=dex)
-    assert market.info.source == "pumpportal"
+    assert market.info.source == "solana-rpc"
     assert any("DexScreener lookup failed" in note for note in market.info.notes)
 
 
@@ -96,3 +97,10 @@ async def test_rejects_non_addresses(make_apis):
     with pytest.raises(ValueError, match="not a Solana address"):
         await open_market("../../etc/passwd", 60, gecko=gecko, dex=dex)
     assert router.requests == []
+
+
+async def test_pumpportal_used_when_api_key_set(make_apis, monkeypatch):
+    monkeypatch.setenv("PUMPPORTAL_API_KEY", "key")
+    gecko, dex, _ = make_apis({})
+    market = await open_market(PUMP_MINT, 60, gecko=gecko, dex=dex)
+    assert market.info.source == "pumpportal" and market.info.domain == "trades"

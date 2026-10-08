@@ -8,8 +8,8 @@ from pathlib import Path
 from typing import Callable
 
 from ..candles import Candle
-from ..feeds.geckoterminal import GeckoTerminal
-from ..feeds.http import ApiError
+from ..feeds.geckoterminal import BASE_URL, GeckoTerminal
+from ..feeds.http import ApiError, JsonClient
 
 
 def _created_ts(created_at: str | None) -> float | None:
@@ -27,16 +27,18 @@ async def collect_ohlcv(
     *,
     pages: int = 10,
     limit: int = 1000,
+    interval: float = 6.5,
     gecko: GeckoTerminal | None = None,
     progress: Callable[[str], None] = lambda message: None,
 ) -> int:
     """Save `<out_dir>/<token>.json` for each new pool's base token. Returns files written.
 
-    The free API allows ~30 requests a minute, so expect ~2s per pool.
+    The free API's quota is tight (nominally 30 requests a minute, often less in
+    practice), so requests are spaced `interval` seconds apart.
     """
     out = Path(out_dir)
     out.mkdir(parents=True, exist_ok=True)
-    gecko = gecko or GeckoTerminal()
+    gecko = gecko or GeckoTerminal(JsonClient(BASE_URL, min_interval=interval, retries=4))
     written = 0
     try:
         for page in range(1, pages + 1):

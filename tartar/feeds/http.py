@@ -68,6 +68,9 @@ class JsonClient:
                 retry_after = response.headers.get("Retry-After", "")
                 if retry_after.isdigit():
                     await asyncio.sleep(min(float(retry_after), 60.0))
+                elif response.status_code == 429:
+                    # Per-minute quotas: wait out a good part of the window, not a few seconds.
+                    await asyncio.sleep(min(self._backoff * 10 * 2**attempt, 60.0))
                 continue
             if response.status_code >= 400:
                 raise ApiError(f"{url}: HTTP {response.status_code}: {response.text[:200]}", response.status_code)

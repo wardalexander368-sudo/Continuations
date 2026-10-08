@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import asyncio
+import os
 import re
 from dataclasses import dataclass, field
 from datetime import datetime
@@ -15,11 +16,13 @@ from .feeds.dexscreener import DexPair, DexScreener, DexScreenerFeed
 from .feeds.geckoterminal import TIMEFRAMES as GECKO_TIMEFRAMES
 from .feeds.geckoterminal import GeckoPool, GeckoTerminal, GeckoTerminalFeed
 from .feeds.http import ApiError
+from .feeds.pumpchain import PumpChainFeed
 from .feeds.pumpportal import PumpPortalFeed
 
 WSOL = "So11111111111111111111111111111111111111112"
 _ADDRESS_RE = re.compile(r"^[1-9A-HJ-NP-Za-km-z]{32,44}$")
-SOURCES = ("auto", "pumpportal", "dexscreener", "gecko")
+SOURCES = ("auto", "chain", "pumpportal", "dexscreener", "gecko")
+TRADE_SOURCES = ("solana-rpc", "pumpportal", "simulated")  # feeds that report every trade with wallets
 
 
 def short(address: str) -> str:
@@ -42,7 +45,7 @@ class MarketInfo:
     @property
     def domain(self) -> str:
         """Which kind of global model fits this data: 'trades' (pump.fun trade stream) or 'ohlcv'."""
-        return "trades" if self.source in ("pumpportal", "simulated") else "ohlcv"
+        return "trades" if self.source in TRADE_SOURCES else "ohlcv"
 
 
 @dataclass
@@ -142,7 +145,7 @@ async def _resolve(
     pump = mint.endswith("pump")
     if source == "auto":
         if pump and (pair is None or pair.dex == "pumpfun"):
-            source = "pumpportal"
+            source = "pumpportal" if os.environ.get("PUMPPORTAL_API_KEY") else "chain"
         elif pair is not None:
             source = "dexscreener"
         elif pool is not None:
@@ -157,12 +160,16 @@ async def _resolve(
 
     symbol = (pair.base_symbol if pair else "") or (pool.base_symbol if pool and pool.base_token == mint else "")
     name = (pair.base_name if pair else "") or (pool.base_name if pool and pool.base_token == mint else "")
-    quote = "SOL" if source == "pumpportal" else "USD"
+    quote = "SOL" if source in ("chain", "pumpportal") else "USD"
 
-    if source == "pumpportal":
-        feed: LiveFeed = PumpPortalFeed(mint, clock=clock)
+    if source == "chain":
+        feed: LiveFeed = PumpChainFeed(mint, clock=clock)
         if not pump:
-            notes.append("mint does not end in 'pump'; PumpPortal may not carry its trades")
+            notes.append("mint does not end in 'pump'; the pump.fun program may not trade it")
+    elif source == "pumpportal":
+        feed = PumpPortalFeed(mint, clock=clock)
+        if not os.environ.get("PUMPPORTAL_API_KEY"):
+            notes.append("PumpPortal's per-token trade stream needs PUMPPORTAL_API_KEY (funded with SOL); try --source chain")
     elif source == "dexscreener":
         if pair is None:
             raise MarketNotFound(f"DexScreener has no Solana pair for {address}")
@@ -192,6 +199,8 @@ async def _resolve(
             async def history() -> list[Candle]:
                 return await gecko.ohlcv(pool_address, timeframe, token=token, currency=currency, limit=limit)
 
+    elif pool is None and any(note.startswith("GeckoTerminal lookup failed") for note in notes):
+        notes.append("no warm-up history: the GeckoTerminal lookup failed (starting cold)")
     elif pool is None:
         notes.append("no warm-up history: GeckoTerminal has not indexed this token yet (starting cold)")
     else:
@@ -213,7 +222,7 @@ async def _resolve(
     return Market(info, feed, history, clock, closers=[gecko.aclose, dex.aclose])
 
 
-def pumpportal_market(
+def launch_market(
     mint: str,
     *,
     symbol: str = "",
@@ -221,11 +230,14 @@ def pumpportal_market(
     creator: str | None = None,
     launched_at: float | None = None,
     initial=(),
-    api_key: str | None = None,
+    stream=None,
 ) -> Market:
-    """A market for a token too new to be indexed anywhere: live PumpPortal trades only."""
+    """A market for a token too new to be indexed anywhere: live on-chain trades only.
+
+    `stream` continues an already-open program event stream so no trade is missed.
+    """
     clock = Clock()
-    feed = PumpPortalFeed(mint, clock=clock, initial=initial, api_key=api_key, creator=creator)
+    feed = PumpChainFeed(mint, clock=clock, initial=initial, creator=creator, stream=stream)
     info = MarketInfo(
         address=mint,
         symbol=symbol or short(mint),

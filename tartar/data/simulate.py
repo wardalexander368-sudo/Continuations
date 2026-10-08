@@ -66,6 +66,7 @@ def _message(kind: str, mint: str, trader: str, sol: float, tokens: float, curve
         "solAmount": sol,
         "vTokensInBondingCurve": curve.vtok,
         "vSolInBondingCurve": curve.vsol,
+        "realSolReserves": curve.vsol - CURVE_SOL,
         "marketCapSol": curve.price * SUPPLY,
         "pool": "pump",
         **extra,

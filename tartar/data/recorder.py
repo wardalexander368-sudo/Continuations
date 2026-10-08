@@ -1,10 +1,15 @@
-"""Record every new pump.fun launch and its trades from PumpPortal, for training."""
+"""Record every new pump.fun launch and its trades, for training.
+
+`ChainRecorder` reads the chain through a Solana RPC websocket (free). `Recorder`
+uses PumpPortal, whose per-token trade stream needs an API key funded with SOL.
+"""
 
 from __future__ import annotations
 
 import asyncio
 import json
 import time
+from contextlib import aclosing
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Callable
@@ -163,3 +168,78 @@ class Recorder:
         while True:
             await asyncio.sleep(30)
             on_stats(self.stats())
+
+
+class ChainRecorder(Recorder):
+    """Records launches and trades straight from the chain (Solana RPC logs; free, no API key).
+
+    The program-wide log stream carries every pump.fun trade, so tokens need no
+    per-token subscription: a token is tracked from its creation for
+    `track_minutes`, or until it goes quiet for `idle_minutes`.
+    """
+
+    def __init__(self, out_dir: str | Path, *, urls: tuple[str, ...] | None = None, **kwargs):
+        kwargs.pop("url", None)
+        kwargs.pop("api_key", None)
+        super().__init__(out_dir, **kwargs)
+        self.urls = urls
+
+    async def run(self, duration: float | None = None, on_stats: Callable[[RecorderStats], None] | None = None) -> RecorderStats:
+        try:
+            if duration is None:
+                await self._stream(on_stats)
+            else:
+                try:
+                    await asyncio.wait_for(self._stream(on_stats), duration)
+                except asyncio.TimeoutError:
+                    pass
+        finally:
+            if self.connected:
+                self._session("disconnected")
+            self.writer.write({"e": "session", "t": self.clock(), "state": "stopped"})
+            self.writer.close()
+        return self.stats()
+
+    async def _stream(self, on_stats: Callable[[RecorderStats], None] | None) -> None:
+        from ..feeds.base import Status
+        from ..feeds.pumpchain import ChainComplete, ChainCreate, ChainTrade, create_to_message, stream_program_events, trade_to_message
+
+        last_housekeeping = last_report = self.clock()
+        async with aclosing(stream_program_events(self.urls)) as stream:
+            async for item in stream:
+                now = self.clock()
+                if isinstance(item, Status):
+                    if item.level == "info":
+                        if self.connected:
+                            self._session("disconnected")
+                        self._session("connected")
+                    elif self.connected:
+                        self._session("disconnected")
+                    continue
+                _, _, events = item
+                created = {e.mint for e in events if isinstance(e, ChainCreate)}
+                first_buys = {}
+                for event in events:
+                    if isinstance(event, ChainTrade) and event.mint in created and event.mint not in first_buys:
+                        first_buys[event.mint] = event  # the creator's initial buy, folded into the create
+                for event in events:
+                    if isinstance(event, ChainCreate):
+                        self.handle(create_to_message(event, first_buys.get(event.mint)))
+                        if event.mint in self.tracked:
+                            self.writer.write({"e": "track", "t": now, "mint": event.mint})
+                    elif isinstance(event, ChainTrade):
+                        if first_buys.get(event.mint) is not event:
+                            self.handle(trade_to_message(event))
+                    elif isinstance(event, ChainComplete):
+                        self.handle({"txType": "migrate", "mint": event.mint})
+                if now - last_housekeeping >= self.housekeeping:
+                    last_housekeeping = now
+                    expired = [m for m, s in self.tracked.items() if now - s.created > self.track_seconds]
+                    idle = [m for m, s in self.tracked.items() if m not in expired and now - s.last > self.idle_seconds]
+                    self._untrack(expired, "age")
+                    self._untrack(idle, "idle")
+                    self._pending.clear()  # nothing to subscribe to: the stream carries every token
+                    self.writer.flush()
+                if on_stats is not None and now - last_report >= 30:
+                    last_report = now
+                    on_stats(self.stats())
