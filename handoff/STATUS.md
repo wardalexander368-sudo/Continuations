@@ -32,58 +32,39 @@ next. Topic documents hold the detail:
 
 ## Active
 
-* profitability session (https://claude.ai/code/session_01U4x5qUJYMStcujpyLJgQ8N), since 2026-10-09 01:00 UTC: **fast loop around Jev (paper trading) + Claude slow loop** (user request), branch `claude/fast-loop`
+* **Jev session** (started 2026-10-08 ~22:45 UTC by the profitability session at the user's request; it has `TYPESAFE_API_KEY` and full network): verify Jev's wire format, run Jev through `tartar decide`, run the fast loop live with Jev, and run the slow loop. See *Queue* item 1.
 
 ## Blockers (need the user)
 
-* **Network:** in the profitability session's environment, the proxy refuses
-  `api.mainnet-beta.solana.com` and `api.dexscreener.com` (HTTP 403), so it
-  cannot record. The user can allow them under the environment's Network
-  access setting. If your environment can reach them, **you** should run the
-  recorder (see the predictor handoff, section 14) and commit the new
-  `data/raw/*.jsonl.gz` hours to `handoff/data/raw/` (each hour is a few MB;
-  keep every file under 50 MB).
-* **TypeSafe Jev key:** the user has one. They were told to add it as
-  `TYPESAFE_API_KEY` (Network secrets or an environment variable) and to
-  allow `api.typesafe.ai`. **Never ask for the key in chat.** A new session
-  picks it up.
+* ~~Network~~: **resolved 22:35 UTC**, the user enabled full network access.
+* ~~TypeSafe Jev key~~: **resolved 22:40 UTC**, `TYPESAFE_API_KEY` is set
+  as an environment secret (new sessions see it). **Never ask for the key in chat.**
 * **Private RPC:** the public RPC misses ~7% of a typical token's trades, more
   for busy ones, and adds delay. A Helius, QuickNode or Triton websocket in
   `SOLANA_RPC_WS` fixes both. Ask the user.
 
 ## Queue (ranked by expected effect on profit)
 
-1. **More data.** Record 24 h or more (needs network). Then retrain
-   (`tartar train --raw data/raw`) and rerun `tartar profit`. Every other item
-   is limited by the 2.7 h recorded so far.
-2. **Run TypeSafe Jev through `tartar decide`** (user request). "jev" is
-   TypeSafe AI's decision model (state + typed questions → calibrated
-   probabilities), not Jito. The user chose **paper trading first**.
-   * If `TYPESAFE_API_KEY` is set and `api.typesafe.ai` is reachable: first
-     check `build_request` / `parse_probability` in `tartar/jev.py` against
-     TypeSafe's OpenAPI spec (docs.typesafe.ai). They are unverified. Then run
-     `tartar decide` (and with `--hold 600 --take-profit 100 --stop-loss 30`).
-     About 1,056 calls (validation + test launches), cached.
-   * Report test results next to the other scorers, plus Jev's latency.
-     Latency matters: the only edge found (§3.4) closes within ~0.4 s, so a
-     network round trip per decision only fits the slower +20 s decision.
-   * If Jev beats the baselines on test launches: build a live **paper
-     trading** mode (`tartar paper`?) that screens real launches, asks the
-     scorer, and logs simulated fills from the chain stream. It needs
-     network access for the Solana RPC. No real money without the user's
-     explicit go-ahead.
-   * Also record **slot numbers** with each event, so latency can be
-     measured in slots, not receive time.
+1. **Jev in the fast loop** (user request: Jev = fast loop, Claude = slow
+   loop; paper trading first). Procedure: `handoff/slow-loop.md`.
+   1. Verify `tartar/jev.py` against TypeSafe's real API (docs.typesafe.ai,
+      OpenAPI spec). `build_request` / `parse_probability` were written
+      blind. Make one real call; fix the format; keep the tests passing.
+   2. `tartar decide` with the key set: Jev is scored on the ~1,056
+      validation and test launches (cached in `data/jev-scores.jsonl`).
+      Compare with the other scorers and note Jev's latency.
+   3. Run the fast loop live with `"scorer": "jev"` (paper). It also
+      records raw data, which is queue item 2.
+   4. Slow-loop cycles every few hours (`tartar review`), one policy change
+      at a time, with the reason in the policy note and the log.
+2. **More data.** The fast loop records as it runs. After 24 h+:
+   `tartar train --raw data/raw`, `tartar profit`, `tartar decide`.
 3. **Longer holds on screened tokens** (10–90 min) once data exists.
-   Costs are fixed per trip, so longer moves have a better chance of
-   clearing them.
 4. **PumpSwap decoder** for graduated tokens (program
-   `pAMMBay6oceH9fJKBRHGP5D4bD4sWpmSwMn52FMfXEA`), so the recorder follows
-   tokens after migration.
-5. **Predictor open problems 3–5** (bands over-cover, in-candle median,
-   underconfidence): accuracy items with no measured profit effect yet.
-6. **Verify the pump.fun fee schedule** used as the 1.25%/side default in
-   `tartar/profit.py`.
+   `pAMMBay6oceH9fJKBRHGP5D4bD4sWpmSwMn52FMfXEA`).
+5. **Record slot numbers** with each event, to measure latency in slots.
+6. **Predictor open problems 3–5** (accuracy only).
+7. **Verify the pump.fun fee schedule** (1.25%/side default).
 
 ## Rules that hold across sessions
 
@@ -102,7 +83,18 @@ next. Topic documents hold the detail:
 
 ## Log (newest first)
 
-* **2026-10-09 ~00:30 UTC, profitability session:** The user's "jev" API is
+* **2026-10-08 22:45 UTC, profitability session:** Built the fast loop
+  (`tartar/fastloop.py`, `tartar fast`) and the slow loop's review
+  (`tartar/review.py`, `tartar review`, `handoff/slow-loop.md`). One
+  streaming launch-state builder now serves live and offline. Network
+  opened at 22:35 and the live fast loop ran in this container (rules
+  scorer, paper): it screened real launches and placed paper fills. The
+  user added the Jev key. At their request I started a fresh **Jev
+  session** to take over queue item 1, and stopped my own live loop so only
+  one session owns it. Earlier log times in this file were estimates; the
+  real clock was ~2 h behind them. Corrected.
+
+* **2026-10-08 ~22:15 UTC, profitability session:** The user's "jev" API is
   TypeSafe's Jev decision model; they chose paper trading first and have a
   key. Built `tartar decide` + `tartar/decide.py` (causal launch states;
   rule, flag, LightGBM and Jev scorers; validation threshold, test report)
@@ -112,7 +104,7 @@ next. Topic documents hold the detail:
   `TYPESAFE_API_KEY`. Fair flag test: −1.8% vs −5.1% per trade, still
   negative. Everything is on `main`.
 
-* **2026-10-08 ~23:40 UTC, profitability session:** Finished the scam-filter
+* **2026-10-08 ~21:45 UTC, profitability session:** Finished the scam-filter
   study (§3.5): the existing screen and a learned 20 s screen do not make
   launch buying profitable; five flags reliably mark worse trades. Fixed a
   simulator flaw: exits after a recording cut used a stale price; they are
@@ -120,7 +112,7 @@ next. Topic documents hold the detail:
   in `handoff/experiments/`. The user then asked to use their "jev" API for
   split-second decisions; I asked what it is before building anything.
 
-* **2026-10-08 ~22:45 UTC, profitability session**
+* **2026-10-08 ~21:00 UTC, profitability session**
   (https://claude.ai/code/session_01U4x5qUJYMStcujpyLJgQ8N): Added
   `tartar profit` and `handoff/profitability.md`. Result: no strategy is
   profitable at realistic costs on the recorded data. The only edge is

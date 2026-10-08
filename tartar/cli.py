@@ -724,9 +724,16 @@ async def cmd_fast(args) -> int:
                 await asyncio.sleep(0.25)
                 loop.advance(time.time())
 
+        import signal
+
         ticker = asyncio.create_task(tick())
+        running = asyncio.create_task(recorder.run(None if args.hours is None else args.hours * 3600))
+        # SIGTERM ends the run cleanly: positions are closed and a summary is journaled.
+        asyncio.get_running_loop().add_signal_handler(signal.SIGTERM, running.cancel)
         try:
-            await recorder.run(None if args.hours is None else args.hours * 3600)
+            await running
+        except asyncio.CancelledError:
+            pass
         finally:
             ticker.cancel()
             summary = loop.finish(time.time())

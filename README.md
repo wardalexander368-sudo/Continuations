@@ -143,6 +143,25 @@ On the recorded data so far, **no strategy is profitable** after costs, and
 buying where the model's expected return is highest loses heavily. See
 `handoff/profitability.md`.
 
+## Fast loop and slow loop: `tartar fast`, `tartar review`
+
+The **fast loop** decides on every new launch within seconds. It waits a
+few seconds after each launch, applies skip rules, asks a scorer (TypeSafe's
+Jev with `TYPESAFE_API_KEY`, or plain rules), and **paper**-trades a yes on
+the live bonding curve. Every decision goes to a journal. The **slow loop**
+(a person or Claude, every few hours) runs `tartar review`, which compares
+the paper results with what every screened launch would have earned, and
+edits the policy file. The fast loop reloads the policy when it changes.
+
+```bash
+tartar fast                             # live, paper only; also records raw data
+tartar fast --replay data/raw           # the same loop over recorded data
+tartar review --hours 6                 # results, counterfactuals, scorer calibration
+```
+
+The policy (`data/policy.json`) is bounded and paper-only by construction.
+See `handoff/slow-loop.md`.
+
 ## What the numbers mean
 
 * **Predicted close**: the median of the predicted distribution of the candle's
