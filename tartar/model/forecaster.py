@@ -44,6 +44,10 @@ class Forecast:
     p_flat: float
     sigma: float
     signal: float
+    # Probability the forecast itself puts inside [low, high]. Usually above `coverage`:
+    # when "no further trade" alone is likelier than `coverage`, the band is just the
+    # current price and covers that whole point mass.
+    band_mass: float | None = None
 
     @property
     def target_end(self) -> int:
@@ -77,7 +81,12 @@ class Forecast:
             "p_up": round(self.p_up, 4),
             "p_down": round(self.p_down, 4),
             "p_flat": round(self.p_flat, 4),
-            "band": {"coverage": self.coverage, "low": self.low, "high": self.high},
+            "band": {
+                "coverage": self.coverage,
+                "stated": None if self.band_mass is None else round(self.band_mass, 4),
+                "low": self.low,
+                "high": self.high,
+            },
             "volatility_pct": round(100 * self.sigma, 4),
             "signal_sigma": round(self.signal, 4),
         }
@@ -166,7 +175,7 @@ class Forecaster:
         domain: str = "ohlcv",
         launched_at: float | None = None,
         creator_known: bool = False,
-        model_prior: float = 0.8,
+        model_prior: float = 0.95,
     ):
         if not 0.5 <= coverage < 1.0:
             raise ValueError("coverage must be in [0.5, 1)")
@@ -361,6 +370,10 @@ class Forecaster:
         mix = Mixture(cont_cdf, mass, x0)
         alpha = self._alpha
         q_low, q_mid, q_high = mix.quantiles((alpha / 2, 0.5, 1 - alpha / 2))
+        if w > 0:  # point forecast: keep only the share of the median's move that held up on validation
+            q_mid = x0 + (1.0 - w + w * self.model.median_shrink(elapsed)) * (q_mid - x0)
+        cont_low, cont_high = cont_cdf(np.array([q_low, q_high]))
+        band_mass = (1.0 - mass) * float(cont_high - cont_low) + (mass if q_low <= x0 <= q_high else 0.0)
 
         q_raw = 1.0 - float(cont_cdf(np.array([0.0]))[0])
         q_up = self.calibrator.apply(q_raw, weight=remaining)
@@ -388,5 +401,6 @@ class Forecaster:
             p_flat=p_flat,
             sigma=sigma,
             signal=signal,
+            band_mass=band_mass,
         )
         return forecast, q_raw

@@ -562,7 +562,7 @@ async def cmd_train(args) -> int:
     path.with_suffix(".report.json").write_text(json.dumps(report, indent=2))
 
     table = Table(title=f"Test set: {report['test_rows']} rows from the latest-launched tokens", box=box.SIMPLE_HEAD)
-    for col in ("candle elapsed", "hit", "stated", "80% band", "band width", "error", "naive", "edge", "info gain"):
+    for col in ("candle elapsed", "hit", "stated", "80% band", "band states", "band width", "error", "naive", "edge", "info gain"):
         table.add_column(col, justify="right")
     for row in report["test_by_fraction"]:
         table.add_row(
@@ -570,6 +570,7 @@ async def cmd_train(args) -> int:
             _metric(row["hit_rate"], pct=True),
             _metric(row["avg_confidence"], pct=True),
             _metric(row["band_coverage"], pct=True),
+            _metric(row.get("band_stated"), pct=True),
             f"{row['band_width_pct']:.2f}%",
             f"{row['mae_pct']:.2f}%",
             f"{row['naive_mae_pct']:.2f}%",
@@ -579,13 +580,20 @@ async def cmd_train(args) -> int:
     console.print(table)
     live = report["live_at_open"]
     cmp = Table(title=f"Live forecaster replayed on {live['tokens']} test tokens (forecasts locked at candle open)", box=box.SIMPLE_HEAD)
-    for col in ("", "candles", "hit", "stated", "80% band", "edge vs naive"):
+    for col in ("", "candles", "hit", "stated", "80% band", "band states", "edge vs naive"):
         cmp.add_column(col, justify="right")
     for name, key in (("online only", "online_only"), ("global + online", "global_plus_online")):
         for subset in ("all", "trading"):
             t = live[key][subset]
-            cmp.add_row(f"{name} · {subset}", str(t["n"]), _metric(t["hit_rate"], pct=True), _metric(t["avg_confidence"], pct=True), _metric(t["band_coverage"], pct=True), _metric(t["edge"], signed=True))
+            cmp.add_row(
+                f"{name} · {subset}", str(t["n"]), _metric(t["hit_rate"], pct=True), _metric(t["avg_confidence"], pct=True),
+                _metric(t["band_coverage"], pct=True), _metric(t.get("band_stated"), pct=True), _metric(t["edge"], signed=True),
+            )  # fmt: skip
     console.print(cmp)
+    console.print(
+        "[dim]'band states' is the probability the forecasts put inside their 80% bands: when 'no further trade' alone "
+        "is likelier than 80%, the band is the current price and covers that whole mass, so compare coverage with it.[/dim]"
+    )
     top = ", ".join(f"{k} {v:.0%}" for k, v in list(report["feature_importance"].items())[:10])
     console.print(f"top features: {top}")
     console.print(f"saved {path} (+ .json metadata, .report.json)")

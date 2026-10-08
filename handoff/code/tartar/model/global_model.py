@@ -91,6 +91,15 @@ class GlobalModel:
     def columns(self) -> list[int]:
         return [FEATURES.index(name) for name in self.meta["features"]]
 
+    def median_shrink(self, elapsed: float) -> float:
+        """Share of the median's move away from the current price to keep as the point forecast,
+        `elapsed` into the candle (fitted on validation at training time; 1 for older models)."""
+        table = self.meta.get("median_shrink")
+        if not table:
+            return 1.0
+        fs, ss = zip(*table)
+        return float(np.interp(elapsed, fs, ss))
+
     def predict_proba(self, X: np.ndarray) -> np.ndarray:
         X = np.atleast_2d(X)[:, self.columns()]
         raw = np.asarray(self.booster.predict(X, raw_score=True)).reshape(len(X), N_CLASSES)

@@ -15,6 +15,7 @@ class Tally:
     hits: int = 0
     confidence: float = 0.0
     in_band: int = 0
+    band_mass: float = 0.0
     error: float = 0.0
     naive_error: float = 0.0
 
@@ -30,6 +31,7 @@ class Tally:
         self.hits += outcome.hit
         self.confidence += outcome.forecast.confidence
         self.in_band += outcome.in_band
+        self.band_mass += outcome.forecast.band_mass if outcome.forecast.band_mass is not None else outcome.forecast.coverage
         self.error += outcome.error
         self.naive_error += outcome.naive_error
 
@@ -44,6 +46,11 @@ class Tally:
     @property
     def coverage(self) -> float | None:
         return self.in_band / self.n if self.n else None
+
+    @property
+    def band_stated(self) -> float | None:
+        """Average probability the forecasts put inside their bands: what coverage should be."""
+        return self.band_mass / self.n if self.n else None
 
     @property
     def mae(self) -> float | None:
@@ -69,6 +76,7 @@ class Tally:
             "hit_rate": r(self.hit_rate),
             "avg_confidence": r(self.avg_confidence),
             "band_coverage": r(self.coverage),
+            "band_stated": r(self.band_stated),
             "mae_pct": r(None if self.mae is None else 100 * self.mae),
             "naive_mae_pct": r(None if self.naive_mae is None else 100 * self.naive_mae),
             "edge": r(self.edge),

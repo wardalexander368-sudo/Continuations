@@ -235,3 +235,18 @@ def test_band_control_ignores_flat_closes_it_covered():
         assert fc.locked.low <= price <= fc.locked.high
         fc.observe(Candle.flat(i * 60, price))
     assert fc._alpha == alpha
+
+
+def test_band_states_its_own_probability():
+    fc = Forecaster(60, domain="trades")
+    for i in range(30):  # a token that trades every other candle
+        fc.observe(Candle(i * 60, 1.0, 1.02, 0.98, 1.0 + 0.002 * (i % 3), volume=1, trades=4) if i % 2 else Candle.flat(i * 60, fc.history[-1].close if fc.history else 1.0))
+    f = fc.locked
+    assert f.band_mass is not None and f.band_mass >= f.coverage - 0.02
+    if f.p_flat >= f.coverage:  # the no-move mass alone exceeds 80%: the band is the price itself
+        assert f.low == f.high == f.ref_price and f.band_mass == pytest.approx(f.p_flat)
+    from tartar.scoreboard import Tally
+
+    t = Tally()
+    t.add(fc.observe(Candle.flat(f.target_start, f.ref_price)))
+    assert t.to_dict()["band_stated"] == pytest.approx(f.band_mass, abs=1e-4)

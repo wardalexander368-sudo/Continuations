@@ -95,7 +95,33 @@
     "simulated": false,
     "trained_at": "2026-10-08T20:15:45Z",
     "train_seconds": 47.4,
-    "model_bytes": 8936134
+    "model_bytes": 8936134,
+    "median_shrink": [
+      [
+        0.0,
+        0.8
+      ],
+      [
+        0.2,
+        0.8
+      ],
+      [
+        0.4,
+        1.0
+      ],
+      [
+        0.6,
+        0.7000000000000001
+      ],
+      [
+        0.8,
+        0.4
+      ],
+      [
+        0.95,
+        0.0
+      ]
+    ]
   },
   "test_rows": 16146,
   "data_capture": {
@@ -111,10 +137,11 @@
       "hit_rate": 0.8533574224631135,
       "avg_confidence": 0.8521346375755133,
       "band_coverage": 0.9186991869918699,
+      "band_stated": 0.9128449841476175,
       "band_width_pct": 19.615808790947735,
-      "mae_pct": 7.4181420860930425,
+      "mae_pct": 7.436377285777847,
       "naive_mae_pct": 7.803868054590854,
-      "edge": 0.049427535909054354,
+      "edge": 0.04709084856923229,
       "log_loss": 0.7632784342411916,
       "info_gain_bits": 0.6148786075863257
     },
@@ -124,10 +151,11 @@
       "hit_rate": 0.8943089430894309,
       "avg_confidence": 0.8980711443207507,
       "band_coverage": 0.9226136705811503,
+      "band_stated": 0.9195354183869979,
       "band_width_pct": 15.964834530702642,
-      "mae_pct": 5.56936195992817,
+      "mae_pct": 5.542370579640639,
       "naive_mae_pct": 5.758049972140852,
-      "edge": 0.032769429429340025,
+      "edge": 0.03745701991885009,
       "log_loss": 0.6836362937203458,
       "info_gain_bits": 0.5476960238307835
     },
@@ -137,6 +165,7 @@
       "hit_rate": 0.9232158988256549,
       "avg_confidence": 0.9253454933682093,
       "band_coverage": 0.9289370671484493,
+      "band_stated": 0.9278889794492778,
       "band_width_pct": 12.263836837719133,
       "mae_pct": 4.384526330447094,
       "naive_mae_pct": 4.5206556561614475,
@@ -150,10 +179,11 @@
       "hit_rate": 0.9566395663956639,
       "avg_confidence": 0.9461987797356258,
       "band_coverage": 0.948509485094851,
+      "band_stated": 0.9357192677373132,
       "band_width_pct": 8.686760459165283,
-      "mae_pct": 2.8999901308405467,
+      "mae_pct": 2.8497234336141335,
       "naive_mae_pct": 2.8385127071950995,
-      "edge": -0.021658322504462868,
+      "edge": -0.0039495072157389455,
       "log_loss": 0.5002177150626637,
       "info_gain_bits": 0.35539343929505424
     },
@@ -163,10 +193,11 @@
       "hit_rate": 0.9780186690755797,
       "avg_confidence": 0.9667453340681628,
       "band_coverage": 0.959349593495935,
+      "band_stated": 0.948549309648444,
       "band_width_pct": 5.30099828915208,
-      "mae_pct": 1.834626211635991,
+      "mae_pct": 1.8129876075903975,
       "naive_mae_pct": 1.8264792035860635,
-      "edge": -0.004460498665373125,
+      "edge": 0.007386668279155462,
       "log_loss": 0.39108947159250684,
       "info_gain_bits": 0.28383664894773075
     },
@@ -176,10 +207,11 @@
       "hit_rate": 0.992773261065944,
       "avg_confidence": 0.9860806771208629,
       "band_coverage": 0.980126467931346,
+      "band_stated": 0.9673568985424718,
       "band_width_pct": 2.070281550911421,
-      "mae_pct": 0.5906669848538857,
+      "mae_pct": 0.5735903609677848,
       "naive_mae_pct": 0.5735903609677845,
-      "edge": -0.029771462437564233,
+      "edge": -6.661338147750939e-16,
       "log_loss": 0.21622319514182206,
       "info_gain_bits": 0.18082520977682215
     }
@@ -192,6 +224,7 @@
         "hit_rate": 0.7931,
         "avg_confidence": 0.7879,
         "band_coverage": 0.9237,
+        "band_stated": 0.901,
         "mae_pct": 6.3802,
         "naive_mae_pct": 6.3802,
         "edge": 0.0
@@ -201,6 +234,7 @@
         "hit_rate": 0.4598,
         "avg_confidence": 0.4508,
         "band_coverage": 0.8505,
+        "band_stated": 0.7975,
         "mae_pct": 19.1622,
         "naive_mae_pct": 19.1622,
         "edge": 0.0
@@ -209,21 +243,23 @@
     "global_plus_online": {
       "all": {
         "n": 2214,
-        "hit_rate": 0.8659,
-        "avg_confidence": 0.8552,
-        "band_coverage": 0.9354,
-        "mae_pct": 5.9303,
+        "hit_rate": 0.8663,
+        "avg_confidence": 0.8639,
+        "band_coverage": 0.9332,
+        "band_stated": 0.9192,
+        "mae_pct": 5.9048,
         "naive_mae_pct": 6.3802,
-        "edge": 0.0705
+        "edge": 0.0745
       },
       "trading": {
         "n": 709,
         "hit_rate": 0.6897,
-        "avg_confidence": 0.6478,
-        "band_coverage": 0.8745,
-        "mae_pct": 17.7552,
+        "avg_confidence": 0.6783,
+        "band_coverage": 0.8646,
+        "band_stated": 0.8355,
+        "mae_pct": 17.6758,
         "naive_mae_pct": 19.1622,
-        "edge": 0.0734
+        "edge": 0.0776
       }
     }
   },

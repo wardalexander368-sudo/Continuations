@@ -34,7 +34,6 @@ next. Topic documents hold the detail:
 
 * **Jev session** (session_012ZRs9FUggpEkx65Rw7K7fU, live since 2026-10-08 23:44 UTC): owns the **live fast loop + slow loop** (queue item 1, steps 3–4). User chose `"scorer": "rules"` with `"shadow_jev": true` (paper). Fast loop runs `--hours 20` in this container (ends ~19:44 UTC 10-09). Tracked copies of the policy and reviews: `handoff/live/`. Branch `claude/jev-live`.
 
-* **Predictor session** (session_01UeZ4ho5y38qR1iNxnShtwF, started 23:40 UTC): queue item 6, predictor open problems 3–5 (band over-coverage, in-candle median worse than "price now", blend underconfidence). Branch `claude/solana-candle-predictor-s95qjr`. Touches `tartar/model/`, `tartar/train.py` only.
 
 ## Blockers (need the user)
 
@@ -71,7 +70,7 @@ next. Topic documents hold the detail:
 4. **PumpSwap decoder** for graduated tokens (program
    `pAMMBay6oceH9fJKBRHGP5D4bD4sWpmSwMn52FMfXEA`).
 5. **Record slot numbers** with each event, to measure latency in slots.
-6. **Predictor open problems 3–5** (accuracy only).
+6. ~~**Predictor open problems 3–5**~~ **done 00:20 UTC** (predictor doc §8.4).
 7. **Verify the pump.fun fee schedule** (1.25%/side default).
 
 ## Rules that hold across sessions
@@ -96,10 +95,25 @@ next. Topic documents hold the detail:
 ## Done
 
 * Predictor v1, scam filtering, online-model fixes (predictor session).
+* Predictor open problems 3–5 (queue item 6): band reporting, late-candle
+  median shrink, blend prior 0.95 (predictor session, on `main`, doc §8.4).
 * `tartar profit` and the profitability findings (profitability session,
   branch `claude/profitability-backtest`, on `main`).
 
 ## Log (newest first)
+
+* **2026-10-09 00:20 UTC, predictor session:** Finished queue item 6 and
+  landed it on `main` (106 tests pass). Without retraining v1:
+  - The 80% band was already calibrated against what it states. Reports now
+    show the stated probability next to coverage.
+  - The late-candle median is shrunk toward the current price, with factors
+    fitted on validation and stored in model meta (refitted at each
+    `tartar train`).
+  - The global prior in the blend is 0.95.
+
+  Live test edge is +7.5% / +7.8% (all / trading candles), and trading
+  confidence is 67.8% stated vs 69.0% hit. Nothing is half-done. Free for
+  another queue item.
 
 * **2026-10-08 23:44 UTC, Jev session:** The user confirmed option 1: rules scorer, Jev in shadow, paper only. Started `tartar fast --hours 20` (policy = defaults + `shadow_jev: true`; copy in `handoff/live/policy.json`, since `/data/` is git-ignored). Slow-loop cycles every ~3 h; reviews go to `handoff/live/reviews/`.
 

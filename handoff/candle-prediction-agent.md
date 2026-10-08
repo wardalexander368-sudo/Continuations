@@ -45,7 +45,7 @@ split by launch), plus a candle-by-candle replay of the live forecaster.
 | Repo / branch / PR | `StaticPush7217/TARTAR`. All work is on `main` (fast-forwarded from branch `claude/solana-candle-predictor-s95qjr`, PR #1) |
 | Live agent (`tartar watch`) | Works end to end against real tokens (pump.fun via chain, others via DexScreener/GeckoTerminal) |
 | Global model | **v1 installed**: `tartar/models/trades-60s.*`, trained on 3,523 real pump.fun launches (~2.7h of recording, 154k rows) |
-| Real-data result (v1, held-out later launches) | At candle open: hit 85.3% vs stated 85.2%, error **4.9% below naive**, 0.61 bits/row of information over the base rate; 80% band covers 92% (too wide). Live replay (global + online): **edge +7.0%** on all candles, +7.3% on candles where the token is trading; hit 69.0% vs stated 64.8% there (slightly underconfident) |
+| Real-data result (v1, held-out later launches) | At candle open: hit 85.3% vs stated 85.2%, error **4.7% below naive**, 0.61 bits/row of information over the base rate; the 80% band covers 91.9% and states 91.3% (calibrated; the excess over 80% is the "no further trade" mass, section 8.2). Live replay (global + online): **edge +7.5%** on all candles, **+7.8%** on candles where the token is trading; hit 69.0% vs stated 67.8% there |
 | Online-only fallback | Fixed by the online-model review (section 11.1): now calibrated on real tokens (hit 79.3% vs stated 78.8%; trading 46.0% vs 45.1%), edge 0 (was −5.3%, and 23% hit at 52% stated on trading candles) |
 | Data recording | `tartar record` running in this container into `data/raw` (not in git; snapshot in `handoff/data/raw`) |
 | Biggest open problem | The free public Solana RPC drops trade notifications (median capture 93% per token in the v1 data, much lower on busy tokens) and now closes the connection every ~30 s. Fix with a private RPC (section 12) |
@@ -331,15 +331,9 @@ dominates: whether anything else trades before the close is the first question.
     gain 0.34 → 0.61 bits; live blended edge +1.8% → +7.0%. Different test
     tokens, so treat the size of the gain as approximate, not the direction.
   - High hit rates come mostly from correctly calling "flat" on quiet tokens.
-    On candles where the token is trading, the blend is right 69% of the
-    time, stating 65%: slightly **underconfident** (the calibrator only
-    tempers, see 11.1).
-  - The band over-covers: 92–98% instead of 80%, so it is too wide, also in
-    the live replay (93.5%) where ACI should narrow it. Open problem 3.
-  - **During the candle (f ≥ 0.6) the median is slightly worse than "close =
-    price now"** (−0.4% to −3.0%), although the odds and log loss improve. The
-    median should never be worse than the current price late in a candle; open
-    problem 4.
+  - The tables above are the first v1 report. Section 8.4 fixed the three
+    weaknesses they showed (over-coverage, late-candle median, blend
+    underconfidence) without retraining; the installed report is the updated one.
   - v0 was replaced with `--force` without the keep-better comparison, because
     v1 changes σ (volatility from traded candles only, launch prior), which
     shifts the features v0 was trained on.
@@ -353,9 +347,63 @@ dominates: whether anything else trades before the close is the first question.
 ### 8.3 Blending
 
 The global and online distributions are mixed with weight
-σ(logit(0.8) + D), where D is the discounted (0.98) sum of per-candle log-score
+σ(logit(p) + D), where D is the discounted (0.98) sum of per-candle log-score
 differences, clipped to ±5. On simulated data the weight converges to ~0.96 for
-the global model.
+the global model. The prior p was 0.8 and is **0.95** since 8.4.
+
+### 8.4 Calibration and point-forecast fixes (open problems 3–5, queue item 6)
+
+Diagnosed on the v1 validation and test splits (same model; no retraining).
+Every choice was made on **validation** and checked once on test:
+
+- **Band over-coverage is not miscalibration.**
+  - At every f, on validation and test, the probability the model itself
+    puts inside its band matches the realized coverage within ~1 point (test
+    at the open: 91.3% stated, 91.9% realized).
+  - On candles that move, the central 80% of the continuous part covers
+    78–82% (its PIT is close to uniform).
+  - The excess over 80% is the "no further trade" point mass: P(still) is
+    0.79–0.94 on average, and when it exceeds 80% the band is the current
+    price itself. No honest interval that contains the most likely outcome
+    can cover less.
+  - Fix: report what the band states next to what it covers. This is
+    `Forecast.band_mass`, `Tally.band_stated`, `band_stated` in the train
+    report and replay, a "band states" column in `tartar train`, "(stated …)"
+    in plain output, and `band.stated` in JSON.
+- **The late-candle median is shrunk toward the current price.**
+  - The median left the current price on only 2–7% of late rows, mostly
+    downward. It beat "price now" on validation at f = 0.6 and 0.8, lost on
+    test, and lost on both at 0.95.
+  - `fit_median_shrink` (train.py) chooses, per f on validation, how much of
+    the median's move to keep. For v1: 0.8, 0.8, 1.0, 0.7, 0.4, 0.0 at
+    f = 0, 0.2, 0.4, 0.6, 0.8, 0.95.
+  - It is stored as `meta["median_shrink"]`, applied in `evaluate_rows` and in
+    the live forecaster (interpolated in elapsed time, scaled by the global
+    weight), and refitted at every training. The installed v1 metadata was
+    updated in place.
+  - Test edge by f, before → after: 0%: +4.9 → +4.7; 20%: +3.3 → +3.8;
+    40%: +3.0 → +3.0; 60%: −2.2 → −0.4; 80%: −0.4 → +0.7; 95%: −3.0 → 0.0.
+- **The blend's underconfidence came from the online component.**
+  - The raw global model is calibrated on trading candles (test: 67.8% hit
+    vs 68.3% stated).
+  - Mixing in the online model, which is honest but adds no point accuracy,
+    diluted it. Replays on 300 validation tokens, trading candles:
+
+| Global prior | Hit / stated | Direction log loss (bits) |
+|---|---|---|
+| 0.80 | 70.2% / 66.9% | 0.3129 |
+| 0.90 | 70.1% / 68.8% | 0.3098 |
+| **0.95** | 69.5% / 69.8% | 0.3086 |
+| 0.98 | 69.5% / 70.5% | 0.3081 |
+
+  0.98 overshoots calibration for a 0.0005-bit gain, so 0.95 was chosen.
+- **Live replay on the 300 test tokens, after all three changes** (before →
+  after):
+  - all candles: hit 86.6% vs stated 85.5% → 86.6% vs 86.4%; edge +7.0% →
+    **+7.5%**
+  - trading candles: hit 69.0% vs stated 64.8% → 69.0% vs 67.8%; edge +7.3%
+    → **+7.8%**
+  - live band (all candles): covers 93.3% and states 91.9%
 
 ## 9. Scam filtering
 
@@ -527,24 +575,16 @@ reviewers' scripts are in the session scratchpad (not persisted).
 2. **Too little real data.** v1 used ~2.7h (3,523 launches), and early stopping
    picks 54 rounds. Train on 12–48h, and check calibration per token age and
    per capture bucket.
-3. **Bands over-cover.** The raw model covers 92% at the open where 80% is the
-   target, and 93.5% in the live blend. ACI should correct the blend; it does
-   not yet.
-   - Options: conformal calibration of the global quantiles per f on
-     validation, or a faster ACI rate at the start.
-   - Note that "all candles" coverage includes flat closes that any band
-     containing the price covers.
-4. **The in-candle median is worse than "price now" at f ≥ 0.6** (−0.4% to
-   −3.0%), while odds and log loss improve.
-   - Likely cause: when P(still) < 0.5, the median comes from the continuous
-     part, whose down-skew moves it off the current price.
-   - Options: shrink the median to the current price by the point-mass
-     weight, or pick the point forecast that minimises expected absolute error
-     under the mixture. Check per f on validation.
-5. **The blend is underconfident on trading candles** (69.0% hit vs 64.8%
-   stated). The calibrator now only tempers.
-   - Options: temperature per f on validation for the global model, or let the
-     calibrator exceed 1 once the evidence count is large.
+3. ~~Bands over-cover~~ **resolved (8.4):** the band is calibrated against
+   its stated probability; the excess over 80% is the "no further trade"
+   mass. The live blend's band covers ~1.5–3 points more than it states
+   (93.3% vs 91.9%; trading 86.5% vs 83.6%), a small remaining gap.
+4. ~~In-candle median worse than "price now"~~ **mostly resolved (8.4):**
+   validation-fitted shrink; test edge at f ≥ 0.6 is now −0.4% to +0.7%
+   (was −3.0% to −0.4%). The underlying cause, a downward location bias of
+   the continuous part for very active tokens late in a candle, remains.
+5. ~~Blend underconfident on trading candles~~ **mostly resolved (8.4):**
+   global prior 0.95; 69.0% hit vs 67.8% stated (was 64.8%).
 6. **No validation of scam signals.**
    - Label tokens: rug = creator dumped + ≥80% drawdown, or price dead within
      N minutes.
@@ -576,8 +616,7 @@ reviewers' scripts are in the session scratchpad (not persisted).
    capture line in `tartar train` reads ~100%.
 2. **Record ≥24h, then train** (`tartar train --raw data/raw`). The
    keep-better check compares against v1 on the same test tokens.
-3. **Fix the point forecast and calibration of the blend** (open problems 3–5).
-   All three can be measured with `tartar train` (report) and the replay.
+3. ~~Fix the point forecast and calibration of the blend~~ (done, 8.4).
 4. **Run experiments on the real test split, and adopt only what holds:**
    - hyperparameters (leaves 15–127, min rows per leaf 50–500, lr 0.03–0.1)
    - bin edges
