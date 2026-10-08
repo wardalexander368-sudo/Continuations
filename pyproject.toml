@@ -1,0 +1,29 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "tartar"
+version = "0.1.0"
+description = "Live next-candle close predictions, with calibrated confidence, for newly launched Solana tokens"
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+    "numpy>=1.24",
+    "httpx>=0.25",
+    "websockets>=13",
+    "rich>=13",
+]
+
+[project.optional-dependencies]
+dev = ["pytest>=8", "pytest-asyncio>=0.23"]
+
+[project.scripts]
+tartar = "tartar.cli:main"
+
+[tool.setuptools.packages.find]
+include = ["tartar*"]
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+testpaths = ["tests"]
