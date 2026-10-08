@@ -160,7 +160,8 @@ def build_parser() -> argparse.ArgumentParser:
     decide.add_argument("--stop-loss", type=float, help="sell once down this many %%")
     decide.add_argument("--latency", type=float, default=1.0, help="seconds from decision to execution (default 1.0)")
     decide.add_argument("--fee", type=float, default=1.25, help="bonding-curve fee per side, in %% (default 1.25)")
-    decide.add_argument("--jev-cache", default="data/jev-scores.jsonl", help="where Jev scores are cached by mint")
+    decide.add_argument("--jev", action="store_true", help="also ask TypeSafe Jev about every validation/test (and training) launch")
+    decide.add_argument("--jev-cache", default="data/jev-answers.jsonl", help="where Jev's answers are cached by mint")
     decide.set_defaults(func=cmd_decide)
 
     fast = sub.add_parser("fast", help="the fast loop: screen each new launch, ask the scorer (rules or Jev), paper-trade it")
@@ -635,7 +636,7 @@ async def cmd_decide(args) -> int:
     import numpy as np
 
     from .data.dataset import load_trade_tokens
-    from .decide import CachedScorer, FlagScorer, FunctionScorer, LightGBMScorer, evaluate, jev_scorer_from_env, launch_states
+    from .decide import FlagScorer, FunctionScorer, LightGBMScorer, evaluate, launch_states
     from .profit import Costs, Exit, curves_for, label_round_trips
 
     console = Console()
@@ -664,11 +665,20 @@ async def cmd_decide(args) -> int:
         FlagScorer(train, labels[split == 0]),
         LightGBMScorer(train, labels[split == 0], valid, labels[split == 1]),
     ]
-    jev = jev_scorer_from_env()
-    if jev is not None:
-        scorers.append(CachedScorer(jev, args.jev_cache))
+    jev = None
+    if args.jev:
+        from .jev import FEATURES as JEV_FEATURES
+        from .jev import JevClient, JevScorer
+
+        jev = JevClient(cache=args.jev_cache)
+        console.print(f"asking Jev about {len(states)} launches (cached in {args.jev_cache})…")
+        jev.ask_many(states)
+        scorers.append(JevScorer(jev))
+        scorers.append(
+            LightGBMScorer(train, labels[split == 0], valid, labels[split == 1], extra=jev.features, extra_names=JEV_FEATURES, name="lightgbm + jev judgments")
+        )
     else:
-        console.print("[dim]TypeSafe Jev: set TYPESAFE_API_KEY (and allow api.typesafe.ai) to include it[/dim]")
+        console.print("[dim]add --jev to include TypeSafe Jev[/dim]")
     table = Table(
         title=f"Buy {args.seconds:g}s after launch, {rule.label()}, fee {args.fee:g}%/side, {args.latency:g}s latency: "
         f"{int((split == 1).sum())} validation / {int((split == 2).sum())} test launches",
@@ -689,8 +699,10 @@ async def cmd_decide(args) -> int:
         )  # fmt: skip
     console.print(table)
     console.print(f"flags that lost on train launches: {', '.join(scorers[2].bad) or 'none'}")
-    if jev is not None and getattr(jev, "latencies", None):
-        console.print(f"Jev latency: {jev.latency_summary()}")
+    if jev is not None:
+        console.print(f"Jev: {jev.latency_summary() or 'all answers from cache'}")
+        top = ", ".join(f"{k} {v:.0%}" for k, v in list(scorers[-1].importance().items())[:8])
+        console.print(f"lightgbm + jev judgments, top features: {top}")
     return 0
 
 
