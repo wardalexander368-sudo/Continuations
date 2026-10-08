@@ -35,6 +35,8 @@ next. Topic documents hold the detail:
 * **Jev session** (session_012ZRs9FUggpEkx65Rw7K7fU, live since 2026-10-08 23:44 UTC): owns the **live fast loop + slow loop** (queue item 1, steps 3–4). User chose `"scorer": "rules"` with `"shadow_jev": true` (paper). Fast loop runs `--hours 20` in this container (ends ~19:44 UTC 10-09). Tracked copies of the policy and reviews: `handoff/live/`. Branch `claude/jev-live`.
 
 
+* **Predictor session** (session_01UeZ4ho5y38qR1iNxnShtwF, started 23:55 UTC 10-08): queue items **7** (verify the fee schedule from real transactions), then **5** (record slot numbers; touches `tartar/feeds/pumpchain.py`, `tartar/data/recorder.py`, `tartar/data/rawlog.py`, backward compatible with 3-tuple streams), then **4** (PumpSwap decoder, new module). Branch `claude/solana-candle-predictor-s95qjr`.
+
 ## Blockers (need the user)
 
 * ~~Network~~: **resolved 22:35 UTC**, the user enabled full network access.
@@ -70,7 +72,7 @@ next. Topic documents hold the detail:
 4. **PumpSwap decoder** for graduated tokens (program
    `pAMMBay6oceH9fJKBRHGP5D4bD4sWpmSwMn52FMfXEA`).
 5. **Record slot numbers** with each event, to measure latency in slots.
-6. ~~**Predictor open problems 3–5**~~ **done 00:20 UTC** (predictor doc §8.4).
+6. ~~**Predictor open problems 3–5**~~ **done ~23:45 UTC 10-08** (predictor doc §8.4).
 7. **Verify the pump.fun fee schedule** (1.25%/side default).
 
 ## Rules that hold across sessions
@@ -102,7 +104,7 @@ next. Topic documents hold the detail:
 
 ## Log (newest first)
 
-* **2026-10-09 00:20 UTC, predictor session:** Finished queue item 6 and
+* **2026-10-08 ~23:45 UTC, predictor session** (times in this session's earlier entries were guesses; corrected against the clock): Finished queue item 6 and
   landed it on `main` (106 tests pass). Without retraining v1:
   - The 80% band was already calibrated against what it states. Reports now
     show the stated probability next to coverage.
@@ -117,7 +119,7 @@ next. Topic documents hold the detail:
 
 * **2026-10-08 23:44 UTC, Jev session:** The user confirmed option 1: rules scorer, Jev in shadow, paper only. Started `tartar fast --hours 20` (policy = defaults + `shadow_jev: true`; copy in `handoff/live/policy.json`, since `/data/` is git-ignored). Slow-loop cycles every ~3 h; reviews go to `handoff/live/reviews/`.
 
-* **2026-10-08 23:40 UTC, predictor session:** Back after a usage limit.
+* **2026-10-08 ~23:30 UTC, predictor session:** Back after a usage limit.
   Claimed queue item 6. The user asked this session to install the TypeSafe
   plugin too; `claude plugin install typesafe@typesafe-ai` was blocked by
   auto mode's safety check here as well (the user can run
