@@ -116,6 +116,24 @@ def review(records: list[dict], raw_dir: str | Path | None = None, timeframe: in
             without = [cf[m] for m in mints if flag not in (screens[m]["state"].get("flags") or [])]
             out["counterfactual"]["by_flag"][flag] = {"with": _stats(with_flag), "without": _stats(without)}
 
+    shadows = {r["mint"]: r["answers"] for r in records if r["e"] == "shadow" and r.get("answers")}
+    shadow_mints = [m for m in mints if m in shadows and not math.isnan(cf[m])]
+    if len(shadow_mints) >= 50:
+        y = np.array([cf[m] for m in shadow_mints])
+        out["shadow"] = {"launches": len(shadow_mints), "base_p_net_positive": float((y > 0).mean()), "questions": {}}
+        for qid in sorted({q for m in shadow_mints for q in shadows[m]}):
+            p = np.array([shadows[m].get(qid, math.nan) for m in shadow_mints])
+            ok = ~np.isnan(p)
+            edges = np.unique(np.quantile(p[ok], np.linspace(0, 1, 6)))
+            buckets = []
+            for low, high in zip(edges[:-1], edges[1:]):
+                sel = ok & (p >= low) & ((p < high) | (high == edges[-1]))
+                if sel.sum():
+                    buckets.append({"low": float(low), "high": float(high), "mean_answer": float(p[sel].mean()), "p_net_positive": float((y[sel] > 0).mean()), **_stats(y[sel])})
+            ranks = lambda v: np.argsort(np.argsort(v))  # noqa: E731
+            rho = float(np.corrcoef(ranks(p[ok]), ranks(y[ok]))[0, 1]) if ok.sum() > 2 else math.nan
+            out["shadow"]["questions"][qid] = {"spearman_with_net": rho, "buckets": buckets}
+
     scored_mints = [m for m in mints if decisions.get(m, {}).get("score") is not None]
     if len(scored_mints) >= 20 and len({decisions[m]["score"] for m in scored_mints}) > 1:
         s = np.array([decisions[m]["score"] for m in scored_mints])
@@ -183,6 +201,18 @@ def to_markdown(r: dict) -> str:
         lines += ["", f"Counterfactual exit: {cf['rule']}; {cf['launches_with_data']} launches with recorded trades.", "", "| flag | with | without |", "|---|---|---|"]
         for flag, v in cf["by_flag"].items():
             lines.append(f"| {flag} | {_pct(v['with'].get('mean'))} ({v['with'].get('n', 0)}) | {_pct(v['without'].get('mean'))} ({v['without'].get('n', 0)}) |")
+    shadow = r.get("shadow")
+    if shadow:
+        lines += [
+            "",
+            f"Jev shadow answers on {shadow['launches']} screened launches (not acted on; base P(net > 0) {100 * shadow['base_p_net_positive']:.0f}%):",
+            "",
+            "| question | Spearman with net | P(net > 0) lowest → highest answer quintile |",
+            "|---|---|---|",
+        ]
+        for qid, q in shadow["questions"].items():
+            trend = " → ".join(f"{100 * b['p_net_positive']:.0f}%" for b in q["buckets"])
+            lines.append(f"| {qid} | {q['spearman_with_net']:+.3f} | {trend} |")
     cal = r.get("calibration")
     if cal:
         lines += ["", "Scorer calibration (counterfactual outcomes by score quintile):", "", "| score | mean score | P(net > 0) | mean net | n |", "|---|---|---|---|---|"]

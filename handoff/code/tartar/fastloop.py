@@ -83,6 +83,7 @@ class Policy:
     max_open: int = 10
     max_entries_per_hour: int = 60
     daily_loss_limit_sol: float = 1.0
+    shadow_jev: bool = False  # ask Jev about every screened launch and journal its answers, without acting on them
     note: str = ""  # why the policy is what it is (written by whoever changed it)
 
     @classmethod
@@ -106,6 +107,8 @@ class Policy:
                 continue
             if not isinstance(value, (int, float)) or isinstance(value, bool) or not (low <= value <= high):
                 raise PolicyError(f"{name} = {value!r} is outside [{low}, {high}]")
+        if not isinstance(self.shadow_jev, bool):
+            raise PolicyError("shadow_jev must be true or false")
         if not all(isinstance(x, str) for x in list(self.skip_flags) + list(self.skip_levels)):
             raise PolicyError("skip_flags and skip_levels must be lists of strings")
 
@@ -266,6 +269,49 @@ class ThreadDecider:
         self.pool.shutdown(wait=False, cancel_futures=True)
 
 
+class ShadowAsker:
+    """Asks Jev every question about a launch and hands back the answers, to be
+    journaled only. In `threaded` mode the calls run in worker threads (live)."""
+
+    def __init__(self, client, threaded: bool = True, workers: int = 4, clock: Callable[[], float] = time.time):
+        self.client, self.threaded, self.clock = client, threaded, clock
+        self.pool = ThreadPoolExecutor(max_workers=workers) if threaded else None
+        self._pending: list[tuple[str, float, float, object]] = []  # (mint, screened at, started, future or result)
+
+    def _ask(self, state: dict):
+        started = time.perf_counter()
+        try:
+            return self.client.ask(state), None, time.perf_counter() - started
+        except Exception as exc:
+            return None, f"{type(exc).__name__}: {exc}"[:300], time.perf_counter() - started
+
+    def submit(self, mint: str, state: dict, now: float) -> None:
+        if self.threaded:
+            self._pending.append((mint, now, self.clock(), self.pool.submit(self._ask, state)))
+        else:
+            self._pending.append((mint, now, now, self._ask(state)))
+
+    def poll(self) -> list[dict]:
+        out, keep = [], []
+        for mint, screened, started, item in self._pending:
+            if isinstance(item, Future):
+                if not item.done():
+                    keep.append((mint, screened, started, item))
+                    continue
+                item = item.result()
+            answers, error, latency = item
+            record = {"e": "shadow", "t": screened, "mint": mint, "answers": answers, "latency_ms": round(1000 * latency, 1)}
+            if error:
+                record["error"] = error
+            out.append(record)
+        self._pending = keep
+        return out
+
+    def close(self) -> None:
+        if self.pool is not None:
+            self.pool.shutdown(wait=False, cancel_futures=True)
+
+
 # ---------------------------------------------------------------- paper broker
 
 
@@ -374,6 +420,7 @@ class FastLoop:
         decider_factory: Callable[[Scorer], object] | None = None,
         creators: CreatorIndex | None = None,
         reload_every: float = 5.0,
+        shadow_factory: Callable[[], ShadowAsker] | None = None,
     ):
         self.policy_file = policy if isinstance(policy, PolicyFile) else None
         self.policy = policy.policy if isinstance(policy, PolicyFile) else policy
@@ -389,8 +436,11 @@ class FastLoop:
         self._last_reload = -math.inf
         self.reload_every = reload_every
         self.now = 0.0
-        self.counts = {"launches": 0, "screened": 0, "skipped": 0, "asked": 0, "buys": 0, "errors": 0}
+        self.counts = {"launches": 0, "screened": 0, "skipped": 0, "asked": 0, "buys": 0, "errors": 0, "shadow": 0}
+        self.shadow_factory = shadow_factory
+        self.shadow: ShadowAsker | None = None
         self._set_scorer()
+        self._set_shadow()
 
     def _set_scorer(self) -> None:
         if self.policy.scorer == "jev":
@@ -401,6 +451,12 @@ class FastLoop:
             scorer = FunctionScorer("rules", lambda state: 1.0)
         self.scorer_name = self.policy.scorer
         self.decider = self.decider_factory(scorer) if self.policy.scorer == "jev" else InlineDecider(scorer, fixed_latency=0.0)
+
+    def _set_shadow(self) -> None:
+        if self.policy.shadow_jev and self.shadow is None:
+            if self.shadow_factory is None:
+                raise PolicyError("policy asks for Jev shadow answers but no Jev client is configured")
+            self.shadow = self.shadow_factory()
 
     def start(self, t: float) -> None:
         self.journal.write({"e": "start", "t": t, "policy": asdict(self.policy)})
@@ -440,6 +496,10 @@ class FastLoop:
             self._screen(mint, at)
         for decision in self.decider.poll(now):
             self._decide(decision)
+        if self.shadow is not None:
+            for record in self.shadow.poll():
+                self.counts["shadow"] += 1
+                self.journal.write(record)
         self.broker.advance(now)
 
     def _reload(self, now: float) -> None:
@@ -449,8 +509,12 @@ class FastLoop:
         if changed:
             old_scorer = self.policy.scorer
             self.policy = self.policy_file.policy
-            if self.policy.scorer != old_scorer:
-                self._set_scorer()
+            try:
+                if self.policy.scorer != old_scorer:
+                    self._set_scorer()
+                self._set_shadow()
+            except PolicyError as exc:
+                self.journal.write({"e": "policy_error", "t": now, "error": str(exc)})
             self.journal.write({"e": "policy", "t": now, "policy": asdict(self.policy)})
 
     def _screen(self, mint: str, at: float) -> None:
@@ -458,6 +522,8 @@ class FastLoop:
         if state is None:
             return  # closed before its screen time
         self.counts["screened"] += 1
+        if self.shadow is not None and self.policy.shadow_jev:
+            self.shadow.submit(mint, state, at)
         record = {"e": "screen", "t": at, "mint": mint, "state": _clean(state)}
         reason = self.policy.skip_reason(state)
         if reason is None:
@@ -508,6 +574,12 @@ class FastLoop:
             "e": "stop", "t": t, **self.counts, "trades": len(pnl), "pnl_sol": sum(pnl),
             "mean_ret": (sum(pnl) / len(pnl) / self.policy.size_sol) if pnl else None,
         }  # fmt: skip
+        if self.shadow is not None:
+            for record in self.shadow.poll():  # answers that came back; slower ones are dropped
+                self.counts["shadow"] += 1
+                self.journal.write(record)
+            self.shadow.close()
+        summary["shadow"] = self.counts["shadow"]
         self.journal.write(summary)
         self.journal.close()
         if isinstance(self.decider, ThreadDecider):
@@ -536,5 +608,16 @@ def jev_factory_from_env(policy_timeout: float = 2.0) -> Callable[[], Scorer]:
         from .jev import JevClient, JevScorer
 
         return JevScorer(JevClient(timeout=policy_timeout, workers=1))
+
+    return make
+
+
+def shadow_factory(cache: str | Path = "data/jev-answers.jsonl", threaded: bool = True) -> Callable[[], ShadowAsker]:
+    """Jev answering every question about every screened launch, for the journal only."""
+
+    def make() -> ShadowAsker:
+        from .jev import JevClient
+
+        return ShadowAsker(JevClient(cache=cache, workers=1), threaded=threaded)
 
     return make

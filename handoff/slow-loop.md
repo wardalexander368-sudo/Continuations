@@ -18,7 +18,10 @@ within 5 s of a change. Open positions keep the rule they were opened with.
 setsid nohup tartar fast --policy data/policy.json --journal data/journal --out data/raw --hours 20 \
   >> data/logs/fast.log 2>&1 < /dev/null &
 
-# with Jev: TYPESAFE_API_KEY in the environment, then set "scorer": "jev" in data/policy.json
+# Jev shadow mode (recommended): set "shadow_jev": true in data/policy.json.
+# Jev answers every screened launch; answers are journaled, never acted on.
+# "scorer": "jev" acts on Jev's direct answer, which lost money offline (profitability.md 3.7).
+# Credentials: TYPESAFE_API_KEY, or the cloud environment's proxy.
 ```
 
 * Only one process should hold the chain websocket per container: the fast
@@ -52,7 +55,10 @@ journal logs `policy_error`). Fields: `scorer` (`rules` | `jev`),
      or winners?
    * **scorer calibration**: does P(net > 0) rise with Jev's score? If not,
      Jev's score is noise for this question, whatever its threshold;
-   * **latency**: Jev's median / p90 per call.
+   * **latency**: Jev's median / p90 per call;
+   * **Jev shadow answers**: does any question's Spearman with the outcome
+     stay clearly above zero as launches accumulate? Only then try it as a
+     feature (`tartar decide --jev`) or a skip rule.
 3. Change **at most one thing** per cycle, and only with evidence from at
    least ~300 new screened launches:
    * the threshold, toward the hindsight best, at most halfway (it's

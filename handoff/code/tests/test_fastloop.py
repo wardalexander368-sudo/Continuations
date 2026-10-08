@@ -168,3 +168,25 @@ def test_recorder_feeds_the_fast_loop(tmp_path):
     recorder.handle({"txType": "create", "mint": "M", "traderPublicKey": "C", "solAmount": 1, "initialBuy": 1e7, "vSolInBondingCurve": 31, "vTokensInBondingCurve": 1.04e9, "name": "x", "symbol": "X"})
     assert seen and seen[0]["e"] == "create" and seen[0]["mint"] == "M"
     recorder.writer.close()
+
+
+def test_jev_shadow_answers_are_journaled_not_acted_on(raw, tmp_path):
+    from tartar.fastloop import ShadowAsker
+
+    class FakeJev:
+        def ask(self, state):
+            return {"buy": 0.9, "copycat": 0.1 if state["buyers"] else 0.8}
+
+    policy = open_policy(shadow_jev=True, skip_flags=["sniped"])
+    loop = FastLoop(policy, Journal(tmp_path / "j"), shadow_factory=lambda: ShadowAsker(FakeJev(), threaded=False))
+    summary = replay(raw, loop)
+    shadows = journal_events(tmp_path / "j", "shadow")
+    screens = journal_events(tmp_path / "j", "screen")
+    assert summary["shadow"] == len(shadows) == len(screens)  # every screened launch, skipped or not
+    decisions = journal_events(tmp_path / "j", "decision")
+    assert all(d["scorer"] == "rules" for d in decisions)  # the answers never decide anything
+    result = review(load_journal(tmp_path / "j"), raw)
+    assert set(result["shadow"]["questions"]) == {"buy", "copycat"}
+    assert "Jev shadow answers" in to_markdown(result)
+    with pytest.raises(PolicyError):
+        FastLoop(open_policy(shadow_jev=True), Journal(tmp_path / "k"))  # no Jev client configured

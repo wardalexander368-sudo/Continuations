@@ -707,7 +707,7 @@ async def cmd_decide(args) -> int:
 
 
 async def cmd_fast(args) -> int:
-    from .fastloop import FastLoop, InlineDecider, Journal, PolicyFile, ThreadDecider, jev_factory_from_env, replay
+    from .fastloop import FastLoop, InlineDecider, Journal, PolicyFile, ThreadDecider, jev_factory_from_env, replay, shadow_factory
     from .scam import CreatorIndex
 
     console = Console()
@@ -719,13 +719,17 @@ async def cmd_fast(args) -> int:
         f"skip flags {', '.join(p.skip_flags) or 'none'}, {p.exit_rule().label()}, paper size {p.size_sol:g} SOL"
     )
     if args.replay:
-        loop = FastLoop(policy, Journal(args.journal), jev_factory=jev, decider_factory=lambda scorer: InlineDecider(scorer))
+        loop = FastLoop(
+            policy, Journal(args.journal), jev_factory=jev, decider_factory=lambda scorer: InlineDecider(scorer), shadow_factory=shadow_factory(threaded=False)
+        )
         summary = replay(args.replay, loop)
     else:
         from .data.recorder import ChainRecorder
 
         creators = CreatorIndex.from_raw(args.out)
-        loop = FastLoop(policy, Journal(args.journal), jev_factory=jev, decider_factory=lambda scorer: ThreadDecider(scorer), creators=creators)
+        loop = FastLoop(
+            policy, Journal(args.journal), jev_factory=jev, decider_factory=lambda scorer: ThreadDecider(scorer), creators=creators, shadow_factory=shadow_factory()
+        )
         recorder = ChainRecorder(args.out, track_minutes=90, idle_minutes=20)
         recorder.on_event = loop.on_event
         recorder.on_status = lambda message: console.print(f"[yellow]{message}[/yellow]")
@@ -752,7 +756,8 @@ async def cmd_fast(args) -> int:
     mean = summary["mean_ret"]
     console.print(
         f"launches {summary['launches']}, screened {summary['screened']}, skipped {summary['skipped']}, asked {summary['asked']}, "
-        f"paper buys {summary['buys']}, scorer errors {summary['errors']}; closed trades {summary['trades']}, "
+        f"paper buys {summary['buys']}, scorer errors {summary['errors']}, Jev shadow answers {summary.get('shadow', 0)}; "
+        f"closed trades {summary['trades']}, "
         f"net {summary['pnl_sol']:+.3f} SOL" + (f" ({100 * mean:+.2f}% per trade)" if mean is not None else "")
     )
     console.print(f"journal in {args.journal}; review it with `tartar review`")

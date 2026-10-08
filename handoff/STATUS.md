@@ -59,8 +59,8 @@ next. Topic documents hold the detail:
       answer lost more than buying everything) **and add Jev shadow mode**:
       ask Jev about every screened launch and journal the answers without
       acting on them, so `tartar review` can test them on fresh launches.
-      Shadow mode is not built yet. The fast loop also records raw data
-      (queue item 2).
+      Shadow mode is built: set `"shadow_jev": true` in data/policy.json.
+      The fast loop also records raw data (queue item 2).
    4. Slow-loop cycles every few hours (`tartar review`), one policy change
       at a time, with the reason in the policy note and the log.
 2. **More data.** The fast loop records as it runs. After 24 h+:
@@ -88,6 +88,13 @@ next. Topic documents hold the detail:
   branch `claude/profitability-backtest`, on `main`).
 
 ## Log (newest first)
+
+* **2026-10-08 23:35 UTC, profitability session:** Added Jev shadow mode to
+  the fast loop and its review section. A replay over 5,598 recorded launches
+  shows no rank correlation between any Jev answer and outcomes. The user's
+  earlier project `AJW9991/jevtrader` (private) couldn't be attached: no
+  GitHub access from this session. They were told how to grant it (Claude
+  GitHub App on AJW9991, or add StaticPush7217 as a collaborator).
 
 * **2026-10-08 23:10 UTC, profitability session:** The user asked to use the
   TypeSafe agent skill. Installing the plugin was blocked by the permission

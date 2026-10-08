@@ -197,9 +197,15 @@ Answers are cached in `data/jev-answers.jsonl` (not in git).
 what TypeSafe's own docs warn about: it's built for common-sense judgments,
 not market forecasting, and must be validated in the target domain. The name
 judgments carry a weak signal that could matter only if something else
-supplies most of the edge. Next for Jev: **shadow mode** in the fast loop.
-Ask about every screened live launch, journal the answers without acting on
-them, and let `tartar review` measure them out of sample on fresh launches.
+supplies most of the edge.
+
+**Shadow mode** (`"shadow_jev": true` in the policy) now asks Jev every
+question about every screened launch and journals the answers without
+acting on them. `tartar review` reports each question's rank correlation
+with the outcome and P(net > 0) by answer quintile. A replay over the 5,598
+recorded launches agrees with the above: Spearman between −0.03 and +0.03
+for all five questions (`buy` +0.005). Run it live to test Jev on fresh
+launches. That's the only test left that could change this conclusion.
 
 ## 4. What this means for the plan
 
