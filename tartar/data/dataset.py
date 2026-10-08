@@ -41,6 +41,9 @@ class TokenData:
     simulated: bool = False
     capture: float | None = None  # estimated share of the token's trades that were recorded
     end: float = 0.0  # when the token's recorded window ends
+    name: str = ""
+    symbol: str = ""
+    uri: str = ""
     end_reason: str = ""  # idle (untracked after no trades), migrated, interrupted (recording cut), or another untrack reason
 
 
@@ -156,7 +159,10 @@ def load_trade_tokens(raw_dir: str | Path, timeframe: int, max_gap: float = 10.0
             continue
         end, end_reason = min(ends)
         events = [create] + sorted((e for e in trades.get(mint, ()) if start <= e["t"] < end), key=lambda e: e["t"])
-        token = TokenData(mint, start, create.get("creator") or "", end=end, end_reason=end_reason)
+        token = TokenData(
+            mint, start, create.get("creator") or "", end=end, end_reason=end_reason,
+            name=create.get("name") or "", symbol=create.get("symbol") or "", uri=create.get("uri") or "",
+        )  # fmt: skip
         token.capture = capture_rate(
             (e.get("sol") or 0.0, e["e"] == "create" or e.get("side") == "b", e.get("rsol"), e["vsol"]) for e in events if e.get("vsol")
         )

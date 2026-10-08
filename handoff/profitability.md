@@ -138,6 +138,31 @@ dropped (§2). Script: `handoff/experiments/screen_launches.py`.
   end at a recording cut (the second run's disconnects), so few holds of
   10 minutes or more can be scored.
 
+### 3.6 `tartar decide`: buy-or-skip scorers at +20 s (fair comparison)
+
+`tartar/decide.py` builds each launch's state 20 s after it is seen (causal,
+as in §3.5). Every scorer picks its threshold on validation launches and is
+reported on test launches. The flag rule now picks its flags on **training
+launches only**; the hand-picked five in §3.5 were chosen on valid + test,
+so they can't be graded fairly there.
+
+| Exit | Buy every launch | `--next-launch` screen | Skip flags that lost on train | LightGBM screen |
+|---|---|---|---|---|
+| hold 180 s | −5.1% (488) | −4.7% (22) | **−1.8%** (150; CI −5.8 … +4.7%) | −0.6% (27; CI −28 … +30%) |
+| hold 60 s | −6.2% (528) | −2.6% (23) | −6.2% (273) | −16.8% (19) |
+| hold 600 s, TP +100%, SL −30% | −9.3% (244) | −6.3% (14) | **−1.1%** (63; CI −10.5 … +9.3%) | −5.6% (94) |
+
+Skipping flagged launches roughly halves the loss but is not profitable. The
+flags it picks change with the exit rule (always `concentrated`, `sniped` or
+`dev_bag`), which says part of the selection is noise.
+
+**TypeSafe Jev** (the user's decision API) plugs in as one more scorer
+(`tartar/jev.py`): the launch state goes in with a yes/no question, "will
+this beat the ~3.5% round-trip cost?". Scores are cached by mint in
+`data/jev-scores.jsonl`, and per-call latency is reported. Its request format
+is **unverified** (docs unreachable from this session); see the module
+docstring.
+
 ## 4. What this means for the plan
 
 1. **Don't trade the current predictions.** The confidence is honest about

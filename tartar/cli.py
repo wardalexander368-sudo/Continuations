@@ -1,4 +1,4 @@
-"""Command line: tartar watch | new | backtest | demo | resolve | record | collect | simulate | train | profit."""
+"""Command line: tartar watch | new | backtest | demo | resolve | record | collect | simulate | train | profit | decide."""
 
 from __future__ import annotations
 
@@ -151,6 +151,17 @@ def build_parser() -> argparse.ArgumentParser:
     profit.add_argument("--latency", type=float, default=1.0, help="seconds from decision to execution (default 1.0)")
     profit.add_argument("--json", help="also write the results to this file")
     profit.set_defaults(func=cmd_profit)
+
+    decide = sub.add_parser("decide", help="buy-or-skip scorers for new launches (rules, LightGBM, TypeSafe Jev), judged by net SOL")
+    decide.add_argument("--raw", default="data/raw", help="raw trade logs from `tartar record` (default data/raw)")
+    decide.add_argument("--seconds", type=float, default=20.0, help="decide this long after a launch is seen (default 20)")
+    decide.add_argument("--hold", type=float, default=180.0, help="seconds to hold (default 180)")
+    decide.add_argument("--take-profit", type=float, help="sell once up this many %%")
+    decide.add_argument("--stop-loss", type=float, help="sell once down this many %%")
+    decide.add_argument("--latency", type=float, default=1.0, help="seconds from decision to execution (default 1.0)")
+    decide.add_argument("--fee", type=float, default=1.25, help="bonding-curve fee per side, in %% (default 1.25)")
+    decide.add_argument("--jev-cache", default="data/jev-scores.jsonl", help="where Jev scores are cached by mint")
+    decide.set_defaults(func=cmd_decide)
 
     learn = sub.add_parser("learn", help="record continuously and retrain the global model on a schedule")
     learn.add_argument("--out", default="data/raw", help="directory for raw logs (default data/raw)")
@@ -601,6 +612,69 @@ async def cmd_profit(args) -> int:
         console.print("[yellow]no strategy is reliably profitable on the test launches at these costs[/yellow]")
     if args.json:
         Path(args.json).write_text(json.dumps({"costs": costs.__dict__, "results": rows}, indent=2))
+    return 0
+
+
+async def cmd_decide(args) -> int:
+    import numpy as np
+
+    from .data.dataset import load_trade_tokens
+    from .decide import CachedScorer, FlagScorer, FunctionScorer, LightGBMScorer, evaluate, jev_scorer_from_env, launch_states
+    from .profit import Costs, Exit, curves_for, label_round_trips
+
+    console = Console()
+    costs = Costs(fee=args.fee / 100, latency=args.latency)
+    rule = Exit(
+        args.hold,
+        None if args.take_profit is None else args.take_profit / 100,
+        None if args.stop_loss is None else args.stop_loss / 100,
+    )
+    console.print("loading trade data…")
+    tokens = load_trade_tokens(args.raw, 60)
+    if len(tokens) < 50:
+        raise SystemExit(f"only {len(tokens)} usable tokens; record more data first")
+    curves = curves_for(tokens)
+    states = launch_states(tokens, curves, args.seconds)
+    n = len(states)
+    split = np.where(np.arange(n) < 0.7 * n, 0, np.where(np.arange(n) < 0.85 * n, 1, 2))  # states are in launch order
+    token = np.array([s["token"] for s in states])
+    when = np.array([s["decide_at"] for s in states])
+    labels = label_round_trips(curves, token, when, costs, rule)
+    train = [s for s, p in zip(states, split) if p == 0]
+    valid = [s for s, p in zip(states, split) if p == 1]
+    scorers = [
+        FunctionScorer("buy every launch", lambda s: 1.0),
+        FunctionScorer("pass the --next-launch screen", lambda s: float(s["buyers"] >= 3 and s["risk"] not in ("danger", "scam"))),
+        FlagScorer(train, labels[split == 0]),
+        LightGBMScorer(train, labels[split == 0], valid, labels[split == 1]),
+    ]
+    jev = jev_scorer_from_env()
+    if jev is not None:
+        scorers.append(CachedScorer(jev, args.jev_cache))
+    else:
+        console.print("[dim]TypeSafe Jev: set TYPESAFE_API_KEY (and allow api.typesafe.ai) to include it[/dim]")
+    table = Table(
+        title=f"Buy {args.seconds:g}s after launch, {rule.label()}, fee {args.fee:g}%/side, {args.latency:g}s latency: "
+        f"{int((split == 1).sum())} validation / {int((split == 2).sum())} test launches",
+        box=box.SIMPLE_HEAD,
+    )
+    for col in ("scorer", "kept", "valid mean", "test trades", "test mean", "test 90% CI", "test SOL"):
+        table.add_column(col, justify="left" if col == "scorer" else "right", no_wrap=True)
+    for scorer in scorers:
+        r = evaluate(scorer, states, split, curves, costs, rule)
+        if r["threshold"] is None:
+            table.add_row(scorer.name, "—", "—", "0", "—", "—", "—")
+            continue
+        v, t = r["valid"], r["test"]
+        table.add_row(
+            scorer.name, f"{100 * r['kept_share_valid']:.0f}%", _metric(v["mean_ret"], signed=True), str(t["trades"]),
+            _metric(t["mean_ret"], signed=True) if t["trades"] else "—",
+            f"{100 * t['ci_low']:+.1f}% … {100 * t['ci_high']:+.1f}%" if t["trades"] else "—", f"{t['total_sol']:+.3f}",
+        )  # fmt: skip
+    console.print(table)
+    console.print(f"flags that lost on train launches: {', '.join(scorers[2].bad) or 'none'}")
+    if jev is not None and getattr(jev, "latencies", None):
+        console.print(f"Jev latency: {jev.latency_summary()}")
     return 0
 
 

@@ -32,7 +32,7 @@ next. Topic documents hold the detail:
 
 ## Active
 
-* profitability session (https://claude.ai/code/session_01U4x5qUJYMStcujpyLJgQ8N), since 2026-10-08 23:40 UTC: **fast execution path with the user's "jev" API** (asked the user which service it is; waiting). Nothing written yet.
+_(nobody)_ The profitability session's last task (Jev harness) is landed on `main`; see the log.
 
 ## Blockers (need the user)
 
@@ -43,6 +43,10 @@ next. Topic documents hold the detail:
   recorder (see the predictor handoff, section 14) and commit the new
   `data/raw/*.jsonl.gz` hours to `handoff/data/raw/` (each hour is a few MB;
   keep every file under 50 MB).
+* **TypeSafe Jev key:** the user has one. They were told to add it as
+  `TYPESAFE_API_KEY` (Network secrets or an environment variable) and to
+  allow `api.typesafe.ai`. **Never ask for the key in chat.** A new session
+  picks it up.
 * **Private RPC:** the public RPC misses ~7% of a typical token's trades, more
   for busy ones, and adds delay. A Helius, QuickNode or Triton websocket in
   `SOLANA_RPC_WS` fixes both. Ask the user.
@@ -52,12 +56,24 @@ next. Topic documents hold the detail:
 1. **More data.** Record 24 h or more (needs network). Then retrain
    (`tartar train --raw data/raw`) and rerun `tartar profit`. Every other item
    is limited by the 2.7 h recorded so far.
-2. **Fast execution (user request, 23:35 UTC).** The user has a "jev" API
-   (being clarified; maybe Jito) for split-second decisions. Only same-block
-   or next-slot entries showed an edge (`profitability.md` §3.4). First
-   record **slot numbers** with each event so latency can be measured in
-   slots, not receive time. Then a paper-trading mode that logs live
-   decisions with simulated fills, before any real money.
+2. **Run TypeSafe Jev through `tartar decide`** (user request). "jev" is
+   TypeSafe AI's decision model (state + typed questions → calibrated
+   probabilities), not Jito. The user chose **paper trading first**.
+   * If `TYPESAFE_API_KEY` is set and `api.typesafe.ai` is reachable: first
+     check `build_request` / `parse_probability` in `tartar/jev.py` against
+     TypeSafe's OpenAPI spec (docs.typesafe.ai). They are unverified. Then run
+     `tartar decide` (and with `--hold 600 --take-profit 100 --stop-loss 30`).
+     About 1,056 calls (validation + test launches), cached.
+   * Report test results next to the other scorers, plus Jev's latency.
+     Latency matters: the only edge found (§3.4) closes within ~0.4 s, so a
+     network round trip per decision only fits the slower +20 s decision.
+   * If Jev beats the baselines on test launches: build a live **paper
+     trading** mode (`tartar paper`?) that screens real launches, asks the
+     scorer, and logs simulated fills from the chain stream. It needs
+     network access for the Solana RPC. No real money without the user's
+     explicit go-ahead.
+   * Also record **slot numbers** with each event, so latency can be
+     measured in slots, not receive time.
 3. **Longer holds on screened tokens** (10–90 min) once data exists.
    Costs are fixed per trip, so longer moves have a better chance of
    clearing them.
@@ -85,6 +101,16 @@ next. Topic documents hold the detail:
   branch `claude/profitability-backtest`, on `main`).
 
 ## Log (newest first)
+
+* **2026-10-09 ~00:30 UTC, profitability session:** The user's "jev" API is
+  TypeSafe's Jev decision model; they chose paper trading first and have a
+  key. Built `tartar decide` + `tartar/decide.py` (causal launch states;
+  rule, flag, LightGBM and Jev scorers; validation threshold, test report)
+  and `tartar/jev.py`. Could not verify Jev's request format: docs and
+  api.typesafe.ai are unreachable here, and an SDK download was refused by
+  the permission classifier. Told the user to store the key as
+  `TYPESAFE_API_KEY`. Fair flag test: −1.8% vs −5.1% per trade, still
+  negative. Everything is on `main`.
 
 * **2026-10-08 ~23:40 UTC, profitability session:** Finished the scam-filter
   study (§3.5): the existing screen and a learned 20 s screen do not make
