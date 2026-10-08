@@ -32,7 +32,7 @@ next. Topic documents hold the detail:
 
 ## Active
 
-_(nobody)_ The profitability session's last task (Jev harness) is landed on `main`; see the log.
+* profitability session (https://claude.ai/code/session_01U4x5qUJYMStcujpyLJgQ8N), since 2026-10-09 01:00 UTC: **fast loop around Jev (paper trading) + Claude slow loop** (user request), branch `claude/fast-loop`
 
 ## Blockers (need the user)
 
