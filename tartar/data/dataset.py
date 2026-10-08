@@ -58,6 +58,7 @@ class Dataset:
     weight: np.ndarray
     token: np.ndarray  # index into tokens
     tokens: list[TokenData]
+    time: np.ndarray = field(default_factory=lambda: np.zeros(0))  # moment the row's prediction is made (unix s)
     simulated: bool = False
 
     def __len__(self) -> int:
@@ -294,13 +295,14 @@ def build_dataset(
                 for key, value in (
                     ("z", z), ("moved", moved), ("f", f), ("x0", math.log(price / ref) / sigma), ("sigma", sigma),
                     ("ref", ref), ("price", price), ("close", nxt.close), ("weight", weight), ("token", index),
+                    ("time", now),
                 ):  # fmt: skip
                     cols[key].append(value)
         progress(index + 1, len(tokens))
     X = np.vstack(xs) if xs else np.zeros((0, len(FEATURES)))
     arr = {k: np.asarray(v) for k, v in cols.items()}
     if not xs:
-        arr = {k: np.zeros(0) for k in ("z", "moved", "f", "x0", "sigma", "ref", "price", "close", "weight", "token")}
+        arr = {k: np.zeros(0) for k in ("z", "moved", "f", "x0", "sigma", "ref", "price", "close", "weight", "token", "time")}
     return Dataset(
         timeframe=timeframe,
         domain=domain,
@@ -316,5 +318,6 @@ def build_dataset(
         weight=arr["weight"],
         token=arr["token"].astype(int),
         tokens=tokens,
+        time=arr["time"],
         simulated=any(t.simulated for t in tokens),
     )

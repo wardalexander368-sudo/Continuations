@@ -1,4 +1,4 @@
-"""Command line: tartar watch | new | backtest | demo | resolve | record | collect | simulate | train."""
+"""Command line: tartar watch | new | backtest | demo | resolve | record | collect | simulate | train | profit."""
 
 from __future__ import annotations
 
@@ -141,6 +141,16 @@ def build_parser() -> argparse.ArgumentParser:
     train.add_argument("--replay-tokens", type=int, default=300, help="test tokens to replay through the live forecaster")
     train.add_argument("--force", action="store_true", help="replace the installed model even if it scores better")
     train.set_defaults(func=cmd_train)
+
+    profit = sub.add_parser("profit", help="net SOL of trading strategies on recorded launches, after fees, slippage and latency")
+    profit.add_argument("--raw", default="data/raw", help="raw trade logs from `tartar record` (default data/raw)")
+    profit.add_argument("-t", "--timeframe", default="1m")
+    profit.add_argument("--size", type=float, default=0.1, help="SOL per entry (default 0.1)")
+    profit.add_argument("--fee", type=float, default=1.25, help="bonding-curve fee per side, in %% (default 1.25)")
+    profit.add_argument("--network", type=float, default=0.0002, help="SOL per transaction, base + priority fee (default 0.0002)")
+    profit.add_argument("--latency", type=float, default=1.0, help="seconds from decision to execution (default 1.0)")
+    profit.add_argument("--json", help="also write the results to this file")
+    profit.set_defaults(func=cmd_profit)
 
     learn = sub.add_parser("learn", help="record continuously and retrain the global model on a schedule")
     learn.add_argument("--out", default="data/raw", help="directory for raw logs (default data/raw)")
@@ -551,6 +561,46 @@ async def cmd_train(args) -> int:
     top = ", ".join(f"{k} {v:.0%}" for k, v in list(report["feature_importance"].items())[:10])
     console.print(f"top features: {top}")
     console.print(f"saved {path} (+ .json metadata, .report.json)")
+    return 0
+
+
+async def cmd_profit(args) -> int:
+    import json
+
+    from .data.dataset import build_dataset, load_trade_tokens
+    from .profit import Costs, profit_report
+
+    timeframe = parse_timeframe(args.timeframe)
+    console = Console()
+    costs = Costs(size_sol=args.size, fee=args.fee / 100, network_sol=args.network, latency=args.latency)
+    console.print("loading trade data…")
+    tokens = load_trade_tokens(args.raw, timeframe)
+    if len(tokens) < 20:
+        raise SystemExit(f"only {len(tokens)} usable tokens; record more data first")
+    ds = build_dataset(tokens, timeframe, "trades")
+    model = find_model("trades", timeframe, allow_simulated=ds.simulated)
+    rows = profit_report(ds, costs, model)
+    title = (
+        f"Net results per trade: {args.size:g} SOL, fee {args.fee:g}%/side, {args.network:g} SOL/tx, "
+        f"{args.latency:g}s latency ({len(tokens)} launches; validation = earlier, test = latest)"
+    )
+    table = Table(title=title, box=box.SIMPLE_HEAD)
+    for col in ("strategy", "exit", "split", "trades", "mean", "90% CI (by token)", "win", "total SOL"):
+        table.add_column(col, justify="left" if col in ("strategy", "exit") else "right", no_wrap=True)
+    for r in rows:
+        ci = f"{100 * r['ci_low']:+.1f}% … {100 * r['ci_high']:+.1f}%" if r["trades"] else "—"
+        table.add_row(
+            r["strategy"], r["exit"], r["split"], str(r["trades"]),
+            _metric(r["mean_ret"], signed=True) if r["trades"] else "—", ci,
+            _metric(r["win_rate"], pct=True) if r["trades"] else "—", f"{r['total_sol']:+.3f}",
+        )  # fmt: skip
+    console.print(table)
+    if any(r["split"] == "test" and r["trades"] and r["ci_low"] > 0 for r in rows):
+        console.print("a strategy's whole 90% interval is above zero on the test launches; confirm on new recordings before trusting it")
+    else:
+        console.print("[yellow]no strategy is reliably profitable on the test launches at these costs[/yellow]")
+    if args.json:
+        Path(args.json).write_text(json.dumps({"costs": costs.__dict__, "results": rows}, indent=2))
     return 0
 
 

@@ -48,6 +48,7 @@ split by launch), plus a candle-by-candle replay of the live forecaster.
 | Biggest open problem | The free public Solana RPC drops trade notifications (median capture 93% per token in the v1 data, much lower on busy tokens) and now closes the connection every ~30 s. Fix with a private RPC (section 12) |
 | Tests | 81 passing (`pytest`) |
 | Scam filtering | Built and live-tested (section 9); signals not yet validated statistically |
+| Profitability | `tartar profit` (net SOL after fees, slippage, latency). **No strategy is profitable on the recorded data**; see `handoff/profitability.md` |
 
 ## 3. Running it
 

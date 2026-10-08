@@ -125,6 +125,24 @@ Useful options:
 | `--candles N` | stop after N candles |
 | `--no-scam-check` | skip the RugCheck/mint lookups (behavioural flags still shown) |
 
+## Does it make money? `tartar profit`
+
+Accuracy is not profit. `tartar profit` replays trades on the recorded
+bonding curves with every cost charged: the pump.fun fee on both sides (1.25%
+by default), price impact on the curve, network fees, and the delay between a
+decision and its execution (1 s by default). It reports net SOL per trade for
+baseline strategies and for trading on the model's predictions, with
+thresholds chosen on earlier launches and results measured on the latest ones.
+
+```bash
+tartar profit                          # defaults: 0.1 SOL, 1.25% fee/side, 1 s latency
+tartar profit --latency 0.4 --fee 0.5  # what if execution were faster or cheaper?
+```
+
+On the recorded data so far, **no strategy is profitable** after costs, and
+buying where the model's expected return is highest loses heavily. See
+`handoff/profitability.md`.
+
 ## What the numbers mean
 
 * **Predicted close**: the median of the predicted distribution of the candle's
