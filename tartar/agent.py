@@ -98,6 +98,12 @@ class CandleAgent:
         self.static: StaticReport | None = None
         self.static_refresh = static_refresh
         self.risk_report: ScamReport | None = None
+        self._model = model
+        self._coverage = coverage
+        # Feed health: candles the feed did not fully see are never scored or learned from.
+        self.outage_from: float | None = None  # feed currently down since this time
+        self.observed_from: float | None = None  # first candle start fully seen after an outage
+        self.unobserved = 0
 
     def _emit(self, method: str, *args) -> None:
         for sink in self.sinks:
@@ -192,6 +198,7 @@ class CandleAgent:
             return self.book.add_snapshot(event.candles)
         if isinstance(event, Status):
             self._status(event.message, event.level)
+            self._feed_health(event)
         elif event is _END:
             raise FeedEnded("live feed ended")
         elif isinstance(event, Exception):
@@ -206,10 +213,46 @@ class CandleAgent:
             self.forecaster.on_tick(event)
         return len(closed)
 
+    def _feed_health(self, status: Status) -> None:
+        now = self.clock.now()
+        if status.kind == "disconnected" and self.outage_from is None:
+            self.outage_from = now
+        elif status.kind == "connected" and self.outage_from is not None:
+            # Data is complete again from the next candle boundary on.
+            self.outage_from = None
+            self.observed_from = self.book.period(now) + self.timeframe
+
+    def _seen(self, candle: Candle) -> bool:
+        if self.outage_from is not None and candle.start + self.timeframe > self.outage_from:
+            return False
+        return self.observed_from is None or candle.start >= self.observed_from
+
+    def _resync(self) -> None:
+        """After an outage, restart the forecaster the way a mid-life join starts: candle
+        history without trade detail, wallet tracking from scratch (as in training)."""
+        info = self.market.info
+        self.forecaster = Forecaster(
+            self.timeframe,
+            self._coverage,
+            model=self._model,
+            domain=info.domain,
+            launched_at=info.launched_at,
+            creator_known=False,
+        )
+        for c in self.book.closed:
+            self.forecaster.observe(Candle(c.start, c.open, c.high, c.low, c.close, volume=c.volume, trades=None))
+        self._status("feed back: resynced after an outage (candles it missed were not scored)")
+
     def _close_live(self, closed: list[Candle]) -> None:
         for candle in closed:
-            outcome = self._observe(candle, live=True)
             self.live_candles += 1
+            if not self._seen(candle):
+                self.unobserved += 1
+                if self.observed_from is not None and candle.start + self.timeframe == self.observed_from:
+                    self._resync()
+                self._emit("candle_closed", candle, None, None)
+                continue
+            outcome = self._observe(candle, live=True)
             self._emit("candle_closed", candle, outcome, self.forecaster.locked)
 
     def _wait_time(self, next_update: float) -> float:

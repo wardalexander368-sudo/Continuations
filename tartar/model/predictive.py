@@ -84,9 +84,18 @@ class Mixture:
 
     def quantiles(self, ps: Sequence[float]) -> np.ndarray:
         ps = np.asarray(ps, dtype=float)
-        lo = np.full(ps.shape, -64.0)
-        hi = np.full(ps.shape, 64.0)
-        for _ in range(48):
+        # Bracket around the current price (x0 can be hundreds of sigmas away after a rug
+        # or a pump within the candle), widening until every quantile is inside.
+        lo = np.full(ps.shape, self.x0 - 64.0)
+        hi = np.full(ps.shape, self.x0 + 64.0)
+        for step in range(12):
+            low_out = self.cdf(lo) >= ps
+            high_out = self.cdf(hi) < ps
+            if not (low_out.any() or high_out.any()):
+                break
+            lo = np.where(low_out, lo - 128.0 * 2**step, lo)
+            hi = np.where(high_out, hi + 128.0 * 2**step, hi)
+        for _ in range(64):
             mid = 0.5 * (lo + hi)
             below = self.cdf(mid) < ps
             lo = np.where(below, mid, lo)

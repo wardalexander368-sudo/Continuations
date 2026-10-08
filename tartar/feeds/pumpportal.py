@@ -148,7 +148,7 @@ class PumpPortalFeed(LiveFeed):
             try:
                 async with connect(self.url, open_timeout=15, ping_interval=20) as ws:
                     await ws.send(json.dumps({"method": "subscribeTokenTrade", "keys": [self.mint]}))
-                    yield Status("connected to PumpPortal trade stream")
+                    yield Status("connected to PumpPortal trade stream", kind="connected")
                     backoff = 1.0
                     async for raw in ws:
                         try:
@@ -166,7 +166,7 @@ class PumpPortalFeed(LiveFeed):
                         elif msg.get("message"):
                             yield Status(f"PumpPortal: {msg['message']}")
             except (OSError, WebSocketException, asyncio.TimeoutError) as exc:
-                yield Status(f"PumpPortal disconnected ({exc.__class__.__name__}: {exc}); retrying in {backoff:.0f}s", "warn")
+                yield Status(f"PumpPortal disconnected ({exc.__class__.__name__}: {exc}); retrying in {backoff:.0f}s", "warn", kind="disconnected")
             await asyncio.sleep(backoff)
             backoff = min(backoff * 2, self._max_backoff)
 

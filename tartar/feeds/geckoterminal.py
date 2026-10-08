@@ -186,7 +186,7 @@ class GeckoTerminalFeed(LiveFeed):
         token: str = "base",
         currency: str = "usd",
         poll_interval: float | None = None,
-        grace: float = 45.0,
+        grace: float = 75.0,  # its data can lag about a minute
         clock: Clock | None = None,
     ):
         if timeframe not in TIMEFRAMES:

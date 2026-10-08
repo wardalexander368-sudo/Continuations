@@ -12,6 +12,7 @@ from __future__ import annotations
 import asyncio
 import base64
 import binascii
+import bisect
 import hashlib
 import json
 import os
@@ -28,7 +29,9 @@ from ..clock import Clock
 from .base import Event, LiveFeed, Status
 
 PUMP_PROGRAM = "6EF8rrecthR5Dkzon8Nwu78hRvfCKubJ14M5uBEwF6P"
-DEFAULT_RPC_WS = ("wss://api.mainnet-beta.solana.com", "wss://solana-rpc.publicnode.com")
+# Only the official endpoint by default: publicnode's free websocket was seen silently
+# delivering a partial stream (about 60% of trades), which would corrupt candles.
+DEFAULT_RPC_WS = ("wss://api.mainnet-beta.solana.com",)
 LAMPORTS = 1e9
 TOKEN_UNITS = 1e6  # pump.fun tokens have 6 decimals
 
@@ -170,6 +173,27 @@ def events_from_logs(logs: Iterable[str]) -> list[ChainTrade | ChainCreate | Cha
     return events
 
 
+def capture_rate(trades: Iterable[tuple[float, bool, float | None, float]]) -> float | None:
+    """Share of a token's trades whose pre-trade curve reserves match some other recorded
+    trade's post-trade reserves, i.e. whose predecessor was captured.
+
+    Each item is (sol, is_buy, real_sol or None, virtual_sol). Order-insensitive:
+    RPC notifications arrive out of execution order. On the free public RPC this is
+    typically 0.6-0.75, and lower for busy tokens (the endpoint drops notifications).
+    """
+    rows = list(trades)
+    if len(rows) < 2:
+        return None
+    posts = sorted(real if real is not None else virtual for _, _, real, virtual in rows)
+    matched = 0
+    for sol, buy, real, virtual in rows:
+        after = real if real is not None else virtual
+        before = after - sol if buy else after + sol
+        i = bisect.bisect_left(posts, before - 1e-6)
+        matched += i < len(posts) and abs(posts[i] - before) <= 1e-6
+    return matched / len(rows)
+
+
 def trade_to_message(trade: ChainTrade) -> dict:
     """The trade in PumpPortal's message shape, so the rest of the pipeline treats both alike."""
     return {
@@ -206,11 +230,16 @@ async def stream_program_events(
     max_backoff: float = 30.0,
 ) -> AsyncIterator[tuple[float, str, list] | Status]:
     """Yield (receive time, signature, events) for every successful pump.fun transaction,
-    plus Status messages on (re)connection. Rotates through `urls` on failure."""
+    plus Status messages (kind connected/disconnected) on (re)connection.
+
+    After a drop it reconnects to the same endpoint; it only moves to the next of
+    `urls` after repeated failures to connect. Trades during a disconnection are
+    lost, so consumers must treat that time as unobserved."""
     urls = urls or rpc_urls()
-    attempt, backoff = 0, 1.0
+    index, failures, backoff = 0, 0, 1.0
     while True:
-        url = urls[attempt % len(urls)]
+        url = urls[index % len(urls)]
+        connected = False
         try:
             async with connect(url, open_timeout=15, ping_interval=20, ping_timeout=20, max_size=None) as ws:
                 request = {"jsonrpc": "2.0", "id": 1, "method": "logsSubscribe", "params": [{"mentions": [PUMP_PROGRAM]}, {"commitment": commitment}]}
@@ -218,8 +247,9 @@ async def stream_program_events(
                 reply = json.loads(await asyncio.wait_for(ws.recv(), 15))
                 if "error" in reply:
                     raise ConnectionError(f"logsSubscribe refused: {reply['error']}")
-                yield Status(f"connected to {url}")
-                backoff = 1.0
+                connected = True
+                failures, backoff = 0, 1.0
+                yield Status(f"connected to {url}", kind="connected")
                 while True:
                     raw = await asyncio.wait_for(ws.recv(), 60)  # pump.fun is never quiet for a minute
                     try:
@@ -232,8 +262,11 @@ async def stream_program_events(
                     if events:
                         yield time.time(), value.get("signature", ""), events
         except (OSError, WebSocketException, asyncio.TimeoutError, ConnectionError, ValueError) as exc:
-            yield Status(f"{url} disconnected ({exc.__class__.__name__}: {str(exc)[:120]}); retrying in {backoff:.0f}s", "warn")
-        attempt += 1
+            yield Status(f"{url} disconnected ({exc.__class__.__name__}: {str(exc)[:120]}); retrying in {backoff:.0f}s", "warn", kind="disconnected")
+        if not connected:
+            failures += 1
+            if failures >= 3 and len(urls) > 1:
+                index, failures = index + 1, 0
         await asyncio.sleep(backoff)
         backoff = min(backoff * 2, max_backoff)
 
@@ -279,4 +312,5 @@ class PumpChainFeed(LiveFeed):
                     if tick is not None:
                         yield tick
                 elif isinstance(event, ChainComplete) and event.mint == self.mint:
-                    yield Status("token graduated from the bonding curve; trading moves to PumpSwap", "warn")
+                    yield Status("token graduated: bonding-curve trading is over (it now trades on PumpSwap)", "warn", kind="graduated")
+                    return

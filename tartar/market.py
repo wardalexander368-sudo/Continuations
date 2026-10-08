@@ -144,8 +144,10 @@ async def _resolve(
         pool = next((p for p in pools if p.address == address), pool)
 
     pump = mint.endswith("pump")
+    curve_dexes = ("pumpfun", "pump-fun", "")
+    graduated = (pair is not None and pair.dex not in curve_dexes) or (pool is not None and pool.dex not in curve_dexes)
     if source == "auto":
-        if pump and (pair is None or pair.dex == "pumpfun"):
+        if pump and not graduated:
             source = "pumpportal" if os.environ.get("PUMPPORTAL_API_KEY") else "chain"
         elif pair is not None:
             source = "dexscreener"
@@ -180,7 +182,7 @@ async def _resolve(
             raise MarketNotFound(f"GeckoTerminal has no pool for {address}")
         token = mint if mint in (pool.base_token, pool.quote_token) else "base"
         feed = GeckoTerminalFeed(
-            gecko, pool.address, timeframe, token=token, poll_interval=poll, grace=grace or 45.0, clock=clock
+            gecko, pool.address, timeframe, token=token, poll_interval=poll, grace=grace or 75.0, clock=clock
         )
         notes.append("GeckoTerminal candles can lag up to ~1 minute; 5m+ timeframes suit this source best")
     if grace is not None:

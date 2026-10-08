@@ -27,7 +27,7 @@ from .feeds.pumpportal import stream_new_tokens
 from .scam import CreatorIndex, assess, static_checks, static_checks_many
 from .screen import next_clean_launch
 from .feeds.synthetic import SimulatedToken, SyntheticFeed
-from .model.global_model import MODEL_DIR, GlobalModel, find_model, model_name
+from .model.global_model import MODEL_DIR, GlobalModel, find_model, model_dir, model_name
 from .market import SOURCES, Market, MarketInfo, MarketNotFound, launch_market, open_market, short
 from .output import JsonLines, PlainPrinter, fmt_pct, fmt_price, fmt_prob, summary_lines, tally_line
 
@@ -223,6 +223,8 @@ async def _run_agent(market: Market, args, timeframe: int, creators: CreatorInde
     )
     try:
         await agent.run(max_candles=args.candles)
+    except FeedEnded:
+        Console(stderr=True).print(f"The feed ended: {agent.status_message}")
     finally:
         await market.aclose()
         for sink in sinks:
@@ -293,10 +295,7 @@ async def cmd_demo(args) -> int:
         launched_at=token.created,
         creator=token.creator,
     )
-    try:
-        await _run_agent(Market(info, SyntheticFeed(token, clock), load_history, clock), args, timeframe)
-    except FeedEnded:
-        Console(stderr=True).print("The simulated token stopped trading (died or graduated). Run the demo again for another.")
+    await _run_agent(Market(info, SyntheticFeed(token, clock), load_history, clock), args, timeframe)
     return 0
 
 
@@ -478,6 +477,8 @@ async def cmd_train(args) -> int:
     from pathlib import Path
 
     from .data.dataset import build_dataset, load_ohlcv_tokens, load_trade_tokens
+    import numpy as np
+
     from .train import evaluate, test_log_loss, train_global
 
     timeframe = parse_timeframe(args.timeframe)
@@ -489,6 +490,12 @@ async def cmd_train(args) -> int:
         raise SystemExit(f"only {len(tokens)} usable tokens; record more data first")
     ds = build_dataset(tokens, timeframe, domain)
     console.print(f"{len(tokens)} tokens → {len(ds)} rows")
+    captures = [t.capture for t in tokens if t.capture is not None]
+    if captures and float(np.median(captures)) < 0.9:
+        console.print(
+            f"[yellow]data capture: a median {float(np.median(captures)):.0%} of each token's trades were recorded "
+            "(the free public RPC drops notifications; set SOLANA_RPC_WS to a private endpoint for complete data)[/yellow]"
+        )
     if len(tokens) < 500:
         console.print("[yellow]fewer than 500 tokens: expect noisy estimates; keep recording for a better model[/yellow]")
     if ds.simulated and args.out is None:
@@ -496,13 +503,12 @@ async def cmd_train(args) -> int:
 
     model = train_global(ds, rounds=args.rounds, log=console.print)
     report = evaluate(model, ds, replay_tokens=args.replay_tokens, log=console.print)
-    out_dir = Path(args.out) if args.out else MODEL_DIR
-    target = out_dir / model_name(domain, timeframe)
+    target = model_dir(args.out) / model_name(domain, timeframe)
     report["test_log_loss"] = new_loss = test_log_loss(model, ds)
     if target.with_suffix(".txt").exists() and not args.force:
         try:
             old_loss = test_log_loss(GlobalModel.load(target), ds)
-        except (ValueError, OSError):
+        except Exception:  # unreadable or incompatible: replace it
             old_loss = None
         if old_loss is not None and old_loss <= new_loss:
             console.print(

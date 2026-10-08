@@ -19,6 +19,7 @@ from typing import Callable
 import numpy as np
 
 from ..candles import Candle, CandleBook, Tick, fill_gaps
+from ..feeds.pumpchain import capture_rate
 from ..feeds.pumpportal import VIRTUAL_SOL
 from ..model.engine import FEATURES, FeatureEngine
 from ..model.global_model import z_to_class
@@ -38,6 +39,7 @@ class TokenData:
     # ticks grouped by candle start (trade data only)
     ticks: dict[int, list[tuple[Tick, bool]]] = field(default_factory=dict)
     simulated: bool = False
+    capture: float | None = None  # estimated share of the token's trades that were recorded
 
 
 @dataclass
@@ -89,35 +91,49 @@ def load_trade_tokens(raw_dir: str | Path, timeframe: int) -> list[TokenData]:
     creates: dict[str, dict] = {}
     trades: dict[str, list[dict]] = defaultdict(list)
     untracked: dict[str, float] = {}
+    tracked: dict[str, float] = {}
     interruptions: list[float] = []
     last_seen = 0.0
     simulated = False
-    for event in read_events(raw_files(raw_dir)):
+    started = False
+    for event in sorted(read_events(raw_files(raw_dir)), key=lambda e: e["t"]):
         kind = event["e"]
+        if kind == "session":
+            state = event.get("state")
+            if state in ("disconnected", "stopped"):
+                interruptions.append(event["t"])
+            elif state == "connected" and started:
+                # A (re)connection means data stopped somewhere before it: after a clean
+                # stop that is already cut; after a kill, cut where the data ends.
+                interruptions.append(last_seen)
+            started = True
+            simulated = simulated or bool(event.get("simulated"))
         last_seen = max(last_seen, event["t"])
         if kind == "create":
             creates[event["mint"]] = event
         elif kind == "trade":
             trades[event["mint"]].append(event)
+        elif kind == "track":
+            tracked.setdefault(event["mint"], event["t"])
         elif kind in ("untrack", "migrate"):
-            untracked.setdefault(event["mint"], event["t"])
-            untracked[event["mint"]] = min(untracked[event["mint"]], event["t"])
-        elif kind == "session":
-            if event.get("state") in ("disconnected", "stopped"):
-                interruptions.append(event["t"])
-            simulated = simulated or bool(event.get("simulated"))
+            untracked[event["mint"]] = min(untracked.get(event["mint"], event["t"]), event["t"])
     interruptions.append(last_seen)  # a recording that was killed has no "stopped" event
     interruptions.sort()
 
     tokens = []
     for mint, create in creates.items():
         start = create["t"]
+        if mint not in tracked or tracked[mint] - start > 2.0:
+            continue  # trades were not recorded from the launch on
         ends = [t for t in interruptions if t > start][:1] + ([untracked[mint]] if mint in untracked else [])
         if not ends:
             continue
         end = min(ends)
         events = [create] + sorted((e for e in trades.get(mint, ()) if start <= e["t"] < end), key=lambda e: e["t"])
         token = TokenData(mint, start, create.get("creator") or "")
+        token.capture = capture_rate(
+            (e.get("sol") or 0.0, e["e"] == "create" or e.get("side") == "b", e.get("rsol"), e["vsol"]) for e in events if e.get("vsol")
+        )
         book = CandleBook(timeframe, grace=0.0)
         for event in events:
             price = event_price(event)

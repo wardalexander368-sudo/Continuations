@@ -16,6 +16,8 @@ from .global_model import BinnedDistribution, GlobalModel
 from .predictive import DirectionCalibrator, Mixture, ResidualDistribution, logit, sigmoid
 from .volatility import ActivityEstimator
 
+LAST_TRAINED_FRACTION = 0.95  # latest point in a candle the global model is trained on (dataset.FRACTIONS)
+
 
 @dataclass(frozen=True)
 class Forecast:
@@ -315,6 +317,11 @@ class Forecaster:
         scale = math.sqrt(remaining)
         center = x0 + signal * remaining
         online_mass = self.activity.no_trade_prob(remaining, active)
+        if g_mass is not None and elapsed > LAST_TRAINED_FRACTION:
+            # Beyond the last trained snapshot, the chance of another move shrinks with the time left.
+            g_mass = g_mass ** (remaining / (1.0 - LAST_TRAINED_FRACTION))
+        if remaining <= 1e-9:
+            online_mass, g_mass = 1.0, (None if g_mass is None else 1.0)  # no time left: the close is the price now
 
         def online_cdf(x: np.ndarray) -> np.ndarray:
             return self.residuals.cdf_many(x - center, scale)

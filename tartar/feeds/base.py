@@ -20,6 +20,9 @@ class Snapshot:
 class Status:
     message: str
     level: str = "info"  # info | warn | error
+    # Machine-readable meaning, when it matters to the agent:
+    # connected | disconnected (data stops) | gap (trades were missed) | graduated (no more curve trades)
+    kind: str = ""
 
 
 Event = Union[Tick, Snapshot, Status]

@@ -104,11 +104,17 @@ class GlobalModel:
         return BinnedDistribution(float(p[0]), p[1:], self.meta.get("tail_low", 1.0), self.meta.get("tail_high", 1.0))
 
     def save(self, path: str | Path) -> Path:
+        """Write atomically (temp files, then rename): a reader never sees a half-written model."""
         path = Path(path)
         path.parent.mkdir(parents=True, exist_ok=True)
-        self.booster.save_model(str(path.with_suffix(".txt")))
-        path.with_suffix(".json").write_text(json.dumps(self.meta, indent=2))
-        return path.with_suffix(".txt")
+        txt, meta = path.with_suffix(".txt"), path.with_suffix(".json")
+        tmp_txt, tmp_meta = txt.with_name(txt.name + ".tmp"), meta.with_name(meta.name + ".tmp")
+        self.booster.save_model(str(tmp_txt))
+        self.meta["model_bytes"] = tmp_txt.stat().st_size
+        tmp_meta.write_text(json.dumps(self.meta, indent=2))
+        os.replace(tmp_txt, txt)
+        os.replace(tmp_meta, meta)
+        return txt
 
     @classmethod
     def load(cls, path: str | Path) -> GlobalModel:
@@ -118,7 +124,15 @@ class GlobalModel:
         meta = json.loads(path.with_suffix(".json").read_text())
         if meta.get("edges") != EDGES.tolist() or any(name not in FEATURES for name in meta["features"]):
             raise ValueError(f"{path}: model was trained with a different feature/bin layout")
+        size = meta.get("model_bytes")
+        if size is not None and path.with_suffix(".txt").stat().st_size != size:
+            raise ValueError(f"{path}: model file does not match its metadata (incomplete write?)")
         return cls(lgb.Booster(model_file=str(path.with_suffix(".txt"))), meta)
+
+
+def model_dir(directory: str | Path | None = None) -> Path:
+    """Where models are installed and loaded: explicit, else $TARTAR_MODEL_DIR, else the package."""
+    return Path(directory or os.environ.get("TARTAR_MODEL_DIR") or MODEL_DIR)
 
 
 def model_name(domain: str, timeframe: int) -> str:
@@ -130,13 +144,12 @@ def find_model(domain: str, timeframe: int, directory: str | Path | None = None,
 
     Models trained on simulated data are only loaded when `allow_simulated` is set.
     """
-    directory = Path(directory or os.environ.get("TARTAR_MODEL_DIR") or MODEL_DIR)
-    path = directory / f"{model_name(domain, timeframe)}.txt"
+    path = model_dir(directory) / f"{model_name(domain, timeframe)}.txt"
     if not path.exists():
         return None
     try:
         model = GlobalModel.load(path)
-    except ImportError:
+    except Exception:  # missing LightGBM, corrupt or mismatched files: run without it
         return None
     if model.meta.get("simulated") and not allow_simulated:
         return None

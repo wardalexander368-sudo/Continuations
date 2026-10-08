@@ -21,9 +21,11 @@ from .model.global_model import (
 from .scoreboard import Tally
 
 # Candle-only data (e.g. GeckoTerminal OHLCV) has no trade counts, wallets or creator.
+# High/low-based inputs are left out: live candle-only tokens are built from 3s DexScreener
+# price polls, whose ranges are about half the true OHLC ranges the model would train on.
 OHLCV_FEATURES = (
     "r1", "r2", "r3", "r1_raw", "mom5", "mom15", "log_sigma", "vol_ratio",
-    "clv", "body", "range", "upper_wick", "lower_wick", "ema_dev", "ema_trend", "drawdown", "rise",
+    "body", "ema_dev", "ema_trend", "drawdown", "rise",
     "log_volume", "volume_z", "flat_streak", "idle", "age", "n_candles",
 )  # fmt: skip
 
@@ -131,7 +133,9 @@ def train_global(
     return GlobalModel(booster, meta)
 
 
-def evaluate_rows(model: GlobalModel, ds: Dataset, mask: np.ndarray, coverage: float = 0.8, baseline: np.ndarray | None = None) -> list[dict]:
+def evaluate_rows(
+    model: GlobalModel, ds: Dataset, mask: np.ndarray, coverage: float = 0.8, baselines: dict[float, np.ndarray] | None = None
+) -> list[dict]:
     """Global-model metrics on the masked rows, per fraction of the candle elapsed."""
     probs = model.predict_proba(ds.X[mask])
     tl, th = model.meta.get("tail_low", 1.0), model.meta.get("tail_high", 1.0)
@@ -155,7 +159,6 @@ def evaluate_rows(model: GlobalModel, ds: Dataset, mask: np.ndarray, coverage: f
     naive = np.abs(np.log(close / price_now))
     in_band = (close >= low * (1 - 1e-9)) & (close <= high * (1 + 1e-9))
     ll = -np.log(np.maximum(probs[np.arange(len(labels)), labels], 1e-12))
-    base_ll = -np.log(np.maximum(baseline[labels], 1e-12)) if baseline is not None else None
 
     out = []
     for frac in sorted(set(f.tolist())):
@@ -175,7 +178,9 @@ def evaluate_rows(model: GlobalModel, ds: Dataset, mask: np.ndarray, coverage: f
             "edge": 1.0 - mae / naive_mae if naive_mae > 0 else None,
             "log_loss": avg(ll),
         }
-        if base_ll is not None:
+        if baselines is not None and frac in baselines:
+            # Against the label frequencies at this same point of the candle, so knowing f earns nothing.
+            base_ll = -np.log(np.maximum(baselines[frac][labels], 1e-12))
             row["info_gain_bits"] = (avg(base_ll) - row["log_loss"]) / math.log(2)
         out.append(row)
     return out
@@ -195,6 +200,9 @@ def replay(tokens: list[TokenData], timeframe: int, domain: str, model: GlobalMo
         fc = Forecaster(timeframe, coverage, model=model, domain=domain, launched_at=launched, creator_known=known_creator)
         prev_active = False
         for candle in token.candles:
+            # Live order: a candle's trades reach the wallet tracker before the candle closes.
+            for tick, _ in token.ticks.get(candle.start, ()):
+                fc.on_tick(tick)
             outcome = fc.observe(candle)
             if outcome is not None:
                 all_.add(outcome)
@@ -206,12 +214,22 @@ def replay(tokens: list[TokenData], timeframe: int, domain: str, model: GlobalMo
 
 def evaluate(model: GlobalModel, ds: Dataset, *, replay_tokens: int = 300, log: Callable[[str], None] = print) -> dict:
     train, valid, test = ds.split()
-    baseline = np.bincount(ds.label[train], weights=ds.weight[train], minlength=N_CLASSES)
-    baseline = baseline / baseline.sum()
+    baselines = {}
+    for frac in sorted(set(ds.f.tolist())):
+        m = train & (ds.f == frac)
+        counts = np.bincount(ds.label[m], weights=ds.weight[m], minlength=N_CLASSES) + 0.5
+        baselines[frac] = counts / counts.sum()
+    captures = [t.capture for t in ds.tokens if t.capture is not None]
     report = {
         "model": model.meta,
         "test_rows": int(test.sum()),
-        "test_by_fraction": evaluate_rows(model, ds, test, baseline=baseline),
+        "data_capture": {
+            "tokens_measured": len(captures),
+            "median": float(np.median(captures)) if captures else None,
+            "mean": float(np.mean(captures)) if captures else None,
+            "note": "share of recorded trades whose predecessor was also recorded (1.0 = complete stream)",
+        },
+        "test_by_fraction": evaluate_rows(model, ds, test, baselines=baselines),
     }
     test_tokens = sorted({int(i) for i in ds.token[test]})
     sample = [ds.tokens[i] for i in test_tokens[:replay_tokens]]

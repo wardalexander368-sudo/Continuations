@@ -202,18 +202,25 @@ class ChainRecorder(Recorder):
 
     async def _stream(self, on_stats: Callable[[RecorderStats], None] | None) -> None:
         from ..feeds.base import Status
-        from ..feeds.pumpchain import ChainComplete, ChainCreate, ChainTrade, create_to_message, stream_program_events, trade_to_message
+        from ..feeds.pumpchain import (
+            ChainComplete,
+            ChainCreate,
+            ChainTrade,
+            create_to_message,
+            stream_program_events,
+            trade_to_message,
+        )
 
         last_housekeeping = last_report = self.clock()
         async with aclosing(stream_program_events(self.urls)) as stream:
             async for item in stream:
                 now = self.clock()
                 if isinstance(item, Status):
-                    if item.level == "info":
+                    if item.kind == "connected":
                         if self.connected:
                             self._session("disconnected")
                         self._session("connected")
-                    elif self.connected:
+                    elif item.kind == "disconnected" and self.connected:
                         self._session("disconnected")
                     continue
                 _, _, events = item
