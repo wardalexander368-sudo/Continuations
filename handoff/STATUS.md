@@ -32,7 +32,7 @@ next. Topic documents hold the detail:
 
 ## Active
 
-* **Jev session** (session_012ZRs9FUggpEkx65Rw7K7fU, started 22:43 UTC): waiting for the user's confirmation; it will own the **live fast loop + slow loop** (queue item 1, steps 3–4). Steps 1–2 were done by the profitability session (below).
+* **Jev session** (session_012ZRs9FUggpEkx65Rw7K7fU, live since 2026-10-08 23:44 UTC): owns the **live fast loop + slow loop** (queue item 1, steps 3–4). User chose `"scorer": "rules"` with `"shadow_jev": true` (paper). Fast loop runs `--hours 20` in this container (ends ~19:44 UTC 10-09). Tracked copies of the policy and reviews: `handoff/live/`. Branch `claude/jev-live`.
 
 * **Predictor session** (session_01UeZ4ho5y38qR1iNxnShtwF, started 23:40 UTC): queue item 6, predictor open problems 3–5 (band over-coverage, in-candle median worse than "price now", blend underconfidence). Branch `claude/solana-candle-predictor-s95qjr`. Touches `tartar/model/`, `tartar/train.py` only.
 
@@ -100,6 +100,8 @@ next. Topic documents hold the detail:
   branch `claude/profitability-backtest`, on `main`).
 
 ## Log (newest first)
+
+* **2026-10-08 23:44 UTC, Jev session:** The user confirmed option 1: rules scorer, Jev in shadow, paper only. Started `tartar fast --hours 20` (policy = defaults + `shadow_jev: true`; copy in `handoff/live/policy.json`, since `/data/` is git-ignored). Slow-loop cycles every ~3 h; reviews go to `handoff/live/reviews/`.
 
 * **2026-10-08 23:40 UTC, predictor session:** Back after a usage limit.
   Claimed queue item 6. The user asked this session to install the TypeSafe
