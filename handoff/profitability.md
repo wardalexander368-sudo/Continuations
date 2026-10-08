@@ -163,6 +163,44 @@ this beat the ~3.5% round-trip cost?". Scores are cached by mint in
 is **unverified** (docs unreachable from this session); see the module
 docstring.
 
+### 3.7 TypeSafe Jev (`tartar decide --jev`)
+
+Client: `tartar/jev.py`, now matching docs.typesafe.ai/api (checked
+2026-10-08) and the TypeSafe agent skill's guidance. Each launch's numbers
+become phrases in code, since Jev is weak with raw numbers. One request per
+launch asks five narrow yes/no questions: the direct "buy" question (would
+buying now and selling in 3 min beat ~3.5% costs?) plus four judgments about
+the name and symbol: `copycat`, `low_effort`, `meme`, `scam_wording`.
+Credentials come from the environment's proxy. All 3,523 recorded launches
+were asked: median **243 ms** per call (p90 284 ms), ~1.15M input tokens.
+Answers are cached in `data/jev-answers.jsonl` (not in git).
+
+| Scorer (test launches) | Hold 180 s | Hold 600 s, TP +100%, SL −30% |
+|---|---|---|
+| Buy every launch | −5.1% (488) | −9.3% (244) |
+| Skip flags that lost on train | −1.8% (150) | −1.1% (63) |
+| LightGBM screen | −0.0% (22) | −5.8% (93) |
+| **Jev, direct question** (top 6% on validation) | **−9.2%** (41; CI −15.9 … −1.9%) | **−24.2%** (16) |
+| LightGBM + Jev's 4 judgments | +5.4% (25; CI −23.7 … +36.8%; validation −8.9%) | +0.8% (55; CI −15 … +17%; validation −8.7%) |
+
+**Calibration over all 3,444 launches with outcomes (hold 180 s):**
+
+* The direct "buy" answer averages 0.20 while 10.5% of launches actually beat
+  costs, so it's **overconfident by about 2×**. Its top quintile (0.28–0.50)
+  wins more often (16.9% vs 10.5%) but loses more on average (−13.2% mean,
+  −16% median). It picks volatile launches, not good ones.
+* The name judgments are nearly flat. `low_effort` has the clearest slope
+  (P(net > 0) 15.3% in the lowest quintile vs 8.0% in the highest), then
+  `copycat` (13.1% vs 9.6%). Every bucket's mean is negative.
+
+**Reading:** Jev doesn't find a tradable edge at the 20 s decision. That's
+what TypeSafe's own docs warn about: it's built for common-sense judgments,
+not market forecasting, and must be validated in the target domain. The name
+judgments carry a weak signal that could matter only if something else
+supplies most of the edge. Next for Jev: **shadow mode** in the fast loop.
+Ask about every screened live launch, journal the answers without acting on
+them, and let `tartar review` measure them out of sample on fresh launches.
+
 ## 4. What this means for the plan
 
 1. **Don't trade the current predictions.** The confidence is honest about

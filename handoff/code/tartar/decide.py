@@ -217,24 +217,46 @@ class CachedScorer:
 
 
 class LightGBMScorer:
-    """P(net > 0) from a small LightGBM classifier fitted on earlier launches' outcomes."""
+    """P(net > 0) from a small LightGBM classifier fitted on earlier launches' outcomes.
 
-    name = "lightgbm screen"
+    `extra` adds feature columns computed from the states (e.g. Jev's judgments).
+    """
 
-    def __init__(self, train_states: list[dict], labels: np.ndarray, valid_states: list[dict], valid_labels: np.ndarray, seed: int = 1):
+    def __init__(
+        self,
+        train_states: list[dict],
+        labels: np.ndarray,
+        valid_states: list[dict],
+        valid_labels: np.ndarray,
+        seed: int = 1,
+        extra: Callable[[list[dict]], np.ndarray] | None = None,
+        extra_names: tuple[str, ...] = (),
+        name: str = "lightgbm screen",
+    ):
         import lightgbm as lgb
 
+        self.name, self.extra = name, extra
         params = dict(
             objective="binary", learning_rate=0.03, num_leaves=7, min_data_in_leaf=40, feature_fraction=0.8,
             bagging_fraction=0.8, bagging_freq=1, lambda_l2=5.0, verbose=-1, seed=seed,
         )  # fmt: skip
         ok, vok = ~np.isnan(labels), ~np.isnan(valid_labels)
-        train = lgb.Dataset(state_matrix(train_states)[ok], (labels[ok] > 0).astype(int), feature_name=list(NUMERIC))
-        valid = lgb.Dataset(state_matrix(valid_states)[vok], (valid_labels[vok] > 0).astype(int), reference=train)
+        names = list(NUMERIC) + [f"extra_{n}" for n in extra_names]
+        train = lgb.Dataset(self._matrix(train_states)[ok], (labels[ok] > 0).astype(int), feature_name=names)
+        valid = lgb.Dataset(self._matrix(valid_states)[vok], (valid_labels[vok] > 0).astype(int), reference=train)
         self.booster = lgb.train(params, train, 2000, valid_sets=[valid], callbacks=[lgb.early_stopping(100, verbose=False)])
 
+    def _matrix(self, states: list[dict]) -> np.ndarray:
+        X = state_matrix(states)
+        return X if self.extra is None else np.hstack([X, self.extra(states)])
+
     def score(self, states: list[dict]) -> np.ndarray:
-        return self.booster.predict(state_matrix(states), num_iteration=self.booster.best_iteration)
+        return self.booster.predict(self._matrix(states), num_iteration=self.booster.best_iteration)
+
+    def importance(self) -> dict[str, float]:
+        gain = self.booster.feature_importance("gain")
+        total = gain.sum() or 1.0
+        return {n: float(g / total) for n, g in sorted(zip(self.booster.feature_name(), gain), key=lambda x: -x[1])}
 
 
 class FlagScorer:
@@ -316,12 +338,3 @@ def evaluate(
         "valid": summarize(trades(1, thr), costs).to_dict(),
         "test": summarize(trades(2, thr), costs).to_dict(),
     }
-
-
-def jev_scorer_from_env() -> Scorer | None:
-    """TypeSafe Jev as a scorer, if `TYPESAFE_API_KEY` is set (see tartar/jev.py)."""
-    if not os.environ.get("TYPESAFE_API_KEY"):
-        return None
-    from .jev import JevScorer
-
-    return JevScorer(os.environ["TYPESAFE_API_KEY"])

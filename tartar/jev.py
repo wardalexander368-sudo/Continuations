@@ -138,7 +138,7 @@ def parse_answers(body: dict, questions: dict | None = None) -> dict[str, float]
 class JevClient:
     """Asks Jev about launches, caching answers by mint (and question version) in a JSON-lines file."""
 
-    def __init__(self, *, api_key: str | None = None, url: str | None = None, model: str | None = None, cache: str | Path | None = None, client: httpx.Client | None = None, timeout: float = 10.0, workers: int = 8, retries: int = 4):
+    def __init__(self, *, api_key: str | None = None, url: str | None = None, model: str | None = None, cache: str | Path | None = None, client: httpx.Client | None = None, timeout: float = 10.0, workers: int = 4, retries: int = 4):
         self.url = url or os.environ.get("TYPESAFE_URL") or DEFAULT_URL
         self.model = model or os.environ.get("TYPESAFE_MODEL") or DEFAULT_MODEL
         key = api_key if api_key is not None else os.environ.get("TYPESAFE_API_KEY")
@@ -163,7 +163,13 @@ class JevClient:
         body = build_request(state, self.model)
         for attempt in range(self.retries + 1):
             started = time.perf_counter()
-            response = self.client.post(self.url, json=body, headers=self.headers)
+            try:
+                response = self.client.post(self.url, json=body, headers=self.headers)
+            except httpx.TransportError:  # dropped or reset connections: retry with backoff, like TypeSafe's SDK
+                if attempt == self.retries:
+                    raise
+                time.sleep(0.5 * 2**attempt)
+                continue
             if response.status_code in (429, 529) and attempt < self.retries:
                 time.sleep(0.5 * 2**attempt)
                 continue

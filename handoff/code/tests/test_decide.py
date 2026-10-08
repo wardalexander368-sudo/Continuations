@@ -1,5 +1,7 @@
 """Launch decisions: causal launch states, scorer evaluation, caching, and the Jev client."""
 
+import json
+
 import httpx
 import numpy as np
 import pytest
@@ -7,7 +9,7 @@ import pytest
 from tartar.data.dataset import load_trade_tokens
 from tartar.data.simulate import simulate_raw
 from tartar.decide import NUMERIC, CachedScorer, FlagScorer, FunctionScorer, evaluate, launch_states, state_matrix
-from tartar.jev import JevFormatError, JevScorer, build_request, parse_probability
+from tartar.jev import FEATURES, QUESTIONS, JevClient, JevFormatError, JevScorer, build_request, describe, parse_answers
 from tartar.profit import Costs, Exit, curves_for
 
 
@@ -75,21 +77,39 @@ def test_cached_scorer_asks_once(tmp_path):
     assert calls == ["a", "b", "c"]
 
 
-def test_jev_client_request_and_errors():
-    state = {"name": "Dog", "buyers": 4, "rise_pct": float("nan"), "flags": ["sniped"], "seconds": 20}
-    body = build_request(state, "within 3 minutes", model="typesafe/jev")
-    assert body["state"]["rise_pct"] is None and body["state"]["flags"] == ["sniped"] and body["model"] == "typesafe/jev"
-    assert body["questions"][0]["type"] == "noul"
-    assert parse_probability({"answers": [{"id": "buy", "probability": 0.31}]}) == 0.31
+def test_jev_request_follows_the_documented_format():
+    state = {"mint": "M1", "name": "Dog", "symbol": "DOG", "buyers": 4, "buy_sol": 2.0, "rise_pct": float("nan"), "flags": ["sniped"], "seconds": 20}
+    body = build_request(state)
+    assert body["model"] == "jev-latest" and set(body["questions"]) == set(QUESTIONS)
+    assert all(q["type"] == "noul" and q["instructions"] and set(q["criteria"]) == {"true", "false"} for q in body["questions"].values())
+    launch = describe(state)["launch"]
+    assert launch["name"] == "Dog" and launch["price_since_launch"] == "unknown" and launch["buying"] == "moderate (1-5 SOL)"
+    assert "first 5 seconds" in launch["warning_signs"][0]  # numbers and flags become phrases, not raw values
+    answers = {qid: {"type": "noul", "noul": 0.25} for qid in QUESTIONS}
+    assert parse_answers({"model": "jev-1.13.0", "answers": answers}) == {qid: 0.25 for qid in QUESTIONS}
     with pytest.raises(JevFormatError):
-        parse_probability({"result": "yes"})
+        parse_answers({"answers": {"buy": {"type": "noul", "noul": 0.4}}})
 
-    seen = {}
+
+def test_jev_client_auth_cache_retries_and_features(tmp_path):
+    seen = {"calls": 0, "auth": set()}
 
     def handler(request: httpx.Request) -> httpx.Response:
-        seen["auth"] = request.headers["authorization"]
-        return httpx.Response(200, json={"answers": [{"id": "buy", "probability": 0.7}]})
+        seen["calls"] += 1
+        seen["auth"].add(request.headers.get("authorization"))
+        if seen["calls"] == 1:
+            return httpx.Response(429, json={"error": "slow down"})
+        name = json.loads(request.content)["state"]["launch"]["name"]
+        p = 0.9 if name == "Dog" else 0.1
+        return httpx.Response(200, json={"model": "jev-1.13.0", "answers": {q: {"type": "noul", "noul": p} for q in QUESTIONS}, "usage": {"input_tokens": 300, "output_tokens": 20}})
 
-    scorer = JevScorer("k3y", url="https://jev.test/v1/systemone", client=httpx.Client(transport=httpx.MockTransport(handler)))
-    assert scorer.score([state, state]).tolist() == [0.7, 0.7]
-    assert seen["auth"] == "Bearer k3y" and scorer.latency_summary()["calls"] == 2
+    transport = httpx.MockTransport(handler)
+    client = JevClient(api_key="k3y", url="https://jev.test/v1/systemone", client=httpx.Client(transport=transport), cache=tmp_path / "c.jsonl", workers=2, retries=2)
+    states = [{"mint": "a", "name": "Dog"}, {"mint": "b", "name": "Cat"}]
+    assert JevScorer(client).score(states).tolist() == [0.9, 0.1]
+    assert seen["auth"] == {"Bearer k3y"} and client.tokens["input"] == 600
+    assert client.features(states).shape == (2, len(FEATURES))  # from the cache, no new calls
+    calls = seen["calls"]
+    again = JevClient(api_key="", url="https://jev.test/v1/systemone", client=httpx.Client(transport=transport), cache=tmp_path / "c.jsonl")
+    assert again.ask({"mint": "a", "name": "Dog"})["buy"] == 0.9 and seen["calls"] == calls
+    assert again.headers == {}  # no key: the environment's proxy authenticates

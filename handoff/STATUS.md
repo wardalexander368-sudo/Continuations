@@ -32,7 +32,7 @@ next. Topic documents hold the detail:
 
 ## Active
 
-* **Jev session** (started 2026-10-08 ~22:45 UTC by the profitability session at the user's request; it has `TYPESAFE_API_KEY` and full network): verify Jev's wire format, run Jev through `tartar decide`, run the fast loop live with Jev, and run the slow loop. See *Queue* item 1.
+* **Jev session** (session_012ZRs9FUggpEkx65Rw7K7fU, started 22:43 UTC): waiting for the user's confirmation; it will own the **live fast loop + slow loop** (queue item 1, steps 3–4). Steps 1–2 were done by the profitability session (below).
 
 ## Blockers (need the user)
 
@@ -47,14 +47,20 @@ next. Topic documents hold the detail:
 
 1. **Jev in the fast loop** (user request: Jev = fast loop, Claude = slow
    loop; paper trading first). Procedure: `handoff/slow-loop.md`.
-   1. Verify `tartar/jev.py` against TypeSafe's real API (docs.typesafe.ai,
-      OpenAPI spec). `build_request` / `parse_probability` were written
-      blind. Make one real call; fix the format; keep the tests passing.
-   2. `tartar decide` with the key set: Jev is scored on the ~1,056
-      validation and test launches (cached in `data/jev-scores.jsonl`).
-      Compare with the other scorers and note Jev's latency.
-   3. Run the fast loop live with `"scorer": "jev"` (paper). It also
-      records raw data, which is queue item 2.
+   1. ~~Verify `tartar/jev.py`~~ **done 23:05 UTC**: it matches
+      docs.typesafe.ai/api and follows the TypeSafe agent skill (read
+      `github.com/typesafe-ai/skills` → `skills/typesafe-ai/SKILL.md` and
+      `docs.typesafe.ai/llms.txt` before changing Jev code; the user asked
+      for this). The proxy supplies credentials (no env var needed).
+   2. ~~`tartar decide --jev`~~ **done**: Jev finds no edge (direct answer
+      −9.2% on test, overconfident ~2×; name judgments weak). See
+      `profitability.md` §3.7.
+   3. Run the fast loop live (paper). Use `"scorer": "rules"` (Jev's direct
+      answer lost more than buying everything) **and add Jev shadow mode**:
+      ask Jev about every screened launch and journal the answers without
+      acting on them, so `tartar review` can test them on fresh launches.
+      Shadow mode is not built yet. The fast loop also records raw data
+      (queue item 2).
    4. Slow-loop cycles every few hours (`tartar review`), one policy change
       at a time, with the reason in the policy note and the log.
 2. **More data.** The fast loop records as it runs. After 24 h+:
@@ -82,6 +88,16 @@ next. Topic documents hold the detail:
   branch `claude/profitability-backtest`, on `main`).
 
 ## Log (newest first)
+
+* **2026-10-08 23:10 UTC, profitability session:** The user asked to use the
+  TypeSafe agent skill. Installing the plugin was blocked by the permission
+  classifier (marketplace added; the user can run `/plugin install
+  typesafe@typesafe-ai`). I followed the skill's guidance directly: read the
+  live docs, rewrote `tartar/jev.py` to the documented API (one real call,
+  243 ms median over 3,523 launches), and evaluated Jev in `tartar decide
+  --jev` (§3.7): no edge. The user offered folders from earlier Jev trader
+  attempts (data, tests, code); asked them to share as repos or a
+  `prior/<name>/` branch.
 
 * **2026-10-08 22:45 UTC, profitability session:** Built the fast loop
   (`tartar/fastloop.py`, `tartar fast`) and the slow loop's review

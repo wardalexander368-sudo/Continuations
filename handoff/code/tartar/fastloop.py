@@ -528,13 +528,13 @@ def replay(raw_dir: str | Path, loop: FastLoop) -> dict:
     return loop.finish(events[-1]["t"] + 1.0)
 
 
-def jev_factory_from_env(policy_timeout: float = 2.0) -> Callable[[], Scorer] | None:
-    if not os.environ.get("TYPESAFE_API_KEY"):
-        return None
+def jev_factory_from_env(policy_timeout: float = 2.0) -> Callable[[], Scorer]:
+    """Jev's direct answer as the fast loop's scorer. Credentials come from
+    `TYPESAFE_API_KEY` or, in a Claude cloud environment, from the proxy."""
 
     def make() -> Scorer:
-        from .jev import JevScorer
+        from .jev import JevClient, JevScorer
 
-        return JevScorer(os.environ["TYPESAFE_API_KEY"], timeout=policy_timeout)
+        return JevScorer(JevClient(timeout=policy_timeout, workers=1))
 
     return make
