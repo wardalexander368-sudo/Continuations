@@ -434,6 +434,8 @@ async def cmd_record(args) -> int:
     console = Console()
     kind = ChainRecorder if args.source == "chain" else Recorder
     recorder = kind(args.out, track_minutes=args.track_minutes, idle_minutes=args.idle_minutes, max_tokens=args.max_tokens)
+    if isinstance(recorder, ChainRecorder):
+        recorder.on_status = lambda message: console.print(f"{datetime.now():%H:%M:%S}  ! {message}")
     console.print(f"Recording pump.fun launches and trades to {args.out} (Ctrl+C to stop)…")
 
     def report(stats) -> None:

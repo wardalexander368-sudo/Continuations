@@ -241,7 +241,7 @@ async def stream_program_events(
         url = urls[index % len(urls)]
         connected = False
         try:
-            async with connect(url, open_timeout=15, ping_interval=20, ping_timeout=20, max_size=None) as ws:
+            async with connect(url, open_timeout=15, ping_interval=None, max_size=None, max_queue=None) as ws:
                 request = {"jsonrpc": "2.0", "id": 1, "method": "logsSubscribe", "params": [{"mentions": [PUMP_PROGRAM]}, {"commitment": commitment}]}
                 await ws.send(json.dumps(request))
                 reply = json.loads(await asyncio.wait_for(ws.recv(), 15))
