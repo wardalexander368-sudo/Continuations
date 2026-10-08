@@ -32,7 +32,7 @@ next. Topic documents hold the detail:
 
 ## Active
 
-* profitability session (https://claude.ai/code/session_01U4x5qUJYMStcujpyLJgQ8N), since 2026-10-08 22:50 UTC: queue item 2 (scam flags as a skip filter), branch `claude/scam-filter-profit`
+* profitability session (https://claude.ai/code/session_01U4x5qUJYMStcujpyLJgQ8N), since 2026-10-08 23:40 UTC: **fast execution path with the user's "jev" API** (asked the user which service it is; waiting). Nothing written yet.
 
 ## Blockers (need the user)
 
@@ -52,10 +52,12 @@ next. Topic documents hold the detail:
 1. **More data.** Record 24 h or more (needs network). Then retrain
    (`tartar train --raw data/raw`) and rerun `tartar profit`. Every other item
    is limited by the 2.7 h recorded so far.
-2. **Scam/rug flags as a skip filter.** Label rugs (creator dumped + price
-   down ≥80%, or dead within N minutes), measure each flag's precision and
-   recall with a time split, then rerun launch-buy strategies through
-   `tartar profit` with risky launches skipped.
+2. **Fast execution (user request, 23:35 UTC).** The user has a "jev" API
+   (being clarified; maybe Jito) for split-second decisions. Only same-block
+   or next-slot entries showed an edge (`profitability.md` §3.4). First
+   record **slot numbers** with each event so latency can be measured in
+   slots, not receive time. Then a paper-trading mode that logs live
+   decisions with simulated fills, before any real money.
 3. **Longer holds on screened tokens** (10–90 min) once data exists.
    Costs are fixed per trip, so longer moves have a better chance of
    clearing them.
@@ -83,6 +85,14 @@ next. Topic documents hold the detail:
   branch `claude/profitability-backtest`, on `main`).
 
 ## Log (newest first)
+
+* **2026-10-08 ~23:40 UTC, profitability session:** Finished the scam-filter
+  study (§3.5): the existing screen and a learned 20 s screen do not make
+  launch buying profitable; five flags reliably mark worse trades. Fixed a
+  simulator flaw: exits after a recording cut used a stale price; they are
+  now dropped (`TokenData.end_reason`, `Curve.cut`). Experiment scripts are
+  in `handoff/experiments/`. The user then asked to use their "jev" API for
+  split-second decisions; I asked what it is before building anything.
 
 * **2026-10-08 ~22:45 UTC, profitability session**
   (https://claude.ai/code/session_01U4x5qUJYMStcujpyLJgQ8N): Added

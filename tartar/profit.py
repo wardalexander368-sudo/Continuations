@@ -57,13 +57,22 @@ def sell_sol(vsol: float, vtok: float, tokens: float, fee: float) -> float:
 
 
 class Curve:
-    """A token's recorded bonding-curve state over time."""
+    """A token's recorded bonding-curve state over time.
 
-    def __init__(self, ticks: list[Tick]):
+    `known_until` is when the record stops being complete (the end of the
+    token's recorded window); `cut` says the window ended because the
+    recording itself stopped or dropped out, so nothing is known about the
+    price afterwards. When it ended because the token went idle or migrated,
+    the last recorded state is a fair stand-in for a while longer.
+    """
+
+    def __init__(self, ticks: list[Tick], known_until: float | None = None, cut: bool = False):
         ticks = sorted((t for t in ticks if t.virtual_sol > 0 and t.price > 0), key=lambda t: t.ts)
         self.times = np.array([t.ts for t in ticks])
         self.vsol = np.array([t.virtual_sol for t in ticks])
         self.price = np.array([t.price for t in ticks])
+        self.known_until = known_until if known_until is not None else self.end
+        self.cut = cut
 
     def __len__(self) -> int:
         return len(self.times)
@@ -91,7 +100,8 @@ class Trade:
     exit_price: float
     pnl_sol: float
     reason: str  # horizon, take_profit, stop_loss
-    censored: bool  # the exit fell after the token's recorded data ended
+    censored: bool  # the exit fell after the token's recorded window ended
+    cut: bool = False  # ... and that window ended because the recording was cut (outcome unknown)
 
 
 def round_trip(curve: Curve, decided: float, costs: Costs, rule: Exit) -> Trade | None:
@@ -133,16 +143,20 @@ def round_trip(curve: Curve, decided: float, costs: Costs, rule: Exit) -> Trade 
         exit_price=float(curve.price[j]),
         pnl_sol=pnl,
         reason=reason,
-        censored=t_out > curve.end,
+        censored=t_out > curve.known_until,
+        cut=t_out > curve.known_until and curve.cut,
     )
 
 
 def label_round_trips(curves: list[Curve], token: np.ndarray, time: np.ndarray, costs: Costs, rule: Exit) -> np.ndarray:
-    """Net return (fraction of the stake) of a round trip decided at each (token, time); NaN where impossible."""
+    """Net return (fraction of the stake) of a round trip decided at each (token, time).
+
+    NaN where nothing had traded yet or the exit falls after a recording cut.
+    """
     out = np.full(len(token), np.nan)
     for n, (k, t) in enumerate(zip(token, time)):
         trade = round_trip(curves[int(k)], float(t), costs, rule)
-        if trade is not None:
+        if trade is not None and not trade.cut:
             out[n] = trade.pnl_sol / costs.size_sol
     return out
 
@@ -155,12 +169,15 @@ def run_policy(
     costs: Costs,
     rule: Exit,
     max_entries: int | None = None,
+    keep_cut: bool = False,
 ) -> list[Trade]:
     """Trade every candidate decision with `take` set, holding at most one position per token.
 
     Candidates are processed in time order per token; a candidate that comes
     while a position on that token is open is skipped. `max_entries` caps the
-    trades per token.
+    trades per token. Trades whose exit falls after a recording cut are
+    dropped unless `keep_cut`: their outcome is unknown, and since a cut has
+    nothing to do with the token, dropping them does not bias the result.
     """
     trades: list[Trade] = []
     busy_until: dict[int, float] = {}
@@ -174,7 +191,7 @@ def run_policy(
         if max_entries is not None and count.get(k, 0) >= max_entries:
             continue
         trade = round_trip(curves[k], t, costs, rule)
-        if trade is None:
+        if trade is None or (trade.cut and not keep_cut):
             continue
         trade.token = k
         trades.append(trade)
@@ -232,7 +249,17 @@ def summarize(trades: list[Trade], costs: Costs, boot: int = 2000, seed: int = 0
 
 def curves_for(tokens) -> list[Curve]:
     """One curve per `TokenData` (trade data), in the same order."""
-    return [Curve([tick for group in token.ticks.values() for tick, _ in group]) for token in tokens]
+    return [
+        Curve(
+            [tick for group in token.ticks.values() for tick, _ in group],
+            known_until=token.end or None,
+            # After a migration the token trades elsewhere, so the last curve price stands in for the exit
+            # (dropping those trades would remove the biggest winners). Any other end, such as the
+            # recording stopping or the recorder's tracking limit, is unrelated to the token.
+            cut=token.end_reason not in ("idle", "migrated"),
+        )
+        for token in tokens
+    ]
 
 
 def model_scores(model, ds) -> dict[str, np.ndarray]:

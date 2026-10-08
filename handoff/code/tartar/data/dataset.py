@@ -40,6 +40,8 @@ class TokenData:
     ticks: dict[int, list[tuple[Tick, bool]]] = field(default_factory=dict)
     simulated: bool = False
     capture: float | None = None  # estimated share of the token's trades that were recorded
+    end: float = 0.0  # when the token's recorded window ends
+    end_reason: str = ""  # idle (untracked after no trades), migrated, interrupted (recording cut), or another untrack reason
 
 
 @dataclass
@@ -92,6 +94,7 @@ def load_trade_tokens(raw_dir: str | Path, timeframe: int, max_gap: float = 10.0
     creates: dict[str, dict] = {}
     trades: dict[str, list[dict]] = defaultdict(list)
     untracked: dict[str, float] = {}
+    untrack_reason: dict[str, str] = {}
     tracked: dict[str, float] = {}
     interruptions: list[float] = []
     last_seen = 0.0
@@ -132,7 +135,10 @@ def load_trade_tokens(raw_dir: str | Path, timeframe: int, max_gap: float = 10.0
         elif kind == "track":
             tracked.setdefault(event["mint"], event["t"])
         elif kind in ("untrack", "migrate"):
-            untracked[event["mint"]] = min(untracked.get(event["mint"], event["t"]), event["t"])
+            mint = event["mint"]
+            if event["t"] < untracked.get(mint, math.inf):
+                untracked[mint] = event["t"]
+                untrack_reason[mint] = "migrated" if kind == "migrate" else event.get("reason") or "idle"
     if down_since is not None:
         interruptions.append(down_since)
     interruptions.append(last_seen)  # a recording that was killed has no "stopped" event
@@ -143,12 +149,14 @@ def load_trade_tokens(raw_dir: str | Path, timeframe: int, max_gap: float = 10.0
         start = create["t"]
         if mint not in tracked or tracked[mint] - start > 2.0:
             continue  # trades were not recorded from the launch on
-        ends = [t for t in interruptions if t > start][:1] + ([untracked[mint]] if mint in untracked else [])
+        ends = [(t, "interrupted") for t in interruptions if t > start][:1]
+        if mint in untracked:
+            ends.append((untracked[mint], untrack_reason[mint]))
         if not ends:
             continue
-        end = min(ends)
+        end, end_reason = min(ends)
         events = [create] + sorted((e for e in trades.get(mint, ()) if start <= e["t"] < end), key=lambda e: e["t"])
-        token = TokenData(mint, start, create.get("creator") or "")
+        token = TokenData(mint, start, create.get("creator") or "", end=end, end_reason=end_reason)
         token.capture = capture_rate(
             (e.get("sol") or 0.0, e["e"] == "create" or e.get("side") == "b", e.get("rsol"), e["vsol"]) for e in events if e.get("vsol")
         )

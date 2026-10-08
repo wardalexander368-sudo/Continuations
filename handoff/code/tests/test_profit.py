@@ -77,3 +77,24 @@ def test_profit_report_on_simulated_launches(tmp_path):
     assert any(r["strategy"].startswith("buy every launch") and r["trades"] > 0 for r in rows)
     for r in rows:
         assert r["trades"] == 0 or -1.0 <= r["mean_ret"]
+
+
+def test_exits_after_a_recording_cut_are_dropped():
+    ticks = [tick(0.0, 30.0), tick(5.0, 40.0)]
+    costs = Costs(size_sol=0.01, fee=0.0, network_sol=0.0, latency=1.0)
+    idle = Curve(ticks, known_until=1200.0, cut=False)  # untracked after going quiet: the price stayed put
+    cut = Curve(ticks, known_until=20.0, cut=True)  # the recording stopped at 20 s
+    assert not round_trip(idle, 0.0, costs, Exit(600.0)).censored
+    trade = round_trip(cut, 0.0, costs, Exit(600.0))
+    assert trade.censored and trade.cut
+    assert run_policy([cut], np.array([0]), np.array([0.0]), np.ones(1, bool), costs, Exit(600.0)) == []
+    assert len(run_policy([cut], np.array([0]), np.array([0.0]), np.ones(1, bool), costs, Exit(600.0), keep_cut=True)) == 1
+    assert len(run_policy([cut], np.array([0]), np.array([0.0]), np.ones(1, bool), costs, Exit(10.0))) == 1
+
+
+def test_token_windows_record_why_they_ended(tmp_path):
+    simulate_raw(tmp_path, 20, seed=4)
+    tokens = load_trade_tokens(tmp_path, 60)
+    assert tokens and all(t.end >= t.created and t.end_reason for t in tokens)
+    assert {t.end_reason for t in tokens} == {"age"}  # the simulator follows every launch for an hour
+    assert all(curve.cut for curve in curves_for(tokens))

@@ -25,6 +25,13 @@ close" and confidence as measurement, not as trade signals.
   All are flags: `--size --fee --network --latency`.
 * **Exits:** fixed hold, optional take-profit / stop-loss checked on every
   recorded trade, then executed after the latency.
+* **Unobserved exits are dropped.** Each token's window records why it ended
+  (`TokenData.end_reason`). An exit after a *recording cut* (recorder
+  stopped, long disconnect, tracking limit) has an unknown price, so the
+  trade is dropped; the cut is unrelated to the token, so this doesn't bias
+  the result. After *idle* untracking the price is known flat. After
+  *migration* the last curve price stands in (an approximation; dropping
+  those trades would remove the biggest winners).
 * **One position per token at a time.** Signals that fire while a position is
   open are skipped.
 * **Splits:** launches ordered by time; thresholds are chosen on validation
@@ -92,6 +99,45 @@ timestamps are when the public RPC delivered the event, already after that,
 so the 0-latency row is **not achievable** with this setup. Lower fees alone
 do not rescue any strategy at realistic latency.
 
+### 3.5 Scam flags and a learned screen as filters (queue item 2)
+
+Each launch is judged on its first 20 s of recorded trades, the way
+`--next-launch` does it. Creator history comes only from launches whose
+outcome was known by then (a causal `CreatorIndex`). We then buy at +20 s
+(1 s latency) and hold. Trades whose exit falls after a recording cut are
+dropped (§2). Script: `handoff/experiments/screen_launches.py`.
+
+* **The existing screen does not help trading.** It passes 3.9% of
+  launches (139 of 3,523), and those do no better than the rest on test
+  launches (180 s hold: −4.7% vs −5.1%; validation: −33% vs −7%).
+  Requiring 3+ buyers selects *worse* trades (−9.2% vs −6.1% for all
+  launches; valid + test, 180 s).
+* **Flags that mark worse trades** (valid + test, 180 s hold, with vs
+  without the flag):
+
+| Flag | With | Without |
+|---|---|---|
+| odd_curve (non-standard curve) | −12.5% (285) | −3.5% (721) |
+| concentrated (top-10 ≥ 50%) | −13.7% (78) | −5.4% (928) |
+| serial_rugger (creator rugged before) | −12.7% (135) | −5.1% (871) |
+| dev_bag (creator holds ≥ 20%) | −8.0% (451) | −4.5% (555) |
+| sniped (≥ 25% bought in 5 s) | −7.5% (402) | −5.1% (604) |
+
+  Skipping these cuts losses but leaves the strategy negative. Flags such as
+  dev_dumped, copycat and serial_launcher go with *smaller* losses: buying
+  after the dump already happened.
+* **A learned screen** (LightGBM on the 20 s snapshot: tracker features,
+  buyers, buy/sell SOL, rise since launch, causal creator history, risk
+  level; trained on train launches, threshold on validation): nothing holds
+  up on test launches. One configuration (hold 30 min, take-profit +200%,
+  stop-loss −40%, top 10%) looked positive (+4 to +14% on test over five
+  seeds). Then exits after recording cuts were dropped and it fell to −1.4%
+  (45 trades). Before that it rested on its top three trades. Other positive
+  test cells were negative on validation.
+* **Long holds have little clean data.** 1,748 of the 3,523 token windows
+  end at a recording cut (the second run's disconnects), so few holds of
+  10 minutes or more can be scored.
+
 ## 4. What this means for the plan
 
 1. **Don't trade the current predictions.** The confidence is honest about
@@ -107,8 +153,9 @@ do not rescue any strategy at realistic latency.
      experiment.
 3. **Where an edge could plausibly exist** (ranked; each must clear the cost
    floor on later launches in `tartar profit` before any money is used):
-   * Exits, not entries: who to *avoid* (scam/rug signals as a filter on
-     launch buys) and when to get out. The scam flags are still unvalidated.
+   * Exits, not entries: who to *avoid* and when to get out. Five flags are
+     now validated as marking worse trades (§3.5), but avoiding them alone
+     does not make launch buying profitable.
    * Longer horizons (10–90 min) on tokens that already passed screening and
      have organic flow, where the fee is small relative to moves.
    * Graduation (≈85 SOL raised → PumpSwap): needs a PumpSwap decoder and
