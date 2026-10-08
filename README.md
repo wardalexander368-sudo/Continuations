@@ -69,7 +69,7 @@ prediction as well as the warning.
 
 ## Getting the most accurate predictions: train the global model
 
-A first model (`tartar/models/trades-60s`, trained on 786 real pump.fun
+A model (`tartar/models/trades-60s`, trained on 3,523 real pump.fun
 launches) ships with the repo and is used automatically for 1-minute candles of
 pump.fun tokens. Without a trained model, the agent learns each token from
 scratch while it watches.
@@ -226,20 +226,25 @@ held-out tokens.
 
 1. **Volatility**: an EWMA of per-candle log-return variance that blends
    close-to-close moves with the high/low range (the Parkinson estimator), so a
-   few candles are enough. Everything else is measured in units of this volatility.
+   few candles are enough. Only candles that traded update it, and it starts
+   from a prior that fits the source (about 25% per candle for a pump.fun
+   launch watched trade by trade). Everything else is measured in units of this
+   volatility.
 2. **Signal**: an ensemble of experts: random walk, drift (trend), momentum,
    order flow (candle shape, volume surge, buy/sell imbalance), and a full
    ridge regression. Experts are weighted by how well each has predicted this
    token recently, starting with most of the weight on the random walk. The
-   result is then scaled by a reliability slope fitted on realized moves, so a
-   signal that hasn't proven itself fades to zero.
+   result is then scaled by a reliability slope fitted on realized moves. It
+   starts at zero and never exceeds one, so a signal counts only once it has
+   proven itself and is never amplified.
 3. **Uncertainty**: the empirical distribution of the model's own past errors
-   on this token, kernel-smoothed and shrunk toward a fat-tailed Laplace prior
-   while there is little data. The band uses adaptive conformal inference to
-   hold its target coverage.
+   on this token, kernel-smoothed and shrunk toward a normal prior while there
+   is little data (a lopsided handful of errors is not read as direction). The
+   band uses adaptive conformal inference to hold its target coverage.
 4. **Flat odds**: the chance that nothing trades in the rest of the candle,
-   which pins the close to the current price. Trade arrivals are modelled as
-   bursty (quiet spells, then busy ones).
+   which pins the close to the current price. Quiet spells and busy ones
+   persist, so the odds of a flat candle depend on whether the last one traded,
+   and trades within a candle arrive in bursts (a gamma-mixed Poisson rate).
 5. **Calibration**: up/down probabilities are recalibrated against realized
    directions, so a 60% call is right about 60% of the time.
 

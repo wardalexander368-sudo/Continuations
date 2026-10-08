@@ -143,7 +143,7 @@ def test_replay_feeds_wallets_like_training(sim_tokens_small):
 
     if is_late_join(token):
         pytest.skip("busiest token uses the late-join view")
-    fc = Forecaster(60, launched_at=launched, creator_known=known_creator)
+    fc = Forecaster(60, domain="trades", launched_at=launched, creator_known=known_creator)
     rows = {round(float(ds.ref[r]) * 1e15): ds.X[r] for r in np.flatnonzero((ds.token == index) & (ds.f == 0))}
     checked = 0
     for candle in token.candles[:15]:
@@ -180,3 +180,58 @@ def test_truncated_model_file_is_rejected(sim_tokens_small, tmp_path):
     with pytest.raises(ValueError):
         GlobalModel.load(path)
     assert find_model("trades", 60, tmp_path, allow_simulated=True) is None
+
+
+def test_flat_candles_do_not_shrink_volatility():
+    from tartar.model.volatility import VolatilityEstimator, prior_sigma
+
+    est = VolatilityEstimator(prior_sigma(60, "trades"))
+    for i in range(10):
+        est.update(1.0, Candle(i * 60, 1.0, 1.3, 0.8, 1.2, volume=1, trades=3))
+    before = est.sigma
+    for i in range(10, 60):
+        est.update(1.2, Candle.flat(i * 60, 1.2))
+    assert est.sigma == before and est.count == 10
+    assert prior_sigma(60, "trades") > 5 * prior_sigma(60, "ohlcv")
+
+
+def test_first_moves_are_not_capped_against_the_prior():
+    from tartar.model.volatility import VolatilityEstimator
+
+    est = VolatilityEstimator(0.03)
+    est.update(1.0, Candle(0, 1.0, 2.0, 1.0, 2.0, volume=1, trades=3))  # a launch doubling in a minute
+    assert est.sigma > 0.2  # capped at 36x the prior variance it would stay under 0.1
+
+
+def test_activity_follows_the_last_candle():
+    from tartar.model.volatility import ActivityEstimator
+
+    act = ActivityEstimator(prior_flat=0.5, prior_weight=1.5)
+    for i in range(78):  # bursts: three trading candles, then three quiet ones
+        act.update(Candle(i * 60, 1, 1, 1, 1, volume=1, trades=5) if i % 6 < 3 else Candle.flat(i * 60, 1))
+    assert act.flat_rate > 0.55  # ended on a quiet candle: quiet spells persist (2/3)
+    act.update(Candle(78 * 60, 1, 1, 1, 1, volume=1, trades=5))
+    assert act.flat_rate < 0.45  # after a trading candle, trading persists (1/3 flat)
+
+
+def test_bursty_trades_leave_more_quiet_time():
+    from tartar.model.volatility import ActivityEstimator
+
+    steady, bursty = ActivityEstimator(), ActivityEstimator()
+    for i in range(60):
+        steady.update(Candle(i * 60, 1, 1, 1, 1, volume=1, trades=10))
+        bursty.update(Candle(i * 60, 1, 1, 1, 1, volume=1, trades=1 if i % 2 else 19))  # same mean, overdispersed
+    assert bursty.no_trade_prob(0.5, True, 1) > 5 * steady.no_trade_prob(0.5, True, 1)
+    assert bursty.no_trade_prob(0.5, True, 30) < bursty.no_trade_prob(0.5, True, 1)  # a busy start predicts more
+
+
+def test_band_control_ignores_flat_closes_it_covered():
+    fc = Forecaster(60, domain="trades")
+    for i in range(10):
+        fc.observe(Candle(i * 60, 1.0, 1.02, 0.98, 1.0 + 0.001 * i, volume=1, trades=5))
+    alpha = fc._alpha
+    for i in range(10, 40):  # the token goes quiet: every close equals the reference price
+        price = fc.locked.ref_price
+        assert fc.locked.low <= price <= fc.locked.high
+        fc.observe(Candle.flat(i * 60, price))
+    assert fc._alpha == alpha

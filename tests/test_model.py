@@ -102,7 +102,7 @@ def test_calibrator_fades_uninformative_odds():
     for _ in range(2000):
         q = rng.uniform(0.3, 0.7)
         informative.update(math.log(q / (1 - q)), rng.random() < q)
-    assert 0.7 < informative.slope < 1.3
+    assert 0.7 < informative.slope <= 1.0  # calibrated odds are left (nearly) alone; never amplified
 
 
 def test_volume_feature_ignores_other_source_units():
@@ -112,3 +112,22 @@ def test_volume_feature_ignores_other_source_units():
     live = [Candle(600 + i * 60, 1, 1, 1, 1, volume=5.0, trades=10) for i in range(5)]  # SOL-scale
     x = build_features(history + live, 0.03)
     assert abs(x[FEATURES.index("volume")]) < 1.0
+
+
+def test_no_false_conviction_early_on_a_random_walk():
+    """Binned, not averaged: on pure noise, confident up/down calls must be rare and log loss no worse than a coin."""
+    stated, ups = [], []
+    for seed in range(1000, 1300):
+        f = Forecaster(60)
+        for c in make_series(60, seed=seed):
+            locked = f.locked
+            f.observe(c)
+            if locked is not None and c.close != locked.ref_price:
+                moved = locked.p_up + locked.p_down
+                stated.append(locked.p_up / moved)
+                ups.append(c.close > locked.ref_price)
+    p, y = np.array(stated), np.array(ups)
+    confident = np.maximum(p, 1 - p) >= 0.6
+    assert confident.mean() < 0.05
+    log_loss = -np.mean(np.where(y, np.log2(p), np.log2(1 - p)))
+    assert log_loss <= 1.005

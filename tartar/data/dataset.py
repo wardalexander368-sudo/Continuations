@@ -253,7 +253,7 @@ def build_dataset(
         if domain == "trades" and is_late_join(token, late_join):
             candles, tick_groups, first_target = late_join_view(token, timeframe)
             known_creator = False
-        engine = FeatureEngine(timeframe, token.created if known_launch else None, known_creator)
+        engine = FeatureEngine(timeframe, token.created if known_launch else None, known_creator, domain=domain)
         tracker = WalletTracker(token.created if known_launch else None)
         stream = sorted((tick for group in tick_groups.values() for tick, _ in group), key=lambda t: t.ts)
         pos = 0

@@ -84,7 +84,7 @@ def test_train_serve_parity(sim_tokens, sim_dataset):
     expected = {(round(float(sim_dataset.f[r]), 2), int(round(float(sim_dataset.ref[r]) * 1e15))): sim_dataset.X[r] for r in rows}
     known_creator = _hash_unit(token.mint, "creator") >= 0.3
     launched = token.created if _hash_unit(token.mint, "launch") >= 0.15 else None
-    engine = FeatureEngine(60, launched, known_creator)
+    engine = FeatureEngine(60, launched, known_creator, domain="trades")
     tracker = WalletTracker(launched)
     book = CandleBook(60, grace=0.0)
     ticks = sorted((tick for group in token.ticks.values() for tick, _ in group), key=lambda t: t.ts)
@@ -193,10 +193,10 @@ def test_evaluate_report(tiny_model, sim_dataset):
 
 def test_activity_zero_inflated():
     sleepy, busy = ActivityEstimator(), ActivityEstimator()
-    for i in range(60):
+    for i in range(61):
         sleepy.update(Candle(i * 60, 1, 1, 1, 1, volume=1, trades=4) if i % 3 == 0 else Candle.flat(i * 60, 1))
         busy.update(Candle(i * 60, 1, 1, 1, 1, volume=1, trades=50))
-    assert 0.5 < sleepy.no_trade_prob(1.0, False) < 0.8
+    assert sleepy.no_trade_prob(1.0, False) > 0.8  # after a trading candle, two quiet ones follow
     assert sleepy.no_trade_prob(0.5, False) > sleepy.no_trade_prob(1.0, False)
     assert sleepy.no_trade_prob(0.5, True) < 0.2
     assert busy.no_trade_prob(1.0, False) < 0.01 and busy.no_trade_prob(0.05, True) < 0.1
