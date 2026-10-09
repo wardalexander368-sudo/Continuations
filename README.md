@@ -69,7 +69,7 @@ prediction as well as the warning.
 
 ## Getting the most accurate predictions: train the global model
 
-A model (`tartar/models/trades-60s`, trained on 3,523 real pump.fun
+A model (`tartar/models/trades-60s`, trained on 5,790 real pump.fun
 launches) ships with the repo and is used automatically for 1-minute candles of
 pump.fun tokens. Without a trained model, the agent learns each token from
 scratch while it watches.

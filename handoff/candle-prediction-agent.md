@@ -44,7 +44,7 @@ split by launch), plus a candle-by-candle replay of the live forecaster.
 |---|---|
 | Repo / branch / PR | `StaticPush7217/TARTAR`. All work is on `main` (fast-forwarded from branch `claude/solana-candle-predictor-s95qjr`, PR #1) |
 | Live agent (`tartar watch`) | Works end to end against real tokens (pump.fun via chain, others via DexScreener/GeckoTerminal) |
-| Global model | **v1 installed**: `tartar/models/trades-60s.*`, trained on 3,523 real pump.fun launches (~2.7h of recording, 154k rows) |
+| Global model | **v2 installed** (2026-10-09): `tartar/models/trades-60s.*`, trained on 5,790 real pump.fun launches (251k rows; section 8.2.1). v1 (3,523 launches) is described in 8.2 |
 | Real-data result (v1, held-out later launches) | At candle open: hit 85.3% vs stated 85.2%, error **4.7% below naive**, 0.61 bits/row of information over the base rate; the 80% band covers 91.9% and states 91.3% (calibrated; the excess over 80% is the "no further trade" mass, section 8.2). Live replay (global + online): **edge +7.5%** on all candles, **+7.8%** on candles where the token is trading; hit 69.0% vs stated 67.8% there |
 | Online-only fallback | Fixed by the online-model review (section 11.1): now calibrated on real tokens (hit 79.3% vs stated 78.8%; trading 46.0% vs 45.1%), edge 0 (was −5.3%, and 23% hit at 52% stated on trading candles) |
 | Data recording | `tartar record` running in this container into `data/raw` (not in git; snapshot in `handoff/data/raw`) |
@@ -346,6 +346,33 @@ dominates: whether anything else trades before the close is the first question.
     calls.
   - Keep-better install: a 3-round model was correctly rejected (log loss 1.90
     vs 1.71).
+
+### 8.2.1 v2 (installed 2026-10-09)
+
+Trained on every recording so far: 5,790 launches and 251,220 rows from four
+recorder directories (`tartar train --raw a,b,c,d`): this session's recorder
+14:06–21:50 UTC, the Jev session's fast loop 23:44–23:50, and the
+slot-annotated runs 00:01–00:48. 55 rounds, temperature 1.116.
+
+v1 and v2 compared on the same v2 test launches (the latest 15%, all recorded
+after v1's training data):
+
+| On v2's test launches | v1 | v2 |
+|---|---|---|
+| Test log loss | 0.4891 | **0.4758** |
+| Information gain at the open (bits) | 0.578 | **0.609** |
+| Hit / stated at the open | 86.0% / 87.6% | 86.2% / 86.8% |
+| Live replay, trading candles, hit / stated | 66.6% / 67.5% | 66.9% / 66.3% |
+| Error edge at the open | **+5.2%** | +3.9% |
+| Live replay error edge, all / trading | **+5.6% / +5.9%** | +4.0% / +4.2% |
+
+Installed by the keep-better rule (test log loss). v2 is the better
+probabilistic forecaster and is better calibrated; v1's point forecast was
+~1.5 points closer on these launches. The likely reason is the validation-fitted
+median shrink: v1's validation chose 0.8 at the open, v2's chose 1.0 (no
+shrink) up to f = 0.8. **Open item:** fit the shrink on a larger, pooled
+validation set or as a smooth rule in f. v2's test set is later and harder
+than v1's: v2's own live edge is +4.0%, against +7.5% for v1 on v1's test set.
 
 ### 8.3 Blending
 

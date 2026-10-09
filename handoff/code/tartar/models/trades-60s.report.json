@@ -84,26 +84,25 @@
       3.0,
       4.0
     ],
-    "temperature": 1.127998559435293,
-    "tail_low": 3.0822477983740306,
-    "tail_high": 2.2566507403403695,
+    "temperature": 1.116290356547353,
+    "tail_low": 3.001280531462545,
+    "tail_high": 1.8482669376597296,
     "nowcast": true,
-    "best_iteration": 54,
-    "train_rows": 115338,
-    "valid_rows": 22554,
-    "tokens": 3523,
+    "best_iteration": 55,
+    "train_rows": 186054,
+    "valid_rows": 31698,
+    "tokens": 5790,
     "simulated": false,
-    "trained_at": "2026-10-08T20:15:45Z",
-    "train_seconds": 47.4,
-    "model_bytes": 8936134,
+    "trained_at": "2026-10-09T00:53:55Z",
+    "train_seconds": 53.4,
     "median_shrink": [
       [
         0.0,
-        0.8
+        1.0
       ],
       [
         0.2,
-        0.8
+        1.0
       ],
       [
         0.4,
@@ -111,179 +110,180 @@
       ],
       [
         0.6,
-        0.7000000000000001
+        1.0
       ],
       [
         0.8,
-        0.4
+        1.0
       ],
       [
         0.95,
-        0.0
+        0.4
       ]
-    ]
+    ],
+    "model_bytes": 9508920
   },
-  "test_rows": 16146,
+  "test_rows": 33468,
   "data_capture": {
-    "tokens_measured": 3180,
-    "median": 0.926829268292683,
-    "mean": 0.8414466321674683,
+    "tokens_measured": 5227,
+    "median": 0.9615384615384616,
+    "mean": 0.8802822628360313,
     "note": "share of recorded trades whose predecessor was also recorded (1.0 = complete stream)"
   },
   "test_by_fraction": [
     {
       "f": 0.0,
-      "rows": 2691,
-      "hit_rate": 0.8533574224631135,
-      "avg_confidence": 0.8521346375755133,
-      "band_coverage": 0.9186991869918699,
-      "band_stated": 0.9128449841476175,
-      "band_width_pct": 19.615808790947735,
-      "mae_pct": 7.436377285777847,
-      "naive_mae_pct": 7.803868054590854,
-      "edge": 0.04709084856923229,
-      "log_loss": 0.7632784342411916,
-      "info_gain_bits": 0.6148786075863257
+      "rows": 5578,
+      "hit_rate": 0.8623955431754875,
+      "avg_confidence": 0.8677846018539312,
+      "band_coverage": 0.9318941504178273,
+      "band_stated": 0.9245045367069692,
+      "band_width_pct": 13.727636752714679,
+      "mae_pct": 5.489027828467432,
+      "naive_mae_pct": 5.711951802966424,
+      "edge": 0.039027635769478874,
+      "log_loss": 0.6539585625827564,
+      "info_gain_bits": 0.6094985281207084
     },
     {
       "f": 0.2,
-      "rows": 2691,
-      "hit_rate": 0.8943089430894309,
-      "avg_confidence": 0.8980711443207507,
-      "band_coverage": 0.9226136705811503,
-      "band_stated": 0.9195354183869979,
-      "band_width_pct": 15.964834530702642,
-      "mae_pct": 5.542370579640639,
-      "naive_mae_pct": 5.758049972140852,
-      "edge": 0.03745701991885009,
-      "log_loss": 0.6836362937203458,
-      "info_gain_bits": 0.5476960238307835
+      "rows": 5578,
+      "hit_rate": 0.8920612813370473,
+      "avg_confidence": 0.9039684402257451,
+      "band_coverage": 0.9318941504178273,
+      "band_stated": 0.9297760552403426,
+      "band_width_pct": 11.440687713715398,
+      "mae_pct": 4.257933419672253,
+      "naive_mae_pct": 4.398292914965327,
+      "edge": 0.03191226641943212,
+      "log_loss": 0.6035159037538551,
+      "info_gain_bits": 0.5501468821116072
     },
     {
       "f": 0.4,
-      "rows": 2691,
-      "hit_rate": 0.9232158988256549,
-      "avg_confidence": 0.9253454933682093,
-      "band_coverage": 0.9289370671484493,
-      "band_stated": 0.9278889794492778,
-      "band_width_pct": 12.263836837719133,
-      "mae_pct": 4.384526330447094,
-      "naive_mae_pct": 4.5206556561614475,
-      "edge": 0.030112739405138145,
-      "log_loss": 0.6185382466424462,
-      "info_gain_bits": 0.45846541261314017
+      "rows": 5578,
+      "hit_rate": 0.9224233983286908,
+      "avg_confidence": 0.9290184134847094,
+      "band_coverage": 0.9376044568245125,
+      "band_stated": 0.9352363620191304,
+      "band_width_pct": 9.015219281329928,
+      "mae_pct": 3.3260495308856393,
+      "naive_mae_pct": 3.366809168871395,
+      "edge": 0.012106310735579662,
+      "log_loss": 0.537371696063195,
+      "info_gain_bits": 0.48295479950294573
     },
     {
       "f": 0.6,
-      "rows": 2691,
-      "hit_rate": 0.9566395663956639,
-      "avg_confidence": 0.9461987797356258,
-      "band_coverage": 0.948509485094851,
-      "band_stated": 0.9357192677373132,
-      "band_width_pct": 8.686760459165283,
-      "mae_pct": 2.8497234336141335,
-      "naive_mae_pct": 2.8385127071950995,
-      "edge": -0.0039495072157389455,
-      "log_loss": 0.5002177150626637,
-      "info_gain_bits": 0.35539343929505424
+      "rows": 5578,
+      "hit_rate": 0.948050139275766,
+      "avg_confidence": 0.950203131531714,
+      "band_coverage": 0.944150417827298,
+      "band_stated": 0.9432783753976903,
+      "band_width_pct": 6.363116675779598,
+      "mae_pct": 2.1756794567403324,
+      "naive_mae_pct": 2.1322822742094196,
+      "edge": -0.020352456640386984,
+      "log_loss": 0.46528486470544833,
+      "info_gain_bits": 0.40601916334489535
     },
     {
       "f": 0.8,
-      "rows": 2691,
-      "hit_rate": 0.9780186690755797,
-      "avg_confidence": 0.9667453340681628,
-      "band_coverage": 0.959349593495935,
-      "band_stated": 0.948549309648444,
-      "band_width_pct": 5.30099828915208,
-      "mae_pct": 1.8129876075903975,
-      "naive_mae_pct": 1.8264792035860635,
-      "edge": 0.007386668279155462,
-      "log_loss": 0.39108947159250684,
-      "info_gain_bits": 0.28383664894773075
+      "rows": 5578,
+      "hit_rate": 0.9745125348189415,
+      "avg_confidence": 0.9702668202660234,
+      "band_coverage": 0.9598885793871866,
+      "band_stated": 0.9549566639241607,
+      "band_width_pct": 3.7397864575450934,
+      "mae_pct": 1.263300848732678,
+      "naive_mae_pct": 1.2445703602747693,
+      "edge": -0.015049762597410421,
+      "log_loss": 0.36336255193416434,
+      "info_gain_bits": 0.3122977236328253
     },
     {
       "f": 0.95,
-      "rows": 2691,
-      "hit_rate": 0.992773261065944,
-      "avg_confidence": 0.9860806771208629,
-      "band_coverage": 0.980126467931346,
-      "band_stated": 0.9673568985424718,
-      "band_width_pct": 2.070281550911421,
-      "mae_pct": 0.5735903609677848,
-      "naive_mae_pct": 0.5735903609677845,
-      "edge": -6.661338147750939e-16,
-      "log_loss": 0.21622319514182206,
-      "info_gain_bits": 0.18082520977682215
+      "rows": 5578,
+      "hit_rate": 0.992757660167131,
+      "avg_confidence": 0.9880780788632243,
+      "band_coverage": 0.9745125348189415,
+      "band_stated": 0.9707688549689514,
+      "band_width_pct": 1.3141101195870477,
+      "mae_pct": 0.5028383181140099,
+      "naive_mae_pct": 0.5033013357493258,
+      "edge": 0.0009199610698955585,
+      "log_loss": 0.23147933740035428,
+      "info_gain_bits": 0.2129063046620969
     }
   ],
   "live_at_open": {
     "tokens": 300,
     "online_only": {
       "all": {
-        "n": 2214,
-        "hit_rate": 0.7931,
-        "avg_confidence": 0.7879,
-        "band_coverage": 0.9237,
-        "band_stated": 0.901,
-        "mae_pct": 6.3802,
-        "naive_mae_pct": 6.3802,
-        "edge": 0.0
+        "n": 3816,
+        "hit_rate": 0.7974,
+        "avg_confidence": 0.784,
+        "band_coverage": 0.9222,
+        "band_stated": 0.8861,
+        "mae_pct": 5.1297,
+        "naive_mae_pct": 5.1262,
+        "edge": -0.0007
       },
       "trading": {
-        "n": 709,
-        "hit_rate": 0.4598,
-        "avg_confidence": 0.4508,
-        "band_coverage": 0.8505,
-        "band_stated": 0.7975,
-        "mae_pct": 19.1622,
-        "naive_mae_pct": 19.1622,
-        "edge": 0.0
+        "n": 1089,
+        "hit_rate": 0.4637,
+        "avg_confidence": 0.4465,
+        "band_coverage": 0.8751,
+        "band_stated": 0.7923,
+        "mae_pct": 17.1846,
+        "naive_mae_pct": 17.172,
+        "edge": -0.0007
       }
     },
     "global_plus_online": {
       "all": {
-        "n": 2214,
-        "hit_rate": 0.8663,
-        "avg_confidence": 0.8639,
-        "band_coverage": 0.9332,
-        "band_stated": 0.9192,
-        "mae_pct": 5.9048,
-        "naive_mae_pct": 6.3802,
-        "edge": 0.0745
+        "n": 3816,
+        "hit_rate": 0.8559,
+        "avg_confidence": 0.8626,
+        "band_coverage": 0.9245,
+        "band_stated": 0.9215,
+        "mae_pct": 4.9223,
+        "naive_mae_pct": 5.1262,
+        "edge": 0.0398
       },
       "trading": {
-        "n": 709,
-        "hit_rate": 0.6897,
-        "avg_confidence": 0.6783,
-        "band_coverage": 0.8646,
-        "band_stated": 0.8355,
-        "mae_pct": 17.6758,
-        "naive_mae_pct": 19.1622,
-        "edge": 0.0776
+        "n": 1089,
+        "hit_rate": 0.6694,
+        "avg_confidence": 0.6629,
+        "band_coverage": 0.8595,
+        "band_stated": 0.8356,
+        "mae_pct": 16.4567,
+        "naive_mae_pct": 17.172,
+        "edge": 0.0417
       }
     }
   },
   "feature_importance": {
-    "p_idle": 0.306,
-    "curve_progress": 0.0774,
-    "idle": 0.0375,
-    "range": 0.0359,
-    "f": 0.0315,
-    "log_price": 0.0247,
-    "rise": 0.0232,
-    "sniper_share": 0.0207,
-    "age": 0.02,
-    "wash_share": 0.0198,
-    "log_volume": 0.0194,
-    "creator_share": 0.0188,
-    "trades_per_wallet": 0.0183,
-    "log_sigma": 0.0171,
-    "volume_z": 0.0169,
-    "p_range": 0.0155,
-    "ema_trend": 0.0153,
-    "vol_ratio": 0.0153,
-    "trade_trend": 0.0152,
-    "drawdown": 0.015
+    "p_idle": 0.3341,
+    "curve_progress": 0.0832,
+    "idle": 0.0433,
+    "range": 0.0376,
+    "f": 0.0341,
+    "log_price": 0.0238,
+    "rise": 0.0221,
+    "age": 0.0179,
+    "sniper_share": 0.0179,
+    "trades_per_wallet": 0.0168,
+    "creator_share": 0.0168,
+    "wash_share": 0.0165,
+    "p_range": 0.0161,
+    "log_sigma": 0.0157,
+    "drawdown": 0.0154,
+    "volume_z": 0.0136,
+    "log_volume": 0.0136,
+    "trade_trend": 0.0134,
+    "vol_ratio": 0.0129,
+    "ema_trend": 0.0129
   },
-  "test_log_loss": 0.5288305594001627
+  "test_log_loss": 0.47582881940662886
 }
