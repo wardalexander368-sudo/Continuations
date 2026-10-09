@@ -4,6 +4,7 @@
   daily loss cap stops every new entry. Exits still run so positions close on schedule; with
   ``flatten_on_halt`` the agent closes everything at the latest marks instead.
 * Caps: max notional per position, max open positions per strategy and in total, max gross exposure.
+* Shadow variants (research copies of a rule) count only against their own per-strategy cap.
 * Daily loss cap: realized + unrealized PnL of the UTC day below ``-daily_loss_cap_usd`` halts the
   agent until ``resume``.
 * Errors: a strategy whose step raises ``max_consecutive_errors`` times in a row is halted
@@ -43,7 +44,7 @@ class Risk:
     def day_pnl(self, now: float, positions: list[Position]) -> float:
         day = time.strftime("%Y-%m-%d", time.gmtime(now))
         realized = self.ledger.state["daily"].get(day, 0.0)
-        return realized + sum(p.unrealized() for p in positions)
+        return realized + sum(p.unrealized() for p in positions if not p.meta.get("shadow"))
 
     def check_daily(self, now: float, positions: list[Position]) -> str | None:
         pnl = self.day_pnl(now, positions)
@@ -67,6 +68,9 @@ class Risk:
         mine = [p for p in positions if p.strategy == intent.strategy]
         if len(mine) >= lim["max_open_per_strategy"]:
             return f"{len(mine)} open >= max {lim['max_open_per_strategy']} for {intent.strategy}"
+        if intent.meta.get("shadow"):
+            return None  # shadow variants are research: outside the agent-wide caps
+        positions = [p for p in positions if not p.meta.get("shadow")]
         if len(positions) >= lim["max_open_total"]:
             return f"{len(positions)} open >= max {lim['max_open_total']} in total"
         gross = sum(p.notional_usd for p in positions)

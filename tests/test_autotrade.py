@@ -134,7 +134,7 @@ def test_review_logs_and_resizes(tmp_path):
     run_once(root, now=3000, strategies={"fake": Fake(verdict=Verdict("pass", 9, {"m": 1}, "criteria met"))})
     led = Ledger(root)
     assert led.strategy("fake")["status"] == "promoted"
-    (row,) = led.changes()
+    (row,) = [c for c in led.changes() if c["kind"] == "status"]
     assert row["from"] == "paper" and row["to"] == "promoted" and row["reason"].startswith("registered criteria met")
 
 
@@ -188,6 +188,7 @@ def test_dip_trades_forward_only_and_holds_48_bars(tmp_path):
 def test_dip_evaluate_pending_then_scored():
     strat = DipStrategy.__new__(DipStrategy)
     strat.rule = {"hold_bars": 48}
+    strat.family_size = 1
     rng = np.random.default_rng(0)
     tr = []
     for i in range(210):
@@ -271,3 +272,24 @@ def test_alt_cost_reported_beside_registered():
     trade, _ = b.close(pos, closer(price=1.0, cost=CostModel(fee=0.005)))
     assert trade.net_return == pytest.approx(-0.01)
     assert trade.meta["alt_net_return"] == pytest.approx(-0.025)
+
+
+def test_variants_expand_register_and_stay_outside_caps(tmp_path):
+    from tartar.autotrade.runner import expand_variants
+
+    cfg = {"strategies": {"dip": {"kind": "dip", "size_usd": 200}},
+           "variants": [{"base": "dip", "base_rule": {"drop": 0.05, "hold_bars": 48},
+                         "grid": {"drop": [0.03, 0.05], "hold_bars": [24, 48]}}]}
+    out = expand_variants(cfg)
+    names = sorted(n for n in out if "~" in n)
+    assert names == ["dip~drop=0.03~hold_bars=24", "dip~drop=0.03~hold_bars=48", "dip~drop=0.05~hold_bars=24"]
+    v = out["dip~drop=0.03~hold_bars=24"]
+    assert v["shadow"] and v["family_size"] == 4 and v["rule_overrides"] == {"drop": 0.03, "hold_bars": 24}
+    # shadow intents bypass the agent-wide caps; registered once in changes.jsonl
+    root = setup(tmp_path, {"risk": {"max_open_total": 0}})
+    o = opener()
+    o.meta["shadow"] = True
+    s = run_once(root, now=3000, strategies={"fake": Fake(script=[[o]])})
+    assert s["opened"] == 1
+    run_once(root, now=4000, strategies={"fake": Fake()})
+    assert [c["kind"] for c in Ledger(root).changes()].count("registered") == 1

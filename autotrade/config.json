@@ -34,8 +34,37 @@
       "enabled": false,
       "prereg": "set by the launch-selector thread when it registers a rule",
       "signals": "autotrade/signals/launch_selector.jsonl",
-      "cost": {"fee": 0.0125, "impact": 0.006, "fixed_usd": 0.02},
-      "eval": {"min_trades": 100, "deadline_days": 30}
+      "cost": {
+        "fee": 0.0125,
+        "impact": 0.006,
+        "fixed_usd": 0.02
+      },
+      "eval": {
+        "min_trades": 100,
+        "deadline_days": 30
+      }
     }
-  }
+  },
+  "variants": [
+    {
+      "base": "dip",
+      "base_rule": {
+        "drop": 0.05,
+        "hold_bars": 48
+      },
+      "grid": {
+        "drop": [
+          0.03,
+          0.05,
+          0.08
+        ],
+        "hold_bars": [
+          24,
+          48,
+          96
+        ]
+      },
+      "note": "shadow research copies of the registered dip rule: scored with Bonferroni-widened CIs (family of 9), outside the risk caps"
+    }
+  ]
 }

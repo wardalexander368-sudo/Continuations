@@ -45,8 +45,9 @@ class Ledger:
         self.trades()
         self._trades.append(trade)
         self._append("trades.jsonl", trade.to_dict())
-        day = time.strftime("%Y-%m-%d", time.gmtime(trade.exit_at))
-        self.state["daily"][day] = self.state["daily"].get(day, 0.0) + trade.pnl_usd
+        if not trade.meta.get("shadow"):
+            day = time.strftime("%Y-%m-%d", time.gmtime(trade.exit_at))
+            self.state["daily"][day] = self.state["daily"].get(day, 0.0) + trade.pnl_usd
 
     # logs
     def journal(self, row: dict) -> None:

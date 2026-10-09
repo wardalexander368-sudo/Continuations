@@ -21,11 +21,31 @@ def load_config(root: Path) -> dict:
     return json.loads(path.read_text()) if path.exists() else {"mode": "paper", "strategies": {}}
 
 
+def expand_variants(config: dict) -> dict:
+    """Config strategies plus shadow variants of a base rule (config "variants"): each grid point is its own
+    paper strategy, registered (logged) the first time the agent runs it, scored with the CI widened for
+    the number of variants in its family (Bonferroni), and kept out of the risk caps (research only)."""
+    out = dict(config.get("strategies", {}))
+    for fam in config.get("variants", []):
+        base = out[fam["base"]]
+        keys = sorted(fam["grid"])
+        combos = [{}]
+        for k in keys:
+            combos = [{**c, k: v} for c in combos for v in fam["grid"][k]]
+        combos = [c for c in combos if any(c[k] != fam.get("base_rule", {}).get(k) for k in keys)]  # not the registered rule
+        k_family = len(combos) + 1
+        for c in combos:
+            name = fam["base"] + "~" + "~".join(f"{k}={c[k]}" for k in keys)
+            out[name] = {**base, "rule_overrides": c, "shadow": True, "family_size": k_family,
+                         "enabled": fam.get("enabled", True) and base.get("enabled", True)}
+    return out
+
+
 def build_strategies(config: dict) -> dict:
     from .strategies import REGISTRY
 
     out = {}
-    for name, scfg in config.get("strategies", {}).items():
+    for name, scfg in expand_variants(config).items():
         if not scfg.get("enabled", True):
             continue
         kind = scfg.get("kind", name)
@@ -54,6 +74,11 @@ def run_once(root: Path = ROOT, now: float | None = None, strategies: dict | Non
 
     for name, strat in strategies.items():
         rec = ledger.strategy(name)
+        if "registered_at" not in rec:  # the agent's own pre-registration: rule and criteria before any data
+            rec["registered_at"] = now
+            describe = getattr(strat, "describe", None)
+            ledger.change({"t": now, "kind": "registered", "scope": name, "reason": "first run under this rule",
+                           "rule": describe() if describe else {}, "prereg": getattr(strat, "prereg", "")})
         if rec["status"] == "halted":
             continue
         mine = [p for p in ledger.positions if p.strategy == name]
@@ -164,6 +189,8 @@ def write_report(root: Path, ledger: Ledger, strategies: dict, now: float, risk:
         lines += ["## Recent changes", ""]
         for c in reversed(changes):
             what = f"{c.get('from')} → {c.get('to')}" if c.get("kind") == "status" else c.get("kind")
+            if c.get("kind") == "registered" and "~" in c.get("scope", ""):
+                continue  # variant registrations: see changes.jsonl
             lines.append(f"* {fmt_t(c['t'])} **{c.get('scope')}** {what}: {c.get('reason')}")
         lines.append("")
     if ledger.positions:

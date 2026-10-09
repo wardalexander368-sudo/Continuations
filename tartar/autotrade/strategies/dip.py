@@ -31,12 +31,17 @@ GECKO = "https://api.geckoterminal.com/api/v2/networks/solana"
 
 
 class DipStrategy:
+    _cache: dict = {}  # (pool, 5-minute bucket) -> rows: variants share one fetch per run
+
     def __init__(self, name: str, cfg: dict):
         self.name = name
         self.cfg = cfg
         self.prereg = cfg.get("prereg", "handoff/preregistration/dip-rolling")
         spec = json.loads((Path(self.prereg) / "SPEC.json").read_text())
-        self.rule, self.costs, self.eval = spec["rule"], spec["costs"], spec["evaluation"]
+        self.rule, self.costs, self.eval = dict(spec["rule"]), spec["costs"], spec["evaluation"]
+        self.rule.update(cfg.get("rule_overrides", {}))
+        self.shadow = bool(cfg.get("shadow"))
+        self.family_size = int(cfg.get("family_size", 1))
         self.size = float(cfg.get("size_usd", self.costs["size_usd"]))
         measured = Path(self.prereg) / "fees-measured.json"  # per-pool PumpSwap fees measured on chain (addendum)
         self.measured = json.loads(measured.read_text()) if measured.exists() else {}
@@ -110,7 +115,11 @@ class DipStrategy:
             pid = p["pool"]
             st = pools_state.setdefault(pid, {})
             try:
-                rows = self.fetch(ctx, pid)
+                ck = (pid, int(ctx.now // 300))
+                if ck not in DipStrategy._cache:
+                    DipStrategy._cache = {k: v for k, v in DipStrategy._cache.items() if k[1] == ck[1]}
+                    DipStrategy._cache[ck] = self.fetch(ctx, pid)
+                rows = DipStrategy._cache[ck]
             except Exception:  # noqa: BLE001 - one pool's data error skips that pool this run
                 failures += 1
                 continue
@@ -147,7 +156,7 @@ class DipStrategy:
                                           asset=pid, side=1, notional_usd=self.size, cost=cost,
                                           meta={"pool": pid, "label": p["name"], "signal_t": float(t[i]), "exit_t": exit_t,
                                                 "key": key, "liquidity_usd": p["liquidity_usd"],
-                                                "alt_cost": self.measured_cost(pid, cost)}))
+                                                "alt_cost": self.measured_cost(pid, cost), "shadow": self.shadow}))
                     st["busy_until"] = exit_t
                     idx = np.searchsorted(t, exit_t)
                     if idx < len(t) and t[idx] == exit_t:  # the whole hold is already in the data
@@ -158,6 +167,12 @@ class DipStrategy:
         if pools and failures == len(pools):
             raise RuntimeError(f"no pool data this run ({failures} fetch failures)")
         return intents
+
+    def describe(self) -> dict:
+        return {"rule": self.rule, "costs": self.costs, "size_usd": self.size, "shadow": self.shadow,
+                "family_size": self.family_size,
+                "success": "at >= 200 trades or 21 days: excess over random entries > 0 with its CI above 0 "
+                           f"(two-sided {100 * (1 - 0.1 / self.family_size):.1f}% pool bootstrap) AND mean net > 0"}
 
     def measured_cost(self, pool: str, cost: CostModel) -> dict:
         """The registered cost model with the pool's measured PumpSwap fee (secondary, ADDENDUM-2026-10-09-fees)."""
@@ -194,10 +209,11 @@ class DipStrategy:
         pools = [t.meta.get("pool", t.asset) for t in trades]
         valid = [(t.net_return - t.meta["baseline"], t.meta.get("pool", t.asset)) for t in trades
                  if t.meta.get("baseline") == t.meta.get("baseline") and t.meta.get("baseline") is not None]
-        m, lo_m, hi_m = bootstrap_ci(net, pools)
+        a = 0.05 / self.family_size  # Bonferroni across a variant family (1 for the registered rule)
+        m, lo_m, hi_m = bootstrap_ci(net, pools, q=(a, 1 - a))
         stats = {"n": n, "days": round(days, 2), "mean_net": m, "mean_lo": lo_m, "mean_hi": hi_m}
         if valid:
-            e, lo_e, hi_e = bootstrap_ci([x for x, _ in valid], [g for _, g in valid])
+            e, lo_e, hi_e = bootstrap_ci([x for x, _ in valid], [g for _, g in valid], q=(a, 1 - a))
             stats.update(excess=e, excess_lo=lo_e, excess_hi=hi_e)
         alt = [t.meta["alt_net_return"] for t in trades if "alt_net_return" in t.meta]
         if alt:
