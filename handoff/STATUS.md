@@ -32,13 +32,6 @@ next. Topic documents hold the detail:
 
 ## Active
 
-* **Same-slot entry thread** (project thread session, since 2026-10-09 17:35 UTC, branch
-  `claude/project-thread-12sv1q`). **Paper and analysis only, never `*.pumpportal.fun`.** Task:
-  §3.9's only winning launch buy is inside the creation slot. Is that entry reachable for an
-  outsider (who the same-slot buyers are, where in the slot they land, the latency and landing
-  cost to get there) and does it stay profitable after real fees, on all slot-annotated
-  recordings (~20k launches, not 1,347)?
-
 * **Dip/jevtrader session** (session_01Htqh7pc1Lh1PP6Dkm1rVvz, since 2026-10-09 17:33 UTC, `main`
   only): continues the profitability session. **Owns the dip forward test (queue 11b)**: a daily
   routine adds a cohort at 02:24 UTC (`established_cohort.py` + `pumpswap_fees.py --cohort`) and
@@ -308,6 +301,16 @@ next. Topic documents hold the detail:
   branch `claude/profitability-backtest`, on `main`).
 
 ## Log (newest first)
+
+* **2026-10-09 ~18:20 UTC, same-slot entry thread: closed, not worth building** (profitability
+  §3.18; 17,098 launches + 200 fetched blocks). §3.9's creation-slot edge comes from the
+  creator's own bundle: one-off wallets buy in an unbroken run right after the create (83%,
+  median 2 txs later) and realize +52%; entering first after the create loses 3.4% when nobody
+  follows in that slot. An outsider can at best be first among the 492 repeat sniper bots
+  (they land a median 132 txs later in the same block, on low fees): +2.0% [+1.3, +2.7] at
+  0.1 SOL only if we beat all of them every time, −1.2% as a median-speed bot, negative with a
+  p90 priority fee or 1 SOL size. Needs ~$1k/month shreds + co-location first. Nothing
+  half-done; no `*.pumpportal.fun` calls.
 
 * **2026-10-09 17:40 UTC, dip/jevtrader session:** edge hunt A1 pre-registered as a 90-day paper
   forward test: hedged JLP vs Kamino USDC (`preregistration/jlp-hedged/SPEC.md`,
