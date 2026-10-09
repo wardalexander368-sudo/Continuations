@@ -214,6 +214,7 @@ class ChainRecorder(Recorder):
             ChainCreate,
             ChainTrade,
             create_to_message,
+            stream_item,
             stream_program_events,
             trade_to_message,
         )
@@ -232,7 +233,7 @@ class ChainRecorder(Recorder):
                     elif item.kind == "disconnected" and self.connected:
                         self._session("disconnected")
                     continue
-                _, _, events = item
+                _, _, events, slot = stream_item(item)
                 created = {e.mint for e in events if isinstance(e, ChainCreate)}
                 first_buys = {}
                 for event in events:
@@ -240,14 +241,14 @@ class ChainRecorder(Recorder):
                         first_buys[event.mint] = event  # the creator's initial buy, folded into the create
                 for event in events:
                     if isinstance(event, ChainCreate):
-                        self.handle(create_to_message(event, first_buys.get(event.mint)))
+                        self.handle(create_to_message(event, first_buys.get(event.mint)) | {"slot": slot})
                         if event.mint in self.tracked:
                             self._emit({"e": "track", "t": now, "mint": event.mint})
                     elif isinstance(event, ChainTrade):
                         if first_buys.get(event.mint) is not event:
-                            self.handle(trade_to_message(event))
+                            self.handle(trade_to_message(event) | {"slot": slot})
                     elif isinstance(event, ChainComplete):
-                        self.handle({"txType": "migrate", "mint": event.mint})
+                        self.handle({"txType": "migrate", "mint": event.mint, "slot": slot})
                 if now - last_housekeeping >= self.housekeeping:
                     last_housekeeping = now
                     expired = [m for m, s in self.tracked.items() if now - s.created > self.track_seconds]

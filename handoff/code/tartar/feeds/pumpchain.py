@@ -158,10 +158,24 @@ def decode_event(data: bytes) -> ChainTrade | ChainCreate | ChainComplete | None
     return None
 
 
-def events_from_logs(logs: Iterable[str]) -> list[ChainTrade | ChainCreate | ChainComplete]:
-    events = []
+def events_from_logs(logs: Iterable[str], program: str = PUMP_PROGRAM) -> list[ChainTrade | ChainCreate | ChainComplete]:
+    """pump.fun events in a transaction's logs.
+
+    Only `Program data` lines emitted while `program` is the innermost running program
+    count: routers and other launchpads called in the same transaction emit their own
+    Anchor events, and one named TradeEvent shares pump.fun's discriminator.
+    """
+    events, frames = [], []
     for line in logs:
         if not line.startswith("Program data: "):
+            parts = line.split(" ", 3)
+            if len(parts) >= 3 and parts[0] == "Program":
+                if parts[2] == "invoke":
+                    frames.append(parts[1])
+                elif (parts[2] == "success" or parts[2].startswith("failed")) and frames and frames[-1] == parts[1]:
+                    frames.pop()
+            continue
+        if frames and frames[-1] != program:
             continue
         try:
             data = base64.b64decode(line[14:], validate=True)
@@ -223,14 +237,20 @@ def create_to_message(create: ChainCreate, first_trade: ChainTrade | None = None
     return msg
 
 
+def stream_item(item: tuple) -> tuple[float, str, list, int | None]:
+    """(receive time, signature, events, slot) from a stream item; slot is None if absent."""
+    return item[0], item[1], item[2], (item[3] if len(item) > 3 else None)
+
+
 async def stream_program_events(
     urls: tuple[str, ...] | None = None,
     *,
     commitment: str = "confirmed",
     max_backoff: float = 30.0,
-) -> AsyncIterator[tuple[float, str, list] | Status]:
-    """Yield (receive time, signature, events) for every successful pump.fun transaction,
-    plus Status messages (kind connected/disconnected) on (re)connection.
+) -> AsyncIterator[tuple[float, str, list, int | None] | Status]:
+    """Yield (receive time, signature, events, slot) for every successful pump.fun
+    transaction, plus Status messages (kind connected/disconnected) on (re)connection.
+    Consumers that predate the slot read the first three items (`stream_item`).
 
     After a drop it reconnects to the same endpoint; it only moves to the next of
     `urls` after repeated failures to connect. Trades during a disconnection are
@@ -253,14 +273,16 @@ async def stream_program_events(
                 while True:
                     raw = await asyncio.wait_for(ws.recv(), 60)  # pump.fun is never quiet for a minute
                     try:
-                        value = json.loads(raw)["params"]["result"]["value"]
+                        result = json.loads(raw)["params"]["result"]
+                        value = result["value"]
                     except (ValueError, KeyError, TypeError):
                         continue
                     if value.get("err") is not None:
                         continue  # failed transactions change nothing
                     events = events_from_logs(value.get("logs") or ())
                     if events:
-                        yield time.time(), value.get("signature", ""), events
+                        slot = (result.get("context") or {}).get("slot")
+                        yield time.time(), value.get("signature", ""), events, slot if isinstance(slot, int) else None
         except (OSError, WebSocketException, asyncio.TimeoutError, ConnectionError, ValueError) as exc:
             yield Status(f"{url} disconnected ({exc.__class__.__name__}: {str(exc)[:120]}); retrying in {backoff:.0f}s", "warn", kind="disconnected")
         if not connected:
@@ -303,7 +325,7 @@ class PumpChainFeed(LiveFeed):
             if isinstance(item, Status):
                 yield item
                 continue
-            _, _, events = item
+            _, _, events, _ = stream_item(item)
             for event in events:
                 if isinstance(event, ChainTrade) and event.mint == self.mint:
                     if not self.creator and event.creator:

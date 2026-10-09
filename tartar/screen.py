@@ -15,7 +15,7 @@ from typing import AsyncIterator, Callable
 
 from .candles import Tick
 from .feeds.base import Status
-from .feeds.pumpchain import ChainCreate, ChainTrade, create_to_message, trade_to_message
+from .feeds.pumpchain import ChainCreate, ChainTrade, create_to_message, stream_item, trade_to_message
 from .feeds.pumpportal import tick_from_message
 from .scam import CreatorIndex, ScamReport, WalletTracker, assess
 
@@ -71,7 +71,7 @@ async def next_clean_launch(
     async for item in stream:
         if isinstance(item, Status):
             continue
-        received, _, events = item
+        received, _, events, _ = stream_item(item)
         created = [e for e in events if isinstance(e, ChainCreate)]
         first_buys: dict[str, ChainTrade] = {}
         for event in events:

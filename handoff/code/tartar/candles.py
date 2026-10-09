@@ -49,6 +49,7 @@ class Tick:
     liquidity: float = 0.0  # SOL raised in the bonding curve after the trade
     tokens: float = 0.0  # token amount traded
     virtual_sol: float = 0.0  # virtual SOL reserves after the trade (pump.fun curve)
+    slot: int | None = None  # Solana slot of the trade, when the source records it
 
 
 @dataclass

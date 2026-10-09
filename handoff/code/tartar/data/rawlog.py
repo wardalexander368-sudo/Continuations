@@ -9,6 +9,11 @@ Event types (short keys keep files small):
     {"e": "untrack", "t": ts, "mint", "reason"}            # ...until here
     {"e": "session", "t": ts, "state": "connected"|"disconnected"|"stopped"}
 
+create, trade and migrate events from the chain recorder also carry "slot": the
+Solana slot of the transaction (since 2026-10-09; absent in older files and from
+PumpPortal). Slots order events across transactions and measure how many blocks
+after a launch each trade landed (~0.4 s per slot).
+
 Trades are only complete while the recorder was connected, so the dataset
 builder cuts each token's history at the first disconnection.
 """
@@ -37,8 +42,9 @@ def event_from_message(msg: dict, t: float) -> dict | None:
     mint = msg.get("mint")
     if not mint:
         return None
+    slot = msg.get("slot")
     if kind in ("migrate", "migration"):
-        return {"e": "migrate", "t": t, "mint": mint}
+        return {"e": "migrate", "t": t, "mint": mint} | ({"slot": int(slot)} if slot is not None else {})
     if kind not in ("create", "buy", "sell"):
         return None
     event = {
@@ -58,6 +64,8 @@ def event_from_message(msg: dict, t: float) -> dict | None:
         event.update(creator=msg.get("traderPublicKey") or "", name=msg.get("name") or "", symbol=msg.get("symbol") or "", uri=msg.get("uri") or "")
     else:
         event.update(side="b" if kind == "buy" else "s", trader=msg.get("traderPublicKey") or "")
+    if slot is not None:
+        event["slot"] = int(slot)
     return event
 
 
