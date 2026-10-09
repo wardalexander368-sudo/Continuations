@@ -89,16 +89,11 @@ deep pools match the model, a thin one was 2.4x it). The `launch_selector` slot 
   data, run `python3 handoff/experiments/fetch_gha_raw.py --dirs` and pass the printed dirs to `--raw`.
 
 * **Curve-model retrain thread** (project thread session, branch `claude/project-thread-6oh2s6`):
-  **v3.2 trained, waiting to install.** Candidates for all four lengths beat v3.1 on unseen launches
-  (predictor doc 8.2.2e; gzipped in `handoff/experiments/predictor-v32/candidates/`). **Install after
-  the predictor-strategy test is evaluated (≤ 2026-10-12)**, not before: its `evaluate` asserts the
-  SHA-256 of `trades-60s` / `trades-300s`. This thread does the install when it is woken after that;
-  if it is gone, any session may (the doc gives the two commands).
-  **Since 23:05 UTC:** market-wide recalibration study (coordinator, under the user's "work
-  continuously"): the 1m/5m blends swing between over- and underconfident with market-wide drift
-  (8.2.2e). Try a calibration layer fitted on recent resolved candles across all tokens, judged by
-  the predictor-strategy signal's net return at Jupiter (curve fees) and Lightning costs, on hours
-  v3.1 never saw. Research only; touches no installed model file.
+  **v3.2 trained, waiting for the user's OK to install** (predictor doc 8.2.2e; gzipped in
+  `handoff/experiments/predictor-v32/candidates/`). The predictor-strategy test that pinned the
+  model hashes was scored at 20:20 UTC, so nothing else blocks it. Market-wide recalibration study
+  done (profitability §3.24, closed). Next here: PumpSwap 5m retry once the recorder thread has
+  more graduated pools.
 
 * **Dip/jevtrader session** (session_01Htqh7pc1Lh1PP6Dkm1rVvz, since 2026-10-09 17:33 UTC, `main`
   only): continues the profitability session. **Owns the dip forward test (queue 11b)**: the GitHub
@@ -398,6 +393,12 @@ deep pools match the model, a thin one was 2.4x it). The `launch_selector` slot 
   branch `claude/profitability-backtest`, on `main`).
 
 ## Log (newest first)
+
+* **2026-10-09 ~23:45 UTC, retrain thread: market-wide recalibration of the candle calls: closed**
+  (profitability §3.24, `recal_market.py`). On hours v3.1 never saw (12–20), a rolling all-token
+  calibration fixes 5m `p_clear`'s 2x overstatement (log loss 0.239 → 0.220; 1m was already
+  calibrated) but no recalibrated or regime-gated rule gets near break-even: best −5.6% at
+  Jupiter/curve fees, −7.5% at Lightning. Nothing installed or changed in `tartar/`.
 
 * **2026-10-09 23:15 UTC, edge hunt E thread: "re-score the closed families at Jupiter's ~1.1%"
   answered without a new run.** 1.1% is CATE's round trip (a deep Meteora pool, 0.85% pool+impact).
