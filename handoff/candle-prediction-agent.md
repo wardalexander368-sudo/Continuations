@@ -467,9 +467,19 @@ The model files now record `num_leaves` / `min_data_in_leaf` in their metadata.
 
 **Open: the 5m model is overconfident on these newer launches.** At the open it states 70.6%
 and hits 60.9% (v2: 73.4% vs 59.9%), and the live blend's trading candles state 68.0% vs
-63.3%. Both models were trained mostly on older, lossier data. Its temperature and the blend's
-prior should be refitted when more `raw-eager`-quality data exists. 15s and 30s lean the other
-way: ~2 points underconfident on trading candles.
+63.3%. 15s and 30s lean the other way: ~2 points underconfident on trading candles.
+
+Diagnosis (`v3`, 2026-10-09): the old recordings and `raw-eager` follow dead tokens for
+different lengths of time. `handoff/data/raw` keeps a token a median 20 min (20-min idle cut,
+plus many reconnect cuts), `raw-eager` ~11 min (10-min idle cut). At 1m this hardly matters (76%
+vs 77% empty candles, and 83% of 1m validation rows are `raw-eager`; test hit 87.1% vs stated
+87.9%). At 5m a token needs ≥ 3 candles (≥ 15 min of window), so `raw-eager` tokens are
+under-represented: only 38% of 5m validation rows are from it, and the open's "no trade" share
+is 78% in training rows vs 36–38% in validation/test. The temperature is fitted mostly on
+old-style rows. On the old part of validation the model is calibrated (70.0% vs 71.2%), on the
+`raw-eager` part it is not (63.2% vs 69.9%). **Fix:** retrain once a few more hours of
+complete-capture recording exist (`raw-clever`, being recorded the same way as `raw-eager`), so
+that validation and test are both mostly new-style data; check 5m calibration first.
 
 ### 8.2.3 A model for graduated tokens on PumpSwap (code 2026-10-09; trained once data allows)
 
