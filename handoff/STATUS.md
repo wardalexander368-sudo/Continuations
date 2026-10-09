@@ -83,6 +83,11 @@ deep pools match the model, a thin one was 2.4x it). The `launch_selector` slot 
   the predictor-strategy test is evaluated (≤ 2026-10-12)**, not before: its `evaluate` asserts the
   SHA-256 of `trades-60s` / `trades-300s`. This thread does the install when it is woken after that;
   if it is gone, any session may (the doc gives the two commands).
+  **Since 23:05 UTC:** market-wide recalibration study (coordinator, under the user's "work
+  continuously"): the 1m/5m blends swing between over- and underconfident with market-wide drift
+  (8.2.2e). Try a calibration layer fitted on recent resolved candles across all tokens, judged by
+  the predictor-strategy signal's net return at Jupiter (curve fees) and Lightning costs, on hours
+  v3.1 never saw. Research only; touches no installed model file.
 
 * **Dip/jevtrader session** (session_01Htqh7pc1Lh1PP6Dkm1rVvz, since 2026-10-09 17:33 UTC, `main`
   only): continues the profitability session. **Owns the dip forward test (queue 11b)**: the GitHub
