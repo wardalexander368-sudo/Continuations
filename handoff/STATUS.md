@@ -42,7 +42,16 @@ next. Topic documents hold the detail:
   17:20 notes): decompose the gap into the flat-vs-move call and the up/down call on unseen
   hours; any change stays `domain == "trades"`.
 
-* **REAL MONEY — the PumpPortal wallet is owned by the clever session's successor (from ~17:20
+* **REAL MONEY — the PumpPortal wallet is owned by the real-money thread session
+  (session_0173Md1HrgsAZHzbjLUmi64b, branch `claude/project-thread-2gop6x`, from 17:30 UTC
+  2026-10-09).** The first successor (session_01RdY84M3yCZbssMGWNVdpQi) was interrupted while
+  cloning and never ran a command. **Probe 17:28 UTC: still 403 "Must supply a valid API key",
+  nothing traded or spent.** `PUMPPORTAL_API_KEY` is not set in new sessions, and the proxy's
+  PumpPortal credential is registered for `*.pumportal.fun` (one "p"), so it never matches
+  `pumpportal.fun`. Needs the user: fix that host to `pumpportal.fun` (the trade URL is the bare
+  domain, so `*.` alone may not match), or add `PUMPPORTAL_API_KEY` as an environment variable.
+  Every real trade waits for the user's go in the thread. Earlier (was) text:
+* (was) **REAL MONEY — the PumpPortal wallet is owned by the clever session's successor (from ~17:20
   UTC 2026-10-09).** The user added the API key as an environment secret; only new sessions see
   it, so the clever session ended and the user starts a new session to continue. **That new
   session is the only one that sends `/api/trade` requests** (first step: `real_fills.py probe`,
