@@ -170,18 +170,23 @@ def write_report(root: Path, ledger: Ledger, strategies: dict, now: float, risk:
               "|---|---|---|---|---|---|---|"]
     total = 0.0
     names = sorted(set(strategies) | set(ledger.state["strategies"]))
-    for name in names:
+    variants = [n for n in names if "~" in n]
+    names = [n for n in names if "~" not in n]
+    for name in names + variants:
+        if name == (variants[0] if variants else None):
+            lines += ["", "Shadow variants (research copies of a rule; scored with a family-wide CI; outside the risk caps):", "",
+                      "| Variant | Status | Open | Closed trades | Mean net/trade | PnL (USD) | Score |", "|---|---|---|---|---|---|---|"]
         rec = ledger.strategy(name)
         tr = ledger.trades(name)
         pnl = sum(t.pnl_usd for t in tr)
-        total += pnl
+        total += 0.0 if "~" in name else pnl
         mean = f"{100 * sum(t.net_return for t in tr) / len(tr):+.2f}%" if tr else "-"
         v = rec.get("verdict") or {}
         n_open = sum(1 for p in ledger.positions if p.strategy == name)
         lines.append(f"| {name} | {rec['status']} | {n_open} | {len(tr)} | {mean} | {pnl:+.2f} | "
                      f"{v.get('decision', '-')}: {v.get('reason', '')} |")
-    unreal = sum(p.unrealized() for p in ledger.positions)
-    lines += ["", f"Realized PnL {total:+.2f} USD; open positions {len(ledger.positions)}, unrealized {unreal:+.2f} USD "
+    unreal = sum(p.unrealized() for p in ledger.positions if not p.meta.get("shadow"))
+    lines += ["", f"Realized PnL {total:+.2f} USD (registered strategies; variants listed above); open positions {len(ledger.positions)}, unrealized {unreal:+.2f} USD "
               f"(entry costs included); today {risk.day_pnl(now, ledger.positions):+.2f} USD "
               f"(cap -{risk.limits['daily_loss_cap_usd']:.0f}).", ""]
     changes = ledger.changes()[-10:]
