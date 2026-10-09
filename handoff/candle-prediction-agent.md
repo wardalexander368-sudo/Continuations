@@ -417,6 +417,22 @@ in log time, `trades_flat_priors`):
 | 60s | 0.487 | 0.965 |
 | 300s | 0.610 | 0.943 |
 
+### 8.2.2b Hyperparameters (sweep 2026-10-09)
+
+`handoff/experiments/predictor_sweep.py` on v2's data (6,107 tokens, 264k rows, 1-minute candles,
+same 70 / 15 / 15% split), choosing on validation log loss:
+
+| leaves / min rows per leaf | 100 | 400 | 1,500 | 4,000 | 10,000 |
+|---|---|---|---|---|---|
+| 15 | 0.5296 / 0.4609 | 0.5294 / 0.4603 | 0.5288 / 0.4589 | 0.5292 / 0.4599 | 0.5312 / 0.4599 |
+| 31 | 0.5300 / 0.4609 | 0.5292 / 0.4596 | 0.5290 / **0.4583** | **0.5286** / 0.4587 | 0.5317 / 0.4607 |
+| 63 (default) | 0.5324 / 0.4629 | | | | |
+
+(validation / test log loss). Fewer leaves and many more rows per leaf than the default are ~1%
+better on test, flat between 1,500 and 4,000 rows. `tartar train --num-leaves 31 --min-leaf 2000`
+for v3 (scale min rows with the data: these are ~0.6–1.5% of rows); defaults unchanged until a
+model trained this way wins the keep-better check.
+
 ### 8.2.3 A model for graduated tokens on PumpSwap (code 2026-10-09; trained once data allows)
 
 `tartar watch` follows a token through graduation onto its PumpSwap pool, but until now it then
@@ -684,12 +700,32 @@ reviewers' scripts are in the session scratchpad (not persisted).
    the continuous part for very active tokens late in a candle, remains.
 5. ~~Blend underconfident on trading candles~~ **mostly resolved (8.4):**
    global prior 0.95; 69.0% hit vs 67.8% stated (was 64.8%).
-6. **No validation of scam signals.**
-   - Label tokens: rug = creator dumped + ≥80% drawdown, or price dead within
-     N minutes.
-   - Measure each flag's precision and recall.
-   - Fit a calibrated P(rug) from recorded data to replace the hand-set
-     thresholds.
+6. **Scam signals: validated 2026-10-09; the risk level needs rework**
+   (`handoff/experiments/scam_validation.py`). 3,659 launches from every
+   recording before 10-09 02:00, judged at +20 s exactly as the fast loop
+   judges them (causal creator history). Outcome 30 min later: **rug** = price
+   down ≥ 80% (7.2% of launches), **moon** = doubled or graduated (2.8%); the
+   median launch is flat (ratio 0.99, already dead).
+   - **The displayed risk level barely ranks launches** (AUC 0.57). "danger"
+     covers 69% of launches at about the base rate (P(rug) 7.8%); "ok" (17%,
+     no flags) is mostly launches where nothing happened (P(rug) 0.2%, P(moon)
+     0.2%); "scam" (0.7%, the `collapsed` flag) is 67% rug.
+   - Flags that mark rugs: `odd_curve` (P(rug) 27.7%, lift 3.9, recall 89%),
+     `few_traders` (lift 6.1, rare), `serial_launcher` (2.5), `serial_rugger`
+     (2.5), `repeat_creator` (2.0), `wash_trading` (1.6), `dev_bag` (1.4).
+   - Flags that mark *fewer* rugs: `sniped` (lift 0.28), `concentrated`
+     (0.41), `dev_dumped` (0.55). They still mark worse *trades*
+     (profitability §3.5), because the damage is done in the first seconds,
+     but they don't predict a later collapse, and they push most launches to
+     "danger".
+   - **A learned P(rug)** (LightGBM on the 18 numeric screen features,
+     trained on the first 70% of launches) reaches **AUC 0.93** on the rest,
+     reasonably calibrated (top decile 52% predicted vs 45% observed; next
+     24% vs 31%); mostly `nonstandard_curve` and `raised_sol`.
+   - **Next:** ship a calibrated P(rug) (train with `tartar train`-style
+     splits, store next to the global models) and show it beside the level;
+     re-weight the level so `sniped` / `concentrated` / `dev_dumped` alone
+     don't make "danger".
 7. ~~**Graduated tokens** only through DexScreener polls~~ **done 2026-10-09:**
    `tartar watch` follows a graduated pump.fun token trade by trade in its
    canonical PumpSwap pool. **Recording too (2026-10-09):**

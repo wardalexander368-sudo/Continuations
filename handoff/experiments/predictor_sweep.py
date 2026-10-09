@@ -28,6 +28,7 @@ def log_loss(model, ds, mask):
 
 GRIDS = {
     "small": {"num_leaves": (15, 31, 63), "min_data_in_leaf": (100, 400, 1500), "learning_rate": (0.05,)},
+    "heavy": {"num_leaves": (15, 31), "min_data_in_leaf": (4000, 10000), "learning_rate": (0.05,)},
     "full": {"num_leaves": (7, 15, 31, 63, 127), "min_data_in_leaf": (50, 100, 400, 1500, 4000), "learning_rate": (0.03, 0.05, 0.1)},
 }
 

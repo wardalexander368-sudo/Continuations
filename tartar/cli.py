@@ -139,6 +139,8 @@ def build_parser() -> argparse.ArgumentParser:
     train.add_argument("-t", "--timeframe", default="1m")
     train.add_argument("--out", help=f"model directory (default {MODEL_DIR}, where `watch` looks)")
     train.add_argument("--rounds", type=int, default=3000, help="max boosting rounds (early stopping decides)")
+    train.add_argument("--num-leaves", type=int, default=63, help="LightGBM leaves per tree (default 63)")
+    train.add_argument("--min-leaf", type=int, default=100, help="LightGBM min rows per leaf (default 100)")
     train.add_argument("--replay-tokens", type=int, default=300, help="test tokens to replay through the live forecaster")
     train.add_argument("--force", action="store_true", help="replace the installed model even if it scores better")
     train.add_argument(
@@ -559,7 +561,7 @@ async def cmd_train(args) -> int:
     if ds.simulated and args.out is None:
         raise SystemExit("this is simulated data; pass --out DIR so the model is not used for real tokens")
 
-    model = train_global(ds, rounds=args.rounds, log=console.print)
+    model = train_global(ds, rounds=args.rounds, num_leaves=args.num_leaves, min_data_in_leaf=args.min_leaf, log=console.print)
     report = evaluate(model, ds, replay_tokens=args.replay_tokens, log=console.print)
     target = model_dir(args.out) / model_name(domain, timeframe)
     report["test_log_loss"] = new_loss = test_log_loss(model, ds)
