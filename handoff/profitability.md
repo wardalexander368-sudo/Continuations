@@ -28,6 +28,7 @@ Where each family stands (2026-10-09):
 | Picking movers from early flow, wallets, holders, curve shape, the creator, the name | movers predictable (AUC 0.88) but they collapse; small creator buys beat buy-all by ~2–4 points, still −2.2% on test | §3.22 |
 | Curve-triggered entries: level crossings, dips after a run | crossings lose (−7.0% test); 70% dip after a 40-SOL run is break-even (−0.3% [−7.4, +6.7]) | §3.23 |
 | Market-wide recalibration / regime gating of the predictor's candle calls | calibration fixed at 5m (log loss 0.239 → 0.220), trading unchanged: best −5.6% at Jupiter costs, −7.5% Lightning | §3.24 |
+| Who sold the dip: deep dips after a run, sold by one or two wallets (edge hunt F) | pre-registered, not confirmed: +1.1% [−6.3, +8.5] on 175 at curve fees, −4.7% via Lightning | §3.25 |
 | SOL-USD with Jev (the user's jevtrader) | sealed test ends 2026-10-23; on-chain costs ≈ 0.5 bps/fill | §3.12, `handoff/jevtrader.md` |
 
 ## 2. How it is measured (`tartar/profit.py`, `tartar profit`)
@@ -961,6 +962,28 @@ correction cannot change which candles rank highest within a moment, and the hou
 large enough for timing alone to pay a 2.5% round trip. **Closed:** recalibration is worth having
 for honest odds (if anything, a 5m `p_clear` shown to a user should be rolling-calibrated), but it
 is not a trading edge. Untouched: no installed model file or forecaster code changed.
+
+### 3.25 Who is trading: a dip sold by one or two wallets (edge hunt F, pre-registered): not confirmed
+
+Edge hunt F (`edge-hunt.md`) looked for pump.fun signals in *who* trades that §3.15 / §3.18 / §3.22
+didn't test. Script `handoff/experiments/who_trades.py` on `exit_study.py extract` paths (every
+trade's wallet), same launches, dev/test split and fills as §3.21-3.23 (0.02 SOL, curve fees
+1.25%/side). Dev output `handoff/data/exit-study/who-trades-dev.txt`.
+
+* **F1, who sold the dip** (§3.23's 70%-after-a-run signal split by the share of the drawdown's sell
+  SOL from the creator and the top seller): the one consistent split. When those one or two wallets
+  sold > 96% of it, +4.2% / +3.5% on dev's two halves vs −0.5% / −1.6% for all such dips.
+* **F2, smart money buying the dip** (wallets whose buys were followed by a rise, scored causally on
+  other launches): no help; dips they bought did no better (or worse) on dev's later half.
+* **F3, bundle overhang gone** (the first-2-s buyers hold ≤ 5% / 20% of their peak while others keep
+  buying): every one of 16 rules loses on both dev halves (−7.0% to −17.1%).
+
+**Pre-registered** (`handoff/preregistration/who-trades/`) before any test launch was scored, then
+scored once on 7,295 launches created after 16:00 UTC 10-09: **+1.12% [−6.30, +8.49] on 175 trades
+at curve fees; −4.69% through Lightning. Not confirmed** (success needed the lower bound > 0). The
+filter held its direction (+3.8 points over all dips) but the edge after costs is about 1% with a
+±7-point interval, which only thousands of trades could settle, and it exists only on the cheap
+route (Jupiter or our own instructions, which need the user's own wallet key; §3.19).
 
 ## 4. What this means for the plan
 
