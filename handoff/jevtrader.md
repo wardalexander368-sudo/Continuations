@@ -50,11 +50,20 @@ TesseraV, Obsidian) quote $1,000 at near-zero spread. **Reading:** on-chain SOL-
 On day 28, any arm whose f*_X is above ~1 bps per fill would clear on-chain costs that the
 Coinbase retail tier cannot.
 
+**Second window, 2026-10-09 04:33–05:33Z** (predictor session; data committed in
+`handoff/data/sol-dex/`):
+- $1,000: **0.46 bps per fill** (p90 0.70; 120 samples).
+- $10,000: **0.15 bps per fill** (p90 0.33; 71 samples).
+- **Quote decay** (same quote re-taken 1/2/4 s later, 178 samples): the drift-free mean is
+  0.00 ± 0.03 bps at every delay, so latency adds noise (median |change| 0.26 bps at 2 s, p90 1.3),
+  not cost.
+- Realistic per fill: **~0.5 bps expected, ~1.3 bps p90**. That is under jevtrader's 2 bps column.
+
 **Caveats:** quotes, not fills. Prop AMMs update every slot and a quote can move before a
-transaction lands (latency ~1–2 s), so realised cost is higher than quoted. The right next
-measurement is a quote at decision time vs the quote ~2 s later. MEV/sandwich risk, failed
-transactions and the USDC/USD basis aren't priced. One 11-minute window at night (UTC) isn't a
-distribution: rerun `sample --minutes 60` at several times of day before relying on it.
+transaction lands (latency ~1–2 s), so realised cost is higher than quoted. Quote decay is now measured
+(above): it adds noise, not cost. MEV/sandwich risk, failed
+transactions and the USDC/USD basis aren't priced. Two night-time (UTC) windows so far (03:37–03:48 and 04:33–05:33). US/EU daytime is still to
+sample: `sample --minutes 60` and `decay --minutes 60`.
 
 ## Not done, on purpose
 No SOL-USD + Jev loop was built in TARTAR. jevtrader is that loop, already pre-registered and

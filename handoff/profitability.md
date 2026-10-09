@@ -438,6 +438,30 @@ cost is higher by whatever the quote moves during ~1–2 s of latency (the next 
 any strategy on SOL itself, the on-chain venue is **~180× cheaper** than retail CEX taker fees,
 which moves the profitability bar from "beat 1.8%" to "beat ~0.01–0.05%".
 
+**Second window and quote decay** (predictor session, 2026-10-09 04:33–05:33 UTC; data in
+`handoff/data/sol-dex/`, `sol_dex_costs.py summary|decay-summary`). All figures are quotes, not
+executed fills; MEV, failed transactions and the USDC/USD basis are still not priced.
+
+- **$1,000, 120 samples:** 0.46 bps per fill (median, p90 0.70) including $0.05 per transaction.
+  That matches the 03:37 window (0.48), so cost is stable across the night hours sampled.
+- **$10,000, 71 samples:** 0.15 bps per fill (p90 0.33). Larger size is cheaper per dollar: the
+  network fee is spread out and impact stays tiny across 2–3 market makers.
+- **Quote decay, 178 samples:** each sample re-takes the same $1,000 buy and sell quotes 1, 2 and
+  4 s later.
+
+  | | 1 s | 2 s | 4 s |
+  |---|---|---|---|
+  | Median \|change\| (bps) | 0.12 | 0.26 | 0.52 |
+  | p90 \|change\| (bps) | 0.58 | 1.27 | 2.08 |
+  | Drift-free mean, (buy+sell)/2 (bps) | +0.01 ± 0.03 | +0.00 ± 0.03 | +0.01 ± 0.03 |
+
+  The drift-free mean cancels the market's move. It is zero, so **quotes do not move against the
+  trader**: latency adds noise (~0.3 bps typical at 2 s), not expected cost.
+- **Realistic per-fill cost at ~2 s latency:** ~0.5 bps expected, with ~1.3 bps at p90. That is
+  below jevtrader's smallest non-zero fee column (2 bps) and ~180× below Coinbase's 90 bps.
+- **Still open:** US/EU daytime windows (only 03:37–05:33 UTC sampled so far), and real fills
+  (a funded wallet; not done, paper only).
+
 ## 4. What this means for the plan
 
 1. **Don't trade the current predictions.** The confidence is honest about
