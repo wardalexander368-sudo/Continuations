@@ -1,0 +1,61 @@
+{
+ "checked_at": 1791588623.3531215,
+ "status": "yellow",
+ "items": [
+  {
+   "check": "Action autotrade.yml",
+   "level": "green",
+   "detail": "the agent, every 5 min"
+  },
+  {
+   "check": "Action recorder.yml",
+   "level": "green",
+   "detail": "raw recorder, back-to-back ~6 h runs"
+  },
+  {
+   "check": "Action paper-tests.yml",
+   "level": "green",
+   "detail": "JLP check-ins every 4 h, dip cohort daily"
+  },
+  {
+   "check": "Action pumpflow-paper.yml",
+   "level": "green",
+   "detail": "pumpflow snapshots, hourly"
+  },
+  {
+   "check": "Action perps-ctx.yml",
+   "level": "yellow",
+   "detail": "no runs yet [Hyperliquid OI/funding snapshots, every 4 h]"
+  },
+  {
+   "check": "Recorder hours",
+   "level": "green",
+   "detail": "all 1 hours through 20261009-21 UTC uploaded"
+  },
+  {
+   "check": "Input: JLP snapshots",
+   "level": "green",
+   "detail": "newest 2.6 h old"
+  },
+  {
+   "check": "Input: dip cohorts",
+   "level": "green",
+   "detail": "newest 21.1 h old"
+  },
+  {
+   "check": "Input: pumpflow snapshots",
+   "level": "green",
+   "detail": "newest 1.9 h old"
+  },
+  {
+   "check": "Input: HL OI/funding snapshots",
+   "level": "green",
+   "detail": "newest 1.7 h old"
+  },
+  {
+   "check": "Agent",
+   "level": "green",
+   "detail": "no halts, no orphans, no closed twins yet"
+  }
+ ]
+}
