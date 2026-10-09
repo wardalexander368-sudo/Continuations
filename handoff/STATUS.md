@@ -315,7 +315,7 @@ next. Topic documents hold the detail:
 
 ## Log (newest first)
 
-* **2026-10-09 ~18:20 UTC, same-slot entry thread: closed, not worth building** (profitability
+* **2026-10-09 17:46 UTC, same-slot entry thread: closed, not worth building** (profitability
   §3.18; 17,098 launches + 200 fetched blocks). §3.9's creation-slot edge comes from the
   creator's own bundle: one-off wallets buy in an unbroken run right after the create (83%,
   median 2 txs later) and realize +52%; entering first after the create loses 3.4% when nobody
