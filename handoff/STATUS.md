@@ -33,6 +33,12 @@ next. Topic documents hold the detail:
 ## Active
 
 * **Jev session** (session_012ZRs9FUggpEkx65Rw7K7fU, live since 2026-10-08 23:44 UTC): owns the **live fast loop + slow loop** (queue item 1, steps 3–4). User chose `"scorer": "rules"` with `"shadow_jev": true` (paper). Fast loop runs `--hours 20` in this container (ends ~19:44 UTC 10-09). Tracked copies of the policy and reviews: `handoff/live/`. Branch `claude/jev-live`.
+* **Research session** (session_01YLnqLnTQzvD6HHUTvnNpVm, since 2026-10-09 04:05 UTC), branch
+  `claude/eager-archimedes-k8pn4q` (this session may only push that branch, so this claim
+  reaches `main` when the user merges it). Tasks: queue **12 next** (SOL-USD quote decay,
+  costs at more times of day), **11a** (trading graduated tokens on PumpSwap: fees, then a
+  strategy study) and **3** (longer holds on screened launches). Runs its own recorder in its
+  container (`tartar record --pumpswap-hours 4`, `data/raw-eager`); no Jev calls.
 
 
 
