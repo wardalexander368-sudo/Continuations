@@ -370,6 +370,63 @@ per trade [−9.10, −4.52] over 2,257 trades (halves −7.9% / −6.0%; win
 11.4%). That's in line with, slightly worse than, the window-based −5.1% to
 −7.0%, so §3.2–3.9 stand.
 
+### 3.11 Established memecoins on public price data (queue item 11b)
+
+Liquid Solana pools days to months old, from GeckoTerminal 5-minute OHLCV
+(`handoff/experiments/established_collect.py`, `established_rules.py`).
+Costs: 0.5% swap fee per side (PumpSwap charges ~0.30%), price impact from
+each pool's liquidity (size / (liquidity/2) per side; $200 trades), and
+$0.05 per transaction. Fixed grid: **momentum** (1 h or 15 min return
+above +5/10/20%), **dip** (below −5/10/20%), **breakout** (new 1/4/24 h
+high), held 15 min / 1 h / 4 h. Entry at the next bar's open. The best
+configuration per family is chosen on the first 60% of the period and
+reported once on the last 40%. **Survivorship control:** today's liquid
+pools are survivors, so every trade is compared with entering the same pool
+at every bar of the same period with the same hold ("excess"). Intervals
+bootstrap over pools. Data: `handoff/data/established/` (tar of both
+collections).
+
+**Harness check:** on 6 sets of random-walk pools (40 each, fat-tailed,
+survivor-like drift), 2 of 18 family tests came out "significant", about
+11% against the nominal 5%. A single positive is not evidence.
+
+**Mixed universe** (50 pools ranked by volume; mostly majors, wrapped
+assets, DeFi tokens and tokenized stocks), test period Oct 4–9:
+
+| Family (config chosen on train) | Test trades | Mean net | Excess over random entries |
+|---|---|---|---|
+| dip: 1 h return < −5%, hold 4 h | 139 (28 pools) | +3.5% [−0.4, +8.4] | **+2.1%** [+0.3, +4.3] |
+| momentum: 1 h return > +5%, hold 4 h | 134 | +0.5% | −0.9% |
+| breakout: 4 h high, hold 4 h | 417 | −1.5% | −0.9% |
+
+The dip result is stable across fees (excess unchanged at 0.3% or 1%),
+test halves (+2.7% / +2.1%) and neighboring settings (all positive). But
+**without its top 3 of 28 pools the excess is +0.3%**, and selecting pools
+by today's liquidity favors exactly the dips that recovered.
+
+**Memecoins only** (12 PumpSwap pools, history before registration):
+the same dip rule averages **+7.4%** per trade [+3.3, +11.6], but only
+**+0.7% [−1.5, +2.9] above random entries**. The high mean is survivorship
+(these coins rose over the period), not timing.
+
+**Pre-registered forward test** (`handoff/preregistration/dip-rolling/`):
+the dip rule (fixed above, from the first study's training split), its
+costs and a mechanical memecoin universe rule are registered before any
+out-of-sample data exists. Established memecoins with real volume are
+scarce (~12 qualify at a time), so cohorts are added over time. Any
+session: run `python3 handoff/experiments/established_cohort.py` about
+once a day and commit the new cohort at once. Score with
+`python3 handoff/experiments/established_prereg_eval.py` at ≥ 200 trades
+or 21 days after cohort 1 (2026-10-30). Success = excess > 0 with its 90%
+interval above 0, AND mean net > 0. Expected: probably not, given the
+memecoin in-sample excess of +0.7%. Two earlier registration drafts (v1:
+mixed universe; v2: a stablecoin pair slipped through the filter) were
+superseded before any out-of-sample data existed; both stay in git.
+
+**Reading:** no reliable edge in simple rules on established memecoins.
+The one candidate (dip buying) is weak, concentrated, and mostly explained
+by survivorship. The forward test is the only thing that could change that.
+
 ## 4. What this means for the plan
 
 1. **Don't trade the current predictions.** The confidence is honest about

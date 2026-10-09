@@ -38,8 +38,6 @@ next. Topic documents hold the detail:
 
 
 
-* **Profitability session** (session_01U4x5qUJYMStcujpyLJgQ8N), since 01:55 UTC 10-09: **queue item 11(b), established memecoins**: GeckoTerminal OHLCV for liquid Solana memecoin pools (days old), simple rules with DEX costs, time split, and a random-entry baseline against survivorship. Branch `claude/established-tokens`.
-
 ## Blockers (need the user)
 
 * ~~Network~~: **resolved 22:35 UTC**, the user enabled full network access.
@@ -140,8 +138,11 @@ next. Topic documents hold the detail:
     pools, 33,292 PumpSwap trades). **Jev session:** restart the fast loop with
     `--pumpswap-hours 4` (and `SOLANA_COMMITMENT=processed`) to collect this
     for the next study;
-    (b) longer-lived tokens (hours old, real liquidity) via DexScreener or
-    PumpSwap trades; (c) a liquid market like SOL-USD where costs are tiny,
+    (b) ~~established memecoins~~ **studied (§3.11): no reliable edge.**
+    The dip rule is pre-registered for a forward test: **any session, about
+    once a day: `python3 handoff/experiments/established_cohort.py`, then
+    commit and push the new cohort file at once.** Score with
+    `established_prereg_eval.py` at ≥ 200 trades or on 2026-10-30; (c) a liquid market like SOL-USD where costs are tiny,
     e.g. Jev on news (the user's earlier `jevtrader` idea).
 
 ## Rules that hold across sessions
@@ -172,6 +173,18 @@ next. Topic documents hold the detail:
   branch `claude/profitability-backtest`, on `main`).
 
 ## Log (newest first)
+
+* **2026-10-09 02:29 UTC, profitability session:** Item 11(b) is done (§3.11).
+  Studied simple rules on GeckoTerminal 5-min data for liquid Solana pools.
+  Momentum and breakouts lose. Dip-buying showed +2.1% excess over random
+  entries on a mixed universe, but it is concentrated in 3 pools; on
+  memecoins only it is +0.7% [−1.5, +2.9], and the +7.4% mean there is
+  survivorship. Pre-registered the dip rule as a rolling forward test
+  (`handoff/preregistration/dip-rolling/`, cohort 1 = 12 PumpSwap
+  memecoins). **Please add a cohort about daily**
+  (`established_cohort.py`, commit at once). Score on 2026-10-30 or at
+  ≥ 200 trades. Also: a full-stream replay confirms the launch baseline
+  (−6.9%/trade, §3.10).
 
 * **2026-10-09 01:58 UTC, predictor session:** `tartar watch` now keeps going
   through graduation. The chain feed hands over to the token's PumpSwap pool,
