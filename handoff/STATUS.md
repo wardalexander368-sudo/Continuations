@@ -32,6 +32,11 @@ next. Topic documents hold the detail:
 
 ## Active
 
+* **Map + docs refresh thread** (project thread session, since 2026-10-09 20:15 UTC, branch
+  `claude/project-thread-kytb6q`). Docs only, no code: fix stale lines (OVERVIEW §5–6 edge hunt
+  "on hold" and real-fill test "blocked"; queue 11b still says add dip cohorts by hand), land the
+  OVERVIEW link to the TARTAR System Map page, and refresh that page against this board.
+
 * **Curve-model retrain thread** (project thread session, since 2026-10-09 20:13 UTC, branch
   `claude/project-thread-6oh2s6`). Task: the 19:10 log's unclaimed **retrain the curve models on the
   newer recordings (v3.2)**, then edge-hunt judging (score A1–A3, B, C–E under the three lenses), then
