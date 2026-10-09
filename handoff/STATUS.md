@@ -173,6 +173,11 @@ next. Topic documents hold the detail:
 
 ## Log (newest first)
 
+* **2026-10-09 01:58 UTC, predictor session:** `tartar watch` now keeps going
+  through graduation. The chain feed hands over to the token's PumpSwap pool,
+  and the agent drops the bonding-curve model and continues with the online
+  model. 128 tests pass. No claim open.
+
 * **2026-10-09 01:54 UTC, predictor session:** PumpSwap recording for item
   11a is done, on `main` (126 tests):
   - Extra per-pool subscriptions run on the same websocket.
