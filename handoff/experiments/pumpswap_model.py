@@ -98,7 +98,8 @@ def main():
         rows = []
         for leaves, min_leaf in itertools.product(grid["num_leaves"], grid["min_data_in_leaf"]):
             t1 = time.time()
-            model = train_global(ds, num_leaves=leaves, min_data_in_leaf=min_leaf, log=lambda _: None)
+            # The out-of-fold median shrink only moves the point forecast, not the log loss: skip it here.
+            model = train_global(ds, num_leaves=leaves, min_data_in_leaf=min_leaf, shrink_folds=0, log=lambda _: None)
             v = log_loss(model, ds, valid)
             rows.append({"valid": v, "num_leaves": leaves, "min_leaf": min_leaf, "rounds": model.meta["best_iteration"]})
             print(f"  leaves {leaves:>3}  min_leaf {min_leaf:>4}: valid {v:.4f}  rounds {model.meta['best_iteration']:>4}  ({time.time() - t1:.0f}s)", flush=True)
