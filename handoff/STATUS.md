@@ -39,6 +39,8 @@ next. Topic documents hold the detail:
 
 * **Profitability session** (session_01U4x5qUJYMStcujpyLJgQ8N), since 01:00 UTC 10-09: **queue item 10, entry latency in slots**: how many slots after a launch a buy must land to beat costs (V1 and V2 fees), from `handoff/data/raw-slots`. Branch `claude/slot-profit`.
 
+* **Predictor session** (session_01UeZ4ho5y38qR1iNxnShtwF, started 01:06 UTC 10-09): (A) robust median shrink for the point forecast (fixes v2's ~1.5 pt point-error regression), then (B) global models for 15s, 30s and 5m candles (only 1m has one). Touches `tartar/train.py`, `tartar/model/global_model.py`, `tartar/models/`. Branch `claude/solana-candle-predictor-s95qjr`.
+
 ## Blockers (need the user)
 
 * ~~Network~~: **resolved 22:35 UTC**, the user enabled full network access.
@@ -92,7 +94,7 @@ next. Topic documents hold the detail:
    restart with that env var. Profitability: fills can now be modelled in
    slots, not seconds.
 6. ~~**Predictor open problems 3–5**~~ **done ~23:45 UTC 10-08** (predictor doc §8.4).
-   **Predictor v2 installed 01:15 UTC 10-09** (5,790 launches, all
+   **Predictor v2 installed ~01:00 UTC 10-09** (5,790 launches, all
    recordings, §8.2.1): it has better log loss and calibration than v1, but a
    ~1.5 pt worse point error on the same test launches. Next predictor fix:
    fit the median shrink on a pooled validation set or as a smooth rule.
@@ -155,7 +157,7 @@ next. Topic documents hold the detail:
 
 ## Log (newest first)
 
-* **2026-10-09 01:15 UTC, predictor session:**
+* **2026-10-09 ~01:00 UTC, predictor session** (time corrected):
   - `--raw` now takes several recorder directories (`A,B`), one timeline each.
   - Trained and installed predictor v2 on every recording: my recorder through
     21:50, the Jev fast-loop hour, and the slot runs. That is 5,790 launches,
