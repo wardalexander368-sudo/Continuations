@@ -44,7 +44,7 @@ split by launch), plus a candle-by-candle replay of the live forecaster.
 |---|---|
 | Repo / branch / PR | `StaticPush7217/TARTAR`. All work is on `main` (fast-forwarded from branch `claude/solana-candle-predictor-s95qjr`, PR #1) |
 | Live agent (`tartar watch`) | Works end to end against real tokens (pump.fun via chain, others via DexScreener/GeckoTerminal) |
-| Global model | **v2 installed** (2026-10-09): `tartar/models/trades-60s.*`, trained on 5,790 real pump.fun launches (251k rows; section 8.2.1). v1 (3,523 launches) is described in 8.2 |
+| Global models | **v2 installed** (2026-10-09) for 1m candles, plus **15s, 30s and 5m models** (section 8.2.2): `tartar/models/trades-{15s,30s,60s,300s}.*`, ~5,800 real pump.fun launches. v1 (3,523 launches, 1m only) is described in 8.2 |
 | Real-data result (v1, held-out later launches) | At candle open: hit 85.3% vs stated 85.2%, error **4.7% below naive**, 0.61 bits/row of information over the base rate; the 80% band covers 91.9% and states 91.3% (calibrated; the excess over 80% is the "no further trade" mass, section 8.2). Live replay (global + online): **edge +7.5%** on all candles, **+7.8%** on candles where the token is trading; hit 69.0% vs stated 67.8% there |
 | Online-only fallback | Fixed by the online-model review (section 11.1): now calibrated on real tokens (hit 79.3% vs stated 78.8%; trading 46.0% vs 45.1%), edge 0 (was −5.3%, and 23% hit at 52% stated on trading candles) |
 | Data recording | `tartar record` running in this container into `data/raw` (not in git; snapshot in `handoff/data/raw`) |
@@ -386,6 +386,37 @@ scratchpad):**
 - To do: fit s(f) on out-of-fold medians over the training split (K-fold by
   token), which has ~6× the rows.
 
+### 8.2.2 Models for 15s, 30s and 5m candles (installed 2026-10-09)
+
+Same data, recorder directories and pipeline as v2 (`tartar train -t 15s|30s|5m`).
+Until now only 1-minute candles had a global model; every other timeframe ran the
+online model alone, whose point forecast is no better than "close = last price".
+Live replay on 300 held-out test tokens, forecasts locked at the open (reports in
+`tartar/models/trades-*.report.json`):
+
+| Candle | Launches / rows | Online only: edge | Global + online: edge, all / trading | Trading candles: hit vs stated | Raw model at the open: hit vs stated |
+|---|---|---|---|---|---|
+| 15 s | 6,189 / 552k | −0.8% | **+3.8% / +4.1%** | 59.2% vs 59.7% | 90.8% vs 91.0% |
+| 30 s | 6,035 / 360k | −0.5% | **+3.7% / +4.0%** | 63.5% vs 63.7% | 88.6% vs 89.2% |
+| 1 m (v2) | 5,790 / 251k | ≈0 | +4.0% / +4.2% | 66.9% vs 66.3% | 86.2% vs 86.8% |
+| 5 m | 3,657 / 75k | 0.0% | **+12.0% / +12.1%** | 74.0% vs 72.9% | 72.9% vs 76.4% |
+
+The 5m model has the least data. Its raw distribution is overconfident during
+the candle (e.g. 80.6% hit vs 86.1% stated at f = 0.2). The live blend at the
+open is calibrated, but nowcasts during a 5m candle lean confident until more
+data exists. Retrain it first when data grows.
+
+**Flat-candle priors by timeframe.** The online model's flat odds now start
+from values measured on the training split for each candle length (interpolated
+in log time, `trades_flat_priors`):
+
+| Candle | P(flat after traded) | P(flat after flat) |
+|---|---|---|
+| 15s | 0.372 | 0.980 |
+| 30s | 0.422 | 0.974 |
+| 60s | 0.487 | 0.965 |
+| 300s | 0.610 | 0.943 |
+
 ### 8.3 Blending
 
 The global and online distributions are mixed with weight
@@ -645,8 +676,9 @@ reviewers' scripts are in the session scratchpad (not persisted).
      Parkinson ranges.
    - Until it is trained, the (now calibrated) online model is the only
      predictor for those tokens.
-9. **Timeframes.** Only a 1m model exists. Train 15s, 30s and 5m models
-   (`tartar train -t 30s` works for trade data).
+9. ~~**Timeframes.** Only a 1m model exists~~ **done 2026-10-09:** 15s, 30s,
+   1m and 5m models are installed (8.2.2). Other lengths still use the
+   online model alone.
    - The trades-domain σ prior grows as (tf/60)^0.25 above 1m; that is a guess
      beyond the measured 15s and 60s.
 10. **GeckoTerminal live polling closes candles 75s after their end**, so
