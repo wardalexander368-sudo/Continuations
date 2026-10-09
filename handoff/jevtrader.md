@@ -62,8 +62,8 @@ only the numbers below):
 **Caveats:** quotes, not fills. Prop AMMs update every slot and a quote can move before a
 transaction lands (latency ~1–2 s); measured since, that adds ~±1 bps of noise and no expected
 cost (*Quote decay* below). MEV/sandwich risk, failed transactions and the USDC/USD basis aren't
-priced. Asian hours only so far (03:37–05:55 UTC, two sessions): rerun the sampler at European and
-US hours before relying on it.
+priced. Sampled 03:37–09:55 UTC so far (Asian hours and the European morning, three sessions):
+the same ~0.5 bps every hour. US hours (13–16 UTC) are still to sample.
 
 ## Quote decay: quotes are close to fills (2026-10-09, 04:10–05:30 UTC)
 `sol_dex_costs.py` now re-quotes the same $1,000 buy and the same SOL sell 1, 2 and 5 s after the
@@ -86,9 +86,15 @@ The predictor session's standalone `decay` run (04:33–05:33 UTC, same quote re
 no Coinbase book; its samples were not committed) agrees: drift-free mean 0.00 ± 0.03 bps at every
 delay, median |change| 0.26 bps at 2 s (p90 1.3).
 
-Still open: other times of day (only Asian hours so far; rerun `sample --minutes 120` across
-European and US hours, e.g. 08–10 and 13–16 UTC), larger sizes, and real fills (a simulated
-transaction, or paper fills recorded live).
+**European morning, 2026-10-09 06:43–09:55 UTC** (clever session, 371 samples,
+`handoff/data/sol-dex/costs-20261009-day.jsonl`): unchanged. $1,000 costs **0.46 bps per fill**
+(p90 0.67); the hourly median round trip stays at 0.86–0.96 bps; re-quoted 1 / 2 / 5 s later the
+quote moves |p90| 0.9 / 1.5 / 2.6 bps with nothing beyond the market's own move, no 50 bps
+slippage failures, and filling at the later quote costs **0.41–0.43 bps per fill**. Routes:
+Kipseli 44% of buys, then HumidiFi, Obsidian, BisonFi, GoonFi V2.
+
+Still open: US hours (13–16 UTC), larger sizes, and real fills (a simulated transaction, or
+paper fills recorded live).
 
 ## Not done, on purpose
 No SOL-USD + Jev loop was built in TARTAR. jevtrader is that loop, already pre-registered and

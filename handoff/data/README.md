@@ -61,15 +61,19 @@ In all, 69 graduated SOL pools. Capture: a median 100% / mean 97% of each launch
 trades (the training loader's estimate); for one PumpSwap pool checked against the chain
 (`pumpswap_capture.py`), 138 of 143 swaps (96.5%).
 
+This is the **evaluation data of the pre-registered PumpSwap study**
+(`handoff/preregistration/pumpswap-graduated/SPEC.md`): don't compute returns on its PumpSwap
+pools before that evaluation is run and logged.
+
 ## `sol-dex/` (research session, 2026-10-09)
 
 `costs-20261009.jsonl`: 216 samples of `handoff/experiments/sol_dex_costs.py sample` (Jupiter
 $1,000 round-trip quotes, re-quoted after 1/2/5 s, with Coinbase's book), 04:09–06:00 UTC.
 `python3 handoff/experiments/sol_dex_costs.py summary --out handoff/data/sol-dex/costs-20261009.jsonl`.
 
-This is the **evaluation data of the pre-registered PumpSwap study**
-(`handoff/preregistration/pumpswap-graduated/SPEC.md`): don't compute returns on its PumpSwap
-pools before that evaluation is run and logged.
+`costs-20261009-day.jsonl` (clever session): 371 more samples the same way, 06:43–09:55 UTC
+(European morning). `*.jsonl` is git-ignored repo-wide, so add sample files with `git add -f`
+(the predictor session's 04:33–05:33 samples were lost that way).
 
 ## `raw-clever/` (clever session, from 2026-10-09 06:23 UTC)
 
@@ -85,3 +89,5 @@ before the 11a evaluation** (`handoff/preregistration/pumpswap-graduated/SPEC.md
   91,560 PumpSwap swaps.
 - `20261009-08`: 08:00–08:59 UTC, 1,375 launches, 106,040 curve trades, 36 graduated SOL pools,
   313,920 PumpSwap swaps; two 2 s reconnects (08:17, 08:44).
+- `20261009-09`: 09:00–09:59 UTC, 1,213 launches, 112,705 curve trades, 30 graduated SOL pools,
+  290,045 PumpSwap swaps.

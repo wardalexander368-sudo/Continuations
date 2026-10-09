@@ -477,7 +477,10 @@ executed fills; MEV, failed transactions and the USDC/USD basis are still not pr
   below jevtrader's smallest non-zero fee column (2 bps) and ~180× below Coinbase's 90 bps.
 - The research session's decay run (04:10–05:30 UTC, 1/2/5 s, with Coinbase's book; above and
   `jevtrader.md`) agrees: no expected cost beyond the market's own move.
-- **Still open:** US/EU daytime windows (only 03:37–05:55 UTC sampled so far), and real fills
+- **European morning** (clever session, 06:43–09:55 UTC, 371 samples with 1/2/5 s re-quotes):
+  0.46 bps per fill (p90 0.67), filling at the later quote 0.41–0.43 bps, no slippage failures.
+  Cost does not depend on the hour sampled so far (`jevtrader.md`).
+- **Still open:** US hours (13–16 UTC; 03:37–09:55 UTC sampled so far), and real fills
   (a funded wallet; not done, paper only).
 
 ### 3.13 PumpSwap fees: 1.20–1.25% per side on young tokens, tiered by market cap
