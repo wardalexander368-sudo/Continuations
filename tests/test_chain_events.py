@@ -143,3 +143,23 @@ async def test_screener_skips_quoted_launches():
         await next_clean_launch(stream(), screen_seconds=20, min_buyers=3, on_verdict=verdicts.append, clock=lambda: T0)
     (verdict,) = verdicts
     assert verdict.candidate.create.mint == "MintQ" and "not SOL" in verdict.reason and not verdict.passed
+
+
+def test_several_recorder_directories_merge(tmp_path):
+    from tartar.data.rawlog import RawWriter
+
+    def write(directory, mint, offset):
+        writer = RawWriter(directory, clock=lambda: T0 + offset)
+        events = [{"e": "session", "t": T0 + offset, "state": "connected"}, {"e": "create", "t": T0 + offset + 1, "mint": mint, "creator": "dev", "name": "A", "symbol": "A", "sol": 1.0, "tok": 3e7, "vsol": 31.0, "vtok": 1.038e9, "rsol": 1.0}, {"e": "track", "t": T0 + offset + 1, "mint": mint}]
+        events += [{"e": "trade", "t": T0 + offset + 2 + 5 * i, "mint": mint, "side": "b", "trader": f"w{i}", "sol": 0.1, "tok": 3e6, "vsol": 31.0 + 0.1 * (i + 1), "vtok": 32.19e9 / (31.0 + 0.1 * (i + 1)), "rsol": 1.0 + 0.1 * (i + 1)} for i in range(60)]
+        events += [{"e": "session", "t": T0 + offset + 400, "state": "stopped"}]
+        for e in events:
+            writer.write(e)
+        writer.close()
+
+    write(tmp_path / "a", "MintA", 0)
+    write(tmp_path / "b", "MintB", 7200)  # another recorder, another directory
+    write(tmp_path / "b2", "MintA", 0)  # the same launch caught twice
+    tokens = load_trade_tokens(f"{tmp_path / 'a'},{tmp_path / 'b'},{tmp_path / 'b2'}", 60)
+    assert [t.mint for t in tokens] == ["MintA", "MintB"]
+    assert [t.mint for t in load_trade_tokens([tmp_path / "a", tmp_path / "b"], 60)] == ["MintA", "MintB"]

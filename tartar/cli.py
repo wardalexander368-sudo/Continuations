@@ -133,7 +133,7 @@ def build_parser() -> argparse.ArgumentParser:
 
     train = sub.add_parser("train", help="train and evaluate the global model on recorded data")
     data = train.add_mutually_exclusive_group(required=True)
-    data.add_argument("--raw", help="raw trade logs from `tartar record` (or `tartar simulate`)")
+    data.add_argument("--raw", help="raw trade logs from `tartar record` (or `tartar simulate`); comma-separate one directory per recorder")
     data.add_argument("--ohlcv", help="OHLCV files from `tartar collect` (the timeframe's subfolder)")
     train.add_argument("-t", "--timeframe", default="1m")
     train.add_argument("--out", help=f"model directory (default {MODEL_DIR}, where `watch` looks)")

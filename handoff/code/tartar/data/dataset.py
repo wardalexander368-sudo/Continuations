@@ -14,7 +14,7 @@ import math
 from collections import defaultdict
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import Callable
+from typing import Callable, Sequence
 
 import numpy as np
 
@@ -116,9 +116,23 @@ def tick_from_event(event: dict, creator: str) -> Tick | None:
     )
 
 
-def load_trade_tokens(raw_dir: str | Path, timeframe: int, max_gap: float = 10.0) -> list[TokenData]:
+def load_trade_tokens(raw_dir: str | Path | Sequence[str | Path], timeframe: int, max_gap: float = 10.0) -> list[TokenData]:
     """Group recorded events by token and rebuild each token's candles over the
-    window in which its trades were completely recorded."""
+    window in which its trades were completely recorded.
+
+    `raw_dir` may name several directories (a sequence, or comma-separated): one per
+    recorder, since each directory is read as one recorder's timeline. A launch two
+    recorders both caught keeps the copy with the most candles.
+    """
+    dirs = [d for d in (raw_dir.split(",") if isinstance(raw_dir, str) else raw_dir if isinstance(raw_dir, (list, tuple)) else [raw_dir]) if str(d).strip()]
+    if len(dirs) > 1:
+        merged: dict[str, TokenData] = {}
+        for d in dirs:
+            for token in load_trade_tokens(str(d).strip(), timeframe, max_gap):
+                if token.mint not in merged or len(token.candles) > len(merged[token.mint].candles):
+                    merged[token.mint] = token
+        return sorted(merged.values(), key=lambda t: t.created)
+    raw_dir = str(dirs[0]).strip() if dirs else raw_dir
     creates: dict[str, dict] = {}
     trades: dict[str, list[dict]] = defaultdict(list)
     untracked: dict[str, float] = {}

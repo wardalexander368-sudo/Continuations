@@ -5,8 +5,7 @@ a file that was still being written. Copy into `data/raw/` to train:
 
     mkdir -p data/raw && cp handoff/data/raw/* data/raw/ && tartar train --raw data/raw
 
-This is exactly the data the installed v1 model (`tartar/models/trades-60s`)
-was trained on: two recording runs (14:06–15:13 and 18:32–20:06 UTC), 5,565
+The hours up to 20:06 UTC are the data v1 was trained on. Since 2026-10-09, `20261008-20` runs to 20:34 and `20261008-21` adds 21:42–21:50 from the same recorder; `20261008-23` is the Jev session's fast loop (23:44–23:50). v1 was trained on: two recording runs (14:06–15:13 and 18:32–20:06 UTC), 5,565
 launches, 213,490 trades, 3,523 usable tokens at 1-minute candles.
 
 Capture is incomplete (median 93%, mean 84% of each token's trades; 63% median
