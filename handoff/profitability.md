@@ -363,8 +363,12 @@ but a live paper run isn't worth a slot: the expected result is ~0.
 whose length depends on the token's fate. Replay the full stream through
 `FastLoop` and exclude only for recorder downtime. Earlier sections' short
 holds (≤ 3 min after entry at +20 s) are only mildly exposed, because
-migrations within minutes are rare there. §3.2–3.9 stand, but rerun them
-this way when convenient.
+migrations within minutes are rare there. **Checked:** buying every launch
+at +20 s and holding 180 s, replayed through `FastLoop` on the full stream
+of `handoff/data/raw` (recorder-downtime exclusion only), gives **−6.94%**
+per trade [−9.10, −4.52] over 2,257 trades (halves −7.9% / −6.0%; win
+11.4%). That's in line with, slightly worse than, the window-based −5.1% to
+−7.0%, so §3.2–3.9 stand.
 
 ## 4. What this means for the plan
 
