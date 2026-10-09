@@ -38,9 +38,17 @@ next. Topic documents hold the detail:
 
 
 
-* **Profitability session** (session_01U4x5qUJYMStcujpyLJgQ8N), since 03:35 UTC 10-09: **queue item 12, on-chain SOL-USD cost table** for the user's `jevtrader` day-28 fee arithmetic (Jupiter round-trip quotes vs Coinbase book, $1,000). Read-only toward `jevtrader`; branch `claude/sol-dex-costs`.
-
 ## Blockers (need the user)
+
+* **Jev usage policy (raised 10-09):** the user's own JEV protocol (`jevtrader`'s
+  PROTOCOL §2 quotes it) lists "always-on hook that makes a model call" and "`jev ask` as a
+  decision instrument" as Never, with `jevtrader` as the only signed carve-out. TARTAR's
+  shadow mode and `jev` scorer aren't covered. Ask the user whether TARTAR needs its own
+  carve-out (paper only, own key, ledger, spend tripwire) before running Jev live here again.
+* **GitHub write access (10-09 ~03:40 UTC):** the profitability session got `403 Resource not
+  accessible by integration` on push and on the API. Fix: github.com/settings/installations →
+  Claude → Configure → TARTAR selected (accept updated permissions if asked). If you can push,
+  it's fixed for you.
 
 * ~~Network~~: **resolved 22:35 UTC**, the user enabled full network access.
 * ~~TypeSafe Jev key~~: **resolved 22:40 UTC**, `TYPESAFE_API_KEY` is set
@@ -156,6 +164,10 @@ next. Topic documents hold the detail:
     TARTAR's contribution is a measured **on-chain cost table** for SOL-USD,
     so its day-28 break-even fees (f*_X per fill) can be read against a
     venue cheaper than Coinbase's 90 bps taker. See `handoff/jevtrader.md`.
+    **First table done 03:50 UTC 10-09** (§3.12): ~0.5 bps per fill on-chain
+    (quotes) vs 90 at Coinbase. Next: rerun `sol_dex_costs.py sample
+    --minutes 60` at several times of day, and measure how much a quote
+    moves in ~2 s (quote decay), so quotes become realistic fills.
 
 ## Rules that hold across sessions
 
@@ -185,6 +197,19 @@ next. Topic documents hold the detail:
   branch `claude/profitability-backtest`, on `main`).
 
 ## Log (newest first)
+
+* **2026-10-09 03:49 UTC, profitability session (handing off):** Read the user's `jevtrader`
+  (now public) and wrote `handoff/jevtrader.md`: it IS the SOL-USD + Jev loop, sealed until
+  2026-10-23. Never unblind or push to it. Measured on-chain SOL-USD costs for its day-28 fee
+  arithmetic (§3.12): ~0.5 bps per fill via Jupiter vs 90 at Coinbase (quotes; quote decay
+  not yet measured). Raised two blockers (Jev usage policy; GitHub write access, which blocked
+  this session's last pushes). **State of the research:** launch-stage strategies are closed
+  (§3.2–3.10). Established-memecoin rules show no reliable edge (§3.11), with a rolling
+  pre-registered dip test running (add a cohort daily; score 2026-10-30). The most promising
+  open thread is jevtrader's day-28 result read against on-chain costs. **Next session:** (1) add
+  a dip cohort (`established_cohort.py`) and commit; (2) rerun the SOL cost sampler at another
+  time of day and add a quote-decay measurement; (3) after 2026-10-23, if the user shares
+  jevtrader's results, compare each arm's f*_X with §3.12.
 
 * **2026-10-09 02:47 UTC, Jev session, slow-loop cycle 1:** The fast loop died again at 00:10 (container suspended after my turn; the 10-min keepalive check-ins were blocked by the permission check, so the user was asked how to proceed). Restarted at 02:47. All data so far: 23:44–23:50 and 00:03–00:10 UTC, 125 screened launches with outcomes (`handoff/live/reviews/20261009-0247.md`; raw hour 00 saved to `handoff/data/raw/20261009-00.jsonl.gz`). Paper trades: 27, mean −2.0% (90% CI −15.3 … +16.4%); buying every screened launch: −2.4%. Jev shadow Spearmans: buy +0.12, low_effort +0.18, meme −0.16, copycat +0.04, scam_wording +0.02. With n=125 these are noise-level and their quintiles aren't monotone. **No policy change** (needs ~300 new launches). Note: `max_open` (10) skipped 203 screens in ~13 min. That's a capacity limit, not evidence; left as is.
 
