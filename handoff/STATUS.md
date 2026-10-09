@@ -37,7 +37,6 @@ next. Topic documents hold the detail:
 
 
 
-* **Predictor session** (session_01UeZ4ho5y38qR1iNxnShtwF, started 01:26 UTC 10-09): **queue item 11(a), part 1: record graduated tokens on PumpSwap.** On every graduation, subscribe to the token's canonical pool on the same websocket and record its trades for N hours (`tartar record --pumpswap-hours N`; off by default, so the fast loop is unchanged until it opts in). Touches `tartar/feeds/pumpchain.py` (extra subscriptions), `tartar/data/recorder.py`, `tartar/data/rawlog.py`. Branch `claude/solana-candle-predictor-s95qjr`.
 
 ## Blockers (need the user)
 
@@ -132,8 +131,13 @@ next. Topic documents hold the detail:
 11. **Next strategy families** (unclaimed): (a) ~~graduation run-up~~
     **done 02:45 UTC 10-09: no edge** (§3.10; 75 → 80 SOL break-even
     after fixing two biases, earlier entries lose). Still open: trading
-    graduated tokens *on PumpSwap*, which needs PumpSwap trades recorded for
-    the tokens we follow (the decoder exists);
+    graduated tokens *on PumpSwap*. **Recording exists since 01:54 UTC 10-09:**
+    `tartar record|fast --pumpswap-hours N` follows each graduated SOL token's
+    canonical pool and writes `swap` events (price = `sol_after / tok_after`).
+    First data: `handoff/data/raw-pumpswap` (20 min: 20 graduations, 12 SOL
+    pools, 33,292 PumpSwap trades). **Jev session:** restart the fast loop with
+    `--pumpswap-hours 4` (and `SOLANA_COMMITMENT=processed`) to collect this
+    for the next study;
     (b) longer-lived tokens (hours old, real liquidity) via DexScreener or
     PumpSwap trades; (c) a liquid market like SOL-USD where costs are tiny,
     e.g. Jev on news (the user's earlier `jevtrader` idea).
@@ -166,6 +170,17 @@ next. Topic documents hold the detail:
   branch `claude/profitability-backtest`, on `main`).
 
 ## Log (newest first)
+
+* **2026-10-09 01:54 UTC, predictor session:** PumpSwap recording for item
+  11a is done, on `main` (126 tests):
+  - Extra per-pool subscriptions run on the same websocket.
+  - Each graduated SOL token's canonical pool is recorded for N hours.
+  - Quote-paired graduations are marked `quote` and skipped; in the live run
+    they were 8 of 20, mostly quoted in pump coin `pumpCmXq…`.
+
+  A 20 min live run is in `handoff/data/raw-pumpswap`. Busy pools logged
+  2,000–10,800 trades in their first minutes, with the first trade 4–46 slots
+  after graduation. No claim open.
 
 * **2026-10-09 02:45 UTC, profitability session:** Graduation run-up (item
   11a): it first looked like +5.8%/trade, but that was two biases. Fast
