@@ -32,6 +32,25 @@ next. Topic documents hold the detail:
 
 ## Active
 
+* **Dip/jevtrader session** (session_01Htqh7pc1Lh1PP6Dkm1rVvz, since 2026-10-09 17:33 UTC, `main`
+  only): continues the profitability session. **Owns the dip forward test (queue 11b)**: the GitHub
+  Action `.github/workflows/paper-tests.yml` adds a cohort at 02:24 UTC daily
+  (`established_cohort.py` + `pumpswap_fees.py --cohort`) and commits it; this session scores it
+  on 2026-10-30. **Owns the jevtrader day-28 readout (queue 12)**: a
+  routine checks on 2026-10-24. Other sessions: no need to add cohorts by hand any more.
+  **Owns the hedged-JLP paper forward test (queue 14, edge hunt A1)**, pre-registered
+  (`handoff/preregistration/jlp-hedged/SPEC.md`), window 2026-10-10 .. 2027-01-08: the same
+  Action runs `handoff/experiments/jlp_paper.py snapshot` every 4 h (:40) and commits
+  `handoff/data/jlp-paper/snapshots.jsonl`; score with `evaluate --final` on 2027-01-08.
+  Commits by `tartar-paper-tests` are this Action's; no Claude session is needed for either job.
+
+* **Predictor-strategy thread** (session continuing session_01YLnqLnTQzvD6HHUTvnNpVm, since 2026-10-09
+  17:33 UTC, branch `claude/project-thread-mwc92g`). The user asked for continuous work toward profit
+  (17:32 UTC), which lifts the edge-hunt hold for this lane. **Task:** can predictor v3.1's live edge
+  plus P(rug) become a rule that is profitable after measured fees (1.25%/side on curves)? Pre-register,
+  paper-test on unseen launches, report net with n and 90% CI. No real SOL; stays off in-block
+  launch entry (the handoff thread's lead).
+
 * **Handoff session** (session_01GAoiXJ4NHWXq6DnP61icSU, since 2026-10-09 13:28 UTC, branch
   `claude/handoff-overview`). **PumpSwap models done** (15s/30s/1m installed, 5m not; predictor doc
   §8.2.3) and `handoff/OVERVIEW.md` on `main`. Still in flight: recording `data/raw-v3` here since
@@ -42,7 +61,37 @@ next. Topic documents hold the detail:
   17:20 notes): decompose the gap into the flat-vs-move call and the up/down call on unseen
   hours; any change stays `domain == "trades"`.
 
-* **REAL MONEY — the PumpPortal wallet is owned by the clever session's successor (from ~17:20
+* **REAL MONEY — the PumpPortal wallet is owned by the "Real-money cost test, fresh key" thread session
+  (session_01C3taLfUKfeFUC2zXBZEhaR, branch `claude/project-thread-4xqd2n`, from 17:58 UTC
+  2026-10-09).** Started after the user re-added the key. **Probe 18:00 UTC: still 403 "Must supply
+  a valid API key", nothing traded or spent.** `PUMPPORTAL_API_KEY` is still not in the environment;
+  the key again shows up only as a proxy network secret for `pumpportal.fun`, and PumpPortal ignores
+  wherever the proxy puts it (it reads only the `?api-key=` query parameter). Needs the user: add it
+  as a plain environment variable `PUMPPORTAL_API_KEY=<key>` (Environment variables, not Network
+  secrets), then start a new session. Every real trade waits for the user's go in the thread.
+* (was) **REAL MONEY — the PumpPortal wallet was owned by the "Real-money cost test" thread session
+  (session_016pSxch8d3Jna6ZzEsLhFVC, branch `claude/project-thread-yy6153`, from 17:40 UTC
+  2026-10-09).** Started after the host fix; this container's proxy injects the PumpPortal key for
+  the bare `pumpportal.fun`. Only this session sends `/api/trade` requests. Every real trade waits
+  for the user's go in the thread. **Probe 17:44 UTC: still 403 "Must supply a valid API key",
+  nothing traded or spent.** This session's proxy does list a PumpPortal credential for the bare
+  `pumpportal.fun` (and still `*.pumportal.fun`), so the host now matches but PumpPortal rejects
+  what arrives: likely the proxy injects the key somewhere PumpPortal doesn't read (it wants the
+  `?api-key=` query parameter), or the stored value isn't the Lightning wallet's key.
+  `PUMPPORTAL_API_KEY` is still unset. Needs the user: add `PUMPPORTAL_API_KEY` as an environment
+  variable (the script sends it as `?api-key=`), or check the stored credential value. Earlier history:
+* (was) **REAL MONEY — the PumpPortal wallet is owned by the real-money thread session
+  (session_0173Md1HrgsAZHzbjLUmi64b, branch `claude/project-thread-2gop6x`, from 17:30 UTC
+  2026-10-09).** The first successor (session_01RdY84M3yCZbssMGWNVdpQi) was interrupted while
+  cloning and never ran a command. **Probe 17:28 UTC: still 403 "Must supply a valid API key",
+  nothing traded or spent.** `PUMPPORTAL_API_KEY` is not set in new sessions, and the proxy's
+  PumpPortal credential is registered for `*.pumportal.fun` (one "p"), so it never matches
+  `pumpportal.fun`. Needs the user: fix that host to `pumpportal.fun` (the trade URL is the bare
+  domain, so `*.` alone may not match), or add `PUMPPORTAL_API_KEY` as an environment variable.
+  Every real trade waits for the user's go in the thread. **17:40 UTC: the user fixed the host
+  (no `*`); this session still sees the old config, so the wallet passes to the next session
+  the user or the project's coordinator starts for this work.** Earlier (was) text:
+* (was) **REAL MONEY — the PumpPortal wallet is owned by the clever session's successor (from ~17:20
   UTC 2026-10-09).** The user added the API key as an environment secret; only new sessions see
   it, so the clever session ended and the user starts a new session to continue. **That new
   session is the only one that sends `/api/trade` requests** (first step: `real_fills.py probe`,
@@ -224,8 +273,9 @@ next. Topic documents hold the detail:
     `--next-launch` screen still skips those three (`ScamReport.avoid`), so its picks are
     unchanged; it shows P(rug) on every verdict and beside the watched token's level.
 
-14. **Edge hunt: new strategy families: ON HOLD by the user (2026-10-09 ~13:25 UTC).**
-    Resume only when the user asks. Exploratory findings and how to resume are in
+14. **Edge hunt: new strategy families: resumed 2026-10-09 17:32 UTC** (the user: "please work
+    continuously towards our goal"; the coordinator read it as lifting the hold). A1, the hedged-JLP
+    paper test, is pre-registered and running (dip/jevtrader session); angles C–E are still open. Exploratory findings and how to resume are in
     `handoff/edge-hunt.md`:
     - the best candidate is a **delta-hedged JLP** paper forward test (+7.9% APR over USDC lending,
       90% CI [+3.0, +12.4], exploratory);
@@ -272,6 +322,22 @@ next. Topic documents hold the detail:
   branch `claude/profitability-backtest`, on `main`).
 
 ## Log (newest first)
+
+* **2026-10-09 17:46 UTC, same-slot entry thread: closed, not worth building** (profitability
+  §3.18; 17,098 launches + 200 fetched blocks). §3.9's creation-slot edge comes from the
+  creator's own bundle: one-off wallets buy in an unbroken run right after the create (83%,
+  median 2 txs later) and realize +52%; entering first after the create loses 3.4% when nobody
+  follows in that slot. An outsider can at best be first among the 492 repeat sniper bots
+  (they land a median 132 txs later in the same block, on low fees): +2.0% [+1.3, +2.7] at
+  0.1 SOL only if we beat all of them every time, −1.2% as a median-speed bot, negative with a
+  p90 priority fee or 1 SOL size. Needs ~$1k/month shreds + co-location first. Nothing
+  half-done; no `*.pumpportal.fun` calls.
+
+* **2026-10-09 17:40 UTC, dip/jevtrader session:** edge hunt A1 pre-registered as a 90-day paper
+  forward test: hedged JLP vs Kamino USDC (`preregistration/jlp-hedged/SPEC.md`,
+  `experiments/jlp_paper.py`, 6 tests). Live check: JLP delta per JLP-$ SOL 0.441, ETH 0.077,
+  BTC 0.124; $10k Jupiter quotes buy −9 to −11 bps, sell +23 to +25 bps vs NAV. Two pilot
+  snapshots precede the window and are ignored by the scorer.
 
 * **2026-10-09 17:18 UTC, handoff session: PumpSwap models done.** 15s, 30s and 1m installed
   (`tartar/models/pumpswap-{15s,30s,60s}`), 5m not; each judged by a rule fixed in
