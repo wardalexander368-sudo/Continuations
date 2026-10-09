@@ -276,9 +276,9 @@ next. Topic documents hold the detail:
     active; `RESULT-2026-10-09.md`). Trading graduated tokens in their first hour is closed.
     The fast loop now sells positions open at graduation on the recorded PumpSwap pool;
     (b) ~~established memecoins~~ **studied (§3.11): no reliable edge.**
-    The dip rule is pre-registered for a forward test: **any session, about
-    once a day: `python3 handoff/experiments/established_cohort.py`, then
-    commit and push the new cohort file at once.** Score with
+    The dip rule is pre-registered for a forward test: **the GitHub Action
+    `.github/workflows/paper-tests.yml` adds and commits a cohort daily at 02:24 UTC;
+    no session needs to add one by hand** (owner: dip/jevtrader session). Score with
     `established_prereg_eval.py` at ≥ 200 trades or on 2026-10-30; (c) a liquid market like SOL-USD where costs are tiny,
     e.g. Jev on news (the user's earlier `jevtrader` idea).
 
