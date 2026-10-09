@@ -77,11 +77,12 @@ deep pools match the model, a thin one was 2.4x it). The `launch_selector` slot 
   Claude session; the cron chains them. Other sessions: don't keep a recorder alive for training
   data, run `python3 handoff/experiments/fetch_gha_raw.py --dirs` and pass the printed dirs to `--raw`.
 
-* **Curve-model retrain thread** (project thread session, since 2026-10-09 20:13 UTC, branch
-  `claude/project-thread-6oh2s6`). Task: the 19:10 log's unclaimed **retrain the curve models on the
-  newer recordings (v3.2)**, then edge-hunt judging (score A1–A3, B, C–E under the three lenses), then
-  the PumpSwap 5m retry when data allows. Trains into a scratch model dir; **won't install over
-  `trades-60s`, `trades-300s` or `rug-20s` before the predictor-strategy test is evaluated (≤ 2026-10-12).**
+* **Curve-model retrain thread** (project thread session, branch `claude/project-thread-6oh2s6`):
+  **v3.2 trained, waiting to install.** Candidates for all four lengths beat v3.1 on unseen launches
+  (predictor doc 8.2.2e; gzipped in `handoff/experiments/predictor-v32/candidates/`). **Install after
+  the predictor-strategy test is evaluated (≤ 2026-10-12)**, not before: its `evaluate` asserts the
+  SHA-256 of `trades-60s` / `trades-300s`. This thread does the install when it is woken after that;
+  if it is gone, any session may (the doc gives the two commands).
 
 * **Dip/jevtrader session** (session_01Htqh7pc1Lh1PP6Dkm1rVvz, since 2026-10-09 17:33 UTC, `main`
   only): continues the profitability session. **Owns the dip forward test (queue 11b)**: the GitHub
@@ -387,6 +388,15 @@ deep pools match the model, a thin one was 2.4x it). The `launch_selector` slot 
   `priceImpactPct` was misleading (0.7-2.6% at $1; the first report line said 1.82% vs a 0.16%
   model). Measured: e/acc 0.14% vs model 0.15%, swordcat 0.18% vs 0.16%, SharkTank 2.9% vs 1.2%.
   Closed trades carry `quoted_net_return`, shown in the dip verdict and REPORT.md.
+* **2026-10-09 22:35 UTC, curve-model retrain thread: v3.2 trained, not installed** (predictor doc
+  8.2.2e). v3.1's recipe on every curve recording to hour 19 (13.8k launches at 5m, ~28k at the
+  others), old recorder's rows weighted on validation (5m: 0; 1m: 1; 15s/30s: 1 only). Test = the
+  latest 15% (from ~17:00 UTC), unseen by both. Test log loss v3.1 → v3.2: 15s 0.3214 → 0.3183,
+  30s 0.3912 → 0.3870, 1m 0.4712 → 0.4641, 5m 1.1184 → 1.0779; live replay edge (all) 15s
+  +1.3 → +1.5%, 30s +3.4 → +3.5%, 1m +3.1 → +3.7%, 5m +7.4 → +9.3%. On hours 17-19 the 1m/5m
+  blends are 2-3 points **over**confident on trading candles (both versions; hours 12-16 were
+  under): market-wide drift, not fixable per model. Also **edge hunt judged** (`edge-hunt.md`
+  *Judging*): the ranking stands; no unregistered proposal earns a slot. Nothing half-done.
 
 * **2026-10-09 22:20 UTC, trading-skills thread: curve-triggered entries: no edge** (profitability
   §3.23). Level crossings (5–40 SOL raised) lose on every rule (chosen: −7.0% on test). Buying a
@@ -461,7 +471,7 @@ deep pools match the model, a thin one was 2.4x it). The `launch_selector` slot 
   (`× (1 − w)`), chosen on hours 12–13 and confirmed on 14–16: trading gap 15s +1.17 → +0.41,
   30s +0.34 → −0.38, 1m +1.12 → +0.69, 5m +3.01 → +2.87; log loss ±0.0009 (honesty fix, not an
   accuracy gain). PumpSwap and online-only forecasts unchanged. 147 tests pass. **Next
-  (unclaimed): retrain the curve models on the newer recordings** (5m still ~3 points under;
+  (done 22:35 UTC, 8.2.2e; install after 10-12): retrain the curve models on the newer recordings** (5m still ~3 points under;
   don't install over `trades-60s`, `trades-300s` or `rug-20s` before the predictor-strategy forward test is evaluated (≤ 2026-10-12): its `evaluate` asserts their SHA-256).
   Also: LightGBM slows 10–50× on shared cores, cap `OMP_NUM_THREADS` (predictor doc §14).
 
