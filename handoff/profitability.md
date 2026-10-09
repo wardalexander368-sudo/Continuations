@@ -258,6 +258,56 @@ order flow and timing, not language. That fits TypeSafe's own positioning:
 Jev is built for semantic judgments, and our problem is market
 microstructure.
 
+### 3.9 Entry speed in slots: the launch edge is inside the creation slot (queue item 10)
+
+§3.4 measured latency from *receive* times, which arrive a median 1.47 s
+after the block. `handoff/experiments/slot_profit.py` redoes it in slots
+(~0.266 s each) on the slot-annotated recording `handoff/data/raw-slots`:
+1,347 SOL launches, of which 964 have a price at creation (a creator buy).
+A buy lands k slots after the create's slot. Its fill is bounded by being
+the first or the last transaction in that slot, with the order inside a slot
+rebuilt by chaining reserves. It is sold at the end of the slot one hold
+later.
+
+**Fees, measured** (`handoff/experiments/fee_sample.py`, 212 pump.fun
+trades from 800 recent transactions, read from each TradeEvent): SOL-quoted
+trades pay **0.95% protocol + 0.30% creator = 1.25% per side** (150 of
+185). 35 paid 0%, probably special cases such as creator first buys.
+None paid the 2.5% creator fee seen on some quote-paired curves.
+Quote-paired curves vary (0.30–1.95%) and are skipped anyway.
+
+Mean net per trade (0.1 SOL, 1.25%/side, 0.001 SOL tip on the buy), 90% CI by launch:
+
+| Lands at | Hold 10 s | Hold 30 s | Hold 60 s | Hold 180 s |
+|---|---|---|---|---|
+| creation slot, **first** (bundled with the create) | **+6.8%** [+2.1, +12.1] | **+5.4%** [+0.2, +11.1] | +1.7% | −2.1% |
+| creation slot, last (after same-slot snipers) | −5.6% | −6.7% | −10.4% | −14.1% |
+| slot +1, first in slot | −5.3% | −6.6% | −10.4% | −14.1% |
+| slot +5 | −6.2% | −6.4% | −10.8% | −13.8% |
+| slot +20 | −6.2% | −7.8% | −11.9% | −15.0% |
+| slot +100 (~27 s) | −5.9% | −5.6% | −9.9% | −10.9% |
+
+Sensitivity (hold 10 s, slot +1 first): no tip −4.3%; **no fee and no
+tip −1.8%** [−3.8, +0.1]; 1 SOL size −9.2% (own price impact). The
+creation-slot "first" entry is the only positive cell in every variant
+(+7.8% without tip, +10.5% without fees).
+
+**Reading:**
+* After the creation slot, the average launch drifts **down** even before
+  costs: the creator's bundle and same-slot snipers sell into later
+  buyers. Speed can't fix that. Landing first in the very next slot, the
+  best any outside bot can do, still loses.
+* So a private RPC or Jito-speed execution would **not** make launch
+  buying profitable. They're worth it for data quality only (complete trade
+  streams, lower notification delay).
+* The value sits in the creation transaction, i.e. with the creator. We
+  will not pursue that: profiting from it means launching tokens and
+  dumping on buyers.
+* This closes the launch-entry strategy family (§3.2–3.9: buy everything,
+  screens, flags, models, Jev, speed). Research should move to other
+  entry points (graduated tokens on PumpSwap now that a decoder exists, or
+  longer-lived tokens) or other markets.
+
 ## 4. What this means for the plan
 
 1. **Don't trade the current predictions.** The confidence is honest about
