@@ -32,6 +32,12 @@ next. Topic documents hold the detail:
 
 ## Active
 
+* **Trading-skills thread** (project thread session, since 2026-10-09 20:32 UTC, branch
+  `claude/project-thread-x7fh45`). Task (the user's 20:30 ask: "hunt down improvements to our agent's
+  trading skills"): audit how the agent picks tokens, enters, sizes, exits, executes and learns
+  from its reviews; rank weaknesses by profit after real costs; test the top ones offline on
+  recorded data. Paper only, no wallet, stays off the dip/JLP/perps tests and the retrain.
+
 * **Recorder thread** (project thread session, since 2026-10-09 20:20 UTC, branch
   `claude/project-thread-9op3pf`). Task (the user's 20:12 go, continuous profit work): a raw
   recorder that no Claude session has to keep alive. Plan: a GitHub Action (`recorder.yml`)
