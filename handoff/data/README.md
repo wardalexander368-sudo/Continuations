@@ -43,3 +43,16 @@ The first recording with `tartar record --pumpswap-hours 2`: 698 launches,
 
 Event formats are in `tartar/data/rawlog.py`. Price after a swap =
 `sol_after / tok_after` (SOL per token).
+
+## `raw-eager/` (research session, from 2026-10-09 04:06 UTC)
+
+`tartar record --out data/raw-eager --pumpswap-hours 4 --hours 20` in the research session's
+container ("confirmed" commitment, current decoder: quote-paired launches and graduations are
+marked `quote`). Hourly files are added as each hour finishes; one recorder, one timeline.
+
+- `20261009-04`: 04:06–04:59 UTC, 1,272 launches, 95,177 curve trades, 35 graduations,
+  91,817 PumpSwap swaps.
+
+This is the **evaluation data of the pre-registered PumpSwap study**
+(`handoff/preregistration/pumpswap-graduated/SPEC.md`): don't compute returns on its PumpSwap
+pools before that evaluation is run and logged.
