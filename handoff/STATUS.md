@@ -70,7 +70,9 @@ next. Topic documents hold the detail:
   PumpPortal credential is registered for `*.pumportal.fun` (one "p"), so it never matches
   `pumpportal.fun`. Needs the user: fix that host to `pumpportal.fun` (the trade URL is the bare
   domain, so `*.` alone may not match), or add `PUMPPORTAL_API_KEY` as an environment variable.
-  Every real trade waits for the user's go in the thread. Earlier (was) text:
+  Every real trade waits for the user's go in the thread. **17:40 UTC: the user fixed the host
+  (no `*`); this session still sees the old config, so the wallet passes to the next session
+  the user or the project's coordinator starts for this work.** Earlier (was) text:
 * (was) **REAL MONEY — the PumpPortal wallet is owned by the clever session's successor (from ~17:20
   UTC 2026-10-09).** The user added the API key as an environment secret; only new sessions see
   it, so the clever session ended and the user starts a new session to continue. **That new
