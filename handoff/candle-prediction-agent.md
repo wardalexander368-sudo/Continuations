@@ -47,9 +47,9 @@ split by launch), plus a candle-by-candle replay of the live forecaster.
 | Global models | **v3.1 installed** (2026-10-09, section 8.2.2d) for **15s, 30s, 1m and 5m** candles: `tartar/models/trades-{15s,30s,60s,300s}.*`, 7,700–15,500 real pump.fun launches (31 leaves, 2,000 rows per leaf). v3 is in 8.2.2c, v2 in 8.2.1–8.2.2, v1 (3,523 launches, 1m only) in 8.2 |
 | Real-data result (v1, held-out later launches) | At candle open: hit 85.3% vs stated 85.2%, error **4.7% below naive**, 0.61 bits/row of information over the base rate; the 80% band covers 91.9% and states 91.3% (calibrated; the excess over 80% is the "no further trade" mass, section 8.2). Live replay (global + online): **edge +7.5%** on all candles, **+7.8%** on candles where the token is trading; hit 69.0% vs stated 67.8% there |
 | Online-only fallback | Fixed by the online-model review (section 11.1): now calibrated on real tokens (hit 79.3% vs stated 78.8%; trading 46.0% vs 45.1%), edge 0 (was −5.3%, and 23% hit at 52% stated on trading candles) |
-| Data recording | `tartar record` running in this container into `data/raw` (not in git; snapshot in `handoff/data/raw`) |
-| Biggest open problem | The free public Solana RPC drops trade notifications (median capture 93% per token in the v1 data, much lower on busy tokens) and now closes the connection every ~30 s. Fix with a private RPC (section 12) |
-| Tests | 81 passing (`pytest`) |
+| Data recording | `tartar record --pumpswap-hours 4` in the active sessions' containers; finished hours are copied to `handoff/data/<recorder>/` (`handoff/data/README.md`; who records now: `handoff/STATUS.md` *Active*) |
+| Biggest open problem | No longer capture: since 10-09 the recorder gets a median 100% / mean 97% of each token's trades from the public RPC (v1 data: 93% / 84%). Open: the 5m model's overconfidence at the candle open (8.2.2d) and the rest of section 12 |
+| Tests | 140 passing (`pytest`, 2026-10-09) |
 | Scam filtering | Built, live-tested and validated (section 9); **P(rug)** (9.1) ranks 30-min collapses at AUC 0.91 vs the level's 0.74 |
 | Profitability | `tartar profit` (net SOL after fees, slippage, latency). **No strategy is profitable on the recorded data**; see `handoff/profitability.md` |
 
