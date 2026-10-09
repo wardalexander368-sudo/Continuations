@@ -642,9 +642,12 @@ reviewers' scripts are in the session scratchpad (not persisted).
    - Fix: a private RPC websocket in `SOLANA_RPC_WS` (Helius, QuickNode,
      Triton), or `PUMPPORTAL_API_KEY` funded with ≥0.02 SOL. Then re-record and
      retrain, and compare capture (should be ~100%).
-   - Also order trades within a candle by reserves, not receive time. The close
-     should be the post-trade price of the last trade *in execution order*, and
-     reserve chaining can reconstruct that order.
+   - ~~Order trades within a candle by reserves, not receive time~~ **checked
+     2026-10-09, not needed on the chain source:** on `handoff/data/raw-slots`
+     (74,438 trades), receipt order never goes back a slot, and of 25,228
+     consecutive same-slot pairs none chains only in swapped order (24,404 chain
+     as received; the rest have a missed trade between them). No 1-minute close
+     changes when trades are ordered by slot. Missed trades remain the problem.
 2. **Too little real data.** v1 used ~2.7h (3,523 launches), and early stopping
    picks 54 rounds. Train on 12–48h, and check calibration per token age and
    per capture bucket.
