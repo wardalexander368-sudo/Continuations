@@ -23,6 +23,7 @@ from ..feeds.pumpchain import capture_rate
 from ..feeds.pumpportal import VIRTUAL_SOL
 from ..model.engine import FEATURES, FeatureEngine
 from ..model.global_model import z_to_class
+from ..model.volatility import TRADE_DOMAINS
 from ..scam import WalletTracker
 from .collect import load_ohlcv_file
 from .rawlog import event_price, raw_files, read_events
@@ -45,6 +46,9 @@ class TokenData:
     symbol: str = ""
     uri: str = ""
     end_reason: str = ""  # idle (untracked after no trades), migrated, interrupted (recording cut), or another untrack reason
+    first_target: int = 1  # first candle a training row may predict (PumpSwap tokens: the first after graduation)
+    launch_known: bool = True  # False when the launch wasn't recorded (`created` is then only a stand-in)
+    graduated: float | None = None  # PumpSwap tokens: when the curve completed (their rows start after it)
 
 
 @dataclass
@@ -70,8 +74,9 @@ class Dataset:
         return len(self.label)
 
     def split(self, train: float = 0.7, valid: float = 0.15) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
-        """Row masks for train/valid/test, splitting tokens by launch time (no look-ahead)."""
-        order = np.argsort([t.created for t in self.tokens])
+        """Row masks for train/valid/test, splitting tokens by launch time (graduation time for
+        PumpSwap tokens, whose rows start then) with no look-ahead."""
+        order = np.argsort([t.graduated if t.graduated is not None else t.created for t in self.tokens])
         n = len(order)
         part = np.empty(n, dtype=int)
         part[order] = np.where(np.arange(n) < train * n, 0, np.where(np.arange(n) < (train + valid) * n, 1, 2))
@@ -143,34 +148,11 @@ def load_trade_tokens(raw_dir: str | Path | Sequence[str | Path], timeframe: int
     untracked: dict[str, float] = {}
     untrack_reason: dict[str, str] = {}
     tracked: dict[str, float] = {}
-    interruptions: list[float] = []
-    last_seen = 0.0
-    simulated = False
-    started = False
     seen_trades: set[tuple] = set()
-    down_since: float | None = None
-    for event in sorted(read_events(raw_files(raw_dir)), key=lambda e: e["t"]):
+    events = sorted(read_events(raw_files(raw_dir)), key=lambda e: e["t"])
+    interruptions, simulated = recorder_interruptions(events, max_gap)
+    for event in events:
         kind = event["e"]
-        if kind == "session":
-            state = event.get("state")
-            if state == "stopped":
-                interruptions.append(event["t"])
-                down_since = None
-            elif state == "disconnected":
-                down_since = event["t"] if down_since is None else down_since
-            elif state == "connected" and started:
-                if down_since is None:
-                    # Connected again without a recorded drop: the recorder was killed;
-                    # cut where its data ends.
-                    interruptions.append(last_seen)
-                elif event["t"] - down_since > max_gap:
-                    interruptions.append(down_since)
-                # A reconnect within `max_gap` seconds only loses those seconds of trades,
-                # comparable to the stream's usual drop rate, so the token continues.
-                down_since = None
-            started = True
-            simulated = simulated or bool(event.get("simulated"))
-        last_seen = max(last_seen, event["t"])
         if kind == "create":
             creates[event["mint"]] = event
         elif kind == "trade":
@@ -186,11 +168,6 @@ def load_trade_tokens(raw_dir: str | Path | Sequence[str | Path], timeframe: int
             if event["t"] < untracked.get(mint, math.inf):
                 untracked[mint] = event["t"]
                 untrack_reason[mint] = "migrated" if kind == "migrate" else event.get("reason") or "idle"
-    if down_since is not None:
-        interruptions.append(down_since)
-    interruptions.append(last_seen)  # a recording that was killed has no "stopped" event
-    interruptions.sort()
-
     tokens = []
     for mint, create in creates.items():
         if create.get("quote"):
@@ -225,6 +202,160 @@ def load_trade_tokens(raw_dir: str | Path | Sequence[str | Path], timeframe: int
             token.simulated = simulated
             tokens.append(token)
     return tokens
+
+
+def recorder_interruptions(events: list[dict], max_gap: float = 10.0) -> tuple[list[float], bool]:
+    """When one recorder's stream stopped being complete (sorted times), and whether it is simulated.
+
+    Events must be in time order. A reconnect within `max_gap` seconds only loses those seconds of
+    trades, comparable to the stream's usual drop rate, so it is not an interruption.
+    """
+    interruptions: list[float] = []
+    last_seen = 0.0
+    simulated = False
+    started = False
+    down_since: float | None = None
+    for event in events:
+        if event["e"] == "session":
+            state = event.get("state")
+            if state == "stopped":
+                interruptions.append(event["t"])
+                down_since = None
+            elif state == "disconnected":
+                down_since = event["t"] if down_since is None else down_since
+            elif state == "connected" and started:
+                if down_since is None:
+                    # Connected again without a recorded drop: the recorder was killed;
+                    # cut where its data ends.
+                    interruptions.append(last_seen)
+                elif event["t"] - down_since > max_gap:
+                    interruptions.append(down_since)
+                down_since = None
+            started = True
+            simulated = simulated or bool(event.get("simulated"))
+        last_seen = max(last_seen, event["t"])
+    if down_since is not None:
+        interruptions.append(down_since)
+    interruptions.append(last_seen)  # a recording that was killed has no "stopped" event
+    interruptions.sort()
+    return interruptions, simulated
+
+
+def swap_tick(event: dict, creator: str = "") -> Tick | None:
+    """A recorded PumpSwap `swap` event as the tick `PumpSwapFeed` yields for it live."""
+    tokens, sol = event.get("tok_after"), event.get("sol_after")
+    if not tokens or not sol or tokens <= 0 or sol <= 0:
+        return None
+    paid = event.get("paid") or 0.0
+    buy = event.get("side") == "b"
+    trader = event.get("trader") or ""
+    return Tick(
+        event["t"], sol / tokens, volume=paid, buy_volume=paid if buy else 0.0, sell_volume=0.0 if buy else paid,
+        buys=int(buy), sells=int(not buy), trader=trader, creator=bool(creator) and trader == creator,
+        liquidity=sol, tokens=event.get("tok") or 0.0,
+    )  # fmt: skip
+
+
+def load_pumpswap_tokens(raw_dir: str | Path | Sequence[str | Path], timeframe: int, max_gap: float = 10.0, min_candles: int = 3) -> list[TokenData]:
+    """Graduated pump.fun tokens on their PumpSwap pools (`tartar record --pumpswap-hours N`),
+    seen the way `tartar watch` sees them after graduation.
+
+    At graduation the agent restarts its forecaster like a mid-life join: the candles so far
+    become history without trade detail, and trades (now PumpSwap swaps) are tracked from
+    there. So each token here is its bonding-curve candles before the candle in which it
+    graduated (when its launch was recorded completely up to graduation; else none), then
+    candles built from every trade from that candle on: the curve's last trades and the swaps.
+    Training rows predict only candles that start after graduation (`first_target`). A pool's
+    window ends when the recorder stops watching it (idle or age) or the recording is cut.
+    """
+    dirs = [d for d in (raw_dir.split(",") if isinstance(raw_dir, str) else raw_dir if isinstance(raw_dir, (list, tuple)) else [raw_dir]) if str(d).strip()]
+    if len(dirs) > 1:
+        merged: dict[str, TokenData] = {}
+        for d in dirs:
+            for token in load_pumpswap_tokens(str(d).strip(), timeframe, max_gap, min_candles):
+                if token.mint not in merged or len(token.candles) > len(merged[token.mint].candles):
+                    merged[token.mint] = token
+        return sorted(merged.values(), key=lambda t: t.graduated)
+    raw_dir = str(dirs[0]).strip() if dirs else raw_dir
+    events = sorted(read_events(raw_files(raw_dir)), key=lambda e: e["t"])
+    interruptions, simulated = recorder_interruptions(events, max_gap)
+    creates: dict[str, dict] = {}
+    tracked: dict[str, float] = {}
+    curve: dict[str, list[dict]] = defaultdict(list)
+    graduations: dict[str, dict] = {}  # pool -> graduate event
+    swaps: dict[str, list[dict]] = defaultdict(list)
+    unwatched: dict[str, float] = {}
+    untracked: dict[str, float] = {}  # curve recording stopped (idle or age) before it graduated?
+    seen_swaps: set[tuple] = set()
+    for event in events:
+        kind = event["e"]
+        if kind == "create":
+            creates.setdefault(event["mint"], event)
+        elif kind == "track":
+            tracked.setdefault(event["mint"], event["t"])
+        elif kind == "untrack" and event.get("reason") != "migrated":
+            untracked.setdefault(event["mint"], event["t"])
+        elif kind == "trade":
+            curve[event["mint"]].append(event)
+        elif kind == "graduate" and event.get("pool"):
+            graduations.setdefault(event["pool"], event)
+        elif kind == "swap":
+            ident = (event.get("pool"), event.get("side"), event.get("trader"), event.get("tok"), event.get("sol_after"))
+            if ident not in seen_swaps:
+                seen_swaps.add(ident)
+                swaps[event.get("pool")].append(event)
+        elif kind == "unwatch":
+            unwatched.setdefault(event.get("pool"), event["t"])
+
+    tokens = []
+    for pool, grad in graduations.items():
+        mint, t_grad = grad["mint"], grad["t"]
+        cut = next((t for t in interruptions if t > t_grad), math.inf)
+        end, end_reason = min((cut, "interrupted"), (unwatched.get(pool, math.inf), "unwatched"))
+        if not math.isfinite(end):
+            continue
+        create = creates.get(mint)
+        launch_ok = (
+            create is not None and not create.get("quote") and mint in tracked and tracked[mint] - create["t"] <= 2.0
+            and not any(create["t"] < t <= t_grad for t in interruptions) and untracked.get(mint, math.inf) >= t_grad
+        )  # fmt: skip
+        creator = (create or {}).get("creator") or ""
+        # One candle book for the token's whole life, as in the agent (its book outlives the
+        # forecaster's restart): curve trades from the launch, then the pool's swaps.
+        book = CandleBook(timeframe, grace=0.0)
+        grad_period = book.period(t_grad)
+        candles: list[Candle] = []
+        if launch_ok:
+            for event in sorted((e for e in [create] + curve.get(mint, []) if e["t"] < t_grad), key=lambda e: e["t"]):
+                tick = tick_from_event(event, creator)
+                if tick is not None:
+                    candles += book.add_tick(tick)
+        token = TokenData(
+            mint, create["t"] if launch_ok else t_grad, creator, end=end, end_reason=end_reason,
+            name=(create or {}).get("name") or "", symbol=(create or {}).get("symbol") or "", uri=(create or {}).get("uri") or "",
+            launch_known=launch_ok, graduated=t_grad,
+        )  # fmt: skip
+        n_swaps = 0
+        for event in swaps.get(pool, ()):
+            if not t_grad <= event["t"] < end:
+                continue
+            tick = swap_tick(event, creator)
+            if tick is None:
+                continue
+            n_swaps += 1
+            # Only post-graduation trades reach the restarted forecaster's wallet tracker.
+            new_trader = bool(tick.trader) and tick.trader not in book.wallets
+            token.ticks.setdefault(book.period(tick.ts), []).append((tick, new_trader))
+            candles += book.add_tick(tick)
+        candles += book.advance(end)
+        # What the restarted forecaster sees: candles before the graduation candle without trade detail.
+        k = sum(1 for c in candles if c.start < grad_period)
+        token.candles = [Candle(c.start, c.open, c.high, c.low, c.close, volume=c.volume, trades=None) for c in candles[:k]] + candles[k:]
+        token.first_target = k + 1  # the first candle that starts after graduation
+        if n_swaps and len(candles) - k > min_candles:
+            token.simulated = simulated
+            tokens.append(token)
+    return sorted(tokens, key=lambda t: t.graduated)
 
 
 def load_ohlcv_tokens(directory: str | Path, timeframe: int) -> list[TokenData]:
@@ -286,14 +417,14 @@ def build_dataset(
     watching" mid-life (see `late_join_view`). Long dead stretches (no trades
     for 5+ candles) are subsampled and up-weighted so they don't swamp the data.
     """
-    if domain != "trades":
+    if domain not in TRADE_DOMAINS:
         fractions = (0.0,)
     cols: dict[str, list] = defaultdict(list)
     xs: list[np.ndarray] = []
     for index, token in enumerate(tokens):
         known_creator = domain == "trades" and _hash_unit(token.mint, "creator") >= mask_creator
-        known_launch = _hash_unit(token.mint, "launch") >= mask_launch
-        candles, tick_groups, first_target = token.candles, token.ticks, 1
+        known_launch = token.launch_known and _hash_unit(token.mint, "launch") >= mask_launch
+        candles, tick_groups, first_target = token.candles, token.ticks, token.first_target
         if domain == "trades" and is_late_join(token, late_join):
             candles, tick_groups, first_target = late_join_view(token, timeframe)
             known_creator = False

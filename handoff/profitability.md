@@ -12,6 +12,19 @@ one that looked good on the validation launches lost on the later (test)
 launches, or its 90% interval spans zero. Treat the dashboard's "predicted
 close" and confidence as measurement, not as trade signals.
 
+Where each family stands (2026-10-09):
+
+| Family | Status | Where |
+|---|---|---|
+| Buying pump.fun launches: baselines, model signals, screens, flags, learned scorers, Jev | closed, loses | §3.2–3.8 |
+| Faster entry (slots, private RPC) | closed: only the creator's own bundle profits | §3.9 |
+| Graduation run-up on the curve | closed, break-even at best | §3.10 |
+| Longer holds (10–45 min) on screened launches | closed, loses | §3.14 |
+| Copy-trading wallets whose buys paid off | closed, loses | §3.15 |
+| Graduated tokens on PumpSwap (fees 1.20–1.25%/side, §3.13) | pre-registered, evaluated at ≥ 250 pools | `handoff/preregistration/pumpswap-graduated/` |
+| Established memecoins: dip buying | rolling forward test, scored 2026-10-30 | §3.11 |
+| SOL-USD with Jev (the user's jevtrader) | sealed test ends 2026-10-23; on-chain costs ≈ 0.5 bps/fill | §3.12, `handoff/jevtrader.md` |
+
 ## 2. How it is measured (`tartar/profit.py`, `tartar profit`)
 
 * **Fills on the real curve.** A buy of `size` SOL at the reserves of the last
@@ -374,7 +387,8 @@ per trade [−9.10, −4.52] over 2,257 trades (halves −7.9% / −6.0%; win
 
 Liquid Solana pools days to months old, from GeckoTerminal 5-minute OHLCV
 (`handoff/experiments/established_collect.py`, `established_rules.py`).
-Costs: 0.5% swap fee per side (PumpSwap charges ~0.30%), price impact from
+Costs: 0.5% swap fee per side (believed then to be above PumpSwap's ~0.30%; **it isn't**:
+memecoin pools pay 0.30–1.25% per side by market cap, see §3.13), price impact from
 each pool's liquidity (size / (liquidity/2) per side; $200 trades), and
 $0.05 per transaction. Fixed grid: **momentum** (1 h or 15 min return
 above +5/10/20%), **dip** (below −5/10/20%), **breakout** (new 1/4/24 h
@@ -433,13 +447,15 @@ The user's `jevtrader` (see `handoff/jevtrader.md`) measures Jev on Coinbase SOL
 retail taker fee is 90 bps per fill (~181 bps round trip). Jupiter quotes for a $1,000 round trip
 (USDC → SOL → USDC at the same moment), 33 samples on 2026-10-09: **median 0.96 bps round trip
 including $0.05 per transaction, i.e. ~0.5 bps per fill**, routed through Solana's proprietary
-market makers. On-chain prices sit within ~1–3 bps of Coinbase's book. Quotes, not fills: realised
-cost is higher by whatever the quote moves during ~1–2 s of latency (the next measurement). For
+market makers. On-chain prices sit within ~1–3 bps of Coinbase's book. Quotes, not fills, but **quote decay
+is small**: re-quoting 1–5 s later moves a $1,000 quote only as much as the market moved (|decay|
+p90 ≈ 1–2.5 bps, mean ≈ 0, no 50 bps slippage failures); filling at the later quote costs
+≈ 0.4 bps per fill (157 samples, 04:10–05:30 UTC; `jevtrader.md`). For
 any strategy on SOL itself, the on-chain venue is **~180× cheaper** than retail CEX taker fees,
 which moves the profitability bar from "beat 1.8%" to "beat ~0.01–0.05%".
 
-**Second window and quote decay** (predictor session, 2026-10-09 04:33–05:33 UTC; data in
-`handoff/data/sol-dex/`, `sol_dex_costs.py summary|decay-summary`). All figures are quotes, not
+**Second window and quote decay** (predictor session, 2026-10-09 04:33–05:33 UTC; `sol_dex_costs.py summary|decay-summary`;
+its samples were not committed, only these numbers). All figures are quotes, not
 executed fills; MEV, failed transactions and the USDC/USD basis are still not priced.
 
 - **$1,000, 120 samples:** 0.46 bps per fill (median, p90 0.70) including $0.05 per transaction.
@@ -459,8 +475,106 @@ executed fills; MEV, failed transactions and the USDC/USD basis are still not pr
   trader**: latency adds noise (~0.3 bps typical at 2 s), not expected cost.
 - **Realistic per-fill cost at ~2 s latency:** ~0.5 bps expected, with ~1.3 bps at p90. That is
   below jevtrader's smallest non-zero fee column (2 bps) and ~180× below Coinbase's 90 bps.
-- **Still open:** US/EU daytime windows (only 03:37–05:33 UTC sampled so far), and real fills
+- The research session's decay run (04:10–05:30 UTC, 1/2/5 s, with Coinbase's book; above and
+  `jevtrader.md`) agrees: no expected cost beyond the market's own move.
+- **Still open:** US/EU daytime windows (only 03:37–05:55 UTC sampled so far), and real fills
   (a funded wallet; not done, paper only).
+
+### 3.13 PumpSwap fees: 1.20–1.25% per side on young tokens, tiered by market cap
+
+Measured 2026-10-09 (`handoff/experiments/pumpswap_fees.py`) two ways that agree: from the
+fee basis points PumpSwap writes into every BuyEvent/SellEvent (fetched over RPC), and from
+recorded swaps (`sol`, `paid` and post-trade reserves give LP and protocol + creator
+separately; 10,283 swaps ≥ 0.05 SOL in `handoff/data/raw-pumpswap`). Every trade pays
+**LP 0.20% + protocol 0.05% + a coin-creator fee that falls as market cap rises**, except
+right after graduation:
+
+| market cap (SOL) | LP + protocol + creator | per side |
+|---|---|---|
+| below ~420 (a fresh graduate sits at ~400) | 0.02 + 0.93 + 0.30 | **1.25%** |
+| ~420–1,200 | 0.20 + 0.05 + 0.95 | **1.20%** |
+| ~1,100–4,400 | 0.20 + 0.05 + 0.80–0.85 | 1.05–1.10% |
+| ~4,400–6,800 | 0.20 + 0.05 + 0.75 | 1.00% |
+| ~12,000 / ~18,000 | creator 0.70 / 0.65 | 0.95% / 0.90% |
+| ~28,000 / ~33,000 | creator 0.55 / 0.50 | 0.80% / 0.75% |
+| ~47,000 | creator 0.35 | 0.60% |
+| ~500,000 | creator 0.05 | 0.30% |
+
+(Tier edges overlap a little in the recorded data; the program's own market-cap measure
+differs slightly from price × 1e9.) A handful of wallets trade fee-free (protocol accounts;
+~28–48 swaps each in 20 minutes); ignore them.
+
+**Consequences:**
+* Trading a token right after graduation costs about what the bonding curve did:
+  **~2.5% round trip** plus impact. Graduation doesn't buy cheaper execution until a token
+  reaches thousands of SOL in market cap. The graduation-exit haircut (§3.10) and any
+  PumpSwap study must charge these fees, not 0.30%.
+* The dip pre-registration (§3.11) charged 0.5% per side, believing PumpSwap took ~0.30%.
+  Cohort 1's pools pay 0.30–1.20%, mean 0.85%. Its primary metric (excess over random
+  entries in the same pool) is barely affected, since both sides of the comparison pay the
+  same fee; its "mean net > 0" criterion is optimistic by ~0.7 points per round trip. An
+  addendum (written before any out-of-sample result existed) adds a secondary line at
+  measured fees; SPEC.json is unchanged (`handoff/preregistration/dip-rolling/ADDENDUM-2026-10-09-fees.md`).
+* §3.11's in-sample memecoin numbers used 0.5%/side as well; at real fees the memecoin
+  mean net falls by ~0.7 points per trade, and the excess is unchanged.
+
+### 3.14 Longer holds on screened launches: no edge (queue item 3)
+
+`handoff/experiments/long_holds.py`: the fast loop itself replayed on the full raw stream of
+every recording before 2026-10-09 02:00 (`handoff/data/raw`, `raw-slots`, `raw-slots-processed`,
+`raw-pumpswap`; 9,591 SOL launches), excluding a trade only when the recorder was down during
+it. Grid: screen 20 / 120 / 600 s × hold 10 / 20 / 30 / 45 min × {the live skip flags; the same
+plus ≥ 20 distinct buyers by the screen}. Holds end inside the recorder's 60-minute tracking
+window. Rule chosen on the first 60% of launches, reported once on the rest:
+
+| | Trades | Mean net | 90% CI | Median | Win |
+|---|---|---|---|---|---|
+| validation, best of 24 (screen 20 s, hold 20 min, flags) | 695 | −5.3% | −8.8 … −2.0% | −3.5% | 4.0% |
+| **test, same rule** | 102 | **−12.5%** | −17.6 … −7.6% | −3.7% | 3.9% |
+| validation range over the 12 "flags" rules | 260–1,032 | −5.3 … −9.5% | all CIs below 0 | −3.5% | 0.5–4.6% |
+| validation, "+ ≥ 20 buyers" rules | 21–57 | −36 … −67% | all below 0 | | |
+
+**Reading:**
+* The median trade is the cost round trip on a token that never trades again (−3.5%: 2 × 1.25%
+  fee, 0.4% network on 0.1 SOL, ~0.6% impact). After 20 s–10 min most screened launches are
+  already dead, and the few that move don't pay for the rest (win rate ~1–5%).
+* Waiting longer before buying doesn't help: a 2- or 10-minute screen is worse than 20 s.
+* Launches with ≥ 20 distinct buyers early are the worst by far (−35% to −67% per trade): heavy
+  early buying marks pump-and-dumps. A good *skip* signal, but skipping doesn't make the rest
+  profitable.
+* Caveats: `tartar record` stops following a token after 10 idle minutes (the fast loop after
+  20), so a token that revives after a quiet spell is valued at its stale price; revivals are
+  rare, but they'd be winners. Old recordings value graduation exits at the final curve price
+  less 10% (positions still open at graduation were very rare here: every test exit was at the
+  horizon); since 2026-10-09 the fast loop sells them on the recorded PumpSwap pool instead.
+
+Together with §3.2–3.10 this closes buying pump.fun launches at any entry delay up to 10
+minutes and any hold up to 45 minutes.
+
+### 3.15 Copy-trading wallets whose buys paid off: no edge
+
+`handoff/experiments/copytrade.py`: follow a wallet's buy 1 s after it was received (about 2.5 s
+after its block), on the curve at the recorded state, at 1.25% per side; exit after 30 s / 2 min /
+10 min, or 1 s after the wallet's own next sell ("mirror", capped at 10 min). A wallet's score is
+the mean net return of *following* its buys in a learning period (shrunk: sum / (n + 5)), so it
+measures only the skill a follower can capture. One entry per token, on the first qualifying buy.
+Learning / validation / test = consecutive 50 / 25 / 25% of buys by time; recorder-downtime
+exclusion only; the creator's own buys aren't followed. Data: every recording before 10-09 02:00
+(9,320 SOL launches, 207,178 buys; 1,098 wallets bought ≥ 10 distinct launches).
+
+| Validation | 30 s | 2 min | 10 min | mirror |
+|---|---|---|---|---|
+| follow every buy | −8.0% | −14.0% | −29.2% | −13.4% |
+| best of 12 wallet filters | −3.7% | −2.2% [−11.6, +6.8] | −13.6% | −7.3% |
+
+**Test, the rule chosen on validation** (2 min, ≥ 10 learning buys, score > +10%, wallets
+re-learned through validation): **−21.0% per trade [−31.0, −10.5]**, 109 trades, win 22%.
+
+**Reading:** a buy is followed by reversion. Copying any buy 2.5 s late loses 4–5 points beyond
+the ~3.5% cost floor at 30 s, and more the longer it's held. Wallets whose buys were good to
+follow earlier are less bad to follow later, but never good. Their edge is being early (often
+bundled with the launch), which a follower can't copy. No forward test is worth running: the best
+in-sample rule already loses.
 
 ## 4. What this means for the plan
 

@@ -139,8 +139,15 @@ def build_parser() -> argparse.ArgumentParser:
     train.add_argument("-t", "--timeframe", default="1m")
     train.add_argument("--out", help=f"model directory (default {MODEL_DIR}, where `watch` looks)")
     train.add_argument("--rounds", type=int, default=3000, help="max boosting rounds (early stopping decides)")
+    train.add_argument("--num-leaves", type=int, default=63, help="LightGBM leaves per tree (default 63)")
+    train.add_argument("--min-leaf", type=int, default=100, help="LightGBM min rows per leaf (default 100)")
     train.add_argument("--replay-tokens", type=int, default=300, help="test tokens to replay through the live forecaster")
     train.add_argument("--force", action="store_true", help="replace the installed model even if it scores better")
+    train.add_argument(
+        "--pumpswap", action="store_true",
+        help="train the model for graduated tokens on their PumpSwap pools (`watch` switches to it at graduation); "
+        "needs recordings made with --pumpswap-hours",
+    )  # fmt: skip
     train.set_defaults(func=cmd_train)
 
     profit = sub.add_parser("profit", help="net SOL of trading strategies on recorded launches, after fees, slippage and latency")
@@ -260,6 +267,7 @@ async def _run_agent(market: Market, args, timeframe: int, creators: CreatorInde
         model=model,
         scam_checks=not simulated and not getattr(args, "no_scam_check", False),
         creators=creators,
+        after_graduation=None if args.no_model or simulated else lambda: find_model("pumpswap", timeframe, args.model_dir),
     )
     try:
         await agent.run(max_candles=args.candles)
@@ -523,16 +531,21 @@ async def cmd_train(args) -> int:
     import json
     from pathlib import Path
 
-    from .data.dataset import build_dataset, load_ohlcv_tokens, load_trade_tokens
+    from .data.dataset import build_dataset, load_ohlcv_tokens, load_pumpswap_tokens, load_trade_tokens
     import numpy as np
 
     from .train import evaluate, test_log_loss, train_global
 
     timeframe = parse_timeframe(args.timeframe)
     console = Console()
-    domain = "trades" if args.raw else "ohlcv"
+    if args.pumpswap and not args.raw:
+        raise SystemExit("--pumpswap needs --raw (recordings made with --pumpswap-hours)")
+    domain = "pumpswap" if args.pumpswap else "trades" if args.raw else "ohlcv"
     console.print(f"loading {domain} data…")
-    tokens = load_trade_tokens(args.raw, timeframe) if args.raw else load_ohlcv_tokens(args.ohlcv, timeframe)
+    if domain == "pumpswap":
+        tokens = load_pumpswap_tokens(args.raw, timeframe)
+    else:
+        tokens = load_trade_tokens(args.raw, timeframe) if args.raw else load_ohlcv_tokens(args.ohlcv, timeframe)
     if len(tokens) < 20:
         raise SystemExit(f"only {len(tokens)} usable tokens; record more data first")
     ds = build_dataset(tokens, timeframe, domain)
@@ -548,7 +561,7 @@ async def cmd_train(args) -> int:
     if ds.simulated and args.out is None:
         raise SystemExit("this is simulated data; pass --out DIR so the model is not used for real tokens")
 
-    model = train_global(ds, rounds=args.rounds, log=console.print)
+    model = train_global(ds, rounds=args.rounds, num_leaves=args.num_leaves, min_data_in_leaf=args.min_leaf, log=console.print)
     report = evaluate(model, ds, replay_tokens=args.replay_tokens, log=console.print)
     target = model_dir(args.out) / model_name(domain, timeframe)
     report["test_log_loss"] = new_loss = test_log_loss(model, ds)

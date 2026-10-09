@@ -6,6 +6,10 @@ Fetches 5-minute OHLCV (USD) from GeckoTerminal for every registered pool, keeps
 after its cohort's `registered_at`, and applies SPEC.json's rule, costs and success criteria.
 Pools that died or lost liquidity count like any other (their history stays available). Candles
 are cached per run hour in data/prereg/.
+
+Secondary (ADDENDUM-2026-10-09-fees.md, declared before any scoring; not a success criterion):
+if fees-measured.json exists, mean net is also reported with each pool's PumpSwap fee as
+measured on-chain (pumpswap_fees.py --save), since the registered 0.5%/side understates it.
 """
 import json
 import sys
@@ -80,11 +84,15 @@ L, drop, H = rule["lookback_bars"], rule["drop"], rule["hold_bars"]
 fee, size, network = costs["fee_per_side"], costs["size_usd"], costs["network_usd_per_tx"]
 
 
-def net(entry, exit_, impact):
+measured_path = DIR / "fees-measured.json"
+measured = json.loads(measured_path.read_text()) if measured_path.exists() else {}
+
+
+def net(entry, exit_, impact, fee=fee):
     return (exit_ / entry) * (1 - fee) ** 2 * (1 - impact) ** 2 - 1 - 2 * network / size
 
 
-per_pool, empty = [], []
+per_pool, per_pool_measured, empty = [], [], []
 t_first = min(t for _, t in registered)
 latest = t_first
 for p, t_reg in registered:
@@ -104,13 +112,16 @@ for p, t_reg in registered:
         prev = c[i]
     impact = size / max(p["liquidity_usd"] / 2.0, 1.0)
     base = float(np.mean(net(o[1 : len(c) - H], c[H:-1], impact)))  # every entry bar i: open i+1, close i+H
-    trades, busy = [], -1
+    pool_fee = measured.get(p["pool"], {}).get("fee_per_side", fee)
+    trades, trades_measured, busy = [], [], -1
     for i in range(L, len(c) - H - 1):
         if i > busy and c[i] / c[i - L] - 1 < -drop:
             trades.append(net(o[i + 1], c[i + H], impact))
+            trades_measured.append(net(o[i + 1], c[i + H], impact, pool_fee))
             busy = i + H
     if trades:
         per_pool.append((p["name"], np.array(trades), base))
+        per_pool_measured.append(np.array(trades_measured))
 
 days = (latest - t_first) / 86400
 print(f"{len(cohorts)} cohort(s), {len(registered)} registered pools; ~{days:.1f} days since the first registration")
@@ -132,3 +143,9 @@ print(f"mean net per trade {100 * allr.mean():+.2f}% [{100 * lo_m:+.2f}, {100 * 
 print(f"PRIMARY excess over random entries {100 * excess.mean():+.2f}% [{100 * lo_e:+.2f}, {100 * hi_e:+.2f}]")
 ok = lo_e > 0 and allr.mean() > 0
 print("RESULT:", "SUCCESS (both criteria met)" if ok else "NOT CONFIRMED")
+if measured:
+    allm = np.concatenate(per_pool_measured)
+    boots = [np.concatenate([per_pool_measured[i] for i in rng.integers(0, len(per_pool), len(per_pool))]).mean() for _ in range(2000)]
+    lo, hi = np.quantile(boots, [0.05, 0.95])
+    covered = sum(p["pool"] in measured for p, _ in registered)
+    print(f"secondary (addendum 2026-10-09): mean net at measured PumpSwap fees {100 * allm.mean():+.2f}% [{100 * lo:+.2f}, {100 * hi:+.2f}] ({covered}/{len(registered)} pools measured; others at the registered fee)")

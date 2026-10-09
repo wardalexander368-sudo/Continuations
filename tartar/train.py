@@ -11,6 +11,7 @@ import numpy as np
 from .data.dataset import Dataset, TokenData, _hash_unit
 from .model import Forecaster
 from .model.engine import FEATURES
+from .model.volatility import TRADE_DOMAINS
 from .model.global_model import (
     EDGES,
     N_CLASSES,
@@ -92,7 +93,7 @@ def train_global(
     train, valid, _ = ds.split()
     if train.sum() < 100 or valid.sum() < 20:
         raise ValueError(f"not enough data to train: {train.sum()} train / {valid.sum()} validation rows")
-    features = list(FEATURES) if ds.domain == "trades" else list(OHLCV_FEATURES)
+    features = list(FEATURES) if ds.domain in TRADE_DOMAINS else list(OHLCV_FEATURES)
     cols = [FEATURES.index(name) for name in features]
     X_train, X_valid = ds.X[train][:, cols], ds.X[valid][:, cols]
     params = dict(_LGB_PARAMS, learning_rate=learning_rate, num_leaves=num_leaves, min_data_in_leaf=min_data_in_leaf, num_threads=threads)
@@ -123,7 +124,7 @@ def train_global(
         "temperature": temperature,
         "tail_low": float(np.mean(EDGES[0] - low)) if len(low) else 1.0,
         "tail_high": float(np.mean(high - EDGES[-1])) if len(high) else 1.0,
-        "nowcast": bool(ds.domain == "trades" and (ds.f > 0).any()),
+        "nowcast": bool(ds.domain in TRADE_DOMAINS and (ds.f > 0).any()),
         "best_iteration": int(booster.best_iteration or booster.current_iteration()),
         "train_rows": int(train.sum()),
         "valid_rows": int(valid.sum()),
@@ -270,15 +271,15 @@ def replay(tokens: list[TokenData], timeframe: int, domain: str, model: GlobalMo
     all_, trading = Tally(), Tally()
     for token in tokens:
         known_creator = domain == "trades" and _hash_unit(token.mint, "creator") >= 0.3
-        launched = token.created if _hash_unit(token.mint, "launch") >= 0.15 else None
+        launched = token.created if token.launch_known and _hash_unit(token.mint, "launch") >= 0.15 else None
         fc = Forecaster(timeframe, coverage, model=model, domain=domain, launched_at=launched, creator_known=known_creator)
         prev_active = False
-        for candle in token.candles:
+        for i, candle in enumerate(token.candles):
             # Live order: a candle's trades reach the wallet tracker before the candle closes.
             for tick, _ in token.ticks.get(candle.start, ()):
                 fc.on_tick(tick)
             outcome = fc.observe(candle)
-            if outcome is not None:
+            if outcome is not None and i >= token.first_target:  # PumpSwap tokens: score only after graduation
                 all_.add(outcome)
                 if prev_active:
                     trading.add(outcome)

@@ -14,7 +14,7 @@ from .ensemble import Ensemble, default_ensemble
 from .features import build_features
 from .global_model import BinnedDistribution, GlobalModel
 from .predictive import DirectionCalibrator, Mixture, ResidualDistribution, logit, sigmoid
-from .volatility import ActivityEstimator, trades_flat_priors
+from .volatility import TRADE_DOMAINS, ActivityEstimator, trades_flat_priors
 
 LAST_TRAINED_FRACTION = 0.95  # latest point in a candle the global model is trained on (dataset.FRACTIONS)
 
@@ -183,7 +183,7 @@ class Forecaster:
         self.coverage = coverage
         self.engine = FeatureEngine(timeframe, launched_at, creator_known, domain=domain)
         self.wallets = WalletTracker(launched_at)
-        if domain == "trades":
+        if domain in TRADE_DOMAINS:
             # Recorded pump.fun launches: a flat candle follows a traded one 37-61% of the time and a
             # flat one 94-98% of the time, depending on the candle length (similar at every age).
             after_trade, after_flat = trades_flat_priors(timeframe)

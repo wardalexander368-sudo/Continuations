@@ -41,6 +41,8 @@ next. Topic documents hold the detail:
   decision instrument" as Never, with `jevtrader` as the only signed carve-out. TARTAR's
   shadow mode and `jev` scorer aren't covered. Ask the user whether TARTAR needs its own
   carve-out (paper only, own key, ledger, spend tripwire) before running Jev live here again.
+  **A draft is ready for the user: `handoff/jev-carveout-DRAFT.md`** (not in force; lists the
+  code guards still missing: ledger, tripwire, pinned model, ≤ 1 retry, signature gate).
 * **GitHub write access (10-09 ~03:40 UTC):** the profitability session got `403 Resource not
   accessible by integration` on push and on the API. Fix: github.com/settings/installations →
   Claude → Configure → TARTAR selected (accept updated permissions if asked). If you can push,
@@ -76,7 +78,14 @@ next. Topic documents hold the detail:
       at a time, with the reason in the policy note and the log.
 2. **More data.** The fast loop records as it runs. After 24 h+:
    `tartar train --raw data/raw`, `tartar profit`, `tartar decide`.
-3. **Longer holds on screened tokens** (10–90 min) once data exists.
+   **Predictor v3 (unclaimed):** train on every recording including `handoff/data/raw-eager`
+   (much better capture: median 100% / mean 97%) with `--num-leaves 31 --min-leaf 2000`
+   (sweep, predictor doc §8.2.2b: ~1% better test log loss than the defaults); also retrain
+   15s/30s/5m. Keep-better decides.
+3. ~~**Longer holds on screened tokens**~~ **done 04:45 UTC 10-09: no edge** (§3.14). Fast-loop
+   replays on every recording, screen 20 s–10 min × hold 10–45 min: all 24 rules lose on
+   validation; the chosen one makes −12.5% [−17.6, −7.6] per trade on test. The median trade is
+   a dead token's cost round trip. Launches with ≥ 20 early buyers lose −35% to −67%.
 4. ~~**PumpSwap decoder**~~ **done 00:12 UTC 10-09** (`tartar/feeds/pumpswap.py`,
    source `pumpswap`): `tartar watch` follows a graduated pump.fun token trade by
    trade in its canonical pool (checked on 43 mainnet trades). Not yet recorded
@@ -143,7 +152,13 @@ next. Topic documents hold the detail:
     First data: `handoff/data/raw-pumpswap` (20 min: 20 graduations, 12 SOL
     pools, 33,292 PumpSwap trades). **Jev session:** restart the fast loop with
     `--pumpswap-hours 4` (and `SOLANA_COMMITMENT=processed`) to collect this
-    for the next study;
+    for the next study.
+    **Research session, 10-09:** PumpSwap fees measured (§3.13): **1.25%/side right after
+    graduation, 1.20% to ~1,150 SOL market cap**, falling to 0.30% only near 500k SOL; the
+    project had assumed 0.30%. The study is **pre-registered**
+    (`handoff/preregistration/pumpswap-graduated/SPEC.md`, harness `pumpswap_study.py`) on the
+    research session's recording since 04:06 UTC; evaluate once at ≥ 250 graduated SOL pools.
+    The fast loop now sells positions open at graduation on the recorded PumpSwap pool;
     (b) ~~established memecoins~~ **studied (§3.11): no reliable edge.**
     The dip rule is pre-registered for a forward test: **any session, about
     once a day: `python3 handoff/experiments/established_cohort.py`, then
@@ -161,15 +176,19 @@ next. Topic documents hold the detail:
     so its day-28 break-even fees (f*_X per fill) can be read against a
     venue cheaper than Coinbase's 90 bps taker. See `handoff/jevtrader.md`.
     **First table done 03:50 UTC 10-09** (§3.12): ~0.5 bps per fill on-chain
-    (quotes) vs 90 at Coinbase. **Second window + quote decay done 05:33
-    UTC 10-09** (§3.12, data `handoff/data/sol-dex/`): 04:33–05:33 UTC,
-    $1k 0.46 bps per fill (p90 0.70), $10k 0.15 bps (p90 0.33); the same
-    quote re-taken 1/2/4 s later moves 0.12/0.26/0.52 bps median (p90
-    0.58/1.27/2.08) but the drift-free mean is 0.00 ± 0.03, so latency adds
-    noise, not cost: plan on ~0.5 bps per fill, ~1.3 at p90. Next: rerun
-    `sol_dex_costs.py sample --minutes 60` and `decay --minutes 60` in US
-    and EU daytime (both windows so far were 03–06 UTC); real fills stay
-    unmeasured (no real-money code without the user).
+    (quotes) vs 90 at Coinbase. **Second window + quote decay done 05:33–05:55 UTC 10-09**
+    (§3.12, `jevtrader.md`; two sessions measured decay independently and agree):
+    04:33–05:33 UTC, $1k 0.46 bps per fill (p90 0.70), $10k 0.15 bps (p90 0.33). A quote
+    re-taken 1–5 s later moves only with the market (|decay| p90 ≈ 1–2.5 bps, drift-free mean
+    0.00 ± 0.03, no 50 bps slippage failures); filling at the later quote ≈ 0.4 bps/fill. Plan
+    on ~0.5 bps per fill, ~1.3 at p90. Samples (research session's) in `handoff/data/sol-dex/`.
+    **Still open (unclaimed):** the same run at European and US hours (e.g. 08–10 and 13–16
+    UTC: `sol_dex_costs.py sample --minutes 120 --out data/sol-dex/costs-<date>.jsonl`), then
+    commit the samples. Real fills stay unmeasured (no real-money code without the user).
+13. **Ship a calibrated P(rug)** (unclaimed; predictor doc problem 6). The displayed risk
+    level barely ranks rugs (AUC 0.57), while a LightGBM P(rug) on the +20 s screen numbers
+    reaches AUC 0.93 on later launches. Train it like the global model, show it beside the
+    level, and stop `sniped` / `concentrated` / `dev_dumped` alone from making "danger".
 
 ## Rules that hold across sessions
 
@@ -202,6 +221,28 @@ next. Topic documents hold the detail:
 
 ## Log (newest first)
 
+* **2026-10-09 06:05 UTC, research session, handing off** (branch
+  `claude/eager-archimedes-k8pn4q`, everything pushed; **not on `main`: this session may push
+  only its branch, so the user (or a session allowed to) must merge it**: `git merge
+  origin/claude/eager-archimedes-k8pn4q`, pytest, fast-forward `main`). 134 tests pass.
+  - Stopped my recorder and SOL sampler at 06:00. Data: `handoff/data/raw-eager/` (04:06–06:00,
+    2,639 launches, 69 graduated SOL pools, ~211k PumpSwap swaps) and `handoff/data/sol-dex/`.
+  - **11a is pre-registered but not evaluated:** it needs ≥ 250 graduated SOL pools; 69 exist.
+    Any session: record more with `tartar record --out data/raw-<you> --pumpswap-hours 4`
+    (~35 SOL pools/hour, so ~5.5 h more), copy finished hours to `handoff/data/raw-<you>/`,
+    then run once `python3 handoff/experiments/pumpswap_study.py handoff/data/raw-eager
+    handoff/data/raw-<you> --show-test` (plus `--latency 3` and `--size 1`), and write it up
+    as profitability §3.16 whatever it shows. Don't compute returns on these pools before.
+  - **After 11a:** `tartar train --raw <same dirs> --pumpswap` (the PumpSwap model; compare
+    with online-only in its report, install only if it helps), and give the `pumpswap` domain
+    its own flat-candle prior (old data: a traded candle is followed by a flat one 6% of the
+    time on PumpSwap vs 45% on curves).
+  - Unclaimed next steps, in order: (1) the 11a recording above; (2) predictor v3 with
+    `--num-leaves 31 --min-leaf 2000` (queue 2); (3) ship P(rug) (queue 13); (4) the SOL
+    sampler at European/US hours (queue 12); (5) dip cohort ~02:24 UTC 10-10, then
+    `pumpswap_fees.py --cohort <file> --save .../fees-measured.json` (addendum).
+  - For the user: the Jev carve-out draft (`handoff/jev-carveout-DRAFT.md`) awaits a decision.
+
 * **2026-10-09 05:52 UTC, Jev session, slow-loop cycle 2:** Reviewed all live data (23:44–03:39 UTC in bursts, 352 screened launches with outcomes; `handoff/live/reviews/20261009-0552.md`). Paper trades: 68, mean **−1.4%** (90% CI −9.2 … +7.8%). Buying every screened launch: −9.2% (CI −13.0 … −4.8%). The skip flags remove losers (skipped: −13.5%). **Jev shadow: no signal.** Spearman with net is buy +0.02, copycat +0.07, low_effort +0.06, meme −0.07, scam_wording +0.08, and no quintile pattern is monotone. That agrees with the offline result (§3.7). Paper results are negative for the 2nd cycle in a row (CI spans 0). `odd_curve` looks like a skip candidate (with −19.2%, n=100; without −5.3%), but it's in-sample, without intervals. Check it with `tartar decide` before adding it. **No policy change.** The fast loop is **stopped** pending the user's Jev-policy decision and somewhere always-on to run it; no further cycles are scheduled.
 
 * **2026-10-09 05:36 UTC, predictor session (handing off; no claim open, nothing half-done):**
@@ -216,7 +257,38 @@ next. Topic documents hold the detail:
   session restart the fast loop (once the user rules on the Jev policy) with
   `--pumpswap-hours 4` and `SOLANA_COMMITMENT=processed` (follows graduations; events ~0.3 s earlier).
 
+* **2026-10-09 05:20 UTC, research session:**
+  - **Copy-trading closed (§3.15):** following wallets whose buys paid off earlier loses on
+    test (−21.0% [−31.0, −10.5] per trade); copying any buy 2.5 s late loses 8–29%.
+  - **New: a PumpSwap model for `watch` after graduation** (predictor doc §8.2.3; code and
+    tests on this branch). `tartar train --raw DIRS --pumpswap` trains it from
+    `--pumpswap-hours` recordings; the agent switches to it at graduation, else behaves as
+    before. Training waits until the 11a evaluation has run (same pools).
+  - Predictor hyperparameters: a sweep on v2's data (`predictor_sweep.py`) finds more
+    regularized trees slightly better than the default (31 leaves / 1,500 rows per leaf: test
+    log loss 0.4583 vs 0.4629). To be applied when v3 is trained on the new recording.
+  - The new recording's capture is much better than the old: median 100%, mean 97% of each
+    token's trades (old data: 93% / 84%).
+
 * **2026-10-09 05:04 UTC, Jev session:** Pushing works again. Landed the unpushed commits and raw hours 02–03 (`handoff/data/raw/20261009-0{2,3}.jsonl.gz`; 03 covers 03:17–03:39). The fast loop has been down since 03:39 (container suspension). **Not restarted**: the new *Jev usage policy* blocker says the user's own protocol may forbid TARTAR's always-on Jev shadow calls. Waiting for the user to decide. The 05:50 cycle will review the data without restarting the loop.
+
+* **2026-10-09 04:50 UTC, research session** (session_01YLnqLnTQzvD6HHUTvnNpVm, branch
+  `claude/eager-archimedes-k8pn4q`; this session may push only that branch, so nothing here is
+  on `main` until the user merges it). GitHub pushes work from this session.
+  - **PumpSwap fees (§3.13):** LP 0.20% + protocol 0.05% + a creator fee falling with market
+    cap; just-graduated pools pay 0.02 + 0.93 + 0.30 = **1.25%/side**, like the curve. The dip
+    pre-registration charged 0.5%/side; cohort 1 pays 0.30–1.20% (mean 0.85%). A dated addendum
+    adds a secondary line at measured fees (SPEC unchanged). **When adding a dip cohort, also
+    run `pumpswap_fees.py --cohort <file> --save .../fees-measured.json`** (see the addendum).
+  - **Queue 3 done, no edge (§3.14).**
+  - **Queue 11a pre-registered** before its data was read; recorder running here
+    (`data/raw-eager`, `--pumpswap-hours 4`, ~40 SOL pools/hour). Finished hours go to
+    `handoff/data/raw-eager/`.
+  - Fast loop: positions open at graduation are sold on the recorded PumpSwap pool at its fee
+    (129 tests pass).
+  - **Queue 12:** `sol_dex_costs.py` now re-quotes after 1/2/5 s (quote decay); a 16 h run
+    started 04:10 UTC here (`data/sol-dex/`). First 5 samples: |decay| p90 ≈ 1–2.6 bps at
+    1–5 s, no 50 bps slippage failures; fill at the later quote still ≈ 0.5 bps/fill.
 
 * **2026-10-09 03:49 UTC, profitability session (handing off):** Read the user's `jevtrader`
   (now public) and wrote `handoff/jevtrader.md`: it IS the SOL-USD + Jev loop, sealed until

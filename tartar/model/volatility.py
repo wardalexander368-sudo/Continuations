@@ -9,6 +9,11 @@ from ..candles import Candle
 _PARKINSON = 1.0 / (4.0 * math.log(2.0))
 
 
+# Data domains read trade by trade: "trades" (pump.fun bonding curves) and "pumpswap" (a graduated
+# token's PumpSwap pool). Anything else is aggregated candles ("ohlcv").
+TRADE_DOMAINS = ("trades", "pumpswap")
+
+
 def prior_sigma(timeframe: int, domain: str = "ohlcv") -> float:
     """Prior per-candle log-volatility of a candle that trades.
 
@@ -17,7 +22,7 @@ def prior_sigma(timeframe: int, domain: str = "ohlcv") -> float:
     curve shifts the price by percents, and recorded launches show a typical
     ~0.28 per traded candle at both 15 s and 60 s, growing only slowly beyond.
     """
-    if domain == "trades":
+    if domain in TRADE_DOMAINS:
         return min(0.25 * max(timeframe / 60.0, 1.0) ** 0.25, 1.5)
     return min(0.03 * math.sqrt(timeframe / 60.0), 1.5)
 

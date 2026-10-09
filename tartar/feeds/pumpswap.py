@@ -27,6 +27,20 @@ from .base import Event, LiveFeed, Status
 from .pumpchain import PUMP_PROGRAM, _disc, _Reader, b58decode, program_data, stream_item, stream_program_events
 
 PUMP_AMM = "pAMMBay6oceH9fJKBRHGP5D4bD4sWpmSwMn52FMfXEA"
+
+# Total fee per side (LP + protocol + coin creator) by market cap in SOL, measured on mainnet
+# 2026-10-09 from the fee bps in Buy/SellEvents (handoff/profitability.md 3.13): a fresh
+# graduate pays 0.02 + 0.93 + 0.30 = 1.25%; above ~420 SOL it is LP 0.20 + protocol 0.05 + a
+# creator fee that falls with market cap. Edges between measured points are approximate.
+FEE_TIERS = ((420, 0.0125), (1150, 0.012), (4400, 0.0105), (8000, 0.010), (15000, 0.0095), (23000, 0.009), (30000, 0.008), (40000, 0.0075), (100000, 0.006))
+
+
+def fee_for_market_cap(mcap_sol: float) -> float:
+    """PumpSwap's total fee per side for a pump.fun token (1e9 supply) at this market cap in SOL."""
+    for edge, fee in FEE_TIERS:
+        if mcap_sol < edge:
+            return fee
+    return 0.003
 WSOL = "So11111111111111111111111111111111111111112"
 BUY, SELL, CREATE_POOL = _disc("BuyEvent"), _disc("SellEvent"), _disc("CreatePoolEvent")
 

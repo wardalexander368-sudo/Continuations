@@ -35,6 +35,7 @@ from typing import Callable
 
 from .data.dataset import tick_from_event
 from .decide import FunctionScorer, LaunchStateBuilder, Scorer
+from .feeds.pumpswap import fee_for_market_cap
 from .profit import Costs, Exit, buy_tokens, sell_sol
 from .scam import CreatorIndex
 
@@ -60,6 +61,7 @@ LIMITS = {
     "graduation_haircut": (0.0, 0.9),
 }
 SCORERS = ("rules", "jev")
+TOKEN_SUPPLY = 1e9  # every pump.fun token
 
 
 class PolicyError(ValueError):
@@ -94,8 +96,9 @@ class Policy:
     runup_exit_sol: float = 80.0
     runup_hold_seconds: float = 1800.0
     # A curve that completes (graduates) stops trading on pump.fun: a buy after that fails, and a
-    # position still open is sold on PumpSwap, whose price isn't recorded yet. Value that sale at
-    # the final curve price less this haircut.
+    # position still open is sold on PumpSwap. When the stream carries the token's PumpSwap swaps
+    # (`tartar record --pumpswap-hours`), the sale fills on the pool's reserves at PumpSwap's fee;
+    # otherwise it is valued at the final curve price less this haircut.
     graduation_haircut: float = 0.10
     note: str = ""  # why the policy is what it is (written by whoever changed it)
 
@@ -359,6 +362,7 @@ class PaperBroker:
         self.positions: dict[str, Position] = {}
         self.closed: list[Position] = []
         self.completed: dict[str, float] = {}  # mint -> when its curve completed (graduated)
+        self.pool_state: dict[str, tuple[float, float]] = {}  # mint -> PumpSwap (token, SOL) reserves after its last swap
 
     def complete(self, mint: str, t: float) -> None:
         self.completed.setdefault(mint, t)
@@ -389,6 +393,15 @@ class PaperBroker:
     def on_trade(self, mint: str, t: float, vsol: float, price: float, raised: float | None = None) -> None:
         self.advance(t)
         self.state[mint] = (vsol, price)
+        self._check(mint, t, price, raised)
+
+    def on_swap(self, mint: str, t: float, tokens: float, sol: float) -> None:
+        """A PumpSwap trade on a graduated token's pool: the pool's reserves after it."""
+        self.advance(t)
+        self.pool_state[mint] = (tokens, sol)
+        self._check(mint, t, sol / tokens, None)
+
+    def _check(self, mint: str, t: float, price: float, raised: float | None) -> None:
         position = self.positions.get(mint)
         if position is None or position.status != "open" or position.exit_at is not None or t > position.deadline:
             return
@@ -430,8 +443,16 @@ class PaperBroker:
         proceeds = sell_sol(vsol, vsol / price, position.tokens, c.fee)
         done = self.completed.get(position.mint)
         if done is not None and at >= done:
-            position.reason = "after_graduation"
-            proceeds *= 1.0 - position.haircut
+            pool = self.pool_state.get(position.mint)
+            if pool is not None:  # sold on the token's PumpSwap pool, at its recorded reserves
+                tokens, sol = pool
+                price = sol / tokens
+                proceeds = sell_sol(sol, tokens, position.tokens, fee_for_market_cap(TOKEN_SUPPLY * price))
+                if position.reason == "horizon":
+                    position.reason = "pumpswap"
+            else:
+                position.reason = "after_graduation"
+                proceeds *= 1.0 - position.haircut
         position.pnl_sol = proceeds - c.size_sol - 2 * c.network_sol
         position.status = "closed"
         self.positions.pop(position.mint)
@@ -514,8 +535,12 @@ class FastLoop:
             self._trade(mint, event)
         elif kind == "trade":
             self._trade(mint, event)
-        elif kind == "migrate":
+        elif kind in ("migrate", "graduate"):  # the same on-chain completion; graduate covers untracked tokens too
             self.broker.complete(mint, t)
+        elif kind == "swap":
+            tokens, sol = event.get("tok_after"), event.get("sol_after")
+            if tokens and sol and tokens > 0 and sol > 0:
+                self.broker.on_swap(mint, t, tokens, sol)
         elif kind == "untrack":
             self.builder.close(mint)
 

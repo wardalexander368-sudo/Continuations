@@ -50,8 +50,8 @@ TesseraV, Obsidian) quote $1,000 at near-zero spread. **Reading:** on-chain SOL-
 On day 28, any arm whose f*_X is above ~1 bps per fill would clear on-chain costs that the
 Coinbase retail tier cannot.
 
-**Second window, 2026-10-09 04:33–05:33Z** (predictor session; data committed in
-`handoff/data/sol-dex/`):
+**Second window, 2026-10-09 04:33–05:33Z** (predictor session; its samples were not committed,
+only the numbers below):
 - $1,000: **0.46 bps per fill** (p90 0.70; 120 samples).
 - $10,000: **0.15 bps per fill** (p90 0.33; 71 samples).
 - **Quote decay** (same quote re-taken 1/2/4 s later, 178 samples): the drift-free mean is
@@ -60,10 +60,35 @@ Coinbase retail tier cannot.
 - Realistic per fill: **~0.5 bps expected, ~1.3 bps p90**. That is under jevtrader's 2 bps column.
 
 **Caveats:** quotes, not fills. Prop AMMs update every slot and a quote can move before a
-transaction lands (latency ~1–2 s), so realised cost is higher than quoted. Quote decay is now measured
-(above): it adds noise, not cost. MEV/sandwich risk, failed
-transactions and the USDC/USD basis aren't priced. Two night-time (UTC) windows so far (03:37–03:48 and 04:33–05:33). US/EU daytime is still to
-sample: `sample --minutes 60` and `decay --minutes 60`.
+transaction lands (latency ~1–2 s); measured since, that adds ~±1 bps of noise and no expected
+cost (*Quote decay* below). MEV/sandwich risk, failed transactions and the USDC/USD basis aren't
+priced. Asian hours only so far (03:37–05:55 UTC, two sessions): rerun the sampler at European and
+US hours before relying on it.
+
+## Quote decay: quotes are close to fills (2026-10-09, 04:10–05:30 UTC)
+`sol_dex_costs.py` now re-quotes the same $1,000 buy and the same SOL sell 1, 2 and 5 s after the
+first quote, with Coinbase's book at each moment. 157 samples (`handoff/data/sol-dex/`):
+
+| re-quoted after | \|decay\| p90 (bps) | mean decay beyond the market's move | would fail a 50 bps limit | per-fill cost filling at the later quote vs Coinbase mid at decision (mean of buy and sell, incl. $0.05/tx) |
+|---|---|---|---|---|
+| 1 s (4 slots) | 0.9 | ≈ 0 | 0% | **0.42 bps** |
+| 2 s (8 slots) | 1.0–1.3 | ≈ 0 | 0% | **0.43 bps** |
+| 5 s (19 slots) | 2.5 | ≈ 0 | 0% | **0.40 bps** |
+
+**Reading:** for a $1,000 order, the quote moves only as much as the market itself does in that
+time (mean decay beyond Coinbase's mid move ≈ 0, spread ±1 bps), so ~1–2 s of latency adds noise
+of about ±1 bps but no expected cost. On-chain SOL-USD stays **≈ 0.4–0.5 bps per fill**. On-chain
+prices sit ~2 bps above Coinbase's mid (the buy pays ~+2.4 bps, the sell gets ~+1.5 bps vs mid),
+which cancels over a round trip. Jupiter's best route beats its "most reliable" AMMs by ~4 bps per
+leg: the proprietary market makers matter.
+
+The predictor session's standalone `decay` run (04:33–05:33 UTC, same quote re-taken 1/2/4 s later,
+no Coinbase book; its samples were not committed) agrees: drift-free mean 0.00 ± 0.03 bps at every
+delay, median |change| 0.26 bps at 2 s (p90 1.3).
+
+Still open: other times of day (only Asian hours so far; rerun `sample --minutes 120` across
+European and US hours, e.g. 08–10 and 13–16 UTC), larger sizes, and real fills (a simulated
+transaction, or paper fills recorded live).
 
 ## Not done, on purpose
 No SOL-USD + Jev loop was built in TARTAR. jevtrader is that loop, already pre-registered and
