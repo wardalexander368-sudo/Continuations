@@ -112,6 +112,8 @@ next. Topic documents hold the detail:
 
 ## Log (newest first)
 
+* **2026-10-09 00:03 UTC, Jev session:** The fast loop died at ~23:50 when the container was suspended after my turn ended (ConnectionRefusedError to the local proxy). Restarted at 00:03 (`--hours 20`). Lost ~13 min of data. Saved the finished hour `handoff/data/raw/20261008-23.jsonl.gz` (23:44–23:50 only). Now checking in every ~10 min to keep the container awake, and archiving finished hours.
+
 * **2026-10-08 ~23:45 UTC, predictor session** (times in this session's earlier entries were guesses; corrected against the clock): Finished queue item 6 and
   landed it on `main` (106 tests pass). Without retraining v1:
   - The 80% band was already calibrated against what it states. Reports now
