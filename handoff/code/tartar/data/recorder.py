@@ -237,7 +237,7 @@ class ChainRecorder(Recorder):
                 created = {e.mint for e in events if isinstance(e, ChainCreate)}
                 first_buys = {}
                 for event in events:
-                    if isinstance(event, ChainTrade) and event.mint in created and event.mint not in first_buys:
+                    if isinstance(event, ChainTrade) and event.mint in created and event.mint not in first_buys and not event.quote_mint:
                         first_buys[event.mint] = event  # the creator's initial buy, folded into the create
                 for event in events:
                     if isinstance(event, ChainCreate):

@@ -2,12 +2,18 @@
 
 Event types (short keys keep files small):
 
-    {"e": "create",  "t": ts, "mint", "creator", "name", "symbol", "sol", "tok", "vsol", "vtok", "rsol"?}
-    {"e": "trade",   "t": ts, "mint", "side": "b"|"s", "trader", "sol", "tok", "vsol", "vtok", "rsol"?}
+    {"e": "create",  "t": ts, "mint", "creator", "name", "symbol", "sol", "tok", "vsol", "vtok", "rsol"?, "quote"?}
+    {"e": "trade",   "t": ts, "mint", "side": "b"|"s", "trader", "sol", "tok", "vsol", "vtok", "rsol"?,
+                     "quote"?, "qamt"?, "vq"?, "rq"?}
     {"e": "migrate", "t": ts, "mint"}                      # graduated off the bonding curve
     {"e": "track",   "t": ts, "mint"}                      # trades are being recorded from here
     {"e": "untrack", "t": ts, "mint", "reason"}            # ...until here
     {"e": "session", "t": ts, "state": "connected"|"disconnected"|"stopped"}
+
+"quote" (since 2026-10-09) marks a curve priced in another token (USDC, a tokenized
+stock, another pump coin...): its trades have no SOL fields, only raw quote amounts
+("qamt", "vq", "rq" in base units of the quote mint) and token fields, so nothing
+SOL-denominated reads them. Older files dropped those trades entirely.
 
 create, trade and migrate events from the chain recorder also carry "slot": the
 Solana slot of the transaction (since 2026-10-09; absent in older files and from
@@ -64,6 +70,11 @@ def event_from_message(msg: dict, t: float) -> dict | None:
         event.update(creator=msg.get("traderPublicKey") or "", name=msg.get("name") or "", symbol=msg.get("symbol") or "", uri=msg.get("uri") or "")
     else:
         event.update(side="b" if kind == "buy" else "s", trader=msg.get("traderPublicKey") or "")
+    if msg.get("quote"):
+        event["quote"] = msg["quote"]
+        for key, src in (("qamt", "quoteAmount"), ("vq", "vQuote"), ("rq", "rQuote")):
+            if msg.get(src) is not None:
+                event[key] = int(msg[src])
     if slot is not None:
         event["slot"] = int(slot)
     return event

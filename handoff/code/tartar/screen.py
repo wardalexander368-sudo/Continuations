@@ -81,6 +81,9 @@ async def next_clean_launch(
             if creators is not None:
                 creators.note_launch(create.creator, create.name, create.symbol, create.uri, create.mint)
             candidate = Candidate(create, received)
+            if create.quote_mint:  # priced in another token: no SOL price to trade or predict
+                on_verdict(Verdict(candidate, assess(None), False, f"priced in {create.quote_mint[:6]}…, not SOL"))
+                continue
             first = first_buys.get(create.mint)
             if first is not None:
                 candidate.add(tick_from_message(create_to_message(create, first), received, create.creator))
