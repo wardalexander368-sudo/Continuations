@@ -99,6 +99,11 @@ deep pools match the model, a thin one was 2.4x it). The `launch_selector` slot 
   model hashes was scored at 20:20 UTC, so nothing else blocks it. Market-wide recalibration study
   done (profitability §3.24, closed). Next here: PumpSwap 5m retry once the recorder thread has
   more graduated pools.
+  **Since 23:15 UTC:** pump.fun who-is-trading signals (coordinator, under the user's "keep finding
+  things"): angles §3.15/§3.18/§3.22 didn't test, chiefly *who sells into* §3.23's deep dip after a
+  run (creator/bundle dump vs dispersed selling; whether past winners buy the dip). Edge-hunt
+  protocol: proposals, three-lens scoring, pre-registration before any hour ≥ 16:00 UTC 10-09 is
+  scored. Paper only. Not touching the low-cost-venue round (other thread).
 
 * **Dip/jevtrader session** (session_01Htqh7pc1Lh1PP6Dkm1rVvz, since 2026-10-09 17:33 UTC, `main`
   only): continues the profitability session. **Owns the dip forward test (queue 11b)**: the GitHub
