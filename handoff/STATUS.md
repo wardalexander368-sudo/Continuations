@@ -94,9 +94,8 @@ deep pools match the model, a thin one was 2.4x it). The `launch_selector` slot 
   data, run `python3 handoff/experiments/fetch_gha_raw.py --dirs` and pass the printed dirs to `--raw`.
 
 * **Curve-model retrain thread** (project thread session, branch `claude/project-thread-6oh2s6`):
-  **v3.2 trained, waiting for the user's OK to install** (predictor doc 8.2.2e; gzipped in
-  `handoff/experiments/predictor-v32/candidates/`). The predictor-strategy test that pinned the
-  model hashes was scored at 20:20 UTC, so nothing else blocks it. Market-wide recalibration study
+  **v3.2 installed 23:15 UTC 10-09 at the user's go** (all four `trades-*` models; predictor doc
+  8.2.2e; v3.1 is in git history). Market-wide recalibration study
   done (profitability §3.24, closed). Next here: PumpSwap 5m retry once the recorder thread has
   more graduated pools.
   **Since 23:15 UTC:** pump.fun who-is-trading signals (coordinator, under the user's "keep finding
@@ -403,6 +402,10 @@ deep pools match the model, a thin one was 2.4x it). The `launch_selector` slot 
   branch `claude/profitability-backtest`, on `main`).
 
 ## Log (newest first)
+
+* **2026-10-09 23:15 UTC, retrain thread: predictor v3.2 installed** (user's go on the thread's card;
+  the predictor-strategy test that pinned the hashes was scored at 20:20). `trades-{15,30,60,300}s`
+  replaced; `.report.json` now holds the v3.2 study results. 163 tests pass.
 
 * **2026-10-09 ~23:45 UTC, retrain thread: market-wide recalibration of the candle calls: closed**
   (profitability §3.24, `recal_market.py`). On hours v3.1 never saw (12–20), a rolling all-token
