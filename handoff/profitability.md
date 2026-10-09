@@ -680,6 +680,90 @@ the slot `hold` later; 90% CI by launch):
   launching tokens and bundling our own buys, is how the one-off wallets earn; it profits from
   later buyers and is out of scope.)
 
+### 3.19 Execution routes: Jupiter with our own key cuts ~2 points per round trip
+
+The real CATE round trips (STATUS REAL MONEY entry, 2026-10-09 19:46 UTC) cost **−3.07%** at
+0.01 SOL: PumpPortal Lightning's fee ≈ 2.0 (1% per side), network ≈ 0.22, pool fee + impact
+≈ 0.85. Lightning is the largest piece. This compares the cheaper routes.
+
+**Method** (`handoff/experiments/execution_routes.py`, data `handoff/data/exec-routes/routes.jsonl`,
+2026-10-09 ~20:00 UTC). For one 0.1 SOL buy, each route builds its real transaction for a stand-in
+wallet; the public RPC *simulates* it (signatures off). Nothing is signed or sent, and no key is
+used. From the simulation's inner instructions: tokens received, and every lamport leaving the
+wallet for the swap and its fees (rent and network fee excluded). Six tokens: CATE (large,
+Meteora/Whirlpool liquidity), three recently graduated PumpSwap tokens, two bonding-curve tokens.
+
+**Tokens per SOL against the best route** (0 = best; negative = worse):
+
+| Token | PumpPortal Local | Jupiter Swap API (Metis) | Jupiter Ultra |
+|---|---|---|---|
+| CATE (routed via Raydium CLMM / Meteora) | −55 bps | **0** | −12 |
+| PumpSwap token 1 | −50 | **0** | −9 |
+| PumpSwap token 2 | −50 | **0** | −8 |
+| PumpSwap token 3 | −5 (fee account not seen) | **0** | −1 (OKX router) |
+| curve token 1 | −49 | **0** | −10 |
+| curve token 2 | −50 | **0** | −10 |
+
+What each charges on top of the pool, read from the transactions:
+* **PumpPortal Local** (`/api/trade-local`, unsigned transaction we sign): a 0.5% transfer to a
+  PumpPortal fee account inside its transaction, as its fees page says. Same pool otherwise
+  (PumpSwap or the curve directly).
+* **Jupiter Swap API v1 (Metis)**: no fee (`platformFee` null); the pool's own fees only (on the
+  curve the same 0.95% protocol + 0.30% creator, read from pump's fee program). It finds a
+  better pool when one exists (CATE).
+* **Jupiter Ultra**: `feeBps` 10 (0.1%), sometimes offset by better routing.
+* **Our own pump.fun / PumpSwap instructions**: no route fee, the same pool cost as Metis on
+  pump tokens (Metis sends a single `Pump.fun` / `Pump.fun Amm` hop there).
+* **Lightning** (`/api/trade`): 1%, measured in the real fills.
+
+**Round trip, estimated from the measured CATE costs** (pool + impact 0.85%, network 0.22% at
+0.01 SOL, ~0.02% at 0.1 SOL):
+
+| Route | CATE 0.01 SOL | CATE 0.1 SOL | Fresh curve token (2 × 1.25% + impact 0.6%) |
+|---|---|---|---|
+| Lightning (measured) | −3.07% | ~−2.9% | ~−5.5% |
+| PumpPortal Local | ~−2.1% | ~−1.9% | ~−4.5% |
+| Jupiter Ultra | ~−1.3% | ~−1.1% | ~−3.3% |
+| **Jupiter Metis, own key** | **~−1.1%** | **~−0.9%** | **~−3.1%** |
+
+**Rent.** With our own key we can close a token account after selling and get its rent back
+(0.0015 SOL for a Token-2022 pump token: 15% of a 0.01 SOL trade, 1.5% of 0.1 SOL). Lightning
+cannot, which is why 0.0015 SOL is still parked in the CATE account. The PumpSwap/pump
+per-wallet account (0.0013 SOL) is paid once per wallet on every route.
+
+**Landing and reliability.** Lightning landed 1.37–1.43 s from send to confirmed, first try
+(2 round trips). With our own key we send it ourselves. The public RPC's `sendTransaction` with
+a priority fee is the free default. Helius Sender (free, no account needed; SWQoS-only tier at a
+0.000005 SOL minimum tip, or 0.001 SOL for every path) is the fast path if needed. Our open
+strategies are not latency-bound (§3.9, §3.18 closed the races), so landing speed matters less
+than cost. API response time (16 calls each): Jupiter quote + swap median 0.12 s, p90 0.16 s;
+PumpPortal Local median 0.17 s. The keyless `api.jup.ag` host rate-limits at 0.5 requests/s (8
+of 16 calls got 429). Keyless `lite-api.jup.ag` still works (16/16), but Jupiter is phasing it
+out, so use a free API key (1 request/s). One Metis quote failed once ("Missing token program")
+on a curve token; Ultra routed it.
+
+**What each needs.**
+* Jupiter Metis or Ultra, or Local: the wallet's **secret key as an environment secret**
+  (`TARTAR_WALLET_KEY`, never in chat or the repo; a fresh wallet with a small balance is safest),
+  and for Jupiter a free `JUPITER_API_KEY` (optional while lite-api lasts).
+* Our own instructions: the same key, plus instruction builders for the curve and PumpSwap that
+  track pump.fun's program changes (V2 curves, the fee program and the volume accumulators have
+  all changed in the last months).
+
+**Build effort.** Jupiter: done. `handoff/experiments/jupiter_fills.py` (`dry` simulates with no
+key; `roundtrip --real` signs with `TARTAR_WALLET_KEY`, sends, confirms, closes the empty token
+account, logs in `real_fills.py`'s format; same caps: ≤ 0.02 SOL per buy, ≤ 5 trips). Signing
+and the close transaction were checked offline with a throwaway key; nothing was sent. Own
+instructions: ~1–2 days plus upkeep, for no fee saving over Metis. They would only save the
+~0.12 s API call.
+
+**Recommendation: Jupiter Swap API (Metis), signed with our own key.** It removes the 1%/side
+Lightning fee (≈ 2 points per round trip, 3.07% → ~1.1% on CATE at 0.01 SOL), lets us reclaim
+token-account rent, routes to the best pool, costs nothing to use, and is built. To verify it:
+two 0.01 SOL round trips on CATE with `jupiter_fills.py roundtrip --real`, by the wallet's
+holder, once the user adds the key. For every rule, the cost bar falls by ~2 points: fresh
+curve tokens ~3.1% per round trip, large pools ~1%.
+
 ## 4. What this means for the plan
 
 1. **Don't trade the current predictions.** The confidence is honest about

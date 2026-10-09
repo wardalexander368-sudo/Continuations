@@ -32,14 +32,6 @@ next. Topic documents hold the detail:
 
 ## Active
 
-* **Execution-cost thread** (project thread session, since 2026-10-09 19:53 UTC, branch
-  `claude/project-thread-12sv1q`). **Research and code only: no real SOL, no keys, never
-  `/api/trade`.** Task (the user's 19:51 ask, continuous profit work): the real round trip on
-  CATE cost 3.07%, ~2 points of it PumpPortal Lightning's 1%/side. Compare cheaper routes
-  (PumpPortal Local Transaction API, Jupiter, our own pump.fun curve / PumpSwap instructions):
-  fee per side, landing time and reliability, what each needs, build effort; recommend one.
-  Write-up: profitability §3.19.
-
 * **Dip/jevtrader session** (session_01Htqh7pc1Lh1PP6Dkm1rVvz, since 2026-10-09 17:33 UTC, `main`
   only): continues the profitability session. **Owns the dip forward test (queue 11b)**: the GitHub
   Action `.github/workflows/paper-tests.yml` adds a cohort at 02:24 UTC daily
@@ -350,6 +342,16 @@ next. Topic documents hold the detail:
   branch `claude/profitability-backtest`, on `main`).
 
 ## Log (newest first)
+
+* **2026-10-09 20:10 UTC, execution-cost thread: use Jupiter's Swap API with our own key**
+  (profitability §3.19). Simulated real transactions for 6 tokens (no keys, nothing sent).
+  PumpPortal Local charges 0.5% (−50 bps vs Jupiter), Jupiter Ultra 0.1%, Jupiter Metis 0, and
+  Lightning 1%. A CATE round trip would drop from the measured −3.07% to ~−1.1% at 0.01 SOL, and a
+  fresh curve token from ~5.5% to ~3.1%. With our own key we can also close token accounts and get
+  the 0.0015 SOL rent back. `handoff/experiments/jupiter_fills.py` is ready (dry run tested).
+  **Needs the user:** a wallet secret key as the environment secret `TARTAR_WALLET_KEY`
+  (and optionally a free `JUPITER_API_KEY`). Then the wallet holder runs two 0.01 SOL round
+  trips to confirm. Nothing half-done.
 
 * **2026-10-09 19:44 UTC, predictor session (final dump at the user's weekly-limit request; no claim open):**
   Saved `handoff/data/raw-v3/20261009-12.jsonl.gz` (12:55–13:00 UTC, this container's recorder,
