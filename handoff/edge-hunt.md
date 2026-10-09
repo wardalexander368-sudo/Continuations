@@ -215,6 +215,34 @@ Hyperliquid's history. If it holds, the live version (our own decoder's revenue 
 Closed: C (PumpSwap LP, memecoin shorts), B's lead-lag/seasonality/seconds-scale prediction.
 
 
+## Judging (2026-10-09 ~20:30 UTC, curve-model retrain thread)
+
+The three lenses the workflow planned, applied to every proposal by one session (not three
+independent judges; read it as a structured second opinion on the ranking above). Each lens is
+scored 1-5:
+
+* **Economics:** the edge left after *measured* costs (§3.12, §3.19), who pays it, and whether it
+  is worth anything at our size.
+* **Testability:** free data, time to a decisive answer, and how many rules were looked at first.
+* **Fit:** the hard constraints (no CEX account, no private RPC, no Jev, real money only as the
+  user directs) and the venues the user would have to be eligible for.
+
+| Proposal | Econ | Test | Fit | Verdict |
+|---|---|---|---|---|
+| **D** 14-day xs momentum, Hyperliquid perps | 4: +1.50%/week after funding is large; expect shrinkage (12 rules) | 3: free, scored from history, but 52 weeks to decide | 4: one venue, no KYC; ~20 legs need a few hundred $ at HL's $10 minimum | **running** (registered) |
+| **A1** delta-hedged JLP | 4: +7.9% APR over USDC, a risk premium with a payer | 3: free; 90 days is short for a CI on a yield spread (the brief itself said 120-180 days would be more decisive) | 3: two venues (Jupiter + Hyperliquid), bridge, liquidation risk on the short | **running** (registered) |
+| **E** predictor v3.1 + P(rug) | 2: must clear ~3.5% (Jupiter/own instructions, §3.19) to ~5.5% (Lightning) per round trip; dev 1m loses at every threshold | 5: ~100 trades within days | 5: TARTAR's own assets and route | **running** (registered, scored by 10-12) |
+| A2 LST cash-and-carry | 1: excess over USDC +0.3% APR in 2026 | 2: regime-driven, a 90-day test is a coin flip | 3 | drop |
+| A3 HL-dYdX funding dispersion | 2: best of 5 pairs, +3.7% excess | 2: sign flips; selection bias | 2: two perp venues | drop |
+| B crash reversal | 2: test +33 bps (−6 without its top 3), on-chain mean +4.3 / median −7.6 bps | 1: ~5 events a month, so years to decide | 1: CEX account needed (out of scope) | drop |
+| C PumpSwap LP / memecoin shorts | 1 | — | — | closed |
+
+**Result:** the ranking stands. Every proposal that survives all three lenses already has a
+registered forward test, and none of the rest earns a slot. The cheapest lever on the running work
+is cost, not a new family: E's rule gains ~2 points per round trip if real trades go through
+Jupiter or our own instructions instead of Lightning (§3.19). A new study should come from a new
+idea with a payer and measured costs, not from re-running these angles.
+
 ## What looks worth doing when the hunt resumes
 
 1. Pre-register and start the **hedged-JLP 90-day paper forward test** (A1). It needs only an

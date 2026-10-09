@@ -6,6 +6,7 @@ import numpy as np
 import pytest
 
 from tartar.autotrade import lifecycle
+from tartar.autotrade.broker import PaperBroker
 from tartar.autotrade.core import CostModel, Intent, Trade, Verdict
 from tartar.autotrade.ledger import Ledger
 from tartar.autotrade.runner import run_once
@@ -293,3 +294,39 @@ def test_variants_expand_register_and_stay_outside_caps(tmp_path):
     assert s["opened"] == 1
     run_once(root, now=4000, strategies={"fake": Fake()})
     assert [c["kind"] for c in Ledger(root).changes()].count("registered") == 1
+
+
+def test_quote_check_records_beside_fill(monkeypatch):
+    from tartar.autotrade import quotes
+
+    class R:
+        def __init__(self, amount):
+            self.amount = amount
+
+        def json(self):  # $1 probe gets 1000 out per USD; $200 gets 990 per USD (1% impact)
+            per = 1000 if self.amount == 1_000_000 else 990
+            return {"priceImpactPct": "0.02", "outAmount": str(int(per * self.amount / 1e6)),
+                    "routePlan": [{"swapInfo": {"label": "Pump.fun Amm"}}]}
+
+    class H:
+        def get(self, url, params):
+            assert params["amount"] in (200_000_000, 1_000_000)
+            return R(params["amount"])
+
+    o = opener(notional=200, at=1000)
+    o.meta["mint"] = "M"
+    out = quotes.quote_check(o, 1100, http=H())
+    assert out["jup_impact_measured_pct"] == pytest.approx(1.0) and out["jup_reported_impact_pct"] == pytest.approx(2.0)
+    assert out["jup_route"] == ["Pump.fun Amm"]
+    assert quotes.quote_check(o, 1000 + 7200, http=H()) is None  # stale entry: no check
+
+
+def test_quoted_net_return_uses_measured_impact():
+    broker = PaperBroker()
+    o = opener(notional=100, price=1.0)
+    o.cost = CostModel(fee=0.01, impact=0.0, fixed_usd=0.0)
+    o.meta["jup_impact_measured_pct"] = 2.0
+    pos, _ = broker.open(o)
+    trade, _ = broker.close(pos, Intent("close", "fake", 2000, 1.0, "t", position_id=pos.id, cost=o.cost))
+    assert trade.net_return == pytest.approx(-0.02)
+    assert trade.meta["quoted_net_return"] == pytest.approx(-0.06)

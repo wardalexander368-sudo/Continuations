@@ -42,6 +42,16 @@ Each strategy trades forward from its first run, with no back-filled trades. The
 forward-test scorers (`established_prereg_eval.py`, `xs_momentum_forward.py`) stay the authority for
 the registered tests. The agent's verdicts score only its own paper book.
 
+## Execution check (real route vs the cost model)
+
+With `execution.quote_check` on, each fresh entry on a Solana token gets two Jupiter quotes of the
+same token: the full USD size and a $1 probe. The measured impact is the full-size shortfall against
+the probe (`jup_impact_measured_pct`). Jupiter's own `priceImpactPct` is kept as
+`jup_reported_impact_pct` but not used, because it already reads 0.7-2.6% at $1 (checked
+2026-10-09). At close, `quoted_net_return` re-prices the trade at the measured impact on both sides,
+and the dip verdict and REPORT.md show it beside the registered figure. First check: deep pools
+match the model (0.14% vs 0.15%, 0.18% vs 0.16%); a thin one was more than twice it (2.9% vs 1.2%).
+
 ## Adding a strategy
 
 * **From another thread's signals:** set `enabled: true` on `launch_selector` (or copy it under a new

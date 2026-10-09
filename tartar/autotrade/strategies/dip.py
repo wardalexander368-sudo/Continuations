@@ -156,7 +156,8 @@ class DipStrategy:
                                           asset=pid, side=1, notional_usd=self.size, cost=cost,
                                           meta={"pool": pid, "label": p["name"], "signal_t": float(t[i]), "exit_t": exit_t,
                                                 "key": key, "liquidity_usd": p["liquidity_usd"],
-                                                "alt_cost": self.measured_cost(pid, cost), "shadow": self.shadow}))
+                                                "alt_cost": self.measured_cost(pid, cost), "shadow": self.shadow,
+                                                "mint": p["token"].split("_", 1)[-1], "impact_assumed": cost.impact}))
                     st["busy_until"] = exit_t
                     idx = np.searchsorted(t, exit_t)
                     if idx < len(t) and t[idx] == exit_t:  # the whole hold is already in the data
@@ -218,9 +219,14 @@ class DipStrategy:
         alt = [t.meta["alt_net_return"] for t in trades if "alt_net_return" in t.meta]
         if alt:
             stats["mean_net_measured_fees"] = float(np.mean(alt))
+        quoted = [t.meta["quoted_net_return"] for t in trades if "quoted_net_return" in t.meta]
+        if quoted:
+            stats["mean_net_quoted_impact"] = float(np.mean(quoted))
+            stats["n_quoted"] = len(quoted)
         due = n >= 200 or days >= 21
         summary = (f"{n} trades over {days:.1f} days: mean net {100 * m:+.2f}% [{100 * lo_m:+.2f}, {100 * hi_m:+.2f}]"
                    + (f" ({100 * stats['mean_net_measured_fees']:+.2f}% at measured pool fees)" if alt else "")
+                   + (f" ({100 * stats['mean_net_quoted_impact']:+.2f}% at Jupiter-measured impact, {len(quoted)} trades)" if quoted else "")
                    + (f", excess over random entries {100 * stats['excess']:+.2f}% [{100 * stats['excess_lo']:+.2f}, {100 * stats['excess_hi']:+.2f}]" if valid else ""))
         if not due:
             return Verdict("pending", n, stats, f"{summary}; scored at 200 trades or 21 days")

@@ -95,7 +95,8 @@ def run_once(root: Path = ROOT, now: float | None = None, strategies: dict | Non
         risk.record_ok(name)
         broker = _broker(config, rec["status"], ledger, name, now)
         for intent in sorted(intents, key=lambda i: (i.at, i.kind != "close")):
-            summary_key = _apply(intent, rec, ledger, risk, broker, now)
+            summary_key = _apply(intent, rec, ledger, risk, broker, now,
+                                 quote=bool(config.get("execution", {}).get("quote_check")) and not intent.meta.get("shadow"))
             summary[summary_key] = summary.get(summary_key, 0) + 1
         ctx.positions = [p for p in ledger.positions if p.strategy == name]
         try:
@@ -128,7 +129,7 @@ def run_once(root: Path = ROOT, now: float | None = None, strategies: dict | Non
     return summary
 
 
-def _apply(intent: Intent, rec: dict, ledger: Ledger, risk: Risk, broker, now: float) -> str:
+def _apply(intent: Intent, rec: dict, ledger: Ledger, risk: Risk, broker, now: float, quote: bool = False) -> str:
     if intent.kind == "close":
         key = intent.meta.get("key")
         pos = next((p for p in ledger.positions if (intent.position_id and p.id == intent.position_id)
@@ -150,6 +151,12 @@ def _apply(intent: Intent, rec: dict, ledger: Ledger, risk: Risk, broker, now: f
         ledger.journal({"event": "rejected", "strategy": intent.strategy, "asset": intent.asset, "at": intent.at,
                         "notional_usd": intent.notional_usd, "reason": why, "logged_at": now})
         return "rejected"
+    if quote:
+        from .quotes import quote_check
+
+        check = quote_check(intent, now)
+        if check:
+            intent.meta.update(check)
     pos, row = broker.open(intent)
     ledger.positions.append(pos)
     ledger.journal({**row, "logged_at": now})
@@ -170,18 +177,34 @@ def write_report(root: Path, ledger: Ledger, strategies: dict, now: float, risk:
               "|---|---|---|---|---|---|---|"]
     total = 0.0
     names = sorted(set(strategies) | set(ledger.state["strategies"]))
-    for name in names:
+    variants = [n for n in names if "~" in n]
+    names = [n for n in names if "~" not in n]
+    for name in names + variants:
+        if name == (variants[0] if variants else None):
+            lines += ["", "Shadow variants (research copies of a rule; scored with a family-wide CI; outside the risk caps):", "",
+                      "| Variant | Status | Open | Closed trades | Mean net/trade | PnL (USD) | Score |", "|---|---|---|---|---|---|---|"]
         rec = ledger.strategy(name)
         tr = ledger.trades(name)
         pnl = sum(t.pnl_usd for t in tr)
-        total += pnl
+        total += 0.0 if "~" in name else pnl
         mean = f"{100 * sum(t.net_return for t in tr) / len(tr):+.2f}%" if tr else "-"
         v = rec.get("verdict") or {}
         n_open = sum(1 for p in ledger.positions if p.strategy == name)
         lines.append(f"| {name} | {rec['status']} | {n_open} | {len(tr)} | {mean} | {pnl:+.2f} | "
                      f"{v.get('decision', '-')}: {v.get('reason', '')} |")
-    unreal = sum(p.unrealized() for p in ledger.positions)
-    lines += ["", f"Realized PnL {total:+.2f} USD; open positions {len(ledger.positions)}, unrealized {unreal:+.2f} USD "
+    checked = [x for x in [*(t.meta for t in ledger.trades()), *(p.meta for p in ledger.positions)] if "jup_impact_measured_pct" in x]
+    if checked:
+        q = sorted(x["jup_impact_measured_pct"] for x in checked)
+        a = sorted(100 * x.get("impact_assumed", 0) for x in checked)
+        worse = sum(1 for x in checked if x["jup_impact_measured_pct"] > 2 * 100 * x.get("impact_assumed", 0) + 0.1)
+        qn = [t.meta["quoted_net_return"] for t in ledger.trades() if "quoted_net_return" in t.meta and "~" not in t.strategy]
+        lines += ["", f"Execution check (Jupiter quotes at entry, same USD size against a $1 probe, {len(checked)} entries): "
+                  f"measured price impact median {q[len(q) // 2]:.2f}% (max {q[-1]:.2f}%) vs the cost model's median "
+                  f"{a[len(a) // 2]:.2f}% per side; {worse} entries more than twice the model."
+                  + (f" Registered strategies' closed trades at the measured impact: mean net {100 * sum(qn) / len(qn):+.2f}% "
+                     f"over {len(qn)} trades." if qn else "")]
+    unreal = sum(p.unrealized() for p in ledger.positions if not p.meta.get("shadow"))
+    lines += ["", f"Realized PnL {total:+.2f} USD (registered strategies; variants listed above); open positions {len(ledger.positions)}, unrealized {unreal:+.2f} USD "
               f"(entry costs included); today {risk.day_pnl(now, ledger.positions):+.2f} USD "
               f"(cap -{risk.limits['daily_loss_cap_usd']:.0f}).", ""]
     changes = ledger.changes()[-10:]
