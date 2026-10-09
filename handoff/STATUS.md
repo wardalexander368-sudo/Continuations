@@ -32,14 +32,6 @@ next. Topic documents hold the detail:
 
 ## Active
 
-* **Clever session** (session_01R61Ym2543SdY4GEWPsLin6, since 2026-10-09 06:19 UTC, branch
-  `claude/clever-pascal-p4m7ub`; the user allows it to fast-forward `main`). Done and on `main`:
-  P(rug), predictor v3 then **v3.1** (§8.2.2d), **11a evaluated (no edge, §3.16)**, and the
-  **`pumpswap` flat-candle priors** (`_PUMPSWAP_FLAT_PRIORS`, committed ~12:25 before the predictor
-  session's claim, landed 13:40: **predictor session, skip that part**; the PumpSwap model is yours).
-  In flight: recorder `data/raw-clever` (hours go to `handoff/data/raw-clever/`), SOL cost sampler
-  10:00–16:00 UTC (`data/sol-dex/costs-20261009-us.jsonl`, queue 12 US hours).
-
 * **Predictor session** (session_01UeZ4ho5y38qR1iNxnShtwF, since 2026-10-09 12:55 UTC, branch
   `claude/solana-candle-predictor-s95qjr`): **edge hunt ON HOLD (user, ~13:25 UTC)**, with progress
   saved in `handoff/edge-hunt.md`. Now: **the PumpSwap model** (`tartar train --raw raw-eager,raw-clever
@@ -58,6 +50,21 @@ next. Topic documents hold the detail:
   `data/raw-v3` here again since 13:31 UTC (same flags plus `SOLANA_COMMITMENT=processed`);
   finished hours go to `handoff/data/raw-v3/`. Not running a SOL sampler (the clever session's
   covers 10–16 UTC).
+
+* **Clever session — SYNC REQUEST, nothing being built** (session_01R61Ym2543SdY4GEWPsLin6,
+  back 16:05 UTC 2026-10-09, branch `claude/clever-pascal-p4m7ub`). The user asked both sessions
+  to sync before building anything. **Handoff session: please answer by editing this entry or
+  your Active line on `main`** (accept, change or reject the split). I'll start nothing until then.
+  - **Yours, untouched by me:** PumpSwap models (`pumpswap-*`, your 30s install on
+    `claude/handoff-overview` is not on `main` yet), `OVERVIEW.md`, the `raw-v3` recorder.
+  - **Proposed for me:** (a) the 5m curve model's overconfidence at the open (§8.2.2c–d: ~6 points
+    left); (b) the curve blends leaning 1–2 points underconfident on trading candles (1m/15s/30s).
+    Both touch only `tartar/models/trades-*` and, for (b), maybe the blend prior in
+    `tartar/model/forecaster.py`, **which the PumpSwap domain shares**: if (b) needs a code
+    change I'd keep it to `domain == "trades"` unless you want it too. Say if that collides.
+  - **Neither:** edge hunt (on hold by the user); OVERVIEW numbers are yours to take from §2/§3
+    (v3.1, P(rug) AUC 0.935, 11a no edge, SOL costs ~0.5 bps every hour). Dip cohort ~02:24 UTC
+    10-10: whoever is up. A second recorder from me only if you want one.
 
 ## Blockers (need the user)
 
@@ -193,9 +200,10 @@ next. Topic documents hold the detail:
     re-taken 1–5 s later moves only with the market (|decay| p90 ≈ 1–2.5 bps, drift-free mean
     0.00 ± 0.03, no 50 bps slippage failures); filling at the later quote ≈ 0.4 bps/fill. Plan
     on ~0.5 bps per fill, ~1.3 at p90. Samples (research session's) in `handoff/data/sol-dex/`.
-    **Still open (unclaimed):** the same run at European and US hours (e.g. 08–10 and 13–16
-    UTC: `sol_dex_costs.py sample --minutes 120 --out data/sol-dex/costs-<date>.jsonl`), then
-    commit the samples. Real fills stay unmeasured (no real-money code without the user).
+    **European and US hours done (clever session, 06:43–15:55 UTC, 920 samples):** ~0.5 bps
+    per fill in every hour sampled (03:37–15:55 UTC); quotes move more in US hours but with no
+    drift, no slippage failures. Item 12's measurement side is complete until jevtrader's day-28
+    results (2026-10-23). Real fills stay unmeasured (no real-money code without the user).
 13. ~~**Ship a calibrated P(rug)**~~ **done 07:15 UTC 10-09** (clever session; predictor doc
     §9.1). `tartar train --raw DIRS --rug` → `tartar/models/rug-20s.*` (installed; retrained
     13:50 UTC on 12,342 launches incl. `raw-clever`: AUC **0.935** on the latest 1,852, calibrated
@@ -253,6 +261,27 @@ next. Topic documents hold the detail:
   branch `claude/profitability-backtest`, on `main`).
 
 ## Log (newest first)
+
+* **2026-10-09 16:05 UTC, clever session, handing off** (session_01R61Ym2543SdY4GEWPsLin6, branch
+  `claude/clever-pascal-p4m7ub`; everything is on `main`; no claim open, nothing half-done; its
+  recorder and sampler are stopped):
+  - **User decisions (06:35):** Jev off in TARTAR, live fast loop retired, no private RPC,
+    this session may fast-forward `main`.
+  - **Merged** the research session's unmerged branch into `main` (fixed `sol_dex_costs.py decay`,
+    broken by the auto-merge).
+  - **P(rug) shipped** (queue 13, §9.1): AUC 0.935 on the latest 1,852 launches, held 0.924 forward
+    on 7,075 unseen ones; risk level reweighted (AUC 0.585 → ~0.7), `--next-launch` picks unchanged.
+  - **Predictor v3.1 installed** at all four candle lengths (§8.2.2c–d); 5m drops the old
+    recorder's rows (chosen on validation). 1m live edge +8.0%, 5m +11.9% on the newest launches.
+  - **11a evaluated as pre-registered: no edge** (§3.16, 264 pools).
+  - **`pumpswap` flat-candle priors** (§8.2.3).
+  - **SOL-USD costs** in European and US hours: ~0.5 bps per fill in every hour (queue 12).
+  - **Data:** `handoff/data/raw-clever` 06:23–16:00 UTC (~16,000 launches, 341 SOL pools),
+    `handoff/data/sol-dex/costs-20261009-{day,us}.jsonl`.
+  - **Open for others:** 5m model still ~6 points overconfident at the open (retrain as new-style
+    data grows); the 1m/15s/30s live blends lean ~1–2 points underconfident on trading candles;
+    dip cohort due ~02:24 UTC 10-10 (`established_cohort.py` + `pumpswap_fees.py`, see queue 11b);
+    the handoff session holds the PumpSwap model and `OVERVIEW.md`.
 
 * **2026-10-09 14:15 UTC, handoff session** (session_01GAoiXJ4NHWXq6DnP61icSU, branch
   `claude/handoff-overview`; started by the user to continue the predictor session after it hit
