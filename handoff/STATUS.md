@@ -72,7 +72,13 @@ next. Topic documents hold the detail:
   (session_016pSxch8d3Jna6ZzEsLhFVC, branch `claude/project-thread-yy6153`, from 17:40 UTC
   2026-10-09).** Started after the host fix; this container's proxy injects the PumpPortal key for
   the bare `pumpportal.fun`. Only this session sends `/api/trade` requests. Every real trade waits
-  for the user's go in the thread. Earlier history:
+  for the user's go in the thread. **Probe 17:44 UTC: still 403 "Must supply a valid API key",
+  nothing traded or spent.** This session's proxy does list a PumpPortal credential for the bare
+  `pumpportal.fun` (and still `*.pumportal.fun`), so the host now matches but PumpPortal rejects
+  what arrives: likely the proxy injects the key somewhere PumpPortal doesn't read (it wants the
+  `?api-key=` query parameter), or the stored value isn't the Lightning wallet's key.
+  `PUMPPORTAL_API_KEY` is still unset. Needs the user: add `PUMPPORTAL_API_KEY` as an environment
+  variable (the script sends it as `?api-key=`), or check the stored credential value. Earlier history:
 * (was) **REAL MONEY — the PumpPortal wallet is owned by the real-money thread session
   (session_0173Md1HrgsAZHzbjLUmi64b, branch `claude/project-thread-2gop6x`, from 17:30 UTC
   2026-10-09).** The first successor (session_01RdY84M3yCZbssMGWNVdpQi) was interrupted while
