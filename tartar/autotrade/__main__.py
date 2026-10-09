@@ -1,8 +1,9 @@
 """python -m tartar.autotrade run | status | halt REASON | resume [STRATEGY] | halt-live REASON | resume-live [STRATEGY]
-       | preflight | dry-swap MINT [--sol 0.01]   [--root autotrade]
+       | preflight | dry-swap MINT [--sol 0.01] | dry-perp COIN [--usd 12] [--side -1]   [--root autotrade]
 
 halt-live stops new live twins (paper and exits keep running); preflight checks the live path without
-trading; dry-swap builds a real Jupiter buy and sell for MINT and has the RPC simulate them (no key, nothing sent)."""
+trading; dry-swap builds a real Jupiter buy and sell for MINT and has the RPC simulate them (no key, nothing sent);
+dry-perp prices opening and closing a Hyperliquid perp twin on the live order book (no key, nothing sent)."""
 
 from __future__ import annotations
 
@@ -17,8 +18,10 @@ from .runner import ROOT, run_once
 
 def main(argv=None) -> int:
     ap = argparse.ArgumentParser(prog="python -m tartar.autotrade")
-    ap.add_argument("cmd", choices=("run", "status", "halt", "resume", "halt-live", "resume-live", "preflight", "dry-swap"))
+    ap.add_argument("cmd", choices=("run", "status", "halt", "resume", "halt-live", "resume-live", "preflight", "dry-swap", "dry-perp"))
     ap.add_argument("--sol", type=float, default=0.01)
+    ap.add_argument("--usd", type=float, default=12.0)
+    ap.add_argument("--side", type=int, default=1, choices=(1, -1))
     ap.add_argument("arg", nargs="?", default="")
     ap.add_argument("--root", default=str(ROOT))
     a = ap.parse_args(argv)
@@ -47,6 +50,15 @@ def main(argv=None) -> int:
         print(json.dumps({"buy": buy.to_dict(), "sell": sell and sell.to_dict(),
                           "round_trip_pct": sell and 100 * (sell.sol / buy.sol - 1)}, indent=1, default=str))
         return 0 if buy.ok and sell and sell.ok else 1
+    if a.cmd == "dry-perp":
+        from .perps import DryPerpExecutor
+
+        ex = DryPerpExecutor()
+        o = ex.open(a.arg, a.side, a.usd)
+        c = ex.close(a.arg, a.side, o.sz) if o.ok else None
+        rt = c and 100 * (a.side * o.sz * (c.px - o.px) - o.fee_usd - c.fee_usd) / o.notional_usd
+        print(json.dumps({"open": o.to_dict(), "close": c and c.to_dict(), "round_trip_pct": rt}, indent=1, default=str))
+        return 0 if o.ok and c and c.ok else 1
     if a.cmd == "halt-live":
         (root / "HALT_LIVE").write_text(a.arg or "live halted by hand")
         ledger.change({"t": now, "kind": "halt", "scope": "live", "reason": a.arg or "live halted by hand"})
