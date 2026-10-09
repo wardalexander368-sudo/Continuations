@@ -69,8 +69,10 @@ next. Topic documents hold the detail:
 2. **More data.** The fast loop records as it runs. After 24 h+:
    `tartar train --raw data/raw`, `tartar profit`, `tartar decide`.
 3. **Longer holds on screened tokens** (10–90 min) once data exists.
-4. **PumpSwap decoder** for graduated tokens (program
-   `pAMMBay6oceH9fJKBRHGP5D4bD4sWpmSwMn52FMfXEA`).
+4. ~~**PumpSwap decoder**~~ **done 00:12 UTC 10-09** (`tartar/feeds/pumpswap.py`,
+   source `pumpswap`): `tartar watch` follows a graduated pump.fun token trade by
+   trade in its canonical pool (checked on 43 mainnet trades). Not yet recorded
+   for training.
 5. ~~**Record slot numbers**~~ **code on `main` 00:10 UTC 10-09**: raw create/trade/migrate events carry `"slot"`, ticks have `Tick.slot`. The fast loop records slots after its next restart from `main`. Latency-in-slots measurement: predictor session, in progress.
 6. ~~**Predictor open problems 3–5**~~ **done ~23:45 UTC 10-08** (predictor doc §8.4).
 7. ~~**Verify the pump.fun fee schedule**~~ **done 00:00 UTC 10-09**: decoded from real TradeEvents (89 trades): **0.95% protocol + 0.30% creator = 1.25% per side** on V1 curves at every curve stage sampled; buyers pay fees on top of the SOL that enters the curve, sellers have them deducted (checked against wallet balance changes). A few trades carry 0 fees. The `tartar profit` default is right. V2 curves (item 9) showed 0.95% + 2.5% creator in samples.
@@ -81,18 +83,22 @@ next. Topic documents hold the detail:
    characters in code, and Jev features lower test AUC (0.767 → 0.740). Not
    worth adding to shadow mode. Caches: `handoff/data/jev/`.
 
-9. **Decode pump.fun V2 launches** (predictor session, in progress). ~1/3 of
-   recorded launches (1,863 of 5,550 creates in `handoff/data/raw`) use
-   `CreateV2`/`BuyV2`/`SellV2` (Token-2022 mints; fees via the fee program's
-   `GetFeesWithQuoteMint`). Their TradeEvent has zero SOL fields under the V1
-   layout, so **every V2 trade is dropped today**: V2 launches look like
-   launches nobody bought (92% show zero recorded trades vs 10% of V1
-   launches; one had 347 transactions on chain). Consequences until fixed:
-   the screener and fast loop never see V2 buyers (they can't trade them
-   either); the predictor dataset already excludes them (no price); any
-   launch-level statistic over all creates (share of launches with buyers,
-   evaluations over "all recorded launches") counts them as dead. Filter on
-   `create.vsol` present to exclude them.
+9. ~~**Decode pump.fun V2 launches**~~ **done 00:20 UTC 10-09** (on `main`).
+   Every pump.fun curve has a quote mint. Verified on 488 mainnet
+   transactions:
+   - **~15% of new launches and ~19% of trades are quote-paired** (USDC,
+     tokenized stocks, wXMR, other pump coins); the rest are SOL.
+   - All new launches now use `CreateV2`.
+
+   The old decoder dropped every quote-paired trade. Those launches appear as
+   creates with no first buy and no trades, so filter on `create.vsol`.
+   1,863 of 5,550 creates in `handoff/data/raw` have no first buy; that count
+   also includes SOL launches without a dev buy. Since 79d1439 the recorder
+   writes `"quote"` on quote-paired creates and trades (raw quote amounts in
+   `qamt`/`vq`/`rq`). The loader and the screener skip them explicitly, and SOL
+   V2/V3 trades decode as before. **Fast loop:** after a restart from `main`
+   the raw creates carry `"quote"`, so skip those launches. A quote-paired
+   curve has no SOL price, and paper fills on it would be meaningless.
 
 ## Rules that hold across sessions
 
