@@ -83,19 +83,19 @@
     3.0,
     4.0
   ],
-  "temperature": 1.0290630073915452,
-  "tail_low": 3.0800359291833868,
-  "tail_high": 1.9691552179029208,
+  "temperature": 0.9850242342712655,
+  "tail_low": 3.070112902987392,
+  "tail_high": 1.9788021115264882,
   "nowcast": true,
-  "best_iteration": 156,
+  "best_iteration": 212,
   "num_leaves": 31,
   "min_data_in_leaf": 2000,
-  "train_rows": 490356,
-  "valid_rows": 120666,
-  "tokens": 14796,
+  "train_rows": 1013844,
+  "valid_rows": 222822,
+  "tokens": 28022,
   "simulated": false,
-  "trained_at": "2026-10-09T12:20:37Z",
-  "train_seconds": 228.7,
+  "trained_at": "2026-10-09T20:38:41Z",
+  "train_seconds": 242.1,
   "median_shrink": [
     [
       0.0,
@@ -111,7 +111,7 @@
     ],
     [
       0.6,
-      0.8
+      0.7000000000000001
     ],
     [
       0.8,
@@ -122,5 +122,7 @@
       0.0
     ]
   ],
-  "model_bytes": 13917446
+  "old_recorder_weight": 1.0,
+  "note": "v3.2 study (handoff/experiments/predictor_v32.py)",
+  "model_bytes": 18950876
 }

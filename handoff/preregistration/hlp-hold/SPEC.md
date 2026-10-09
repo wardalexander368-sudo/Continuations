@@ -6,7 +6,7 @@ Paper only. Scored from Hyperliquid's public history by
 `handoff/experiments/edge-hunt/vaults/hlp_forward.py`; nothing has to be recorded live.
 
 ## Where it came from (exploratory, seen before this rule was fixed)
-The vault-following study (`handoff/edge-hunt.md` §F, `experiments/edge-hunt/vaults/vault_follow.py`)
+The vault-following study (`handoff/edge-hunt.md` §G, `experiments/edge-hunt/vaults/vault_follow.py`)
 used HLP as a benchmark. Following past-winner vaults failed (18 rules, none passed validation), but
 HLP itself earned in every period, from its account value and PnL history (time-weighted, no leader
 commission): monthly mean +7.3% (2023-08..2024-12), +0.97% (2025-01..06), +1.33% [+0.18, +2.70]
