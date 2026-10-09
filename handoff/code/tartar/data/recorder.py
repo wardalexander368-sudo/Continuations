@@ -22,6 +22,13 @@ from .rawlog import RawWriter, event_from_message
 
 
 @dataclass
+class _Pool:
+    mint: str
+    since: float
+    last: float
+
+
+@dataclass
 class _Tracked:
     created: float
     last: float
@@ -184,12 +191,57 @@ class ChainRecorder(Recorder):
     `track_minutes`, or until it goes quiet for `idle_minutes`.
     """
 
-    def __init__(self, out_dir: str | Path, *, urls: tuple[str, ...] | None = None, **kwargs):
+    def __init__(self, out_dir: str | Path, *, urls: tuple[str, ...] | None = None, pumpswap_hours: float = 0.0, pool_idle_minutes: float = 30.0, **kwargs):
         kwargs.pop("url", None)
         kwargs.pop("api_key", None)
         super().__init__(out_dir, **kwargs)
         self.urls = urls
         self.on_status = None  # optional callback for connection problems
+        # After graduation: each token's canonical PumpSwap pool, recorded for `pumpswap_hours`
+        # (0 = off) or until `pool_idle_minutes` pass without a trade.
+        self.pumpswap_seconds = pumpswap_hours * 3600.0
+        self.pool_idle_seconds = pool_idle_minutes * 60.0
+        self.pools: dict[str, _Pool] = {}
+        self.swaps = 0
+
+    def _pools_wanted(self) -> dict:
+        from ..feeds.pumpswap import swap_events_from_logs
+
+        return {pool: swap_events_from_logs for pool in self.pools}
+
+    def _graduated(self, mint: str, slot: int | None) -> None:
+        from ..feeds.pumpswap import canonical_pool
+
+        try:
+            pool = canonical_pool(mint)
+        except ValueError:
+            return
+        now = self.clock()
+        self.pools[pool] = _Pool(mint, now, now)
+        self._emit({"e": "graduate", "t": now, "mint": mint, "pool": pool} | ({"slot": slot} if slot is not None else {}))
+
+    def _swap(self, trade, slot: int | None) -> None:
+        pool = self.pools.get(trade.pool)
+        if pool is None:
+            return
+        now = self.clock()
+        pool.last = now
+        self.swaps += 1
+        event = {
+            "e": "swap", "t": now, "mint": pool.mint, "pool": trade.pool, "side": "b" if trade.is_buy else "s",
+            "trader": trade.user, "tok": trade.base, "sol": trade.quote, "paid": trade.user_quote,
+            "tok_after": trade.base_after, "sol_after": trade.quote_after,
+        }  # fmt: skip
+        if slot is not None:
+            event["slot"] = slot
+        self._emit(event)
+
+    def _expire_pools(self, now: float) -> None:
+        for pool, state in list(self.pools.items()):
+            if now - state.since > self.pumpswap_seconds or now - state.last > self.pool_idle_seconds:
+                del self.pools[pool]
+                reason = "age" if now - state.since > self.pumpswap_seconds else "idle"
+                self._emit({"e": "unwatch", "t": now, "mint": state.mint, "pool": pool, "reason": reason})
 
     async def run(self, duration: float | None = None, on_stats: Callable[[RecorderStats], None] | None = None) -> RecorderStats:
         try:
@@ -219,8 +271,11 @@ class ChainRecorder(Recorder):
             trade_to_message,
         )
 
+        from ..feeds.pumpswap import SwapTrade
+
         last_housekeeping = last_report = self.clock()
-        async with aclosing(stream_program_events(self.urls)) as stream:
+        extra = {"extra": self._pools_wanted} if self.pumpswap_seconds > 0 else {}
+        async with aclosing(stream_program_events(self.urls, **extra)) as stream:
             async for item in stream:
                 now = self.clock()
                 if isinstance(item, Status):
@@ -249,12 +304,17 @@ class ChainRecorder(Recorder):
                             self.handle(trade_to_message(event) | {"slot": slot})
                     elif isinstance(event, ChainComplete):
                         self.handle({"txType": "migrate", "mint": event.mint, "slot": slot})
+                        if self.pumpswap_seconds > 0:
+                            self._graduated(event.mint, slot)
+                    elif isinstance(event, SwapTrade):
+                        self._swap(event, slot)
                 if now - last_housekeeping >= self.housekeeping:
                     last_housekeeping = now
                     expired = [m for m, s in self.tracked.items() if now - s.created > self.track_seconds]
                     idle = [m for m, s in self.tracked.items() if m not in expired and now - s.last > self.idle_seconds]
                     self._untrack(expired, "age")
                     self._untrack(idle, "idle")
+                    self._expire_pools(now)
                     self._pending.clear()  # nothing to subscribe to: the stream carries every token
                     self.writer.flush()
                 if on_stats is not None and now - last_report >= 30:

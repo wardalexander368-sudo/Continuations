@@ -110,6 +110,7 @@ def build_parser() -> argparse.ArgumentParser:
     record.add_argument("--track-minutes", type=float, default=60.0, help="record each token for this long (default 60)")
     record.add_argument("--idle-minutes", type=float, default=10.0, help="stop recording a token after this long without trades")
     record.add_argument("--max-tokens", type=int, default=3000, help="most tokens tracked at once")
+    record.add_argument("--pumpswap-hours", type=float, default=0.0, help="also record each graduated token's PumpSwap pool for this long (chain source; default off)")
     record.add_argument(
         "--source",
         choices=("chain", "pumpportal"),
@@ -470,15 +471,20 @@ async def cmd_record(args) -> int:
     from .data.recorder import ChainRecorder, Recorder
 
     console = Console()
-    kind = ChainRecorder if args.source == "chain" else Recorder
-    recorder = kind(args.out, track_minutes=args.track_minutes, idle_minutes=args.idle_minutes, max_tokens=args.max_tokens)
-    if isinstance(recorder, ChainRecorder):
+    if args.source == "chain":
+        recorder = ChainRecorder(
+            args.out, track_minutes=args.track_minutes, idle_minutes=args.idle_minutes, max_tokens=args.max_tokens,
+            pumpswap_hours=args.pumpswap_hours,
+        )  # fmt: skip
         recorder.on_status = lambda message: console.print(f"{datetime.now():%H:%M:%S}  ! {message}")
+    else:
+        recorder = Recorder(args.out, track_minutes=args.track_minutes, idle_minutes=args.idle_minutes, max_tokens=args.max_tokens)
     console.print(f"Recording pump.fun launches and trades to {args.out} (Ctrl+C to stop)…")
 
     def report(stats) -> None:
         state = "connected" if stats.connected else "reconnecting"
-        console.print(f"{datetime.now():%H:%M:%S}  {state} · {stats.tracked} tokens tracked · {stats.total_tokens} launches · {stats.trades} trades")
+        pools = f" · {len(recorder.pools)} PumpSwap pools, {recorder.swaps} swaps" if getattr(recorder, "pumpswap_seconds", 0) else ""
+        console.print(f"{datetime.now():%H:%M:%S}  {state} · {stats.tracked} tokens tracked · {stats.total_tokens} launches · {stats.trades} trades{pools}")
 
     stats = await recorder.run(None if args.hours is None else args.hours * 3600, on_stats=report)
     report(stats)

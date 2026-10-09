@@ -9,6 +9,14 @@ Event types (short keys keep files small):
     {"e": "track",   "t": ts, "mint"}                      # trades are being recorded from here
     {"e": "untrack", "t": ts, "mint", "reason"}            # ...until here
     {"e": "session", "t": ts, "state": "connected"|"disconnected"|"stopped"}
+    {"e": "graduate", "t": ts, "mint", "pool"}             # curve completed; its PumpSwap pool is recorded
+    {"e": "swap",    "t": ts, "mint", "pool", "side", "trader", "tok", "sol", "paid", "tok_after", "sol_after"}
+    {"e": "unwatch", "t": ts, "mint", "pool", "reason"}    # ...until here (age or idle)
+
+PumpSwap events (`tartar record --pumpswap-hours N`): "sol" is the SOL into or out of
+the pool (LP fee included), "paid" what the trader paid or received with every fee,
+and "tok_after"/"sol_after" the pool's token and effective SOL reserves after the
+trade, so the price is sol_after / tok_after.
 
 "quote" (since 2026-10-09) marks a curve priced in another token (USDC, a tokenized
 stock, another pump coin...): its trades have no SOL fields, only raw quote amounts

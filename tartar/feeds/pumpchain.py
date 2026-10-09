@@ -15,6 +15,7 @@ import binascii
 import bisect
 import hashlib
 import json
+import math
 import os
 import struct
 import time
@@ -296,6 +297,7 @@ async def stream_program_events(
     max_backoff: float = 30.0,
     mentions: str = PUMP_PROGRAM,
     decode: Callable[[list[str]], list] = events_from_logs,
+    extra: Callable[[], dict[str, Callable[[list[str]], list]]] | None = None,
 ) -> AsyncIterator[tuple[float, str, list, int | None] | Status]:
     """Yield (receive time, signature, events, slot) for every successful pump.fun
     transaction, plus Status messages (kind connected/disconnected) on (re)connection.
@@ -303,6 +305,10 @@ async def stream_program_events(
     `mentions` and `decode` select another account (e.g. one PumpSwap pool) and decoder.
     `commitment` defaults to $SOLANA_COMMITMENT, else "confirmed". "processed" reports
     transactions about a second sooner, but rarely one from a block that is then dropped.
+    `extra`, if given, names further accounts to watch on the same connection, each
+    with its decoder (e.g. the PumpSwap pools of graduated tokens). It is called on every
+    (re)connection and about every 5 s; accounts it stops returning are unsubscribed.
+    Each subscription's notifications go through its own decoder only.
 
     After a drop it reconnects to the same endpoint; it only moves to the next of
     `urls` after repeated failures to connect. Trades during a disconnection are
@@ -323,16 +329,51 @@ async def stream_program_events(
                 connected = True
                 failures, backoff = 0, 1.0
                 yield Status(f"connected to {url}", kind="connected")
+                decoders = {reply.get("result"): decode}
+                watched: dict[str, int] = {}  # extra account -> subscription id
+                pending: dict[int, tuple[str, Callable]] = {}  # request id -> (account, decoder)
+                next_id, synced = 2, -math.inf
                 while True:
+                    if extra is not None and time.monotonic() - synced >= 5.0:
+                        synced = time.monotonic()
+                        wanted = extra()
+                        asked = {account for account, _ in pending.values()}
+                        for account, account_decode in wanted.items():
+                            if account not in watched and account not in asked:
+                                pending[next_id] = (account, account_decode)
+                                params = [{"mentions": [account]}, {"commitment": commitment}]
+                                await ws.send(json.dumps({"jsonrpc": "2.0", "id": next_id, "method": "logsSubscribe", "params": params}))
+                                next_id += 1
+                        for account in [a for a in watched if a not in wanted]:
+                            sub = watched.pop(account)
+                            decoders.pop(sub, None)
+                            await ws.send(json.dumps({"jsonrpc": "2.0", "id": next_id, "method": "logsUnsubscribe", "params": [sub]}))
+                            next_id += 1
                     raw = await asyncio.wait_for(ws.recv(), 60)  # pump.fun is never quiet for a minute
                     try:
-                        result = json.loads(raw)["params"]["result"]
+                        message = json.loads(raw)
+                    except ValueError:
+                        continue
+                    if "id" in message:  # the reply to a (un)subscribe request
+                        request_of = pending.pop(message["id"], None)
+                        if request_of is not None and isinstance(message.get("result"), int):
+                            watched[request_of[0]] = message["result"]
+                            decoders[message["result"]] = request_of[1]
+                        continue
+                    try:
+                        params = message["params"]
+                        result = params["result"]
                         value = result["value"]
-                    except (ValueError, KeyError, TypeError):
+                    except (KeyError, TypeError):
                         continue
                     if value.get("err") is not None:
                         continue  # failed transactions change nothing
-                    events = decode(value.get("logs") or [])
+                    # Without extra subscriptions every notification is the program's; with them,
+                    # each goes to its own decoder (a late one for a dropped account is skipped).
+                    account_decode = decode if extra is None else decoders.get(params.get("subscription"))
+                    if account_decode is None:
+                        continue
+                    events = account_decode(value.get("logs") or [])
                     if events:
                         slot = (result.get("context") or {}).get("slot")
                         yield time.time(), value.get("signature", ""), events, slot if isinstance(slot, int) else None

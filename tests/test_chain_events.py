@@ -163,3 +163,78 @@ def test_several_recorder_directories_merge(tmp_path):
     tokens = load_trade_tokens(f"{tmp_path / 'a'},{tmp_path / 'b'},{tmp_path / 'b2'}", 60)
     assert [t.mint for t in tokens] == ["MintA", "MintB"]
     assert [t.mint for t in load_trade_tokens([tmp_path / "a", tmp_path / "b"], 60)] == ["MintA", "MintB"]
+
+
+async def test_recorder_follows_graduated_tokens_on_pumpswap(tmp_path, monkeypatch):
+    from tartar.data.recorder import ChainRecorder
+    from tartar.data.rawlog import raw_files, read_events
+    from tartar.feeds.base import Status
+    from tartar.feeds.pumpchain import ChainComplete
+    from tartar.feeds.pumpswap import SwapTrade, canonical_pool
+
+    buy_tx = json.loads((DATA / "pumpswap_buy.json").read_text())
+    mint = buy_tx["mint"]
+    pool = canonical_pool(mint)
+    now = [T0]
+    asked = []
+
+    async def fake_stream(urls=None, extra=None):
+        yield Status("connected", kind="connected")
+        yield T0, "g", [ChainComplete(mint)], 500
+        asked.append(dict(extra()))
+        now[0] = T0 + 5
+        yield now[0], "s1", [SwapTrade(pool, True, 1000.0, 0.01, 0.0101, "u1", int(T0), 9e8, 90.0, "dev")], 510
+        yield now[0], "s2", [SwapTrade("OtherPool", True, 1.0, 0.01, 0.0101, "u2", int(T0), 9e8, 90.0)], 511
+        now[0] = T0 + 3 * 3600  # past the recording window
+        yield now[0], "s3", [ChainTrade("M", 0.1, 3e6, True, "w", int(T0), 31.0, 1.038e9, "dev", 1.0)], 600
+        asked.append(dict(extra()))
+        await asyncio.sleep(3600)
+
+    monkeypatch.setattr(pumpchain, "stream_program_events", fake_stream)
+    recorder = ChainRecorder(tmp_path, clock=lambda: now[0], pumpswap_hours=2, housekeeping=0)
+    await recorder.run(duration=0.5)
+    events = list(read_events(raw_files(tmp_path)))
+    (grad,) = [e for e in events if e["e"] == "graduate"]
+    swaps = [e for e in events if e["e"] == "swap"]
+    assert grad == {"e": "graduate", "t": T0, "mint": mint, "pool": pool, "slot": 500}
+    assert len(swaps) == 1 and swaps[0]["mint"] == mint and swaps[0]["sol_after"] / swaps[0]["tok_after"] == pytest.approx(1e-7)
+    assert list(asked[0]) == [pool] and asked[1] == {}  # watched after graduation, dropped after the window
+    assert any(e["e"] == "unwatch" and e["reason"] == "age" for e in events)
+
+
+async def test_stream_watches_extra_accounts_on_one_connection(monkeypatch):
+    import websockets
+
+    pump_logs = json.loads((DATA / "pump_sell_via_jupiter.json").read_text())["logs"]
+    swap_logs = json.loads((DATA / "pumpswap_buy.json").read_text())["logs"]
+    seen = []
+
+    async def server(ws):
+        subs = {}
+        async for raw in ws:
+            msg = json.loads(raw)
+            seen.append((msg["method"], msg["params"][0]))
+            if msg["method"] == "logsSubscribe":
+                sub = 100 + len(subs)
+                subs[msg["params"][0]["mentions"][0]] = sub
+                await ws.send(json.dumps({"jsonrpc": "2.0", "result": sub, "id": msg["id"]}))
+                logs = pump_logs if sub == 100 else swap_logs
+                note = {"jsonrpc": "2.0", "method": "logsNotification", "params": {"subscription": sub, "result": {"context": {"slot": 7}, "value": {"signature": f"s{sub}", "err": None, "logs": logs}}}}
+                await ws.send(json.dumps(note))
+            else:
+                await ws.send(json.dumps({"jsonrpc": "2.0", "result": True, "id": msg["id"]}))
+
+    from tartar.feeds.pumpswap import SwapTrade, swap_events_from_logs
+
+    wanted = {"POOL": swap_events_from_logs}
+    async with websockets.serve(server, "127.0.0.1", 0) as srv:
+        port = srv.sockets[0].getsockname()[1]
+        got = []
+        async for item in pumpchain.stream_program_events((f"ws://127.0.0.1:{port}",), extra=lambda: dict(wanted)):
+            if isinstance(item, tuple):
+                got.append(item)
+                if len(got) == 2:
+                    break
+    kinds = sorted(type(e).__name__ for _, _, events, _ in got for e in events)
+    assert kinds == ["ChainTrade", "SwapTrade"]  # each subscription decoded by its own decoder
+    assert ("logsSubscribe", {"mentions": ["POOL"]}) in seen
