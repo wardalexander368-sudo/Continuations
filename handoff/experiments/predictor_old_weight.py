@@ -23,7 +23,9 @@ w0 = ds.weight.copy()
 def report(name, m):
     r = evaluate(m, ds, replay_tokens=300, log=lambda *a: None)
     live = r["live_at_open"]["global_plus_online"]; f0 = r["test_by_fraction"][0]
-    res = {"test_ll": round(test_log_loss(m, ds), 4), "open hit/stated": (round(f0["hit_rate"], 3), round(f0["avg_confidence"], 3)), "edge_open": round(f0["edge"], 4),
+    pv = m.predict_proba(ds.X[va])
+    valid_ll = float(-(ds.weight[va] * np.log(np.maximum(pv[np.arange(va.sum()), ds.label[va]], 1e-12))).sum() / ds.weight[va].sum())
+    res = {"valid_ll": round(valid_ll, 4), "test_ll": round(test_log_loss(m, ds), 4), "open hit/stated": (round(f0["hit_rate"], 3), round(f0["avg_confidence"], 3)), "edge_open": round(f0["edge"], 4),
            "live all/trading": (live["all"]["edge"], live["trading"]["edge"]), "trading hit/stated": (live["trading"]["hit_rate"], live["trading"]["avg_confidence"]),
            "temperature": round(m.meta["temperature"], 3), "iters": m.meta["best_iteration"]}
     print(name, res, flush=True)
