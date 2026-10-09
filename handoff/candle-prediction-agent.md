@@ -676,9 +676,13 @@ reviewers' scripts are in the session scratchpad (not persisted).
 
    PumpSwap as a whole runs ~356 successful tx/s, which is why only
    graduated pools are followed. Still open: no loader or `tartar profit`
-   support for swap events yet (queue item 11a, part 2). A token that
-   graduates during a `watch` ends the feed; run `watch` again to follow it on
-   PumpSwap.
+   support for swap events yet (queue item 11a, part 2). **Since 2026-10-09
+   a `watch` continues through graduation:**
+   - The chain feed closes its pump.fun connection and follows the token's
+     PumpSwap pool.
+   - The agent drops the global model, which covers bonding curves only, and
+     the online model carries on.
+   - Tokens quoted in another token still end at graduation.
 8. **The candle-only (OHLCV) model is untrained.**
    - GeckoTerminal returns 429 from this container; collect from another IP.
    - Live DexScreener-polled candles differ from GeckoTerminal OHLC: ranges
