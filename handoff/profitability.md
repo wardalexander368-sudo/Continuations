@@ -579,6 +579,44 @@ follow earlier are less bad to follow later, but never good. Their edge is being
 bundled with the launch), which a follower can't copy. No forward test is worth running: the best
 in-sample rule already loses.
 
+### 3.16 Trading graduated tokens on PumpSwap: no edge (queue 11a, pre-registered)
+
+Evaluated once on 2026-10-09 at 12:05 UTC, as `handoff/preregistration/pumpswap-graduated/SPEC.md`
+fixed it before any return was computed: `pumpswap_study.py handoff/data/raw-eager
+handoff/data/raw-clever --show-test` (plus the two sensitivity runs). Data: **264 graduated SOL
+pools** (69 from `raw-eager` 04:06–06:00, 195 from `raw-clever` 06:23–11:59; every pool had a
+recorded swap), committed in `382e827` before the run. Validation = the first 158 pools by
+graduation time, test = the last 106. Fills on the recorded reserves, PumpSwap fee by market-cap
+tier (§3.13), 0.1 SOL per entry, 0.0002 SOL per transaction, 1 s latency. Outputs:
+`handoff/preregistration/pumpswap-graduated/results/`.
+
+| Family | Rule chosen on validation | Validation mean | **Test** (trades) | Test mean [90% CI] | Bonferroni bound | Verdict |
+|---|---|---|---|---|---|---|
+| grad | buy 5 s after graduation, hold 60 s | −14.9% | 106 | **−19.6%** [−26.7, −12.4] | −28.8% | no edge |
+| mom | at 15 min, if up > 50%, hold 5 min | +18.3% [+1.2, +34.8] | 14 | **−22.5%** [−45.1, −1.3] | −53.1% | no edge |
+| dip | at 15 min, if down > 60%, hold 60 min | −37.1% | 26 | **−38.1%** [−49.9, −26.5] | −54.6% | no edge |
+| active | at 30 min, if ≥ 50 swaps in 5 min, hold 60 s | −3.8% | 27 | **−3.4%** [−9.7, +1.9] | −12.2% | no edge |
+| reference: every pool, 30 s after graduation, hold 5 min | | | 257 | −25.2% [−31.0, −19.1] | | |
+
+Sensitivity (reported, not criteria): with 3 s latency every family stays negative (the
+`active` choice changes to 15 min / 5 min hold: −14.5%); with 1 SOL per entry the test means
+are −24.9 / −27.5 / −36.7 / −4.9%. No family passes in any run.
+
+**Reading:**
+* Fresh graduates fall. Buying every pool 30 s after graduation and holding 5 minutes loses a
+  quarter of the stake on average (median −17%); holding an hour after a 5 s entry loses ~60% on
+  validation. The insiders who held the curve sell into the new pool, and the 1.25% fee per side
+  (§3.13) comes on top.
+* The only rule that came near zero is `active` (a pool still busy half an hour after
+  graduation, held for one minute): −3.4% on test, about the cost of the round trip. Surviving
+  pools stop falling but don't pay for their fees.
+* Momentum is the cautionary case: +18.3% on 23 validation trades with an interval above zero,
+  then −22.5% on 14 test trades. Small validation samples on these pools produce exactly this.
+* As the SPEC expected: graduation doesn't change the economics of the bonding curve.
+
+Together with §3.2–3.15 this closes trading pump.fun tokens at launch, on the curve, at
+graduation, and in their first hour on PumpSwap, with simple rules on public data.
+
 ## 4. What this means for the plan
 
 1. **Don't trade the current predictions.** The confidence is honest about
