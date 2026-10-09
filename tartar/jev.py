@@ -30,46 +30,15 @@ import math
 import os
 import time
 from concurrent.futures import ThreadPoolExecutor
+from dataclasses import dataclass
 from pathlib import Path
+from typing import Callable
 
 import httpx
 import numpy as np
 
 DEFAULT_URL = "https://api.typesafe.ai/v1/systemone"
 DEFAULT_MODEL = "jev-latest"
-
-QUESTIONS: dict[str, dict] = {
-    "buy": {
-        "type": "noul",
-        "instructions": (
-            "`launch` describes a pump.fun memecoin in its first seconds of trading. If someone buys it now and "
-            "sells it 3 minutes later, will they get back more SOL than they paid, after about 3.5% in fees and slippage?"
-        ),
-        "criteria": {"true": "Selling after 3 minutes returns more than the purchase cost", "false": "It returns the same or less"},
-    },
-    "copycat": {
-        "type": "noul",
-        "instructions": "Do `launch.name` or `launch.symbol` copy or imitate an existing well-known coin, company, brand, product or celebrity?",
-        "criteria": {"true": "Imitates something that already exists and is well known", "false": "An original name, or a generic word"},
-    },
-    "low_effort": {
-        "type": "noul",
-        "instructions": "Do `launch.name` and `launch.symbol` look random, placeholder, test-like or low-effort?",
-        "criteria": {"true": "Keyboard mash, 'test', a single letter, or meaningless characters", "false": "A deliberate, readable name"},
-    },
-    "meme": {
-        "type": "noul",
-        "instructions": "Is `launch.name` a recognizable internet meme, joke, or currently popular cultural reference?",
-        "criteria": {"true": "Refers to a known meme, joke or trend", "false": "No meme or trend reference"},
-    },
-    "scam_wording": {
-        "type": "noul",
-        "instructions": "Do `launch.name` or `launch.symbol` use wording typical of scams, such as airdrop, giveaway, official, v2, free, or claim?",
-        "criteria": {"true": "Uses scam or impersonation wording", "false": "No such wording"},
-    },
-}
-FEATURES = ("copycat", "low_effort", "meme", "scam_wording")  # judgments used as model features
-QUESTION_VERSION = hashlib.sha1(json.dumps(QUESTIONS, sort_keys=True).encode()).hexdigest()[:10]
 
 FLAG_PHRASES = {
     "dev_dumped": "the creator sold almost all of their tokens",
@@ -118,27 +87,192 @@ def describe(state: dict) -> dict:
     }
 
 
-def build_request(state: dict, model: str = DEFAULT_MODEL, questions: dict | None = None) -> dict:
-    return {"state": describe(state), "model": model, "questions": questions or QUESTIONS}
+QUESTIONS: dict[str, dict] = {
+    "buy": {
+        "type": "noul",
+        "instructions": (
+            "`launch` describes a pump.fun memecoin in its first seconds of trading. If someone buys it now and "
+            "sells it 3 minutes later, will they get back more SOL than they paid, after about 3.5% in fees and slippage?"
+        ),
+        "criteria": {"true": "Selling after 3 minutes returns more than the purchase cost", "false": "It returns the same or less"},
+    },
+    "copycat": {
+        "type": "noul",
+        "instructions": "Do `launch.name` or `launch.symbol` copy or imitate an existing well-known coin, company, brand, product or celebrity?",
+        "criteria": {"true": "Imitates something that already exists and is well known", "false": "An original name, or a generic word"},
+    },
+    "low_effort": {
+        "type": "noul",
+        "instructions": "Do `launch.name` and `launch.symbol` look random, placeholder, test-like or low-effort?",
+        "criteria": {"true": "Keyboard mash, 'test', a single letter, or meaningless characters", "false": "A deliberate, readable name"},
+    },
+    "meme": {
+        "type": "noul",
+        "instructions": "Is `launch.name` a recognizable internet meme, joke, or currently popular cultural reference?",
+        "criteria": {"true": "Refers to a known meme, joke or trend", "false": "No meme or trend reference"},
+    },
+    "scam_wording": {
+        "type": "noul",
+        "instructions": "Do `launch.name` or `launch.symbol` use wording typical of scams, such as airdrop, giveaway, official, v2, free, or claim?",
+        "criteria": {"true": "Uses scam or impersonation wording", "false": "No such wording"},
+    },
+}
+FEATURES = ("copycat", "low_effort", "meme", "scam_wording")  # judgments used as model features
 
 
-def parse_answers(body: dict, questions: dict | None = None) -> dict[str, float]:
-    """{question id: P(yes)} for every Noul question asked."""
+
+def _noul(instructions: str, true: str, false: str) -> dict:
+    return {"type": "noul", "instructions": instructions, "criteria": {"true": true, "false": false}}
+
+
+def _score(instructions: str, levels: list[str]) -> dict:
+    return {"type": "score", "instructions": instructions, "criteria": levels}
+
+
+def describe_metadata(state: dict) -> dict:
+    """The launch's own words, for the metadata questions: name, symbol, description and links only
+    (TypeSafe: send only what the questions need)."""
+    meta = state.get("metadata") or {}
+    return {
+        "launch": {
+            "name": state.get("name") or meta.get("name") or "",
+            "symbol": state.get("symbol") or meta.get("symbol") or "",
+            "description": str(meta.get("description") or "")[:600],
+            "twitter": str(meta.get("twitter") or ""),
+            "website": str(meta.get("website") or ""),
+        }
+    }
+
+
+METADATA_QUESTIONS: dict[str, dict] = {
+    "explains": _noul(
+        "Does `launch.description` explain what the token is about?",
+        "At least one sentence describing the token's idea, story or purpose",
+        "Empty, a single word, or text unrelated to the token",
+    ),
+    "news_event": _noul(
+        "Is the token about a specific recent news story, viral post, or event?",
+        "Refers to a particular recent event, announcement or viral moment",
+        "No specific recent event",
+    ),
+    "famous_person": _noul(
+        "Does the token refer to a real, well-known person such as a celebrity, politician, billionaire or influencer?",
+        "Names or clearly refers to a real famous person",
+        "No real famous person",
+    ),
+    "famous_link": _noul(
+        "Does `launch.twitter` or `launch.website` link to an account or post of a well-known person, company or media outlet?",
+        "The link belongs to a famous person, a major company, or a news outlet",
+        "No link, or a link to an unknown account or the token's own pages",
+    ),
+    "utility_claim": _noul(
+        "Does `launch.description` claim the token has a real product, app, platform or utility?",
+        "Claims a working product, tool, platform or use",
+        "Only a meme, joke or story",
+    ),
+    "ai_theme": _noul("Is the token themed around AI, AI agents or robots?", "AI, agents or robots are the theme", "Another theme"),
+    "animal": _noul("Is the token themed around an animal or an animal character?", "An animal or animal character is the theme", "Another theme"),
+    "spam_text": _noul(
+        "Does `launch.description` look like spam, copied filler, or random text?",
+        "Spam, filler, keyword stuffing, or random characters",
+        "Empty, or normal written text",
+    ),
+    "hype": _noul(
+        "Does `launch.description` promise price gains, such as '100x', 'to the moon', or guaranteed returns?",
+        "Promises or predicts price gains",
+        "No promise of gains",
+    ),
+    "relaunch": _noul(
+        "Does the token present itself as a community takeover, a relaunch, or a second version of another token?",
+        "Says it is a community takeover (CTO), relaunch, or v2 of something",
+        "Presents itself as new",
+    ),
+    "name_matches": _noul(
+        "Do `launch.name` and `launch.description` describe the same idea?",
+        "The description is about the thing the name refers to",
+        "The description is empty, or about something else",
+    ),
+    "copycat": QUESTIONS["copycat"],
+    "low_effort": QUESTIONS["low_effort"],
+    "meme": QUESTIONS["meme"],
+    "scam_wording": QUESTIONS["scam_wording"],
+    "narrative": _score(
+        "How strong and catchy is the token's idea for crypto meme traders?",
+        ["No discernible idea", "A generic or weak idea", "A clear idea with some appeal", "A strong, catchy, timely idea"],
+    ),
+    "effort": _score(
+        "How much care went into the token's presentation in `launch` (name, symbol, description and links)?",
+        ["None: empty or placeholder", "Minimal: a name and little else", "Moderate: a real description or links", "Polished: a clear description and fitting links"],
+    ),
+}
+
+
+@dataclass(frozen=True)
+class QuestionSet:
+    """Questions asked together in one request, the state they see, and the answer columns used as features."""
+
+    name: str
+    questions: dict
+    describe: Callable[[dict], dict]
+    features: tuple[str, ...]
+
+    @property
+    def version(self) -> str:
+        """Cache key: changes whenever a question's wording does (same formula as the first cache files)."""
+        return hashlib.sha1(json.dumps(self.questions, sort_keys=True).encode()).hexdigest()[:10]
+
+    @property
+    def columns(self) -> tuple[str, ...]:
+        """Answer columns: a Noul gives its probability; a Score gives its level and its uncertainty."""
+        cols = []
+        for qid, q in self.questions.items():
+            cols.append(qid)
+            if q["type"] == "score":
+                cols.append(f"{qid}_unc")
+        return tuple(cols)
+
+
+LAUNCH = QuestionSet("launch", QUESTIONS, describe, FEATURES)
+METADATA = QuestionSet(
+    "metadata", METADATA_QUESTIONS, describe_metadata, tuple(c for c in QuestionSet("m", METADATA_QUESTIONS, describe_metadata, ()).columns)
+)
+QUESTION_SETS = {qs.name: qs for qs in (LAUNCH, METADATA)}
+
+
+def build_request(state: dict, model: str = DEFAULT_MODEL, questions: QuestionSet = LAUNCH) -> dict:
+    return {"state": questions.describe(state), "model": model, "questions": questions.questions}
+
+
+def parse_answers(body: dict, questions: QuestionSet | dict = LAUNCH) -> dict[str, float]:
+    """{column: value}: P(yes) for a Noul; level and uncertainty (1 - confidence) for a Score."""
+    asked = questions.questions if isinstance(questions, QuestionSet) else questions
     answers = body.get("answers") if isinstance(body, dict) else None
     out = {}
-    for qid in questions or QUESTIONS:
+    for qid, question in asked.items():
         answer = (answers or {}).get(qid)
-        value = answer.get("noul") if isinstance(answer, dict) else None
-        if not isinstance(value, (int, float)) or not 0.0 <= value <= 1.0:
-            raise JevFormatError(f"no noul for {qid!r} in the response: {str(body)[:300]}")
-        out[qid] = float(value)
+        if not isinstance(answer, dict):
+            raise JevFormatError(f"no answer for {qid!r} in the response: {str(body)[:300]}")
+        if question["type"] == "noul":
+            value = answer.get("noul")
+            if not isinstance(value, (int, float)) or not 0.0 <= value <= 1.0:
+                raise JevFormatError(f"bad noul for {qid!r}: {str(answer)[:200]}")
+            out[qid] = float(value)
+        elif question["type"] == "score":
+            level, confidence = answer.get("score"), answer.get("confidence")
+            if not isinstance(level, (int, float)) or not isinstance(confidence, (int, float)):
+                raise JevFormatError(f"bad score for {qid!r}: {str(answer)[:200]}")
+            out[qid] = float(level)
+            out[f"{qid}_unc"] = 1.0 - float(confidence)
+        else:
+            raise JevFormatError(f"unsupported question type {question['type']!r}")
     return out
 
 
 class JevClient:
     """Asks Jev about launches, caching answers by mint (and question version) in a JSON-lines file."""
 
-    def __init__(self, *, api_key: str | None = None, url: str | None = None, model: str | None = None, cache: str | Path | None = None, client: httpx.Client | None = None, timeout: float = 10.0, workers: int = 4, retries: int = 4):
+    def __init__(self, *, questions: QuestionSet = LAUNCH, api_key: str | None = None, url: str | None = None, model: str | None = None, cache: str | Path | None = None, client: httpx.Client | None = None, timeout: float = 10.0, workers: int = 4, retries: int = 4):
+        self.questions = questions
         self.url = url or os.environ.get("TYPESAFE_URL") or DEFAULT_URL
         self.model = model or os.environ.get("TYPESAFE_MODEL") or DEFAULT_MODEL
         key = api_key if api_key is not None else os.environ.get("TYPESAFE_API_KEY")
@@ -153,14 +287,14 @@ class JevClient:
             for line in self.cache_path.read_text().splitlines():
                 if line.strip():
                     row = json.loads(line)
-                    if row.get("version") == QUESTION_VERSION:
+                    if row.get("version") == questions.version:
                         self.cache[row["mint"]] = row["answers"]
 
     def ask(self, state: dict) -> dict[str, float]:
         mint = state.get("mint")
         if mint and mint in self.cache:
             return self.cache[mint]
-        body = build_request(state, self.model)
+        body = build_request(state, self.model, self.questions)
         for attempt in range(self.retries + 1):
             started = time.perf_counter()
             try:
@@ -180,13 +314,13 @@ class JevClient:
         usage = data.get("usage") or {}
         self.tokens["input"] += usage.get("input_tokens", 0)
         self.tokens["output"] += usage.get("output_tokens", 0)
-        answers = parse_answers(data)
+        answers = parse_answers(data, self.questions)
         if mint:
             self.cache[mint] = answers
             if self.cache_path is not None:
                 self.cache_path.parent.mkdir(parents=True, exist_ok=True)
                 with self.cache_path.open("a") as out:
-                    out.write(json.dumps({"mint": mint, "version": QUESTION_VERSION, "answers": answers}) + "\n")
+                    out.write(json.dumps({"mint": mint, "version": self.questions.version, "set": self.questions.name, "answers": answers}) + "\n")
         return answers
 
     def ask_many(self, states: list[dict]) -> list[dict[str, float]]:
@@ -196,8 +330,8 @@ class JevClient:
             return list(pool.map(self.ask, states))
 
     def features(self, states: list[dict]) -> np.ndarray:
-        """The semantic judgments (`FEATURES`) for each state, as a matrix."""
-        return np.array([[a[k] for k in FEATURES] for a in self.ask_many(states)], dtype=float)
+        """The question set's feature columns for each state, as a matrix."""
+        return np.array([[a[k] for k in self.questions.features] for a in self.ask_many(states)], dtype=float)
 
     def latency_summary(self) -> dict:
         if not self.latencies:

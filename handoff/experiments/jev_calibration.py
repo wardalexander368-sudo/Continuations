@@ -3,7 +3,8 @@ sys.path.insert(0, '.')
 from tartar.data.dataset import load_trade_tokens
 from tartar.decide import launch_states
 from tartar.profit import Costs, Exit, curves_for, label_round_trips
-from tartar.jev import QUESTIONS, QUESTION_VERSION
+from tartar.jev import LAUNCH, QUESTIONS
+QUESTION_VERSION = LAUNCH.version
 tokens = load_trade_tokens('data/raw', 60); curves = curves_for(tokens)
 states = launch_states(tokens, curves, 20.0)
 ans = {}

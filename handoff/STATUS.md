@@ -37,8 +37,6 @@ next. Topic documents hold the detail:
 
 * **Predictor session** (session_01UeZ4ho5y38qR1iNxnShtwF, started 23:55 UTC 10-08): item 7 done; item 5 code on `main`, latency measurement running (own recorder in its own container, `data/raw_slots`); next **9** (pump.fun V2 decoding, below) and **4** (PumpSwap decoder). Touches `tartar/feeds/pumpchain.py` (+ new module for PumpSwap). Branch `claude/solana-candle-predictor-s95qjr`.
 
-* **Profitability session** (session_01U4x5qUJYMStcujpyLJgQ8N), since 00:05 UTC 10-09: **queue item 8, Jev feature discovery on launch metadata** (descriptions and links from each launch's metadata URI). New module `tartar/metadata.py`, Jev questions in `tartar/jev.py`. Branch `claude/jev-metadata`.
-
 ## Blockers (need the user)
 
 * ~~Network~~: **resolved 22:35 UTC**, the user enabled full network access.
@@ -76,12 +74,12 @@ next. Topic documents hold the detail:
 5. ~~**Record slot numbers**~~ **code on `main` 00:10 UTC 10-09**: raw create/trade/migrate events carry `"slot"`, ticks have `Tick.slot`. The fast loop records slots after its next restart from `main`. Latency-in-slots measurement: predictor session, in progress.
 6. ~~**Predictor open problems 3–5**~~ **done ~23:45 UTC 10-08** (predictor doc §8.4).
 7. ~~**Verify the pump.fun fee schedule**~~ **done 00:00 UTC 10-09**: decoded from real TradeEvents (89 trades): **0.95% protocol + 0.30% creator = 1.25% per side** on V1 curves at every curve stage sampled; buyers pay fees on top of the SOL that enters the curve, sellers have them deducted (checked against wallet balance changes). A few trades carry 0 fees. The `tartar profit` default is right. V2 curves (item 9) showed 0.95% + 2.5% creator in samples.
-8. **Jev feature discovery on launch metadata** (the user asked to focus
-   on Jev). Jev has only seen the name and symbol so far. Fetch each
-   launch's metadata (description, links), ask Jev narrow questions about
-   the text (TypeSafe's feature-discovery pattern), and test the answers as
-   features: train on train launches, choose on validation, report test
-   once. Promising questions go into shadow mode for live validation.
+8. ~~**Jev feature discovery on launch metadata**~~ **done 00:20 UTC
+   10-09** (`profitability.md` §3.8): 17 questions about description and
+   links, asked for all 3,523 launches. No added value: the best judgment
+   (`explains`, Spearman +0.08) is matched by counting the description's
+   characters in code, and Jev features lower test AUC (0.767 → 0.740). Not
+   worth adding to shadow mode. Caches: `handoff/data/jev/`.
 
 9. **Decode pump.fun V2 launches** (predictor session, in progress). ~1/3 of
    recorded launches (1,863 of 5,550 creates in `handoff/data/raw`) use
@@ -124,6 +122,18 @@ next. Topic documents hold the detail:
   branch `claude/profitability-backtest`, on `main`).
 
 ## Log (newest first)
+
+* **2026-10-09 00:20 UTC, profitability session:** Queue item 8 is done
+  (§3.8): `tartar/metadata.py` fetches launch metadata (Pinata gateway;
+  ipfs.io now refuses requests), and `tartar/jev.py` has question sets
+  (`LAUNCH`, `METADATA`) with Score answers as level + uncertainty. Jev's
+  metadata judgments add nothing beyond code features. Across §3.7–3.8, Jev
+  shows no predictive value for which launches beat costs. Answers and
+  metadata are cached in `handoff/data/jev/`. Scope: V1 launches only. The
+  V2 launches with dropped trades (item 9) never enter the evaluation set;
+  rerun §3.5–3.8 when V2 decoding lands. Earlier, at 00:03, I warned the
+  Jev session that its container had likely been suspended (idle since
+  23:45; first check-in 02:46) and that no live data was in git yet.
 
 * **2026-10-09 00:15 UTC, predictor session:** Item 7 done (fees verified,
   see queue). Item 5 code landed on `main`: slots in raw events and ticks.
