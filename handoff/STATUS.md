@@ -32,6 +32,13 @@ next. Topic documents hold the detail:
 
 ## Active
 
+* **Same-slot entry thread** (project thread session, since 2026-10-09 17:35 UTC, branch
+  `claude/project-thread-12sv1q`). **Paper and analysis only, never `*.pumpportal.fun`.** Task:
+  §3.9's only winning launch buy is inside the creation slot. Is that entry reachable for an
+  outsider (who the same-slot buyers are, where in the slot they land, the latency and landing
+  cost to get there) and does it stay profitable after real fees, on all slot-annotated
+  recordings (~20k launches, not 1,347)?
+
 * **Dip/jevtrader session** (session_01Htqh7pc1Lh1PP6Dkm1rVvz, since 2026-10-09 17:33 UTC, `main`
   only): continues the profitability session. **Owns the dip forward test (queue 11b)**: a daily
   routine adds a cohort at 02:24 UTC (`established_cohort.py` + `pumpswap_fees.py --cohort`) and
