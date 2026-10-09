@@ -329,7 +329,8 @@ next. Topic documents hold the detail:
   (`× (1 − w)`), chosen on hours 12–13 and confirmed on 14–16: trading gap 15s +1.17 → +0.41,
   30s +0.34 → −0.38, 1m +1.12 → +0.69, 5m +3.01 → +2.87; log loss ±0.0009 (honesty fix, not an
   accuracy gain). PumpSwap and online-only forecasts unchanged. 147 tests pass. **Next
-  (unclaimed): retrain the curve models on the newer recordings** (5m still ~3 points under).
+  (unclaimed): retrain the curve models on the newer recordings** (5m still ~3 points under;
+  don't install over `trades-60s`, `trades-300s` or `rug-20s` before the predictor-strategy forward test is evaluated (≤ 2026-10-12): its `evaluate` asserts their SHA-256).
   Also: LightGBM slows 10–50× on shared cores, cap `OMP_NUM_THREADS` (predictor doc §14).
 
 * **2026-10-09 17:46 UTC, same-slot entry thread: closed, not worth building** (profitability

@@ -113,7 +113,7 @@ The one place on-chain costs are tiny is SOL-USD itself, which is what the user'
 | **PumpSwap 5 m model** | failed its install rule on 48 test pools; retry when there are more graduated pools | when data allows |
 | **More data** | recorders running in the active sessions; finished hours go to `handoff/data/` | ongoing |
 | **Real-fill cost measurement** (PumpPortal, ~0.05 SOL) | blocked until the API key is stored as a secret; owned by the clever session's successor (`handoff/experiments/real_fills.py`) | after the key |
-| **Retrain the curve models on the newer recordings** (v3.2: `raw-clever` 12–16, `raw-clever2`, `raw-v3`) | open; the 5 m blend is ~3 points underconfident on these hours (predictor doc 8.4.1) | next |
+| **Retrain the curve models on the newer recordings** (v3.2: `raw-clever` 12–16, `raw-clever2`, `raw-v3`) | open; the 5 m blend is ~3 points underconfident on these hours (predictor doc 8.4.1). Train now, but don't install over `trades-60s`, `trades-300s` or `rug-20s` before the predictor-strategy forward test is evaluated (≤ 2026-10-12): its `evaluate` asserts their SHA-256 | install after 10-12 |
 
 ## 6. Decisions the user has made
 
