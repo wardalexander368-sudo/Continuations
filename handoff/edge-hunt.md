@@ -198,6 +198,13 @@ Hyperliquid's history. If it holds, the live version (our own decoder's revenue 
 00:00 UTC) is the next step. Scripts and outputs: `experiments/edge-hunt/pumpflow/`,
 `data/edge-hunt/pumpflow/`.
 
+**E1b. The same rule on 8 other buyback / revenue-share tokens: does not hold (2026-10-09).**
+Pre-registered before any of their data was read (`preregistration/revflow/SPEC.md`): HYPE, JUP,
+AAVE, DYDX, GMX, CAKE, SKY, BANANA on Hyperliquid. Equal-weight family −0.01%/day [−0.14, +0.13]
+(952 days), four tokens up and four down, none with an interval above zero
+(`preregistration/revflow/RESULT-2026-10-09.md`). The mechanism doesn't generalize, so E1's PUMP
+result is more likely luck or PUMP-specific; its forward test continues with a lower prior.
+
 ## Ranking (2026-10-09, dip/jevtrader session)
 
 1. **D, 14-day cross-sectional momentum on Hyperliquid perps:** test +1.50%/week after costs and
@@ -209,6 +216,7 @@ Hyperliquid's history. If it holds, the live version (our own decoder's revenue 
 5. **A3, funding dispersion:** chosen from 5 pairs, sign flips; weakest.
 * (added) **E1, pump.fun revenue surprise -> PUMP perp:** both halves positive after costs, each
   ~1.7 SE, beyond-trend part positive. **Forward test registered** (180 days, hourly Action).
+  E1b: the same rule on 8 other buyback tokens is flat (family −0.01%/day), so lower the prior.
 6. **D2, funding carry across perps:** loses; its reverse is weaker momentum (closed).
 * (added) **D3, volatility-scaled 14-day momentum:** val +2.15%, test +2.03%/week after lag, 20 bps and
   funding, both CIs above zero, but 0.87 correlated with D. **Forward test registered** (52 weeks, free).
