@@ -37,7 +37,10 @@ next. Topic documents hold the detail:
   §8.2.3) and `handoff/OVERVIEW.md` on `main`. Still in flight: recording `data/raw-v3` here since
   13:31 UTC (`tartar record --source chain` (the default) `--track-minutes 120 --pumpswap-hours
   4`, `SOLANA_COMMITMENT=processed`); finished hours go to `handoff/data/raw-v3/` (13–16 so far).
-  It dies when this session goes idle.
+  It dies when this session goes idle. **Now (17:40 UTC): item (b), the curve blends'
+  1.7–2.8 point underconfidence on trading candles** (unclaimed after the clever session's
+  17:20 notes): decompose the gap into the flat-vs-move call and the up/down call on unseen
+  hours; any change stays `domain == "trades"`.
 
 * **REAL MONEY — the PumpPortal wallet is owned by the clever session's successor (from ~17:20
   UTC 2026-10-09).** The user added the API key as an environment secret; only new sessions see
