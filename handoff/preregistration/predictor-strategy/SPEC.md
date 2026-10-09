@@ -57,3 +57,11 @@ pitfall its docstring warns about. Fixed to `min_candles=0` before any evaluatio
 unchanged. On the development data the fix leaves the picture as it was (later-40% numbers):
 1m p_up top 2%, P(rug)<0.1: −3.6% [−5.9, −1.6] (329); 5m p_clear > ~0.38, P(rug)<0.1:
 earlier −6.4% [−9.5, −3.4] (89), later +5.0% [−2.7, +13.0] (23).
+
+## Addendum, 2026-10-09 19:55 UTC: measured real costs (before any fresh launch was scored)
+The real-money cost test (STATUS, 19:46–19:49 UTC) found that trading through PumpPortal Lightning
+adds a 1% fee per side, which the paper model lacks, and that orders land ~1.4 s after sending. A
+fresh-token round trip then costs ~5.5%, not ~3.5%. `SPEC.json` and the success criterion are
+unchanged. `evaluate` now also prints each rule at **2.25% per side (1.25% pool + 1% Lightning)
+and 1.4 s latency**, on the same decisions. A SUCCESS whose real-cost line has a mean ≤ 0, or an
+interval reaching below 0, is not profitable to trade through Lightning.

@@ -153,6 +153,12 @@ def evaluate(dirs, count_only=False):
         res["role"] = r["role"]
         show(res)
         out["results"].append(res)
+        # addendum 2026-10-09 19:55 UTC: the same decisions at measured real costs (Lightning 1%/side, ~1.4 s landing)
+        real = Costs(size_sol=c["size_sol"], fee=c["fee_per_side"] + 0.01, network_sol=c["network_sol"], latency=1.4)
+        res2 = row(r["name"] + " @ real costs", trade(ds, curves, take, real, tf), real)
+        res2["role"] = r["role"] + " (addendum, not a criterion)"
+        show(res2)
+        out["results"].append(res2)
     if not count_only:
         print(json.dumps(out, indent=1, default=float))
 
