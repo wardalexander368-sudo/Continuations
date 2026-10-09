@@ -37,6 +37,8 @@ next. Topic documents hold the detail:
 
 
 
+* **Profitability session** (session_01U4x5qUJYMStcujpyLJgQ8N), since 01:00 UTC 10-09: **queue item 10, entry latency in slots**: how many slots after a launch a buy must land to beat costs (V1 and V2 fees), from `handoff/data/raw-slots`. Branch `claude/slot-profit`.
+
 ## Blockers (need the user)
 
 * ~~Network~~: **resolved 22:35 UTC**, the user enabled full network access.
@@ -118,6 +120,11 @@ next. Topic documents hold the detail:
    V2/V3 trades decode as before. **Fast loop:** after a restart from `main`
    the raw creates carry `"quote"`, so skip those launches. A quote-paired
    curve has no SOL price, and paper fills on it would be meaningless.
+
+10. **Entry latency in slots** (profitability session). Rerun §3.4 in slots:
+    net result of buying at launch slot + k for k = 0…100, at 1.25% and 3.45%
+    per side. That tells whether a private RPC or Jito-speed execution
+    could ever pay.
 
 ## Rules that hold across sessions
 
