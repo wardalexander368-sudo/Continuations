@@ -32,6 +32,14 @@ next. Topic documents hold the detail:
 
 ## Active
 
+* **Trading-skills thread → perps lane** (project thread session, since 2026-10-09 21:50 UTC,
+  branch `claude/project-thread-x7fh45`). Task (coordinator, under the user's "work nonstop"): new
+  edges on Hyperliquid perps with D's data and cost model: time-series trend on the majors,
+  short-term reversal, volatility- / volume-scaled momentum, open interest / liquidations. Same
+  train / validation / test splits as D, every rule counted, fees + funding. **Does not touch D's
+  registered test** (owned by the dip/jevtrader session) or `autotrade/` (owned by the handoff
+  session). Scripts in `handoff/experiments/edge-hunt/perps/`.
+
 * **Edge hunt E thread** (project thread session, since 2026-10-09 21:40 UTC, branch
   `claude/project-thread-9op3pf`). **Paper only, no real SOL, no keys.** Task (the user's 21:30
   "work continuously"): edge hunt angle E, TARTAR's assets, beyond the closed predictor + P(rug)
