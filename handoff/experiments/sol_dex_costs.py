@@ -2,6 +2,8 @@
 
     python3 handoff/experiments/sol_dex_costs.py sample [--minutes 60] [--every 30] [--size 1000] [--out data/sol-dex-costs.jsonl]
     python3 handoff/experiments/sol_dex_costs.py summary [--out data/sol-dex-costs.jsonl]
+    python3 handoff/experiments/sol_dex_costs.py decay [--minutes 60] [--every 20] [--out data/sol-dex-decay.jsonl]
+    python3 handoff/experiments/sol_dex_costs.py decay-summary [--out data/sol-dex-decay.jsonl]
 
 For the user's jevtrader (SOL-USD on Coinbase, 90 bps taker; day-28 break-even fees f*_X per
 fill): is there a venue where an arm's break-even fee is reachable? Each sample, at one moment:
@@ -16,6 +18,12 @@ Network costs are added in the summary: `--tx-usd` per transaction (default $0.0
 current priority fees on Jupiter's program are near zero). MEV (sandwiching) is not measured;
 small size with tight slippage limits it, and it is noted in the summary, not priced.
 Per-fill cost = half the round trip, comparable to jevtrader's FEE_BPS_COLUMNS (per fill).
+
+Quote decay (`decay`): a quote is not a fill. A decision taken on a quote lands a second or
+two later, at whatever the pools quote then (within the slippage limit). Each decay sample
+takes the buy quote (`size` USDC -> SOL) and the sell quote (that SOL -> USDC), then re-takes
+the very same quotes 1, 2 and 4 s later. The change is what acting on the first quote would
+cost or save by landing later: + = worse for the trader.
 """
 import argparse
 import json
@@ -33,7 +41,7 @@ JUP = "https://lite-api.jup.ag/swap/v1/quote"
 CB = "https://api.exchange.coinbase.com/products/SOL-USD/book?level=1"
 
 parser = argparse.ArgumentParser()
-parser.add_argument("mode", choices=("sample", "summary"))
+parser.add_argument("mode", choices=("sample", "summary", "decay", "decay-summary"))
 parser.add_argument("--minutes", type=float, default=60.0)
 parser.add_argument("--every", type=float, default=30.0)
 parser.add_argument("--size", type=float, default=1000.0, help="USD per trade (jevtrader's liq walks $1,000)")
@@ -106,4 +114,53 @@ def summary():
     print("not priced: MEV/sandwich risk (limit with small size and tight slippage), failed transactions, USDC/USD basis")
 
 
-sample() if args.mode == "sample" else summary()
+DELAYS = (1.0, 2.0, 4.0)
+
+
+def decay():
+    out.parent.mkdir(parents=True, exist_ok=True)
+    client = httpx.Client(timeout=15)
+    end = time.time() + args.minutes * 60
+    n = 0
+    while time.time() < end:
+        started = time.time()
+        try:
+            sol_out, buy_route, _ = quote(client, USDC, SOL, args.size * 1e6)
+            usdc_back, sell_route, _ = quote(client, SOL, USDC, sol_out)
+            row = {"t": datetime.now(timezone.utc).isoformat(timespec="seconds"), "size": args.size, "sol_in": sol_out / 1e9,
+                   "buy": [sol_out / 1e9], "sell": [usdc_back / 1e6], "at": [0.0], "buy_route": buy_route, "sell_route": sell_route}  # fmt: skip
+            for delay in DELAYS:
+                time.sleep(max(0.0, started + delay - time.time()))
+                at = time.time() - started
+                b, _, _ = quote(client, USDC, SOL, args.size * 1e6)
+                s_, _, _ = quote(client, SOL, USDC, sol_out)  # the same SOL amount as the first sell quote
+                row["buy"].append(b / 1e9)
+                row["sell"].append(s_ / 1e6)
+                row["at"].append(round(at, 3))
+            with out.open("a") as f:
+                f.write(json.dumps(row) + "\n")
+            n += 1
+        except (httpx.HTTPError, KeyError, ValueError, IndexError) as exc:
+            print(f"skip: {type(exc).__name__}: {exc}"[:200], file=sys.stderr)
+        time.sleep(max(0.0, args.every - (time.time() - started)))
+    print(f"{n} decay samples written to {out}")
+
+
+def decay_summary():
+    rows = [json.loads(line) for line in out.read_text().splitlines() if line.strip()]
+    buy = np.array([r["buy"] for r in rows])  # SOL received for `size` USDC, at 0, 1, 2, 4 s
+    sell = np.array([r["sell"] for r in rows])  # USDC received for the same SOL
+    at = np.array([r["at"] for r in rows])
+    print(f"{len(rows)} decay samples, {rows[0]['t']} .. {rows[-1]['t']}, ${rows[0]['size']:,.0f} per trade")
+    print("change vs the first quote, bps (+ = worse for the trader); the same quote re-taken later")
+    for k, delay in enumerate(DELAYS, start=1):
+        b = 1e4 * (1 - buy[:, k] / buy[:, 0])
+        s_ = 1e4 * (1 - sell[:, k] / sell[:, 0])
+        both = np.concatenate([b, s_])
+        print(f"  ~{delay:.0f} s (measured {np.median(at[:, k]):.2f} s): buy mean {b.mean():+.2f} median {np.median(b):+.2f} | "
+              f"sell mean {s_.mean():+.2f} median {np.median(s_):+.2f} | |change| p50 {np.median(np.abs(both)):.2f} p90 {np.quantile(np.abs(both), 0.9):.2f} max {np.abs(both).max():.2f}")
+    print("A trader with no timing edge pays the mean (≈0 if moves are symmetric) and carries the spread of |change|;")
+    print("a fill is cancelled if the move passes the slippage limit (50 bps in these quotes).")
+
+
+{"sample": sample, "summary": summary, "decay": decay, "decay-summary": decay_summary}[args.mode]()
