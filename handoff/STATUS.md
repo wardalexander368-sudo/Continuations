@@ -50,6 +50,12 @@ next. Topic documents hold the detail:
   "trades"` (PumpSwap blends are calibrated; `pumpswap-*` models are the handoff session's).
   Recording `data/raw-clever2` here since ~16:10 UTC (second recorder, as the handoff session
   asked; same flags as `raw-clever`); finished hours go to `handoff/data/raw-clever2/`.
+  **Forward check (16:30, unseen `raw-clever` hours 12–15, live replay on 1,000 tokens per
+  length):** (a) is gone: the 5m raw model at the open hits 74.8% vs 73.4% stated (the earlier
+  gap was the 10–12 UTC test window), so nothing to build for (a). (b) holds at every length:
+  trading candles hit 1.7–2.8 points above stated (15s 62.7/61.0, 30s 65.8/63.8, 1m 69.1/67.4,
+  5m 73.9/71.1). Now: choosing the curve blend's global prior on validation (§8.4 method),
+  `trades` domain only.
 
 ## Blockers (need the user)
 
