@@ -32,17 +32,6 @@ next. Topic documents hold the detail:
 
 ## Active
 
-* **Go-live path thread** (project thread session, since 2026-10-09 23:05 UTC, branch
-  `claude/project-thread-kytb6q`). **No keys, no real orders; dry-run and paper only.** Task (the
-  user's 22:58 check-in, via the coordinator): make `tartar/autotrade` able to trade a promoted
-  strategy live without manual steps once the user has given a standing approval: route selection
-  (Jupiter with `TARTAR_WALLET_KEY`, else Lightning with `PUMPPORTAL_API_KEY`), live sizing in SOL,
-  per-trade and daily loss limits, a live kill switch, and a fill log comparing each live fill with
-  its paper twin. Builds on the execution-cost thread's §3.19 and `jupiter_fills.py` (no route
-  re-measuring). **Agent-machinery thread:** I touch `broker.py` (wire `LiveBroker`), add
-  `tartar/autotrade/execution.py`, and add small hooks in `runner.py`/`risk.py`; config stays `paper`.
-  Please ping me (via the coordinator) before changing those parts.
-
 * **Trading-skills thread → new markets** (project thread session, since 2026-10-09 22:45 UTC,
   branch `claude/project-thread-x7fh45`). Task (coordinator, under the user's "work nonstop"):
   (1) Hyperliquid vaults / top traders: does following past winners beat cash after fees, with
@@ -50,11 +39,6 @@ next. Topic documents hold the detail:
   late-resolution drift on resolved-market history, net of fees and spread. Free public history
   only, paper, train/test, every rule counted. Scripts in `handoff/experiments/edge-hunt/vaults/`
   and `.../predmkt/`.
-
-* **Edge hunt round 2** (edge hunt E thread session, since 2026-10-09 23:20 UTC, branch
-  `claude/project-thread-9op3pf`). Paper only. Proposals and judging in `edge-hunt.md` "Round 2";
-  winner F1 (shorting newly listed Hyperliquid perps) pre-registered before its data was read:
-  `preregistration/listing-fade/SPEC.md`. Not touching D/D2/D3, vaults or Polymarket.
 
 * **Edge hunt E thread** (project thread session, since 2026-10-09 21:40 UTC, branch
   `claude/project-thread-9op3pf`). **Paper only, no real SOL, no keys.** Task (the user's 21:30
@@ -402,6 +386,40 @@ deep pools match the model, a thin one was 2.4x it). The `launch_selector` slot 
   branch `claude/profitability-backtest`, on `main`).
 
 ## Log (newest first)
+
+* **2026-10-09 23:55 UTC, perps route for live twins: dry, landed** (claim cleared). `tartar/autotrade/perps.py`
+  + `broker.py` hooks: intents with `meta.venue == "hyperliquid"` (xs_momentum's legs) get perp twins
+  priced on Hyperliquid's live L2 book (taker, $10 minimum, funding from history), same limits / kill
+  switches / `fills.jsonl` compare; kept legs roll at mid. `dry_all` mirrors unpromoted perp strategies
+  in `dry_live` (nothing at risk). Live perp orders are **not built**: they'd need the user's API wallet
+  (`HYPERLIQUID_AGENT_KEY`, `HYPERLIQUID_ACCOUNT`) and an EIP-712 signer (`autotrade.md`, *Perp twins*).
+  `dry-perp` CLI; 7 tests, 188 pass. No config change; `autotrade/` state untouched.
+
+* **2026-10-09 23:50 UTC, edge hunt round 2: F1 (short new HL listings) not confirmed, closed**
+  (claim cleared). Six proposals judged (`edge-hunt.md` "Round 2"); F1 pre-registered before its
+  data, run once: train loses at every rule (squeezes), validation +5.7% [−9.4, +19.6] (51),
+  test +2.9% [−28.3, +24.9] (7). `preregistration/listing-fade/RESULT-2026-10-09.md`. Nothing
+  half-done; F2 on hold, F3-F6 dropped (no data or no events).
+
+* **2026-10-09 23:40 UTC, trading-skills thread (new markets): vault following closed; HLP
+  holding pre-registered** (`edge-hunt.md` §G). 3,206 vaults incl. closed ones, 18 follow-the-winner
+  rules: none has train and validation both positive. HLP itself beat cash in every split (test
+  +1.33%/month); registered a 180-day test against a 5% hurdle (`preregistration/hlp-hold/`,
+  scorer `experiments/edge-hunt/vaults/hlp_forward.py`). **Handoff session (`autotrade/`): HLP
+  holding is a candidate paper strategy** (one position, valued from HLP's history). Polymarket
+  study running next.
+
+* **2026-10-09 23:35 UTC, go-live path thread: live twins built, dry only** (`handoff/autotrade.md`
+  *Going live*). `LiveBroker` keeps the paper book and mirrors each entry of a **promoted** strategy
+  with a twin in SOL: route Jupiter (`TARTAR_WALLET_KEY`) else Lightning (`PUMPPORTAL_API_KEY` +
+  `live.lightning_wallet`) else none (`execution.py`). Live-only limits in SOL (0.01/trade, 0.03
+  budget, 0.01 reserve, 0.01/day loss cap, 25% per-trade and 3-point fill-vs-paper divergence halts),
+  kill switches `HALT_LIVE` / Actions var `TARTAR_LIVE_KILL`, orphan tracking, `fills.jsonl` with
+  each twin against its paper twin, `preflight` and `dry-swap` commands; 18 tests. Committed config
+  is now `dry_live` (quote-only twins, nothing signed); `autotrade.yml` passes the secrets through
+  (unset = off). Real twins need the user once: `mode: live`, `live_approved_on` = Actions secret
+  `TARTAR_LIVE_APPROVED`, plus `TARTAR_WALLET_KEY`. **Gaps for the user:** the hourly Action makes
+  dip signals too old to mirror (needs a `*/5` run), and perps rules have no live route. Claim cleared.
 
 * **2026-10-09 23:15 UTC, retrain thread: predictor v3.2 installed** (user's go on the thread's card;
   the predictor-strategy test that pinned the hashes was scored at 20:20). `trades-{15,30,60,300}s`

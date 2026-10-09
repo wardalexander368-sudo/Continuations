@@ -179,6 +179,22 @@ public API keeps no history (only the current snapshot), and Binance's OI histor
 so nothing to test yet; the `perps-ctx` GitHub Action snapshots every perp's OI, funding, mark and
 volume every 4 hours from 2026-10-09 (`data/edge-hunt/hl-ctx/`), enough for an OI study in a few months.
 
+### G. Following Hyperliquid vaults (2026-10-09, trading-skills thread): closed; HLP pre-registered
+
+Every Hyperliquid vault whose PnL ever reached $1k either way, **closed vaults included** (3,206 of
+9,477 listed; `experiments/edge-hunt/vaults/fetch_vaults.py`, `vault_follow.py`; output
+`data/edge-hunt/vaults/vault-follow.txt`). Monthly time-weighted returns from each vault's PnL and
+account-value history (points every ~14 days), net of the leader's 10% of gains. Rule: each month,
+among open vaults with ≥ $50k, buy the top N (5/10/20) by trailing 1/3/6-month return or return/std,
+hold a month (18 rules; train 2023-08..2024-12, validation 2025-01..06, test 2025-07..2026-09).
+**No rule has train and validation both positive**: past winners don't persist (top-5 by last month:
+train +2.1%/month, validation −12.0%), and the equal-weight average vault ≥ $50k lost −8.6%/month in
+validation. Few months have enough vaults, so every interval is wide. Top-trader leaderboards only
+show today's survivors, so they can't be tested honestly. **HLP itself** (the protocol vault, no
+commission) earned in every split (+1.33%/month [+0.18, +2.70] in test; 2025 +19%, 2026 YTD +8.1%,
+falling as it grows), so holding it against a 5% cash hurdle is **pre-registered** for 180 days:
+`preregistration/hlp-hold/SPEC.md`, scorer `experiments/edge-hunt/vaults/hlp_forward.py`.
+
 ### E. TARTAR's assets
 
 Covered by the fee-research thread's predictor + P(rug) strategy forward test (see STATUS.md);
@@ -216,12 +232,18 @@ E1b). Proposals, judged by this session under the three lenses (one judge, not t
 
 | # | Proposal | Payer | Econ | Test | Fit | Verdict |
 |---|---|---|---|---|---|---|
-| F1 | **Short newly listed HL perps** for 1-4 weeks | late hype buyers, crowded longs' funding | 3: fades of several % vs ~0.5% costs; squeezes | 4: ~180 listings since 2023 incl. delisted, free history, D-style forward test needs no collection | 4: one venue | **pre-registered** (`preregistration/listing-fade/SPEC.md`) |
+| F1 | **Short newly listed HL perps** for 1-4 weeks | late hype buyers, crowded longs' funding | 3: fades of several % vs ~0.5% costs; squeezes | 4: ~150 listings since 2023-09 incl. delisted, free history, D-style forward test needs no collection | 4: one venue | **closed:** not confirmed (below) |
 | F2 | Funding-spike event short (time series, per coin) | crowded longs | 2: overlaps D2's closed cross-section and momentum | 3 | 4 | hold; run only if F1 shows listing funding matters |
 | F3 | On-chain spot vs HL perp gap on memecoins listed on both (convergence) | impatient perp traders | 2: gaps above ~1% are brief; our latency 1.2-1.5 s | 1: no history, must record seconds-level data first | 3: two venues | drop for now |
 | F4 | Token-unlock shorts | unlock sellers | 3 | 1: unlock calendars are paid-only (DefiLlama emissions 402) | 4 | drop (no free data) |
 | F5 | HL pre-market "hyperps" converging at spot launch | pre-market buyers | 2: few events | 1: a handful a year | 3 | drop |
 | F6 | Decoder flow (pump.fun-born tokens) leading their HL perp | on-chain buyers | 2: few such perps, flow mostly off pump venues after graduation | 2 | 3 | drop |
+
+**F1 result (closed).** Chosen on train (k=3, H=7; every train rule lost, −12% to −48% mean,
+medians ~0), validation +5.7% [−9.4, +19.6] (51 listings), test +2.9% [−28.3, +24.9] (7 listings).
+The median listing fades (short +13%, 2/3 win in 2025-26) but squeezes own the mean (PANDORA
+−1,888%, JUP pre-market, PNUT −285%). `preregistration/listing-fade/RESULT-2026-10-09.md`.
+Round 2 has nothing registered; F2 (funding-spike shorts) stays on hold.
 
 ## Ranking (2026-10-09, dip/jevtrader session)
 
@@ -235,6 +257,8 @@ E1b). Proposals, judged by this session under the three lenses (one judge, not t
 * (added) **E1, pump.fun revenue surprise -> PUMP perp:** both halves positive after costs, each
   ~1.7 SE, beyond-trend part positive. **Forward test registered** (180 days, hourly Action).
   E1b: the same rule on 8 other buyback tokens is flat (family −0.01%/day), so lower the prior.
+* (added) **G, HLP holding:** +11–28% a year in recent halves vs a 5% hurdle, thin and decaying.
+  **Forward test registered** (180 days, free). Following past-winner vaults: closed.
 6. **D2, funding carry across perps:** loses; its reverse is weaker momentum (closed).
 * (added) **D3, volatility-scaled 14-day momentum:** val +2.15%, test +2.03%/week after lag, 20 bps and
   funding, both CIs above zero, but 0.87 correlated with D. **Forward test registered** (52 weeks, free).
