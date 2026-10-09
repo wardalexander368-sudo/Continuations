@@ -51,6 +51,11 @@ next. Topic documents hold the detail:
   only, paper, train/test, every rule counted. Scripts in `handoff/experiments/edge-hunt/vaults/`
   and `.../predmkt/`.
 
+* **Edge hunt round 2** (edge hunt E thread session, since 2026-10-09 23:20 UTC, branch
+  `claude/project-thread-9op3pf`). Paper only. Proposals and judging in `edge-hunt.md` "Round 2";
+  winner F1 (shorting newly listed Hyperliquid perps) pre-registered before its data was read:
+  `preregistration/listing-fade/SPEC.md`. Not touching D/D2/D3, vaults or Polymarket.
+
 * **Edge hunt E thread** (project thread session, since 2026-10-09 21:40 UTC, branch
   `claude/project-thread-9op3pf`). **Paper only, no real SOL, no keys.** Task (the user's 21:30
   "work continuously"): edge hunt angle E, TARTAR's assets, beyond the closed predictor + P(rug)

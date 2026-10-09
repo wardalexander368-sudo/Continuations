@@ -205,6 +205,24 @@ AAVE, DYDX, GMX, CAKE, SKY, BANANA on Hyperliquid. Equal-weight family −0.01%/
 (`preregistration/revflow/RESULT-2026-10-09.md`). The mechanism doesn't generalize, so E1's PUMP
 result is more likely luck or PUMP-specific; its forward test continues with a lower prior.
 
+## Round 2: venues where costs are small next to the signal (2026-10-09 ~23:20 UTC, edge hunt E thread)
+
+Brief (coordinator, under the user's "work continuously"): Hyperliquid perps, big Solana tokens near
+Jupiter's ~1% round trip, funding or basis. Excluded as done or claimed: price momentum, trend,
+reversal and cross-sectional funding on perps (D, D2, D3), LST and JLP carry (A1, A2), cross-venue
+funding (A3), CEX lead-lag (B), vaults and Polymarket (trading-skills thread), revenue flow (E1,
+E1b). Proposals, judged by this session under the three lenses (one judge, not three; scores
+1-5, written before any of the proposals' data was read):
+
+| # | Proposal | Payer | Econ | Test | Fit | Verdict |
+|---|---|---|---|---|---|---|
+| F1 | **Short newly listed HL perps** for 1-4 weeks | late hype buyers, crowded longs' funding | 3: fades of several % vs ~0.5% costs; squeezes | 4: ~180 listings since 2023 incl. delisted, free history, D-style forward test needs no collection | 4: one venue | **pre-registered** (`preregistration/listing-fade/SPEC.md`) |
+| F2 | Funding-spike event short (time series, per coin) | crowded longs | 2: overlaps D2's closed cross-section and momentum | 3 | 4 | hold; run only if F1 shows listing funding matters |
+| F3 | On-chain spot vs HL perp gap on memecoins listed on both (convergence) | impatient perp traders | 2: gaps above ~1% are brief; our latency 1.2-1.5 s | 1: no history, must record seconds-level data first | 3: two venues | drop for now |
+| F4 | Token-unlock shorts | unlock sellers | 3 | 1: unlock calendars are paid-only (DefiLlama emissions 402) | 4 | drop (no free data) |
+| F5 | HL pre-market "hyperps" converging at spot launch | pre-market buyers | 2: few events | 1: a handful a year | 3 | drop |
+| F6 | Decoder flow (pump.fun-born tokens) leading their HL perp | on-chain buyers | 2: few such perps, flow mostly off pump venues after graduation | 2 | 3 | drop |
+
 ## Ranking (2026-10-09, dip/jevtrader session)
 
 1. **D, 14-day cross-sectional momentum on Hyperliquid perps:** test +1.50%/week after costs and
