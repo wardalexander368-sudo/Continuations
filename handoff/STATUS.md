@@ -74,6 +74,14 @@ next. Topic documents hold the detail:
     No tested rule beats a round trip (§3.2–3.16).
   - Code and log: `handoff/experiments/real_fills.py`, results in `handoff/data/real-fills/` and
     profitability §3.17 (in progress).
+  - **BLOCKED 17:15 UTC, nothing traded or spent:** PumpPortal's `/api/trade` answers 403 "Must
+    supply a valid API key" to every request from this container (no key, or a dummy `api-key`):
+    the proxy's PumpPortal injection does not reach the trade endpoint. **Needs the user:** store
+    the Lightning wallet's API key as an environment secret named `PUMPPORTAL_API_KEY` (cloud
+    environment settings; never in chat). New sessions pick it up; the script reads it from there.
+    Then: `python3 handoff/experiments/real_fills.py probe` (a sell of a token not held, with
+    simulation on: must no longer say 403), then `roundtrip --mint <liquid PumpSwap token> --real`
+    (plan: CATE `Ai66LHZG9MCzg1WKdawwqduVAXpNDUuV8M3uyq5ppump`, pool `pump-amm`, ~$2.6M liquidity).
 
 ## Blockers (need the user)
 
