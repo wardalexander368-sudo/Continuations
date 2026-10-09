@@ -7,7 +7,8 @@ closes of every Hyperliquid perp (56 delisted included), universe = 60 days of h
 median USD volume >= $2M, train 2023-07..2025-03, validation 2025-04..2025-12, test 2026-01..10,
 cost per side per unit of turnover (10 bps default, as D's exploration), funding optional (hourly
 history cached by `crosssection/fetch_hl_funding.py`; longs pay, shorts receive). Every rule tried
-is printed and counted. `--lag 1` executes a day after the signal (as D's registration). A family's rule is chosen on train by mean weekly return, kept only if
+is printed and counted. `--funding-dir DIR` reads funding from another cache (e.g. one from
+`fetch_funding_since.py`, which only covers validation and test). `--lag 1` executes a day after the signal (as D's registration). A family's rule is chosen on train by mean weekly return, kept only if
 validation agrees in sign; test is reported for the chosen rule only (the others print "-").
 
 Families:
@@ -31,7 +32,7 @@ from pathlib import Path
 import numpy as np
 
 D = Path("handoff/data/edge-hunt/hl-daily")
-FUND = Path("handoff/data/edge-hunt/hl-funding")
+FUND = Path(sys.argv[sys.argv.index("--funding-dir") + 1]) if "--funding-dir" in sys.argv else Path("handoff/data/edge-hunt/hl-funding")
 SPLITS = {"train": ("2023-07-01", "2025-03-31"), "val": ("2025-04-01", "2025-12-31"), "test": ("2026-01-01", "2026-12-31")}
 COST = float(sys.argv[sys.argv.index("--cost-bps") + 1]) / 1e4 if "--cost-bps" in sys.argv else 0.0010
 USE_FUNDING = "--funding" in sys.argv

@@ -149,6 +149,36 @@ quintile, long the lowest) **loses in train at every lookback** (1/7/28 days: �
 validation and **+0.78% [−0.44, +2.13] on test**, and its weekly returns correlate 0.55 with D's
 momentum: mostly momentum again, weaker. Not registered. Script: `crosssection/xs_carry.py`.
 
+### D3. More rule families on Hyperliquid perps (2026-10-09, trading-skills thread): one pre-registered
+
+Same universe, splits and data as D (`experiments/edge-hunt/perps/perp_rules.py`; outputs
+`data/edge-hunt/perps/`). 24 rules in 7 families, each family's rule chosen on train, test read
+only if validation agrees. Settings below: 1-day execution lag, 20 bps per side, actual funding in
+validation and test (funding fetched since 2025-04 for the 118 coins the momentum rules held;
+`fetch_funding_since.py`).
+
+| Family (rules) | Chosen on train | Validation | Test (39 weeks) |
+|---|---|---|---|
+| time-series trend, BTC/ETH/SOL, weekly (L 7–112) | 56 d | −0.5% | not read |
+| time-series trend, daily (L 7–112) | 28 d | +0.1% at 10 bps; ≤ 0 here | +0.07% at 10 bps |
+| daily cross-sectional reversal (1/2/3 d) | loses in train (−2.3 to −2.9%/wk) | | not read |
+| **volatility-scaled momentum** (7/14/28 d) | **14 d** | **+2.15% [+0.46, +3.88]** | **+2.03% [+0.26, +3.97]** |
+| residual momentum vs BTC (7/14/28 d) | 14 d | +1.16% | +1.40% [−0.31, +3.28] |
+| volume-confirmed momentum (7/14/28 d) | 14 d | +2.9% at 10 bps | −0.02% |
+| nearness to the 30/90-day high | 30 d | ≤ 0 | not read |
+
+D's plain 14-day rule in the same settings: validation +0.63%, test +1.29% [−0.44, +3.21].
+Volatility-scaled momentum (14-day return / std of the last 14 daily returns) is the only rule whose
+validation and test intervals both clear zero; **its weekly returns correlate 0.87 with D's**, and
+the difference from D is not significant (test +0.51%/week [−0.38, +1.33] at 10 bps, no lag), so it
+is a better-behaved version of D, not an independent edge. Pre-registered anyway, since it passed
+held-out data and is free to score: `preregistration/vol-momentum/SPEC.md`, same 52 weeks as D,
+scorer `experiments/edge-hunt/perps/vmom_forward.py` (prints the difference from D as a secondary).
+Trend on the majors and short-term reversal: no edge. Open interest and liquidations: Hyperliquid's
+public API keeps no history (only the current snapshot), and Binance's OI history covers 30 days,
+so nothing to test yet; the `perps-ctx` GitHub Action snapshots every perp's OI, funding, mark and
+volume every 4 hours from 2026-10-09 (`data/edge-hunt/hl-ctx/`), enough for an OI study in a few months.
+
 ### E. TARTAR's assets
 
 Covered by the fee-research thread's predictor + P(rug) strategy forward test (see STATUS.md);
@@ -180,6 +210,8 @@ Hyperliquid's history. If it holds, the live version (our own decoder's revenue 
 * (added) **E1, pump.fun revenue surprise -> PUMP perp:** both halves positive after costs, each
   ~1.7 SE, beyond-trend part positive. **Forward test registered** (180 days, hourly Action).
 6. **D2, funding carry across perps:** loses; its reverse is weaker momentum (closed).
+* (added) **D3, volatility-scaled 14-day momentum:** val +2.15%, test +2.03%/week after lag, 20 bps and
+  funding, both CIs above zero, but 0.87 correlated with D. **Forward test registered** (52 weeks, free).
 Closed: C (PumpSwap LP, memecoin shorts), B's lead-lag/seasonality/seconds-scale prediction.
 
 

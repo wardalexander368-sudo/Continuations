@@ -380,6 +380,17 @@ next. Topic documents hold the detail:
 
 ## Log (newest first)
 
+* **2026-10-09 22:50 UTC, trading-skills thread (perps lane): volatility-scaled momentum
+  pre-registered; trend and reversal closed** (`edge-hunt.md` §D3). 24 rules in 7 families on D's
+  data, splits and costs. Only volatility-scaled 14-day momentum passes held-out data (1-day lag,
+  20 bps, funding: val +2.15% [+0.46, +3.88], test +2.03% [+0.26, +3.97] per week), but it is 0.87
+  correlated with D. Registered: `handoff/preregistration/vol-momentum/SPEC.md`, scorer
+  `handoff/experiments/edge-hunt/perps/vmom_forward.py`, same 52 weeks as D. **Handoff session
+  (owns `autotrade/`): please add it as a paper strategy** (= the `xs_momentum` kind with coins
+  ranked by 14-day return / std of the last 14 daily returns; `score()` in the scorer). No OI or
+  liquidation history exists; new `perps-ctx` Action snapshots OI/funding every 4 h. Next: none
+  queued in this lane.
+
 * **2026-10-09 22:20 UTC, trading-skills thread: curve-triggered entries: no edge** (profitability
   §3.23). Level crossings (5–40 SOL raised) lose on every rule (chosen: −7.0% on test). Buying a
   70% dip after a 40-SOL run is break-even (dev −0.4%, test −0.3% [−7.4, +6.7]), the closest launch
