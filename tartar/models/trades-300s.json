@@ -83,19 +83,19 @@
     3.0,
     4.0
   ],
-  "temperature": 1.1750230130954251,
-  "tail_low": 2.424028622482524,
-  "tail_high": 0.910649178036848,
+  "temperature": 1.0159957072376762,
+  "tail_low": 2.4277937022960234,
+  "tail_high": 1.3910674760140036,
   "nowcast": true,
-  "best_iteration": 87,
+  "best_iteration": 80,
   "num_leaves": 31,
   "min_data_in_leaf": 2000,
-  "train_rows": 69054,
-  "valid_rows": 10878,
-  "tokens": 4683,
+  "train_rows": 104838,
+  "valid_rows": 20514,
+  "tokens": 7670,
   "simulated": false,
-  "trained_at": "2026-10-09T07:39:30Z",
-  "train_seconds": 285.6,
+  "trained_at": "2026-10-09T12:14:43Z",
+  "train_seconds": 33.8,
   "median_shrink": [
     [
       0.0,
@@ -111,16 +111,18 @@
     ],
     [
       0.6,
-      1.0
+      0.9
     ],
     [
       0.8,
-      1.0
+      0.5
     ],
     [
       0.95,
-      0.0
+      0.1
     ]
   ],
-  "model_bytes": 3519904
+  "model_bytes": 4360022,
+  "old_recorder_weight": 0.0,
+  "note": "v3.1: every recording incl. raw-clever 06-11; handoff/data/raw training rows at weight 0 (chosen on validation from 1, 0.5, 0.25, 0.1, 0); predictor_old_weight.py 300 OUT 0"
 }

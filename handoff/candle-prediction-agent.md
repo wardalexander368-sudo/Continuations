@@ -44,7 +44,7 @@ split by launch), plus a candle-by-candle replay of the live forecaster.
 |---|---|
 | Repo / branch / PR | `StaticPush7217/TARTAR`. All work is on `main` (fast-forwarded from branch `claude/solana-candle-predictor-s95qjr`, PR #1) |
 | Live agent (`tartar watch`) | Works end to end against real tokens (pump.fun via chain, others via DexScreener/GeckoTerminal) |
-| Global models | **v3 installed** (2026-10-09, section 8.2.2c) for **15s, 30s, 1m and 5m** candles: `tartar/models/trades-{15s,30s,60s,300s}.*`, 4,700–9,200 real pump.fun launches (31 leaves, 2,000 rows per leaf). v2 is in 8.2.1–8.2.2, v1 (3,523 launches, 1m only) in 8.2 |
+| Global models | **v3.1 installed** (2026-10-09, section 8.2.2d) for **15s, 30s, 1m and 5m** candles: `tartar/models/trades-{15s,30s,60s,300s}.*`, 7,700–15,500 real pump.fun launches (31 leaves, 2,000 rows per leaf). v3 is in 8.2.2c, v2 in 8.2.1–8.2.2, v1 (3,523 launches, 1m only) in 8.2 |
 | Real-data result (v1, held-out later launches) | At candle open: hit 85.3% vs stated 85.2%, error **4.7% below naive**, 0.61 bits/row of information over the base rate; the 80% band covers 91.9% and states 91.3% (calibrated; the excess over 80% is the "no further trade" mass, section 8.2). Live replay (global + online): **edge +7.5%** on all candles, **+7.8%** on candles where the token is trading; hit 69.0% vs stated 67.8% there |
 | Online-only fallback | Fixed by the online-model review (section 11.1): now calibrated on real tokens (hit 79.3% vs stated 78.8%; trading 46.0% vs 45.1%), edge 0 (was −5.3%, and 23% hit at 52% stated on trading candles) |
 | Data recording | `tartar record` running in this container into `data/raw` (not in git; snapshot in `handoff/data/raw`) |
@@ -515,6 +515,28 @@ test 0.4219 / 0.4233 / 0.4318; installed 0.4255), and so does **15s** (validatio
 at full weight; 5m with the old-row weight chosen on validation. Also on these `raw-clever` test launches, the 1m
 live blend is **under**confident on trading candles: 69% hit vs 64% stated (all variants). Check
 the blend's global prior (0.95, §8.4) on new-style data when v3.1 is trained.
+
+### 8.2.2d v3.1: with `raw-clever` (installed 2026-10-09 ~13:35 UTC, all four candle lengths)
+
+Every curve recording including `raw-clever` hours 06–11 (14,796 launches at 1m, 15,485 at 15s,
+15,205 at 30s, 7,670 at 5m), 31 leaves / 2,000 rows per leaf. As planned in 8.2.2c: 15s, 30s and
+1m at full weight (`tartar train`); 5m with the old recorder's training rows weighted on
+validation (`predictor_old_weight.py 300 OUT 1,0.5,0.25,0.1,0`: validation log loss 0.9197 /
+0.9054 / 0.8989 / 0.8926 / **0.8822**, so weight 0; test 0.9909 / 0.9792 / 0.9864 / 0.9922 /
+0.9953). Each scored against installed v3 on its own test launches (the latest 15%, all
+`raw-clever`, ~10:00–12:00 UTC): `handoff/experiments/predictor-v3/v31-*`.
+
+| Candle | Test log loss, v3 → v3.1 | Edge at the open | Live replay edge, all / trading | Trading candles: hit vs stated, v3.1 (v3) |
+|---|---|---|---|---|
+| 15 s | 0.2815 → **0.2767** | +3.6% → **+3.8%** | +1.9 / +2.0% → **+2.2 / +2.4%** | 62.1% vs 60.2% (59.9% vs 58.8%) |
+| 30 s | 0.3618 → **0.3539** | +6.8% → **+7.4%** | +5.8 / +6.1% → +5.7 / +6.0% | 63.1% vs 61.6% (61.4% vs 60.3%) |
+| 1 m | 0.4339 → **0.4282** | +9.0% → **+10.3%** | +6.0 / +6.1% → **+8.0 / +8.2%** | 64.6% vs 64.3% (62.8% vs 63.2%) |
+| 5 m | 1.0894 → **0.9953** | +13.0% → **+15.0%** | +8.1 / +8.2% → **+11.9 / +12.2%** | 73.8% vs 73.4% (68.1% vs 69.4%) |
+
+All four installed (keep-better on test log loss). 5m at the open is still overconfident (hits
+69.7%, states 75.5%; v3: 60.1% vs 72.4%), half the gap. Its trading candles are calibrated.
+The 5m model was trained by the study script, not `tartar train` (which has no row weights):
+its metadata says so (`old_recorder_weight: 0`, `note`).
 
 ### 8.2.3 A model for graduated tokens on PumpSwap (code 2026-10-09; trained once data allows)
 

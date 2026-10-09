@@ -83,17 +83,19 @@
     3.0,
     4.0
   ],
-  "temperature": 1.0549246668235137,
-  "tail_low": 3.1708569820779346,
-  "tail_high": 1.8253236999557736,
+  "temperature": 1.0290630073915452,
+  "tail_low": 3.0800359291833868,
+  "tail_high": 1.9691552179029208,
   "nowcast": true,
-  "best_iteration": 97,
-  "train_rows": 260790,
-  "valid_rows": 57660,
-  "tokens": 8560,
+  "best_iteration": 156,
+  "num_leaves": 31,
+  "min_data_in_leaf": 2000,
+  "train_rows": 490356,
+  "valid_rows": 120666,
+  "tokens": 14796,
   "simulated": false,
-  "trained_at": "2026-10-09T06:27:59Z",
-  "train_seconds": 75.6,
+  "trained_at": "2026-10-09T12:20:37Z",
+  "train_seconds": 228.7,
   "median_shrink": [
     [
       0.0,
@@ -105,7 +107,7 @@
     ],
     [
       0.4,
-      1.0
+      0.9
     ],
     [
       0.6,
@@ -120,7 +122,5 @@
       0.0
     ]
   ],
-  "model_bytes": 8435186,
-  "num_leaves": 31,
-  "min_data_in_leaf": 2000
+  "model_bytes": 13917446
 }

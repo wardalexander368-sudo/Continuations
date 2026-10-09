@@ -68,10 +68,10 @@ next. Topic documents hold the detail:
    ~~**Predictor v3**~~ **installed 07:50 UTC 10-09** (clever session, predictor doc §8.2.2c):
    every curve recording incl. `raw-eager`, `--num-leaves 31 --min-leaf 2000`, all four candle
    lengths. On the same test launches it beats the installed models everywhere on log loss;
-   1m live edge +6.2% vs +4.7%, 5m +6.5% vs +4.6%. **Open:** the 5m model states ~70% at the open
-   and hits 61–65% on the newer launches: the old recorder's rows (75% of 5m training rows)
-   have a very different outcome mix (§8.2.2c). Retrain with `raw-clever` once it has a few
-   hours, trying down-weighted/dropped old rows at 5m.
+   1m live edge +6.2% vs +4.7%, 5m +6.5% vs +4.6%. **v3.1 installed ~13:35 UTC** (§8.2.2d): +`raw-clever`
+   06–11, and at 5m the old recorder's rows dropped (chosen on validation). Beats v3 on the
+   newest launches at every length (1m live edge +8.0% vs +6.0%, 5m +11.9% vs +8.1%). 5m at
+   the open is still ~6 points overconfident (was ~12).
 3. ~~**Longer holds on screened tokens**~~ **done 04:45 UTC 10-09: no edge** (§3.14). Fast-loop
    replays on every recording, screen 20 s–10 min × hold 10–45 min: all 24 rules lose on
    validation; the chosen one makes −12.5% [−17.6, −7.6] per trade on test. The median trade is
