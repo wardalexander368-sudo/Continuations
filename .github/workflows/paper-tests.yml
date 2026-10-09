@@ -1,0 +1,54 @@
+# Data collection for the pre-registered paper tests, without a Claude session.
+# Paper only: no wallet, no keys, nothing signed. Each job appends data and commits it to main.
+name: paper-tests
+
+on:
+  schedule:
+    - cron: "40 */4 * * *"   # hedged-JLP check-in (handoff/preregistration/jlp-hedged/SPEC.md)
+    - cron: "24 2 * * *"     # dip cohort (handoff/preregistration/dip-rolling/)
+  workflow_dispatch:
+    inputs:
+      job:
+        description: "jlp or dip"
+        default: "jlp"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: paper-tests-main
+  cancel-in-progress: false
+
+jobs:
+  collect:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install "httpx>=0.25" "numpy>=1.24"
+      - name: Run the job
+        env:
+          JOB: ${{ github.event_name == 'workflow_dispatch' && inputs.job || (github.event.schedule == '24 2 * * *' && 'dip' || 'jlp') }}
+        run: |
+          if [ "$JOB" = "dip" ]; then
+            out=$(python3 handoff/experiments/established_cohort.py | tee /dev/stderr)
+            file=${out%%:*}
+            python3 handoff/experiments/pumpswap_fees.py --cohort "$file" --save handoff/preregistration/dip-rolling/fees-measured.json
+            msg="Dip cohort (paper-tests action): $out"
+          else
+            line=$(python3 handoff/experiments/jlp_paper.py snapshot | tee /dev/stderr)
+            msg="JLP check-in (paper-tests action): ${line%% ->*}"
+          fi
+          git config user.name "tartar-paper-tests"
+          git config user.email "actions@users.noreply.github.com"
+          git add handoff/data/jlp-paper handoff/preregistration/dip-rolling
+          git commit -m "$msg"
+          for i in 1 2 3 4; do
+            git pull --rebase origin main && git push origin HEAD:main && exit 0
+            sleep $((2 ** i))
+          done
+          exit 1

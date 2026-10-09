@@ -33,14 +33,16 @@ next. Topic documents hold the detail:
 ## Active
 
 * **Dip/jevtrader session** (session_01Htqh7pc1Lh1PP6Dkm1rVvz, since 2026-10-09 17:33 UTC, `main`
-  only): continues the profitability session. **Owns the dip forward test (queue 11b)**: a daily
-  routine adds a cohort at 02:24 UTC (`established_cohort.py` + `pumpswap_fees.py --cohort`) and
-  scores it on 2026-10-30 or at 200 trades. **Owns the jevtrader day-28 readout (queue 12)**: a
+  only): continues the profitability session. **Owns the dip forward test (queue 11b)**: the GitHub
+  Action `.github/workflows/paper-tests.yml` adds a cohort at 02:24 UTC daily
+  (`established_cohort.py` + `pumpswap_fees.py --cohort`) and commits it; this session scores it
+  on 2026-10-30. **Owns the jevtrader day-28 readout (queue 12)**: a
   routine checks on 2026-10-24. Other sessions: no need to add cohorts by hand any more.
   **Owns the hedged-JLP paper forward test (queue 14, edge hunt A1)**, pre-registered
-  (`handoff/preregistration/jlp-hedged/SPEC.md`), window 2026-10-10 .. 2027-01-08: a routine
-  runs `handoff/experiments/jlp_paper.py snapshot` every 4 h and commits
+  (`handoff/preregistration/jlp-hedged/SPEC.md`), window 2026-10-10 .. 2027-01-08: the same
+  Action runs `handoff/experiments/jlp_paper.py snapshot` every 4 h (:40) and commits
   `handoff/data/jlp-paper/snapshots.jsonl`; score with `evaluate --final` on 2027-01-08.
+  Commits by `tartar-paper-tests` are this Action's; no Claude session is needed for either job.
 
 * **Predictor-strategy thread** (session continuing session_01YLnqLnTQzvD6HHUTvnNpVm, since 2026-10-09
   17:33 UTC, branch `claude/project-thread-mwc92g`). The user asked for continuous work toward profit
@@ -59,7 +61,18 @@ next. Topic documents hold the detail:
   17:20 notes): decompose the gap into the flat-vs-move call and the up/down call on unseen
   hours; any change stays `domain == "trades"`.
 
-* **REAL MONEY — the PumpPortal wallet is owned by the real-money thread session
+* **REAL MONEY — the PumpPortal wallet is owned by the "Real-money cost test" thread session
+  (session_016pSxch8d3Jna6ZzEsLhFVC, branch `claude/project-thread-yy6153`, from 17:40 UTC
+  2026-10-09).** Started after the host fix; this container's proxy injects the PumpPortal key for
+  the bare `pumpportal.fun`. Only this session sends `/api/trade` requests. Every real trade waits
+  for the user's go in the thread. **Probe 17:44 UTC: still 403 "Must supply a valid API key",
+  nothing traded or spent.** This session's proxy does list a PumpPortal credential for the bare
+  `pumpportal.fun` (and still `*.pumportal.fun`), so the host now matches but PumpPortal rejects
+  what arrives: likely the proxy injects the key somewhere PumpPortal doesn't read (it wants the
+  `?api-key=` query parameter), or the stored value isn't the Lightning wallet's key.
+  `PUMPPORTAL_API_KEY` is still unset. Needs the user: add `PUMPPORTAL_API_KEY` as an environment
+  variable (the script sends it as `?api-key=`), or check the stored credential value. Earlier history:
+* (was) **REAL MONEY — the PumpPortal wallet is owned by the real-money thread session
   (session_0173Md1HrgsAZHzbjLUmi64b, branch `claude/project-thread-2gop6x`, from 17:30 UTC
   2026-10-09).** The first successor (session_01RdY84M3yCZbssMGWNVdpQi) was interrupted while
   cloning and never ran a command. **Probe 17:28 UTC: still 403 "Must supply a valid API key",
