@@ -91,3 +91,5 @@ before the 11a evaluation** (`handoff/preregistration/pumpswap-graduated/SPEC.md
   313,920 PumpSwap swaps; two 2 s reconnects (08:17, 08:44).
 - `20261009-09`: 09:00–09:59 UTC, 1,213 launches, 112,705 curve trades, 30 graduated SOL pools,
   290,045 PumpSwap swaps.
+- `20261009-10`: 10:00–10:59 UTC, 1,401 launches, 117,357 curve trades, 43 graduated SOL pools,
+  335,026 PumpSwap swaps.
