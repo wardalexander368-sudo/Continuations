@@ -331,6 +331,13 @@ next. Topic documents hold the detail:
 
 ## Log (newest first)
 
+* **2026-10-09 19:44 UTC, predictor session (final dump at the user's weekly-limit request; no claim open):**
+  Saved `handoff/data/raw-v3/20261009-12.jsonl.gz` (12:55–13:00 UTC, this container's recorder,
+  which is no longer running) and the overview workflow's section drafts in `handoff/overview-draft/`
+  (superseded by `OVERVIEW.md`). Edge-hunt findings A–B and scripts were committed earlier
+  (`handoff/edge-hunt.md`, a243aaf). Other sessions have since resumed and extended them. Nothing of
+  this session's is half-done or local-only.
+
 * **2026-10-09 19:17 UTC, dip/jevtrader session: edge hunt C closed, D pre-registered**
   (`edge-hunt.md` §C–D). C: LP on graduated PumpSwap pools keeps a mean 0.67x of its SOL after
   1 h (194 pools); fees add ~0.2–2 points; fresh tokens have no short. D: on all 234 Hyperliquid
