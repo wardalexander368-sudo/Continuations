@@ -23,6 +23,7 @@ Where each family stands (2026-10-09):
 | Copy-trading wallets whose buys paid off | closed, loses | §3.15 |
 | Graduated tokens in their first hour on PumpSwap (fees 1.20–1.25%/side, §3.13) | closed, loses (pre-registered, 264 pools) | §3.16 |
 | Established memecoins: dip buying | rolling forward test, scored 2026-10-30 | §3.11 |
+| Predictor v3.1 candle calls + P(rug), held to the candle close (1m, 5m) | closed, loses (pre-registered, 108 trades) | §3.20 |
 | SOL-USD with Jev (the user's jevtrader) | sealed test ends 2026-10-23; on-chain costs ≈ 0.5 bps/fill | §3.12, `handoff/jevtrader.md` |
 
 ## 2. How it is measured (`tartar/profit.py`, `tartar profit`)
@@ -763,6 +764,27 @@ token-account rent, routes to the best pool, costs nothing to use, and is built.
 two 0.01 SOL round trips on CATE with `jupiter_fills.py roundtrip --real`, by the wallet's
 holder, once the user adds the key. For every rule, the cost bar falls by ~2 points: fresh
 curve tokens ~3.1% per round trip, large pools ~1%.
+
+### 3.20 Trading the predictor's candle calls with P(rug): no edge (pre-registered)
+
+Predictor v3.1's "live edge" (+8.0% at 1m, +11.9% at 5m) is a forecast-accuracy measure (point
+error against "the price stays put"), not a return. Test: at every candle open of a launch at
+least 20 s old, buy when a signal from the model's distribution of the close is high and the
+launch's 20 s P(rug) is low; sell at the candle's close (`handoff/experiments/predictor_strategy.py`;
+signals `p_clear` = P(close clears the 3.5% cost floor), `p_up`, trimmed expected return).
+
+* **Development** (6,336 launches, `raw-clever` 13–15 + `raw-clever2` 16, unseen by both models;
+  thresholds on the earlier 60%): 1m loses at every threshold in both halves (best: `p_up` top 2%,
+  P(rug) < 0.1, −3.6% [−5.9, −1.6] on the later 40%), about break-even *before* costs. The trimmed
+  expected return is harmful at both lengths (top rows −35% to −90%, collapsing tokens, as in §3.2).
+  P(rug) < 0.1 helps every signal by a few points. 5m was noisy (−6.4% earlier, +5.0% later on 23).
+* **Pre-registered forward test** (`handoff/preregistration/predictor-strategy/`, registered 18:36
+  UTC, scored once on 2,800+ fresh launches): **5m `p_clear` > 0.362, P(rug) < 0.1: −5.15%
+  [−11.85, +2.52] on 108 trades; −7.07% at measured Lightning costs. Not confirmed.** The 1m line:
+  −4.92% [−6.63, −3.37] on 590.
+* **Reading:** the predictor calls direction and flat-vs-move well, but the candles it likes do not
+  move enough to pay a 2.5–5.5% round trip. Holding to one candle's close is the horizon the model
+  is built for; longer holds are already closed (§3.14).
 
 ## 4. What this means for the plan
 

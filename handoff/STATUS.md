@@ -64,18 +64,6 @@ next. Topic documents hold the detail:
   Hyperliquid perp, signal Mondays 2026-10-12 .. 2027-10-11, scored from Hyperliquid history by
   `handoff/experiments/xs_momentum_forward.py` (no live collection). Edge hunt C is closed.
 
-* **Predictor-strategy thread** (session continuing session_01YLnqLnTQzvD6HHUTvnNpVm, since 2026-10-09
-  17:33 UTC, branch `claude/project-thread-mwc92g`). The user asked for continuous work toward profit
-  (17:32 UTC), which lifts the edge-hunt hold for this lane. **Task:** can predictor v3.1's live edge
-  plus P(rug) become a rule that is profitable after measured fees (1.25%/side on curves)? Pre-register,
-  paper-test on unseen launches, report net with n and 90% CI. No real SOL; stays off in-block
-  launch entry (the handoff thread's lead).
-  **18:55 UTC:** dev result (4 unseen hours): 1m loses at every threshold (best −3.6%), 5m noisy
-  (−6.4% earlier, +5.0% later, n=23). 5m rule pre-registered 18:36 UTC
-  (`handoff/preregistration/predictor-strategy/`); recorder `data/raw-pred` here since 17:33 UTC;
-  evaluate once at 100 primary trades or 2026-10-12. If this session dies, its unarchived
-  hours are lost; any recorder's hours after 18:36 UTC will do (`predictor_strategy.py evaluate DIR`).
-
 * **Handoff session** (session_01GAoiXJ4NHWXq6DnP61icSU, since 2026-10-09 13:28 UTC, branch
   `claude/handoff-overview`). **PumpSwap models done** (15s/30s/1m installed, 5m not; predictor doc
   §8.2.3) and `handoff/OVERVIEW.md` on `main`. Still in flight: recording `data/raw-v3` here since
@@ -358,6 +346,11 @@ next. Topic documents hold the detail:
   branch `claude/profitability-backtest`, on `main`).
 
 ## Log (newest first)
+
+* **2026-10-09 20:25 UTC, predictor-strategy thread: predictor v3.1 + P(rug) candle trading: no
+  edge** (profitability §3.20, pre-registered). Primary 5m rule −5.15% [−11.85, +2.52] on 108 fresh
+  trades (−7.07% at Lightning costs); 1m −4.92% [−6.63, −3.37] on 590. Data `handoff/data/raw-pred`
+  17:33–20:20 UTC. Recorder stopped; nothing half-done; claim cleared.
 
 * **2026-10-09 20:30 UTC, map + docs refresh thread: done** (docs only). OVERVIEW §4–6 now carry
   the real-fill result (−3.07% per round trip through Lightning, ~5.5% for a fresh token; Jupiter
