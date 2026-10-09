@@ -70,3 +70,14 @@ $1,000 round-trip quotes, re-quoted after 1/2/5 s, with Coinbase's book), 04:09â
 This is the **evaluation data of the pre-registered PumpSwap study**
 (`handoff/preregistration/pumpswap-graduated/SPEC.md`): don't compute returns on its PumpSwap
 pools before that evaluation is run and logged.
+
+## `raw-clever/` (clever session, from 2026-10-09 06:23 UTC)
+
+`tartar record --out data/raw-clever --pumpswap-hours 4 --hours 20` in the clever session's
+container, made the same way as `raw-eager` ("confirmed" commitment, current decoder), as
+evaluation data for the pre-registered PumpSwap study (queue 11a). One recorder, one timeline;
+hourly files are added as each hour finishes. **Don't compute returns on its PumpSwap pools
+before the 11a evaluation** (`handoff/preregistration/pumpswap-graduated/SPEC.md`).
+
+- `20261009-06`: 06:23â€“06:59 UTC, 770 launches, 67,525 curve trades, 17 graduated SOL pools,
+  44,917 PumpSwap swaps.
