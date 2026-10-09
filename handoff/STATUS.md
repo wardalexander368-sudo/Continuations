@@ -40,15 +40,12 @@ next. Topic documents hold the detail:
   evaluation, predictor v3.1 (§8.2.2c plan), SOL sampler 13–16 UTC.
 
 * **Predictor session** (session_01UeZ4ho5y38qR1iNxnShtwF, since 2026-10-09 12:55 UTC, branch
-  `claude/solana-candle-predictor-s95qjr`): **edge hunt**: survey strategy families not yet tested
-  (against the closed list in profitability §1), pre-register the most promising and run them on
-  free data (no real money, no Jev). Also `handoff/OVERVIEW.md` (project overview, the user's request).
-  Recording `data/raw_v3` in this container (`--pumpswap-hours 4 --track-minutes 120`).
-  **In flight (13:20 UTC):** two background workflows in this session: (1) edge-hunt design
-  (5 angles: SOL microstructure, perp funding carry, memecoin liquidity/short side, established
-  cross-section, TARTAR's own models; 3 adversarial judges each; ranked plan), to be saved as
-  `handoff/edge-hunt.md`; (2) the project overview, to be saved as `handoff/OVERVIEW.md`. **If this
-  session stops before they land, neither exists yet:** rerun them, or pick from the angles above.
+  `claude/solana-candle-predictor-s95qjr`): **edge hunt ON HOLD (user, ~13:25 UTC)**, with progress
+  saved in `handoff/edge-hunt.md`. Now: **the PumpSwap model** (`tartar train --raw raw-eager,raw-clever
+  --pumpswap`, compared with online-only; install only if it helps) and a `pumpswap` flat-candle
+  prior (the research session's after-11a list). Also `handoff/OVERVIEW.md` (project overview, the
+  user's request; a background workflow in this session, not yet landed). Recording `data/raw_v3`
+  here (`--pumpswap-hours 4 --track-minutes 120`); finished hours go to `handoff/data/raw-v3/`.
 
 ## Blockers (need the user)
 
@@ -193,6 +190,17 @@ next. Topic documents hold the detail:
     (was 0.585) since `sniped` / `concentrated` / `dev_dumped` alone are a caution. The
     `--next-launch` screen still skips those three (`ScamReport.avoid`), so its picks are
     unchanged; it shows P(rug) on every verdict and beside the watched token's level.
+
+14. **Edge hunt: new strategy families: ON HOLD by the user (2026-10-09 ~13:25 UTC).**
+    Resume only when the user asks. Exploratory findings and how to resume are in
+    `handoff/edge-hunt.md`:
+    - the best candidate is a **delta-hedged JLP** paper forward test (+7.9% APR over USDC lending,
+      90% CI [+3.0, +12.4], exploratory);
+    - SOL-USD microstructure at our latency (lead-lag, seconds-scale prediction, seasonality) is
+      mostly closed;
+    - crash reversal is real on Binance but not executable on-chain;
+    - three angles (memecoin liquidity/short side, established cross-section, TARTAR's own
+      assets) and the judging are not done.
 
 ## Rules that hold across sessions
 
