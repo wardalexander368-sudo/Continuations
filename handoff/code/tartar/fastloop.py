@@ -54,6 +54,10 @@ LIMITS = {
     "max_open": (1, 100),
     "max_entries_per_hour": (1, 1000),
     "daily_loss_limit_sol": (0.0, 100.0),
+    "runup_enter_sol": (20.0, 84.0),
+    "runup_exit_sol": (21.0, 85.0),
+    "runup_hold_seconds": (10.0, 7200.0),
+    "graduation_haircut": (0.0, 0.9),
 }
 SCORERS = ("rules", "jev")
 
@@ -84,6 +88,15 @@ class Policy:
     max_entries_per_hour: int = 60
     daily_loss_limit_sol: float = 1.0
     shadow_jev: bool = False  # ask Jev about every screened launch and journal its answers, without acting on them
+    # Graduation run-up (profitability.md 3.10): buy when a curve's real SOL raised first reaches
+    # runup_enter_sol, sell when it reaches runup_exit_sol or after runup_hold_seconds. None = off.
+    runup_enter_sol: float | None = None
+    runup_exit_sol: float = 80.0
+    runup_hold_seconds: float = 1800.0
+    # A curve that completes (graduates) stops trading on pump.fun: a buy after that fails, and a
+    # position still open is sold on PumpSwap, whose price isn't recorded yet. Value that sale at
+    # the final curve price less this haircut.
+    graduation_haircut: float = 0.10
     note: str = ""  # why the policy is what it is (written by whoever changed it)
 
     @classmethod
@@ -103,10 +116,12 @@ class Policy:
             raise PolicyError(f"scorer must be one of {SCORERS}")
         for name, (low, high) in LIMITS.items():
             value = getattr(self, name)
-            if value is None and name in ("take_profit", "stop_loss"):
+            if value is None and name in ("take_profit", "stop_loss", "runup_enter_sol"):
                 continue
             if not isinstance(value, (int, float)) or isinstance(value, bool) or not (low <= value <= high):
                 raise PolicyError(f"{name} = {value!r} is outside [{low}, {high}]")
+        if self.runup_enter_sol is not None and self.runup_exit_sol <= self.runup_enter_sol:
+            raise PolicyError("runup_exit_sol must be above runup_enter_sol")
         if not isinstance(self.shadow_jev, bool):
             raise PolicyError("shadow_jev must be true or false")
         if not all(isinstance(x, str) for x in list(self.skip_flags) + list(self.skip_levels)):
@@ -330,6 +345,9 @@ class Position:
     reason: str = "horizon"
     status: str = "pending"  # pending -> open -> closed (or cancelled)
     pnl_sol: float = 0.0
+    kind: str = "launch"  # launch: bought at the screen; runup: bought on the graduation run-up
+    exit_raised: float | None = None  # sell once the curve's real SOL raised reaches this
+    haircut: float = 0.0  # discount on a sale after the curve completed (sold on PumpSwap)
 
 
 class PaperBroker:
@@ -340,14 +358,21 @@ class PaperBroker:
         self.state: dict[str, tuple[float, float]] = {}  # mint -> (virtual SOL, price) after its last trade
         self.positions: dict[str, Position] = {}
         self.closed: list[Position] = []
+        self.completed: dict[str, float] = {}  # mint -> when its curve completed (graduated)
+
+    def complete(self, mint: str, t: float) -> None:
+        self.completed.setdefault(mint, t)
 
     def open_count(self) -> int:
         return sum(1 for p in self.positions.values() if p.status in ("pending", "open"))
 
-    def order(self, mint: str, decided_at: float, costs: Costs, rule: Exit, score: float | None) -> Position | None:
+    def order(
+        self, mint: str, decided_at: float, costs: Costs, rule: Exit, score: float | None, kind: str = "launch",
+        exit_raised: float | None = None, haircut: float = 0.0,
+    ) -> Position | None:
         if mint in self.positions:
             return None  # one position per token
-        position = Position(mint, decided_at, decided_at + costs.latency, costs, rule, score)
+        position = Position(mint, decided_at, decided_at + costs.latency, costs, rule, score, kind=kind, exit_raised=exit_raised, haircut=haircut)
         self.positions[mint] = position
         return position
 
@@ -361,7 +386,7 @@ class PaperBroker:
                 if due < now:
                     self._exit(position, due)
 
-    def on_trade(self, mint: str, t: float, vsol: float, price: float) -> None:
+    def on_trade(self, mint: str, t: float, vsol: float, price: float, raised: float | None = None) -> None:
         self.advance(t)
         self.state[mint] = (vsol, price)
         position = self.positions.get(mint)
@@ -372,16 +397,21 @@ class PaperBroker:
         if (rule.take_profit is not None and ratio >= 1.0 + rule.take_profit) or (rule.stop_loss is not None and ratio <= 1.0 - rule.stop_loss):
             position.reason = "take_profit" if ratio >= 1.0 else "stop_loss"
             position.exit_at = t + position.costs.latency
+        elif position.exit_raised is not None and raised is not None and raised >= position.exit_raised:
+            position.reason = "raised"
+            position.exit_at = t + position.costs.latency
 
     def close_all(self, now: float) -> None:
         self.advance(math.inf)
 
     def _fill(self, position: Position) -> None:
         state = self.state.get(position.mint)
-        if state is None:
+        done = self.completed.get(position.mint)
+        if state is None or (done is not None and position.fill_at >= done):
             position.status = "cancelled"
             self.positions.pop(position.mint)
-            self.journal.write({"e": "cancel", "t": position.fill_at, "mint": position.mint, "reason": "nothing traded yet"})
+            reason = "nothing traded yet" if state is None else "the curve completed before the buy landed"
+            self.journal.write({"e": "cancel", "t": position.fill_at, "mint": position.mint, "kind": position.kind, "reason": reason})
             return
         vsol, price = state
         c = position.costs
@@ -389,18 +419,25 @@ class PaperBroker:
         position.fill = c.size_sol / position.tokens
         position.deadline = position.fill_at + position.rule.horizon
         position.status = "open"
-        self.journal.write({"e": "fill", "t": position.fill_at, "mint": position.mint, "price": price, "avg_price": position.fill, "tokens": position.tokens, "size_sol": c.size_sol})
+        self.journal.write({
+            "e": "fill", "t": position.fill_at, "mint": position.mint, "kind": position.kind, "price": price,
+            "avg_price": position.fill, "tokens": position.tokens, "size_sol": c.size_sol,
+        })  # fmt: skip
 
     def _exit(self, position: Position, at: float) -> None:
         vsol, price = self.state[position.mint]
         c = position.costs
         proceeds = sell_sol(vsol, vsol / price, position.tokens, c.fee)
+        done = self.completed.get(position.mint)
+        if done is not None and at >= done:
+            position.reason = "after_graduation"
+            proceeds *= 1.0 - position.haircut
         position.pnl_sol = proceeds - c.size_sol - 2 * c.network_sol
         position.status = "closed"
         self.positions.pop(position.mint)
         self.closed.append(position)
         self.journal.write({
-            "e": "exit", "t": at, "mint": position.mint, "price": price, "reason": position.reason,
+            "e": "exit", "t": at, "mint": position.mint, "kind": position.kind, "price": price, "reason": position.reason,
             "pnl_sol": position.pnl_sol, "ret": position.pnl_sol / c.size_sol, "held": at - position.fill_at,
         })  # fmt: skip
 
@@ -436,7 +473,8 @@ class FastLoop:
         self._last_reload = -math.inf
         self.reload_every = reload_every
         self.now = 0.0
-        self.counts = {"launches": 0, "screened": 0, "skipped": 0, "asked": 0, "buys": 0, "errors": 0, "shadow": 0}
+        self.counts = {"launches": 0, "screened": 0, "skipped": 0, "asked": 0, "buys": 0, "errors": 0, "shadow": 0, "runups": 0}
+        self._runup_seen: set[str] = set()
         self.shadow_factory = shadow_factory
         self.shadow: ShadowAsker | None = None
         self._set_scorer()
@@ -465,6 +503,8 @@ class FastLoop:
         t = event.get("t", self.now)
         self.advance(t)
         kind, mint = event["e"], event.get("mint")
+        if event.get("quote"):
+            return  # quote-paired curve (USDC, other tokens): no SOL price, nothing to trade
         if kind == "create":
             creator = event.get("creator") or ""
             self.creators_of[mint] = creator
@@ -474,6 +514,8 @@ class FastLoop:
             self._trade(mint, event)
         elif kind == "trade":
             self._trade(mint, event)
+        elif kind == "migrate":
+            self.broker.complete(mint, t)
         elif kind == "untrack":
             self.builder.close(mint)
 
@@ -483,7 +525,30 @@ class FastLoop:
             return
         self.builder.tick(mint, tick)
         if tick.virtual_sol > 0:
-            self.broker.on_trade(mint, tick.ts, tick.virtual_sol, tick.price)
+            self.broker.on_trade(mint, tick.ts, tick.virtual_sol, tick.price, tick.liquidity)
+            enter = self.policy.runup_enter_sol
+            if enter is not None and tick.liquidity >= enter and mint not in self._runup_seen:
+                self._runup_seen.add(mint)
+                self._runup(mint, tick)
+
+    def _runup(self, mint: str, tick) -> None:
+        """The curve just reached the run-up entry level: buy unless a cap or an open position stops it."""
+        p = self.policy
+        self.counts["runups"] += 1
+        record = {"e": "runup", "t": tick.ts, "mint": mint, "raised": tick.liquidity, "price": tick.price, "enter": p.runup_enter_sol, "exit": p.runup_exit_sol}
+        reason = self._cap_reason(tick.ts)
+        if reason is None:
+            position = self.broker.order(
+                mint, tick.ts, p.costs(), Exit(p.runup_hold_seconds), None, kind="runup", exit_raised=p.runup_exit_sol, haircut=p.graduation_haircut
+            )
+            if position is None:
+                reason = "a position on this token is open"
+            else:
+                self._entries.append(tick.ts)
+                self.counts["buys"] += 1
+        if reason is not None:
+            record["skip"] = reason
+        self.journal.write(record)
 
     def advance(self, now: float) -> None:
         """Run everything due before `now` (call with the wall clock when the stream is quiet)."""
@@ -561,7 +626,7 @@ class FastLoop:
             record["error"] = d.error
             self.counts["errors"] += 1
         self.journal.write(record)
-        if buy and self.broker.order(d.mint, d.decided_at, p.costs(), p.exit_rule(), d.score) is not None:
+        if buy and self.broker.order(d.mint, d.decided_at, p.costs(), p.exit_rule(), d.score, haircut=p.graduation_haircut) is not None:
             self.counts["buys"] += 1
             self._entries.append(d.decided_at)
 

@@ -66,6 +66,11 @@ def review(records: list[dict], raw_dir: str | Path | None = None, timeframe: in
         "counts": dict(Counter(r["e"] for r in records)),
         "skips": dict(Counter(r["skip"].split(" ")[0] for r in screens.values() if "skip" in r)),
         "paper": {**_stats([r["ret"] for r in exits]), "total_sol": float(sum(r["pnl_sol"] for r in exits)), "reasons": dict(Counter(r["reason"] for r in exits))},
+        "paper_by_kind": {
+            kind: {**_stats([r["ret"] for r in exits if r.get("kind", "launch") == kind]), "total_sol": float(sum(r["pnl_sol"] for r in exits if r.get("kind", "launch") == kind))}
+            for kind in sorted({r.get("kind", "launch") for r in exits})
+        },
+        "runups": {"triggered": sum(1 for r in records if r["e"] == "runup"), "skipped": dict(Counter(r["skip"].split(" ")[0] for r in records if r["e"] == "runup" and "skip" in r))},
     }
     latencies = np.array([r["latency_ms"] for r in decisions.values() if r.get("latency_ms") is not None])
     scored = [r for r in decisions.values() if r.get("score") is not None]
@@ -189,6 +194,10 @@ def to_markdown(r: dict) -> str:
         "|---|---|---|---|---|",
         _line("paper trades (as run)", r["paper"]),
     ]
+    if len(r.get("paper_by_kind", {})) > 1 or "runup" in r.get("paper_by_kind", {}):
+        lines += [_line(f"  of which {kind} entries", v) for kind, v in r["paper_by_kind"].items()]
+    if r.get("runups", {}).get("triggered"):
+        lines += [f"| (graduation run-ups triggered: {r['runups']['triggered']}, skipped {r['runups']['skipped']}) | | | | |"]
     cf = r.get("counterfactual")
     if cf:
         lines += [

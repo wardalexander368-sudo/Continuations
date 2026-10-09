@@ -129,9 +129,11 @@ next. Topic documents hold the detail:
     first in slot +1, the best any outsider can do, loses 5.3%, and still
     −1.8% with zero fees and tips. **Launch buying is closed as a strategy
     family; faster infrastructure can't fix it.**
-11. **Next strategy families** (unclaimed): (a) graduated tokens on
-    PumpSwap: record them with the new decoder, then measure entries
-    around graduation and after it with `tartar profit`-style net results;
+11. **Next strategy families** (unclaimed): (a) ~~graduation run-up~~
+    **done 02:45 UTC 10-09: no edge** (§3.10; 75 → 80 SOL break-even
+    after fixing two biases, earlier entries lose). Still open: trading
+    graduated tokens *on PumpSwap*, which needs PumpSwap trades recorded for
+    the tokens we follow (the decoder exists);
     (b) longer-lived tokens (hours old, real liquidity) via DexScreener or
     PumpSwap trades; (c) a liquid market like SOL-USD where costs are tiny,
     e.g. Jev on news (the user's earlier `jevtrader` idea).
@@ -164,6 +166,17 @@ next. Topic documents hold the detail:
   branch `claude/profitability-backtest`, on `main`).
 
 ## Log (newest first)
+
+* **2026-10-09 02:45 UTC, profitability session:** Graduation run-up (item
+  11a): it first looked like +5.8%/trade, but that was two biases. Fast
+  graduations were dropped by the ≥3-candle filter, and length-biased
+  censoring dropped rugs. The fair replay through `FastLoop` (exclude only
+  recorder downtime) gives break-even at best. Code kept: `load_trade_tokens(...,
+  min_candles=0)` for trading studies; the fast loop has `runup_*` entries
+  (off by default), skips quote-paired launches, cancels buys on completed
+  curves, and values post-graduation exits with `graduation_haircut`.
+  **Everyone: for long-hold studies, replay through `FastLoop`; don't use
+  `load_trade_tokens` windows** (§3.10 lesson).
 
 * **2026-10-09 01:26 UTC, predictor session:**
   - Installed global models for 15s, 30s and 5m candles, on the same ~5,800

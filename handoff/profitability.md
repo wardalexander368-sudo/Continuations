@@ -25,7 +25,10 @@ close" and confidence as measurement, not as trade signals.
   All are flags: `--size --fee --network --latency`.
 * **Exits:** fixed hold, optional take-profit / stop-loss checked on every
   recorded trade, then executed after the latency.
-* **Unobserved exits are dropped.** Each token's window records why it ended
+* **Unobserved exits are dropped.** (Caution, see §3.10: a token's window
+  length depends on its fate, so this is only near-unbiased for short
+  holds. For long holds, replay through `FastLoop` and exclude by recorder
+  downtime.) Each token's window records why it ended
   (`TokenData.end_reason`). An exit after a *recording cut* (recorder
   stopped, long disconnect, tracking limit) has an unknown price, so the
   trade is dropped; the cut is unrelated to the token, so this doesn't bias
@@ -307,6 +310,61 @@ creation-slot "first" entry is the only positive cell in every variant
   screens, flags, models, Jev, speed). Research should move to other
   entry points (graduated tokens on PumpSwap now that a decoder exists, or
   longer-lived tokens) or other markets.
+
+### 3.10 The graduation run-up: a false edge, and two biases worth knowing (queue item 11a)
+
+Rule: buy when a curve's real SOL raised first reaches X, and sell when it
+reaches E = 80 SOL (into the last buyers before completion at ~85) or after
+30 min. A curve that completes stops trading, so a buy landing after
+completion fails, and a position still open is sold on PumpSwap. That price
+isn't recorded yet, so it's valued at the final curve price less a 0/10/25%
+haircut.
+
+**What first looked like an edge** (`graduation_runup.py` on
+`load_trade_tokens` curves): 75 → 80 SOL +5.8% per trade [+3.9, +7.8],
+positive in both halves. 60 → 80: +16%. **It was two biases:**
+
+1. **Fast graduations were dropped.** The loader kept tokens with ≥3
+   closed 1-min candles. Half of all run-ups reach 75 SOL within a minute
+   of launch, and those tokens vanished, along with the buys that would
+   have failed because the curve completed first. (`load_trade_tokens`
+   now takes `min_candles=0` for trading studies.)
+2. **Length-biased censoring.** A token's recorded window ends at
+   graduation (short, rarely cut by a recording interruption) or after 20
+   idle minutes (long, often cut). Skipping trades whose window was cut,
+   even when decided at entry, therefore skips rugs far more than wins.
+   The tokens it dropped averaged **−33%**: real rugs from 74 SOL raised
+   down to 0, observed before the cut.
+
+**Fair evaluation** (`graduation_runup_replay.py`): every signal traded
+through `FastLoop` itself on the full raw stream, which keeps recording
+across short disconnects. A signal is excluded only when the *recorder*
+was down during its holding period (event gaps > 30 s; three multi-hour
+gaps between recording runs). That rule depends on the recorder, never on
+the token. Mean net per signal (a failed buy costs one transaction), with
+earlier/later halves:
+
+| Rule | Signals | 1 s, haircut 0% | 1 s, 10% | 3 s, 10% | 3 s, 25% |
+|---|---|---|---|---|---|
+| 50 → 80 SOL | 96–97 | −7.6% | −9.2% | −9.6% | −12.5% |
+| 60 → 80 SOL | 76 | −5.3% | −6.7% | −8.1% | −10.7% |
+| 70 → 80 SOL | 59 | −0.6% | −2.1% | −3.4% | −6.0% |
+| 75 → 80 SOL | 53 | +2.3% [+1.2, +3.6] | +1.3% | **+0.5%** [−0.6, +1.6] | −0.5% |
+
+About half of the 75-SOL signals are missed (the curve completes within
+the latency). At a realistic delay (recorded times are already ~1.5 s
+after the block) 75 → 80 is **break-even**. Entering earlier is worse:
+more of those run-ups end in rugs. **No edge.** The fast loop keeps the
+`runup_*` policy fields (off by default; completed curves cancel buys,
+post-graduation exits take `graduation_haircut`) for any future live test,
+but a live paper run isn't worth a slot: the expected result is ~0.
+
+**Lesson for every study here:** never decide inclusion with a window
+whose length depends on the token's fate. Replay the full stream through
+`FastLoop` and exclude only for recorder downtime. Earlier sections' short
+holds (≤ 3 min after entry at +20 s) are only mildly exposed, because
+migrations within minutes are rare there. §3.2–3.9 stand, but rerun them
+this way when convenient.
 
 ## 4. What this means for the plan
 
