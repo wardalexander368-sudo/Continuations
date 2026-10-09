@@ -507,6 +507,12 @@ Validation picks × 0 by a hair, test favours × 0.25, and × 0 loses a lot of p
 (it trains on ~9% of the rows). Choose the weight on validation from a grid (1, 0.5, 0.25, 0.1, 0)
 once `raw-clever` has more hours; script `handoff/experiments/predictor_old_weight.py`.
 
+The same at **1m** (10,184 tokens; training 68% old rows): validation log loss × 1 0.4144,
+× 0.25 0.4140, × 0 0.4197; test 0.5090 / 0.5119 / 0.5220 (installed v3: 0.5136). The old rows
+help at 1m, and down-weighting is a 5m fix. Also on these `raw-clever` test launches, the 1m
+live blend is **under**confident on trading candles: 69% hit vs 64% stated (all variants). Check
+the blend's global prior (0.95, §8.4) on new-style data when v3.1 is trained.
+
 ### 8.2.3 A model for graduated tokens on PumpSwap (code 2026-10-09; trained once data allows)
 
 `tartar watch` follows a token through graduation onto its PumpSwap pool, but until now it then
