@@ -38,7 +38,19 @@ next. Topic documents hold the detail:
 
 
 
+* **Predictor session** (session_01UeZ4ho5y38qR1iNxnShtwF, started 04:32 UTC 10-09): **queue item 12 next steps:** rerun the on-chain SOL-USD cost sampler at another time of day (60 min), and add a quote-decay measurement (the same quote re-taken 1, 2 and 4 s later), so quotes become realistic fills. Data committed to `handoff/data/sol-dex/` (the first sample was never committed). Touches `handoff/experiments/sol_dex_costs.py`, `handoff/profitability.md` §3.12, `handoff/jevtrader.md`. Read-only toward jevtrader. Branch `claude/solana-candle-predictor-s95qjr`.
+
 ## Blockers (need the user)
+
+* **Jev usage policy (raised 10-09):** the user's own JEV protocol (`jevtrader`'s
+  PROTOCOL §2 quotes it) lists "always-on hook that makes a model call" and "`jev ask` as a
+  decision instrument" as Never, with `jevtrader` as the only signed carve-out. TARTAR's
+  shadow mode and `jev` scorer aren't covered. Ask the user whether TARTAR needs its own
+  carve-out (paper only, own key, ledger, spend tripwire) before running Jev live here again.
+* **GitHub write access (10-09 ~03:40 UTC):** the profitability session got `403 Resource not
+  accessible by integration` on push and on the API. Fix: github.com/settings/installations →
+  Claude → Configure → TARTAR selected (accept updated permissions if asked). If you can push,
+  it's fixed for you. (The predictor session's account could push at 04:32 UTC.)
 
 * ~~Network~~: **resolved 22:35 UTC**, the user enabled full network access.
 * ~~TypeSafe Jev key~~: **resolved 22:40 UTC**, `TYPESAFE_API_KEY` is set
@@ -145,6 +157,20 @@ next. Topic documents hold the detail:
     `established_prereg_eval.py` at ≥ 200 trades or on 2026-10-30; (c) a liquid market like SOL-USD where costs are tiny,
     e.g. Jev on news (the user's earlier `jevtrader` idea).
 
+12. **The user's `jevtrader` (github.com/AJW9991/jevtrader, public, read-only for us).**
+    It is the SOL-USD + Jev loop: a sealed 28-day pre-registered paper test
+    running on the user's Mac (T0 2026-09-25 21:40Z, `make results` on
+    2026-10-23). **Never unblind or disturb it:** don't run its reports on
+    its data, don't push to it, don't feed its outcomes into anything. Its
+    PROTOCOL keeps it separate from the user's `crypto-trading-system` repo.
+    TARTAR's contribution is a measured **on-chain cost table** for SOL-USD,
+    so its day-28 break-even fees (f*_X per fill) can be read against a
+    venue cheaper than Coinbase's 90 bps taker. See `handoff/jevtrader.md`.
+    **First table done 03:50 UTC 10-09** (§3.12): ~0.5 bps per fill on-chain
+    (quotes) vs 90 at Coinbase. Next: rerun `sol_dex_costs.py sample
+    --minutes 60` at several times of day, and measure how much a quote
+    moves in ~2 s (quote decay), so quotes become realistic fills.
+
 ## Rules that hold across sessions
 
 * **Background processes die when a session goes idle.** On 2026-10-08 the
@@ -173,6 +199,21 @@ next. Topic documents hold the detail:
   branch `claude/profitability-backtest`, on `main`).
 
 ## Log (newest first)
+
+* **2026-10-09 05:04 UTC, Jev session:** Pushing works again. Landed the unpushed commits and raw hours 02–03 (`handoff/data/raw/20261009-0{2,3}.jsonl.gz`; 03 covers 03:17–03:39). The fast loop has been down since 03:39 (container suspension). **Not restarted**: the new *Jev usage policy* blocker says the user's own protocol may forbid TARTAR's always-on Jev shadow calls. Waiting for the user to decide. The 05:50 cycle will review the data without restarting the loop.
+
+* **2026-10-09 03:49 UTC, profitability session (handing off):** Read the user's `jevtrader`
+  (now public) and wrote `handoff/jevtrader.md`: it IS the SOL-USD + Jev loop, sealed until
+  2026-10-23. Never unblind or push to it. Measured on-chain SOL-USD costs for its day-28 fee
+  arithmetic (§3.12): ~0.5 bps per fill via Jupiter vs 90 at Coinbase (quotes; quote decay
+  not yet measured). Raised two blockers (Jev usage policy; GitHub write access, which blocked
+  this session's last pushes). **State of the research:** launch-stage strategies are closed
+  (§3.2–3.10). Established-memecoin rules show no reliable edge (§3.11), with a rolling
+  pre-registered dip test running (add a cohort daily; score 2026-10-30). The most promising
+  open thread is jevtrader's day-28 result read against on-chain costs. **Next session:** (1) add
+  a dip cohort (`established_cohort.py`) and commit; (2) rerun the SOL cost sampler at another
+  time of day and add a quote-decay measurement; (3) after 2026-10-23, if the user shares
+  jevtrader's results, compare each arm's f*_X with §3.12.
 
 * **2026-10-09 03:35 UTC, Jev session:** Keepalives don't work. The container suspends 5–7 min after a turn ends, even with check-ins every 5 min, and the loop died at 03:24 and 03:33. Stopped scheduling keepalives and asked the user. Pushes have returned 403 since 03:17; this entry and raw hour 02 are local only. 834 screens journaled so far. The 3-hourly cycle is still set for 05:50.
 

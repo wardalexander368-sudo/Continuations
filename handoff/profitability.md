@@ -427,6 +427,17 @@ superseded before any out-of-sample data existed; both stay in git.
 The one candidate (dip buying) is weak, concentrated, and mostly explained
 by survivorship. The forward test is the only thing that could change that.
 
+### 3.12 SOL-USD on-chain: about 0.5 bps per fill (for the user's jevtrader)
+
+The user's `jevtrader` (see `handoff/jevtrader.md`) measures Jev on Coinbase SOL-USD, whose
+retail taker fee is 90 bps per fill (~181 bps round trip). Jupiter quotes for a $1,000 round trip
+(USDC → SOL → USDC at the same moment), 33 samples on 2026-10-09: **median 0.96 bps round trip
+including $0.05 per transaction, i.e. ~0.5 bps per fill**, routed through Solana's proprietary
+market makers. On-chain prices sit within ~1–3 bps of Coinbase's book. Quotes, not fills: realised
+cost is higher by whatever the quote moves during ~1–2 s of latency (the next measurement). For
+any strategy on SOL itself, the on-chain venue is **~180× cheaper** than retail CEX taker fees,
+which moves the profitability bar from "beat 1.8%" to "beat ~0.01–0.05%".
+
 ## 4. What this means for the plan
 
 1. **Don't trade the current predictions.** The confidence is honest about

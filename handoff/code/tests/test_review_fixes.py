@@ -312,3 +312,17 @@ async def test_agent_drops_the_curve_model_after_graduation(sim_tokens_small, tm
     agent = CandleAgent(Market(info, ScriptFeed(clock, script), None, clock), 60, model=model, update_interval=0.02, scam_checks=False)
     await asyncio.wait_for(agent.run(max_candles=6), timeout=20)
     assert agent.forecaster.model is None and agent.live_candles >= 5
+
+
+def test_median_shrink_is_fitted_on_out_of_fold_medians(sim_tokens_small):
+    from tartar.train import oof_medians, train_global
+
+    _, ds = sim_tokens_small
+    model = train_global(ds, rounds=5, early_stopping=3, num_leaves=7, min_data_in_leaf=10, log=lambda m: None)
+    shrink = model.meta["median_shrink"]
+    assert [f for f, _ in shrink] == sorted(set(ds.f.tolist())) and all(0.0 <= s <= 1.0 for _, s in shrink)
+    train, valid, _ = ds.split()
+    from tartar.model.global_model import N_CLASSES
+
+    q = oof_medians(model, ds, train, params={"objective": "multiclass", "num_class": N_CLASSES, "num_leaves": 7, "min_data_in_leaf": 10, "verbose": -1})
+    assert np.isfinite(q[train]).all() and np.isnan(q[~train]).all()

@@ -383,8 +383,17 @@ scratchpad):**
   both datasets: f = 0.6 from about −2% to ≈0, f = 0.8 from −0.5…−1.5% to ≈0.
   Validation found this for v1's data but not for v2's.
 - The effect is real but small, and too noisy for validation alone to fit.
-- To do: fit s(f) on out-of-fold medians over the training split (K-fold by
-  token), which has ~6× the rows.
+- **Resolved (2026-10-09):** `train_global` now fits s(f) on out-of-fold
+  medians over the training split plus validation (`oof_medians`, 3
+  token-wise folds), about 6× the rows. On test, total point error compared
+  with validation-only fitting:
+  - v1 data: 750.39 vs 750.53
+  - v2 data: 1218.82 vs 1221.66
+
+  It keeps s = 1 early in the candle and shrinks late. The four installed
+  models were refitted this way without retraining. 1m: [1, 1, 0.9, 0.7,
+  0.6, 0]; the test edge at 60% elapsed went from −2.0% to −1.05%, and at
+  80% from −1.5% to −0.4%.
 
 ### 8.2.2 Models for 15s, 30s and 5m candles (installed 2026-10-09)
 
@@ -396,11 +405,14 @@ Live replay on 300 held-out test tokens, forecasts locked at the open (reports i
 
 | Candle | Launches / rows | Online only: edge | Global + online: edge, all / trading | Trading candles: hit vs stated | Raw model at the open: hit vs stated |
 |---|---|---|---|---|---|
-| 15 s | 6,189 / 552k | −0.8% | **+3.8% / +4.1%** | 59.2% vs 59.7% | 90.8% vs 91.0% |
-| 30 s | 6,035 / 360k | −0.5% | **+3.7% / +4.0%** | 63.5% vs 63.7% | 88.6% vs 89.2% |
+| 15 s | 6,189 / 552k | −0.8% | **+3.7% / +4.0%** | 59.2% vs 59.7% | 90.8% vs 91.0% |
+| 30 s | 6,035 / 360k | −0.5% | **+4.2% / +4.5%** | 63.5% vs 63.7% | 88.6% vs 89.2% |
 | 1 m (v2) | 5,790 / 251k | ≈0 | +4.0% / +4.2% | 66.9% vs 66.3% | 86.2% vs 86.8% |
 | 5 m | 3,657 / 75k | 0.0% | **+12.0% / +12.1%** | 74.0% vs 72.9% | 72.9% vs 76.4% |
 
+Edges are after the out-of-fold shrink refit (§8.2.1). That moved 30s from
++3.7%/+4.0% to +4.2%/+4.5%, moved 15s by −0.1 pt, and fixed a noisy 0.2
+shrink at 20% elapsed for 5m: its test edge there went from +2.4% to +6.0%.
 The 5m model has the least data. Its raw distribution is overconfident during
 the candle (e.g. 80.6% hit vs 86.1% stated at f = 0.2). The live blend at the
 open is calibrated, but nowcasts during a 5m candle lean confident until more
