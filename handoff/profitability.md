@@ -480,7 +480,10 @@ executed fills; MEV, failed transactions and the USDC/USD basis are still not pr
 - **European morning** (clever session, 06:43–09:55 UTC, 371 samples with 1/2/5 s re-quotes):
   0.46 bps per fill (p90 0.67), filling at the later quote 0.41–0.43 bps, no slippage failures.
   Cost does not depend on the hour sampled so far (`jevtrader.md`).
-- **Still open:** US hours (13–16 UTC; 03:37–09:55 UTC sampled so far), and real fills
+- **European afternoon and US hours** (clever session, 10:56–15:55 UTC, 549 samples): 0.47 bps per
+  fill (p90 0.68), later-quote fills 0.37–0.41 bps; quotes move about twice as much as in the
+  morning but with no drift. **Every hour sampled (03:37–15:55 UTC) gives ~0.5 bps per fill.**
+- **Still open:** real fills
   (a funded wallet; not done, paper only).
 
 ### 3.13 PumpSwap fees: 1.20–1.25% per side on young tokens, tiered by market cap

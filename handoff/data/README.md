@@ -72,7 +72,8 @@ $1,000 round-trip quotes, re-quoted after 1/2/5 s, with Coinbase's book), 04:09�
 `python3 handoff/experiments/sol_dex_costs.py summary --out handoff/data/sol-dex/costs-20261009.jsonl`.
 
 `costs-20261009-day.jsonl` (clever session): 371 more samples the same way, 06:43–09:55 UTC
-(European morning). `*.jsonl` is git-ignored repo-wide, so add sample files with `git add -f`
+(European morning); `costs-20261009-us.jsonl`: 549 more, 10:56–15:55 UTC (European
+afternoon and US hours). `*.jsonl` is git-ignored repo-wide, so add sample files with `git add -f`
 (the predictor session's 04:33–05:33 samples were lost that way).
 
 ## `raw-clever/` (clever session, from 2026-10-09 06:23 UTC)
@@ -104,6 +105,10 @@ before the 11a evaluation** (`handoff/preregistration/pumpswap-graduated/SPEC.md
 - `20261009-14`: 14:00–14:59 UTC, 2,020 launches, 336,007 curve trades, 53 graduated SOL pools,
   329,821 PumpSwap swaps. The public RPC dropped the connection 47 times this hour (gaps 1.2–3.7 s,
   all under the loaders' 10 s cut): ~70 s of missed trades, about 2%.
+- `20261009-15`: 15:00–15:59 UTC, 2,203 launches, 392,898 curve trades, 54 graduated SOL pools,
+  271,059 PumpSwap swaps; 35 short reconnects. **The recording ends here** (stopped 16:00:39 at
+  the clever session's handoff; the 39 s tail of hour 16 was not kept, so loaders end it at hour
+  15's last event). In all: 06:23–16:00 UTC, ~16,000 launches, 341 graduated SOL pools.
 
 ## `raw-v3/` (predictor session, 2026-10-09 from 06:25 UTC)
 
