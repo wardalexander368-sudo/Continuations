@@ -32,6 +32,14 @@ next. Topic documents hold the detail:
 
 ## Active
 
+* **Execution-cost thread** (project thread session, since 2026-10-09 19:53 UTC, branch
+  `claude/project-thread-12sv1q`). **Research and code only: no real SOL, no keys, never
+  `/api/trade`.** Task (the user's 19:51 ask, continuous profit work): the real round trip on
+  CATE cost 3.07%, ~2 points of it PumpPortal Lightning's 1%/side. Compare cheaper routes
+  (PumpPortal Local Transaction API, Jupiter, our own pump.fun curve / PumpSwap instructions):
+  fee per side, landing time and reliability, what each needs, build effort; recommend one.
+  Write-up: profitability §3.19.
+
 * **Dip/jevtrader session** (session_01Htqh7pc1Lh1PP6Dkm1rVvz, since 2026-10-09 17:33 UTC, `main`
   only): continues the profitability session. **Owns the dip forward test (queue 11b)**: the GitHub
   Action `.github/workflows/paper-tests.yml` adds a cohort at 02:24 UTC daily
