@@ -40,14 +40,6 @@ next. Topic documents hold the detail:
   only, paper, train/test, every rule counted. Scripts in `handoff/experiments/edge-hunt/vaults/`
   and `.../predmkt/`.
 
-* **Perps live route** (edge hunt E thread session, since 2026-10-09 23:25 UTC, branch
-  `claude/project-thread-9op3pf`). **Dry only: no keys, no orders.** Task (coordinator, "Known gaps"
-  2 in `handoff/autotrade.md`): a Hyperliquid route for live twins of perp strategies
-  (xs_momentum, later pumpflow) in `tartar/autotrade/perps.py` + `broker.py` hooks, priced from
-  live HL order books, same promotion / limits / kill switch / fill log; document the keys live
-  would need. Agent-machinery thread: I touch `broker.py`, `strategies/xs_momentum.py` (two meta
-  fields) and `__main__.py` only; merging main before each push.
-
 * **Edge hunt E thread** (project thread session, since 2026-10-09 21:40 UTC, branch
   `claude/project-thread-9op3pf`). **Paper only, no real SOL, no keys.** Task (the user's 21:30
   "work continuously"): edge hunt angle E, TARTAR's assets, beyond the closed predictor + P(rug)
@@ -394,6 +386,14 @@ deep pools match the model, a thin one was 2.4x it). The `launch_selector` slot 
   branch `claude/profitability-backtest`, on `main`).
 
 ## Log (newest first)
+
+* **2026-10-09 23:55 UTC, perps route for live twins: dry, landed** (claim cleared). `tartar/autotrade/perps.py`
+  + `broker.py` hooks: intents with `meta.venue == "hyperliquid"` (xs_momentum's legs) get perp twins
+  priced on Hyperliquid's live L2 book (taker, $10 minimum, funding from history), same limits / kill
+  switches / `fills.jsonl` compare; kept legs roll at mid. `dry_all` mirrors unpromoted perp strategies
+  in `dry_live` (nothing at risk). Live perp orders are **not built**: they'd need the user's API wallet
+  (`HYPERLIQUID_AGENT_KEY`, `HYPERLIQUID_ACCOUNT`) and an EIP-712 signer (`autotrade.md`, *Perp twins*).
+  `dry-perp` CLI; 7 tests, 188 pass. No config change; `autotrade/` state untouched.
 
 * **2026-10-09 23:50 UTC, edge hunt round 2: F1 (short new HL listings) not confirmed, closed**
   (claim cleared). Six proposals judged (`edge-hunt.md` "Round 2"); F1 pre-registered before its

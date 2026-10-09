@@ -117,9 +117,43 @@ and simulated cleanly; the quoted round trip was −0.40% before network fees).
 | `max_divergence_pct` × `divergence_streak` | 3 points × 3 | live fills worse than paper by more than 3 points three closes in a row: that strategy's live entries stop |
 | `max_signal_age_s` | 900 | an entry whose reference price is older is not mirrored |
 
-Also skipped: shadow variants, assets without a Solana mint (perps), shorts, a second twin on a mint
-already held. Demoted strategies' twins are sized by `size_factor`. There is no stop-loss inside a
+Also skipped on the SOL route: shadow variants, assets without a Solana mint, shorts, a second twin on
+a mint already held. Perp strategies have their own route (next section). Demoted strategies' twins are sized by `size_factor`. There is no stop-loss inside a
 trade: exits follow the registered rule, so the per-trade limit acts after the close.
+
+### Perp twins (Hyperliquid)
+
+Built 2026-10-09 by the edge hunt E thread: `tartar/autotrade/perps.py`, hooks in `broker.py`, tests in
+`tests/test_autotrade_perps.py`. A strategy's intent with `meta["venue"] == "hyperliquid"` (xs_momentum's
+legs now; pumpflow when it joins the agent) gets a **perp twin** instead of a SOL twin: a long or short
+on Hyperliquid at a USD notional, with the same paper-book-unchanged design, kill switches and
+`fills.jsonl` comparison (`perp_open`, `perp_close`; `compare.live_net_return_usd` against
+`paper_net_return`, fees and funding broken out). REPORT.md shows them in their own table.
+
+* **Dry (mode `dry_live`, now):** each leg is the order walked through Hyperliquid's live L2 book at that
+  moment as a taker (size rounded to the coin's step, $10 minimum), plus the 0.045% taker fee; funding
+  over the hold from Hyperliquid's history. Nothing is signed or sent, no account. Because nothing is at
+  risk, `perps.dry_all` (default on) mirrors every non-shadow perp strategy, promoted or not, so
+  xs_momentum's weekly legs start producing real-book fills from its next Wednesday.
+  By hand: `python -m tartar.autotrade dry-perp PUMP --usd 12 --side -1` (2026-10-09 23:45 UTC: PUMP
+  short round trip −0.11%, BTC long −0.09%: the 0.09% fee plus ~1-2 bps of spread at $12).
+* **Kept legs:** a weekly rebalance that keeps a leg closes and reopens it on paper at no cost; the twin
+  rolls instead (marked at the book's mid, `perp_roll_out` / `perp_roll_in`, no fee), as a real
+  account would simply hold it.
+* **Limits (config `live.perps`, defaults `perps.PERP_DEFAULTS`):** $12 per twin (min $10, Hyperliquid's
+  minimum order), $60 notional across open perp twins, $6 daily realized loss cap (halts all live
+  entries), 25% per-twin loss and 3 points × 3 closes divergence halts per strategy, reference prices
+  up to 2 days old (weekly rules book a day late).
+* **Live: not built.** In mode `live`, `select_perp_route` returns None and perp strategies stay on paper
+  (preflight's `perps` block says so). Real orders would need, from the user:
+  1. a Hyperliquid account with USDC deposited (the trading account);
+  2. an **API wallet** ("agent") created and approved in that account (Hyperliquid → API), whose
+     private key goes in the GitHub Actions secret **`HYPERLIQUID_AGENT_KEY`**: it can place and cancel
+     orders but cannot withdraw;
+  3. the trading account's address as the secret or variable **`HYPERLIQUID_ACCOUNT`**;
+  4. and on our side a live executor: EIP-712 order signing (e.g. the `hyperliquid-python-sdk`),
+     IOC limit orders priced through the book, fills read back from `userFills`. Not written yet.
+  Eligibility to use Hyperliquid is the user's to check.
 
 ### Kill switches
 
@@ -137,7 +171,7 @@ A failed live sell also records an orphan and halts that strategy's live entries
 
 1. **Cadence: resolved 2026-10-09 23:20 UTC.** The user chose a run every 5 minutes, so dip entries
    reach the broker within ~10 minutes of their bar, inside `max_signal_age_s` (900 s).
-2. **Perps.** `xs_momentum`, `pumpflow` and other Hyperliquid rules have no live route. They need a
-   Hyperliquid executor and an API wallet (taken by the edge-hunt E thread, 2026-10-09 23:16 UTC).
+2. **Perps.** Dry perp twins exist (*Perp twins* above); real ones need the user's Hyperliquid API
+   wallet (`HYPERLIQUID_AGENT_KEY`, `HYPERLIQUID_ACCOUNT`) and a live executor that isn't written yet.
 3. **Lightning** reads fills from chain for its custodial wallet, so `live.lightning_wallet` must be set
    before that route can be used; Jupiter needs only the key.

@@ -24,6 +24,7 @@ from pathlib import Path
 
 from .core import CostModel, Intent, Position, Trade
 from .execution import make_executor, select_route
+from .perps import PERP_DEFAULTS, is_perp, make_perp_executor, perp_keys, select_perp_route
 
 
 class LiveNotAllowed(RuntimeError):
@@ -77,13 +78,15 @@ LIVE_DEFAULTS = {
     "max_signal_age_s": 900,      # an entry whose reference price is older than this is not mirrored
     "priority_sol": 0.00002,
     "dry_balance_sol": 0.05,
+    # "perps": Hyperliquid perp twins, in USD; defaults in perps.PERP_DEFAULTS
 }
 
 
 class LiveBroker(PaperBroker):
     """The paper fill plus a live twin. ``entries=False`` only runs exits of existing twins."""
 
-    def __init__(self, config: dict, ledger=None, root=None, executor=None, env=None, entries: bool = True, now: float | None = None):
+    def __init__(self, config: dict, ledger=None, root=None, executor=None, env=None, entries: bool = True, now: float | None = None,
+                 perp_executor=None):
         env = os.environ if env is None else env
         mode = config.get("mode")
         self.cfg = {**LIVE_DEFAULTS, **config.get("live", {})}
@@ -104,6 +107,9 @@ class LiveBroker(PaperBroker):
         self.ledger, self.root, self.env, self.entries = ledger, Path(root) if root else None, env, entries
         self.now = time.time() if now is None else now
         self._sol_usd: float | None = None
+        self.pcfg = {**PERP_DEFAULTS, **self.cfg.get("perps", {})}
+        self.perp_route = select_perp_route(mode, env)
+        self._perp_exec = perp_executor
 
     # state
     def live_state(self) -> dict:
@@ -163,7 +169,7 @@ class LiveBroker(PaperBroker):
         age = self.now - intent.at
         if age > self.cfg["max_signal_age_s"]:
             return f"signal {age:.0f} s old > {self.cfg['max_signal_age_s']:.0f} s", 0.0
-        twins = [p.meta["live"] for p in positions if p.meta.get("live")]
+        twins = [p.meta["live"] for p in positions if p.meta.get("live") and not is_perp(p.meta["live"])]
         if any(t["mint"] == mint for t in twins):
             return "a live twin already holds this mint", 0.0
         at_risk = sum(t["sol_in"] for t in twins)
@@ -178,6 +184,8 @@ class LiveBroker(PaperBroker):
         return None, round(size, 6)
 
     def open(self, intent: Intent, positions: list[Position] | None = None) -> tuple[Position, dict]:
+        if is_perp(intent.meta):
+            return self._open_perp(intent, positions or [])
         pos, row = super().open(intent)
         pos.mode = row["mode"] = "paper"  # until a twin is bought
         why, size = self.entry_block(intent, positions or [])
@@ -214,6 +222,8 @@ class LiveBroker(PaperBroker):
     # exit
     def close(self, pos: Position, intent: Intent) -> tuple[Trade, dict]:
         twin = pos.meta.get("live")
+        if twin and is_perp(twin):
+            return self._close_perp(pos, intent)
         trade, row = super().close(pos, intent)
         trade.mode = pos.mode
         if not twin:
@@ -267,6 +277,141 @@ class LiveBroker(PaperBroker):
         return trade, row
 
 
+    # perps (Hyperliquid; perps.py)
+    def perp_exec(self):
+        if self._perp_exec is None:
+            self._perp_exec = make_perp_executor(self.perp_route, self.pcfg, self.env)
+        return self._perp_exec
+
+    def perp_entry_block(self, intent: Intent, positions: list[Position]) -> tuple[str | None, float]:
+        """(why not, USD notional)."""
+        if intent.meta.get("shadow"):
+            return "shadow variant", 0.0
+        if self.perp_route is None:
+            return "no perp route: live Hyperliquid orders are not built (perps.py)", 0.0
+        if not (self.entries or (self.perp_route == "dry" and self.pcfg["dry_all"])):
+            return "strategy not promoted", 0.0
+        why = self.kill_reason(intent.strategy)
+        if why:
+            return why, 0.0
+        age = self.now - intent.at
+        if age > self.pcfg["max_signal_age_s"]:
+            return f"signal {age:.0f} s old > {self.pcfg['max_signal_age_s']:.0f} s", 0.0
+        at_risk = sum(p.meta["live"]["notional_in"] for p in positions if p.meta.get("live") and is_perp(p.meta["live"]))
+        at_risk += sum(h["notional_in"] for h in self.live_state().get("perp_handover", []))
+        size = min(self.pcfg["max_leg_usd"], self.pcfg["budget_usd"] - at_risk)
+        size *= self.ledger.strategy(intent.strategy).get("size_factor", 1.0) if self.ledger else 1.0
+        if size < self.pcfg["min_leg_usd"]:
+            return f"size ${size:.2f} < min ${self.pcfg['min_leg_usd']:.0f} (budget ${self.pcfg['budget_usd']:.0f}, at risk ${at_risk:.2f})", 0.0
+        return None, round(size, 2)
+
+    def _open_perp(self, intent: Intent, positions: list[Position]) -> tuple[Position, dict]:
+        pos, row = PaperBroker.open(self, intent)
+        pos.mode = row["mode"] = "paper"
+        coin, side = intent.meta.get("coin", intent.asset), intent.side
+        hand = self.live_state().setdefault("perp_handover", [])
+        held = next((h for h in hand if h["strategy"] == intent.strategy and h["coin"] == coin and h["side"] == side), None)
+        if held:  # a kept leg: the twin carries on without trading
+            hand.remove(held)
+            pos.meta["live"] = {k: v for k, v in held.items() if k != "strategy"} | {"paper_price_in": intent.price}
+            pos.mode = row["mode"] = self.mode
+            row["live"] = {"rolled": True, "notional_in": held["notional_in"]}
+            self.log({"event": "perp_roll_in", "strategy": intent.strategy, "position": pos.id, "coin": coin, "side": side})
+            return pos, row
+        why, usd = self.perp_entry_block(intent, positions)
+        if why:
+            row["live"] = {"skipped": why}
+            if not intent.meta.get("shadow"):
+                self.log({"event": "skip", "venue": "hyperliquid", "strategy": intent.strategy, "position": pos.id, "reason": why, "at": intent.at})
+            return pos, row
+        f = self.perp_exec().open(coin, side, usd)
+        rec = {"event": "perp_open", "strategy": intent.strategy, "position": pos.id, "coin": coin, "fill": f.to_dict(),
+               "paper_price_usd": intent.price, "paper_at": intent.at,
+               "paper_side_cost_pct": 100 * intent.cost.side_cost(intent.notional_usd) / intent.notional_usd}
+        if f.ok:
+            rec["vs_paper_price_bps"] = 1e4 * side * (f.px / intent.price - 1)
+            pos.meta["live"] = {"venue": "hyperliquid", "coin": coin, "side": side, "route": self.perp_route, "sz": f.sz,
+                                "px_in": f.px, "notional_in": f.notional_usd, "fee_in": f.fee_usd, "opened_at": self.now,
+                                "paper_price_in": intent.price, "dry": f.dry}
+            pos.mode = row["mode"] = self.mode
+            row["live"] = {"venue": "hyperliquid", "sz": f.sz, "px_in": f.px, "notional_in": f.notional_usd}
+        else:
+            row["live"] = {"failed": f.error}
+            self.ledger.journal({"event": "live_error", "strategy": intent.strategy, "position": pos.id, "leg": "perp_open",
+                                 "error": f.error, "at": self.now})
+        self.log(rec)
+        return pos, row
+
+    def _close_perp(self, pos: Position, intent: Intent) -> tuple[Trade, dict]:
+        twin = pos.meta["live"]
+        trade, row = PaperBroker.close(self, pos, intent)
+        trade.mode = pos.mode
+        coin, side, ex = twin["coin"], twin["side"], None
+        if twin["route"] != self.perp_route:
+            if twin.get("dry"):
+                row["live"] = {"dropped": f"dry perp twin closed while the perp route is {self.perp_route}"}
+                return trade, row
+            self.live_state()["orphans"].append({"position": pos.id, "strategy": pos.strategy, **twin, "at": self.now,
+                                                 "error": f"opened on {twin['route']}, perp route now {self.perp_route}"})
+            self.ledger.journal({"event": "live_orphan", "strategy": pos.strategy, "position": pos.id, "at": self.now,
+                                 "reason": f"perp twin opened on {twin['route']}, perp route now {self.perp_route}; position still open"})
+            row["live"] = {"failed": "perp route changed"}
+            return trade, row
+        ex = self.perp_exec()
+        kept = bool(intent.meta.get("kept")) or "(kept)" in intent.reason
+        if kept:  # the leg stays: mark at mid, no trade, hand the twin to the reopen
+            try:
+                px_out, fee_out = ex.mid(coin), 0.0
+            except Exception:  # noqa: BLE001
+                px_out, fee_out = intent.price * twin["px_in"] / twin["paper_price_in"], 0.0
+            event = "perp_roll_out"
+        else:
+            f = ex.close(coin, side, twin["sz"])
+            if not f.ok:
+                self.live_state()["orphans"].append({"position": pos.id, "strategy": pos.strategy, **twin, "error": f.error, "at": self.now})
+                self.ledger.journal({"event": "live_error", "strategy": pos.strategy, "position": pos.id, "leg": "perp_close",
+                                     "error": f.error, "at": self.now})
+                self.log({"event": "perp_close_failed", "strategy": pos.strategy, "position": pos.id, "fill": f.to_dict()})
+                self.halt(pos.strategy, f"perp close failed ({f.error}); twin kept in live.orphans")
+                row["live"] = {"failed": f.error}
+                return trade, row
+            px_out, fee_out, event = f.px, f.fee_usd, "perp_close"
+        try:
+            funding = ex.funding_usd(coin, side, twin["notional_in"], twin["opened_at"], self.now)
+            ferr = None
+        except Exception as exc:  # noqa: BLE001
+            funding, ferr = 0.0, f"{type(exc).__name__}: {exc}"[:120]
+        gross = side * twin["sz"] * (px_out - twin["px_in"])
+        net = gross - twin["fee_in"] - fee_out + funding
+        ret = net / twin["notional_in"]
+        cmp = {"venue": "hyperliquid", "live_net_return_usd": ret, "paper_net_return": trade.net_return,
+               "live_minus_paper": ret - trade.net_return, "net_usd": net, "notional_in": twin["notional_in"],
+               "px_in": twin["px_in"], "px_out": px_out, "fees_usd": twin["fee_in"] + fee_out, "funding_usd": funding,
+               "funding_error": ferr, "route": twin["route"], "dry": twin.get("dry", False), "rolled": kept,
+               "paper_exit_price": intent.price, "hold_s": self.now - twin["opened_at"]}
+        trade.meta["live"] = cmp
+        row["live"] = cmp
+        self.log({"event": event, "strategy": pos.strategy, "position": pos.id, "coin": coin, "compare": cmp})
+        if kept:
+            self.live_state().setdefault("perp_handover", []).append(
+                {**{k: v for k, v in twin.items() if k != "paper_price_in"}, "strategy": pos.strategy, "px_in": px_out,
+                 "notional_in": twin["sz"] * px_out, "fee_in": 0.0, "opened_at": self.now})
+        st = self.live_state()
+        day = time.strftime("%Y-%m-%d", time.gmtime(self.now))
+        st.setdefault("daily_usd_perps", {})
+        st["daily_usd_perps"][day] = st["daily_usd_perps"].get(day, 0.0) + net
+        if st["daily_usd_perps"][day] < -self.pcfg["daily_loss_cap_usd"] and not st["halted"]:
+            self.halt("live", f"perp twins' daily loss ${st['daily_usd_perps'][day]:.2f} < -${self.pcfg['daily_loss_cap_usd']:.2f}")
+        srec = self.strat_state(pos.strategy)
+        if not kept and ret < -self.pcfg["max_trade_loss_pct"] and not srec["halted"]:
+            self.halt(pos.strategy, f"perp twin round trip {100 * ret:+.1f}% < -{100 * self.pcfg['max_trade_loss_pct']:.0f}%")
+        srec["divergence_run"] = srec["divergence_run"] + 1 if cmp["live_minus_paper"] < -self.pcfg["max_divergence_pct"] else 0
+        if srec["divergence_run"] >= self.pcfg["divergence_streak"] and not srec["halted"]:
+            self.halt(pos.strategy, f"perp twins worse than paper by > {100 * self.pcfg['max_divergence_pct']:.0f} points "
+                                    f"{srec['divergence_run']} closes in a row")
+        return trade, row
+
+
 def make_broker(config: dict, strategy_status: str, ledger=None, root=None, now: float | None = None) -> PaperBroker:
     """Paper unless the mode has live twins; live conditions that fail raise LiveNotAllowed (the runner then
     falls back to paper and journals why)."""
@@ -293,7 +438,10 @@ def preflight(config: dict, ledger, root, env=None) -> dict:
                           **{n: r["halted"] for n, r in ledger.state.get("live", {}).get("strategies", {}).items() if r.get("halted")}},
            "orphans": len(ledger.state.get("live", {}).get("orphans", [])),
            "promoted": sorted(n for n, r in ledger.state.get("strategies", {}).items() if r.get("status") == "promoted"),
-           "limits": cfg, "problems": []}
+           "limits": cfg, "problems": [],
+           "perps": {"route": select_perp_route(mode, env), "keys": perp_keys(env),
+                     "limits": {**PERP_DEFAULTS, **cfg.get("perps", {})},
+                     "note": "dry only: live Hyperliquid orders are not built (tartar/autotrade/perps.py)"}}
     p = out["problems"]
     if mode == "paper":
         p.append("mode is paper: no live twins")

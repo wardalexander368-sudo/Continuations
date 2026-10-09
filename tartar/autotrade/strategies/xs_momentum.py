@@ -135,7 +135,7 @@ class XSMomentum:
             carry = -pos.side * fund * pos.notional_usd  # longs pay positive funding, shorts receive it
             intents.append(Intent("close", self.name, close_ts(d), px, "weekly rebalance" + (" (kept)" if keep else ""),
                                   position_id=pos.id, cost=CostModel(fee=0.0 if keep else COST),
-                                  meta={"carry_usd": carry, "funding": fund}))
+                                  meta={"carry_usd": carry, "funding": fund, "kept": keep}))
         # 2) open this week's legs at Tuesday's close
         q = ctx.state.get("last_q") or 1
         for coin, side in new_w.items():
@@ -144,7 +144,7 @@ class XSMomentum:
                                   f"14-day return rank, {'top' if side > 0 else 'bottom'} quintile (signal {week})",
                                   asset=coin, side=int(side), notional_usd=self.leg_usd / q,
                                   cost=CostModel(fee=0.0 if kept else COST),
-                                  meta={"week": week, "leg_usd": self.leg_usd, "label": coin}))
+                                  meta={"week": week, "leg_usd": self.leg_usd, "label": coin, "venue": "hyperliquid"}))
         ctx.state["last_tuesday"] = d.isoformat()
         return intents
 
