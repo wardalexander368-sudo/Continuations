@@ -179,6 +179,22 @@ public API keeps no history (only the current snapshot), and Binance's OI histor
 so nothing to test yet; the `perps-ctx` GitHub Action snapshots every perp's OI, funding, mark and
 volume every 4 hours from 2026-10-09 (`data/edge-hunt/hl-ctx/`), enough for an OI study in a few months.
 
+### F. Following Hyperliquid vaults (2026-10-09, trading-skills thread): closed; HLP pre-registered
+
+Every Hyperliquid vault whose PnL ever reached $1k either way, **closed vaults included** (3,206 of
+9,477 listed; `experiments/edge-hunt/vaults/fetch_vaults.py`, `vault_follow.py`; output
+`data/edge-hunt/vaults/vault-follow.txt`). Monthly time-weighted returns from each vault's PnL and
+account-value history (points every ~14 days), net of the leader's 10% of gains. Rule: each month,
+among open vaults with ≥ $50k, buy the top N (5/10/20) by trailing 1/3/6-month return or return/std,
+hold a month (18 rules; train 2023-08..2024-12, validation 2025-01..06, test 2025-07..2026-09).
+**No rule has train and validation both positive**: past winners don't persist (top-5 by last month:
+train +2.1%/month, validation −12.0%), and the equal-weight average vault ≥ $50k lost −8.6%/month in
+validation. Few months have enough vaults, so every interval is wide. Top-trader leaderboards only
+show today's survivors, so they can't be tested honestly. **HLP itself** (the protocol vault, no
+commission) earned in every split (+1.33%/month [+0.18, +2.70] in test; 2025 +19%, 2026 YTD +8.1%,
+falling as it grows), so holding it against a 5% cash hurdle is **pre-registered** for 180 days:
+`preregistration/hlp-hold/SPEC.md`, scorer `experiments/edge-hunt/vaults/hlp_forward.py`.
+
 ### E. TARTAR's assets
 
 Covered by the fee-research thread's predictor + P(rug) strategy forward test (see STATUS.md);
@@ -209,6 +225,8 @@ Hyperliquid's history. If it holds, the live version (our own decoder's revenue 
 5. **A3, funding dispersion:** chosen from 5 pairs, sign flips; weakest.
 * (added) **E1, pump.fun revenue surprise -> PUMP perp:** both halves positive after costs, each
   ~1.7 SE, beyond-trend part positive. **Forward test registered** (180 days, hourly Action).
+* (added) **F, HLP holding:** +11–28% a year in recent halves vs a 5% hurdle, thin and decaying.
+  **Forward test registered** (180 days, free). Following past-winner vaults: closed.
 6. **D2, funding carry across perps:** loses; its reverse is weaker momentum (closed).
 * (added) **D3, volatility-scaled 14-day momentum:** val +2.15%, test +2.03%/week after lag, 20 bps and
   funding, both CIs above zero, but 0.87 correlated with D. **Forward test registered** (52 weeks, free).

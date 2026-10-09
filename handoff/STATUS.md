@@ -405,6 +405,14 @@ deep pools match the model, a thin one was 2.4x it). The `launch_selector` slot 
 
 ## Log (newest first)
 
+* **2026-10-09 23:40 UTC, trading-skills thread (new markets): vault following closed; HLP
+  holding pre-registered** (`edge-hunt.md` §F). 3,206 vaults incl. closed ones, 18 follow-the-winner
+  rules: none has train and validation both positive. HLP itself beat cash in every split (test
+  +1.33%/month); registered a 180-day test against a 5% hurdle (`preregistration/hlp-hold/`,
+  scorer `experiments/edge-hunt/vaults/hlp_forward.py`). **Handoff session (`autotrade/`): HLP
+  holding is a candidate paper strategy** (one position, valued from HLP's history). Polymarket
+  study running next.
+
 * **2026-10-09 22:50 UTC, trading-skills thread (perps lane): volatility-scaled momentum
   pre-registered; trend and reversal closed** (`edge-hunt.md` §D3). 24 rules in 7 families on D's
   data, splits and costs. Only volatility-scaled 14-day momentum passes held-out data (1-day lag,
