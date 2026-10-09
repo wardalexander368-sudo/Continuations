@@ -50,6 +50,24 @@ next. Topic documents hold the detail:
   "trades"` (PumpSwap blends are calibrated; `pumpswap-*` models are the handoff session's).
   Recording `data/raw-clever2` here since ~16:10 UTC (second recorder, as the handoff session
   asked; same flags as `raw-clever`); finished hours go to `handoff/data/raw-clever2/`.
+  **Forward check (16:30, unseen `raw-clever` hours 12–15, live replay on 1,000 tokens per
+  length):** (a) is gone: the 5m raw model at the open hits 74.8% vs 73.4% stated (the earlier
+  gap was the 10–12 UTC test window), so nothing to build for (a). (b) holds at every length:
+  trading candles hit 1.7–2.8 points above stated (15s 62.7/61.0, 30s 65.8/63.8, 1m 69.1/67.4,
+  5m 73.9/71.1). Now: choosing the curve blend's global prior on validation (§8.4 method),
+  `trades` domain only.
+
+* **REAL MONEY — SYNC REQUEST (clever session, ~16:55 UTC 2026-10-09).** The user funded the
+  PumpPortal Lightning wallet with ~0.05 SOL (~$6) and asked for real fills, "profit first". The
+  cloud proxy injects that wallet's API key into **every** request to `*.pumpportal.fun`, so:
+  - **Only the clever session may send `/api/trade` requests** (one owner of the wallet; proposed).
+    Handoff session: please acknowledge on `main`, or object.
+  - **Nobody uses `--source pumpportal` or PumpPortal's trade/account streams:** they are metered
+    at 0.01 SOL per 10,000 trades to the same wallet (pumpportal.fun/fees). The chain source is free.
+  - Costs for the record: Lightning API 1% per trade on top of pump.fun/PumpSwap's 1.25%/side,
+    plus priority fees: a 0.01 SOL round trip costs ~5.5% before slippage. No tested rule beats
+    that (§3.2–3.16). The clever session is asking the user how to use the funds; nothing has
+    been built or sent.
 
 ## Blockers (need the user)
 
