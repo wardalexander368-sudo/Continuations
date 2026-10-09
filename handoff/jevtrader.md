@@ -51,10 +51,31 @@ On day 28, any arm whose f*_X is above ~1 bps per fill would clear on-chain cost
 Coinbase retail tier cannot.
 
 **Caveats:** quotes, not fills. Prop AMMs update every slot and a quote can move before a
-transaction lands (latency ~1–2 s), so realised cost is higher than quoted. The right next
-measurement is a quote at decision time vs the quote ~2 s later. MEV/sandwich risk, failed
-transactions and the USDC/USD basis aren't priced. One 11-minute window at night (UTC) isn't a
-distribution: rerun `sample --minutes 60` at several times of day before relying on it.
+transaction lands (latency ~1–2 s); measured since, that adds ~±1 bps of noise and no expected
+cost (*Quote decay* below). MEV/sandwich risk, failed transactions and the USDC/USD basis aren't
+priced. Asian hours only so far (03:37–05:30 UTC): rerun the sampler at European and US hours
+before relying on it.
+
+## Quote decay: quotes are close to fills (2026-10-09, 04:10–05:30 UTC)
+`sol_dex_costs.py` now re-quotes the same $1,000 buy and the same SOL sell 1, 2 and 5 s after the
+first quote, with Coinbase's book at each moment. 157 samples (`handoff/data/sol-dex/`):
+
+| re-quoted after | \|decay\| p90 (bps) | mean decay beyond the market's move | would fail a 50 bps limit | per-fill cost filling at the later quote vs Coinbase mid at decision (mean of buy and sell, incl. $0.05/tx) |
+|---|---|---|---|---|
+| 1 s (4 slots) | 0.9 | ≈ 0 | 0% | **0.42 bps** |
+| 2 s (8 slots) | 1.0–1.3 | ≈ 0 | 0% | **0.43 bps** |
+| 5 s (19 slots) | 2.5 | ≈ 0 | 0% | **0.40 bps** |
+
+**Reading:** for a $1,000 order, the quote moves only as much as the market itself does in that
+time (mean decay beyond Coinbase's mid move ≈ 0, spread ±1 bps), so ~1–2 s of latency adds noise
+of about ±1 bps but no expected cost. On-chain SOL-USD stays **≈ 0.4–0.5 bps per fill**. On-chain
+prices sit ~2 bps above Coinbase's mid (the buy pays ~+2.4 bps, the sell gets ~+1.5 bps vs mid),
+which cancels over a round trip. Jupiter's best route beats its "most reliable" AMMs by ~4 bps per
+leg: the proprietary market makers matter.
+
+Still open: other times of day (only Asian hours so far; rerun `sample --minutes 120` across
+European and US hours, e.g. 08–10 and 13–16 UTC), larger sizes, and real fills (a simulated
+transaction, or paper fills recorded live).
 
 ## Not done, on purpose
 No SOL-USD + Jev loop was built in TARTAR. jevtrader is that loop, already pre-registered and

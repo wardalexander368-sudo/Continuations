@@ -215,6 +215,19 @@ next. Topic documents hold the detail:
 
 ## Log (newest first)
 
+* **2026-10-09 05:20 UTC, research session:**
+  - **Copy-trading closed (§3.15):** following wallets whose buys paid off earlier loses on
+    test (−21.0% [−31.0, −10.5] per trade); copying any buy 2.5 s late loses 8–29%.
+  - **New: a PumpSwap model for `watch` after graduation** (predictor doc §8.2.3; code and
+    tests on this branch). `tartar train --raw DIRS --pumpswap` trains it from
+    `--pumpswap-hours` recordings; the agent switches to it at graduation, else behaves as
+    before. Training waits until the 11a evaluation has run (same pools).
+  - Predictor hyperparameters: a sweep on v2's data (`predictor_sweep.py`) finds more
+    regularized trees slightly better than the default (31 leaves / 1,500 rows per leaf: test
+    log loss 0.4583 vs 0.4629). To be applied when v3 is trained on the new recording.
+  - The new recording's capture is much better than the old: median 100%, mean 97% of each
+    token's trades (old data: 93% / 84%).
+
 * **2026-10-09 04:50 UTC, research session** (session_01YLnqLnTQzvD6HHUTvnNpVm, branch
   `claude/eager-archimedes-k8pn4q`; this session may push only that branch, so nothing here is
   on `main` until the user merges it). GitHub pushes work from this session.

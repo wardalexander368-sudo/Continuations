@@ -417,6 +417,29 @@ in log time, `trades_flat_priors`):
 | 60s | 0.487 | 0.965 |
 | 300s | 0.610 | 0.943 |
 
+### 8.2.3 A model for graduated tokens on PumpSwap (code 2026-10-09; trained once data allows)
+
+`tartar watch` follows a token through graduation onto its PumpSwap pool, but until now it then
+dropped the global model (trained on bonding curves) and ran the online model alone. Now:
+
+- `tartar train --raw DIRS --pumpswap` trains a model for domain `pumpswap` (`pumpswap-60s.txt`
+  etc.) from recordings made with `--pumpswap-hours` (`load_pumpswap_tokens`).
+- At graduation the agent loads that model if it exists (`CandleAgent(after_graduation=...)`,
+  wired in `watch`) and restarts its forecaster, as it already did: candles so far become history
+  without trade detail, the creator counts as unknown, and the wallet tracker starts from
+  scratch. Without the model, behaviour is unchanged.
+- Training rows mimic exactly that restart. Each graduated token is its curve candles before
+  the graduation candle (when its launch was recorded up to graduation) as history, then candles
+  from one candle book over curve trades and pool swaps, as the agent's book (which outlives the
+  restart) builds them. Only swaps reach the wallet tracker. Rows predict only candles that start
+  after graduation. The time split uses graduation time. A pool's window ends when the recorder
+  stops watching it (30 idle minutes, or `--pumpswap-hours`) or the recording is cut.
+- `swap_tick` turns a recorded `swap` event into exactly the tick `PumpSwapFeed` yields live
+  (tested on a mainnet transaction), and a parity test checks that the rows equal the features
+  the agent computes after its restart.
+- `pumpswap` counts as a trade domain wherever `trades` did (`TRADE_DOMAINS`): nowcast
+  fractions, the volatility prior and flat priors (both still the curve's, refined online).
+
 ### 8.3 Blending
 
 The global and online distributions are mixed with weight

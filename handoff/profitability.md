@@ -12,6 +12,19 @@ one that looked good on the validation launches lost on the later (test)
 launches, or its 90% interval spans zero. Treat the dashboard's "predicted
 close" and confidence as measurement, not as trade signals.
 
+Where each family stands (2026-10-09):
+
+| Family | Status | Where |
+|---|---|---|
+| Buying pump.fun launches: baselines, model signals, screens, flags, learned scorers, Jev | closed, loses | §3.2–3.8 |
+| Faster entry (slots, private RPC) | closed: only the creator's own bundle profits | §3.9 |
+| Graduation run-up on the curve | closed, break-even at best | §3.10 |
+| Longer holds (10–45 min) on screened launches | closed, loses | §3.14 |
+| Copy-trading wallets whose buys paid off | closed, loses | §3.15 |
+| Graduated tokens on PumpSwap (fees 1.20–1.25%/side, §3.13) | pre-registered, evaluated at ≥ 250 pools | `handoff/preregistration/pumpswap-graduated/` |
+| Established memecoins: dip buying | rolling forward test, scored 2026-10-30 | §3.11 |
+| SOL-USD with Jev (the user's jevtrader) | sealed test ends 2026-10-23; on-chain costs ≈ 0.5 bps/fill | §3.12, `handoff/jevtrader.md` |
+
 ## 2. How it is measured (`tartar/profit.py`, `tartar profit`)
 
 * **Fills on the real curve.** A buy of `size` SOL at the reserves of the last
@@ -434,8 +447,10 @@ The user's `jevtrader` (see `handoff/jevtrader.md`) measures Jev on Coinbase SOL
 retail taker fee is 90 bps per fill (~181 bps round trip). Jupiter quotes for a $1,000 round trip
 (USDC → SOL → USDC at the same moment), 33 samples on 2026-10-09: **median 0.96 bps round trip
 including $0.05 per transaction, i.e. ~0.5 bps per fill**, routed through Solana's proprietary
-market makers. On-chain prices sit within ~1–3 bps of Coinbase's book. Quotes, not fills: realised
-cost is higher by whatever the quote moves during ~1–2 s of latency (the next measurement). For
+market makers. On-chain prices sit within ~1–3 bps of Coinbase's book. Quotes, not fills, but **quote decay
+is small**: re-quoting 1–5 s later moves a $1,000 quote only as much as the market moved (|decay|
+p90 ≈ 1–2.5 bps, mean ≈ 0, no 50 bps slippage failures); filling at the later quote costs
+≈ 0.4 bps per fill (157 samples, 04:10–05:30 UTC; `jevtrader.md`). For
 any strategy on SOL itself, the on-chain venue is **~180× cheaper** than retail CEX taker fees,
 which moves the profitability bar from "beat 1.8%" to "beat ~0.01–0.05%".
 

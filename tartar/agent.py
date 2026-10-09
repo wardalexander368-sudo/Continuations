@@ -5,7 +5,7 @@ from __future__ import annotations
 import asyncio
 import time
 from dataclasses import dataclass
-from typing import Sequence
+from typing import Callable, Sequence
 
 from .candles import Candle, CandleBook, Tick
 from .feeds.base import Snapshot, Status
@@ -74,6 +74,7 @@ class CandleAgent:
         scam_checks: bool = True,
         creators: CreatorIndex | None = None,
         static_refresh: float = 600.0,
+        after_graduation: Callable[[], GlobalModel | None] | None = None,
     ):
         self.market = market
         self.timeframe = timeframe
@@ -99,6 +100,9 @@ class CandleAgent:
         self.static_refresh = static_refresh
         self.risk_report: ScamReport | None = None
         self._model = model
+        self._domain = info.domain
+        # At graduation the curve model no longer applies; this finds the PumpSwap model, if any.
+        self.after_graduation = after_graduation
         self._coverage = coverage
         # Feed health: candles the feed did not fully see are never scored or learned from.
         self.outage_from: float | None = None  # feed currently down since this time
@@ -216,10 +220,17 @@ class CandleAgent:
 
     def _feed_health(self, status: Status) -> None:
         now = self.clock.now()
-        if status.kind == "graduated" and self._model is not None:
-            # The global model knows bonding curves only; on PumpSwap the online model carries on.
-            self._model = None
-            self._resync("graduated: global model off (it covers bonding curves only); online model continues on PumpSwap")
+        if status.kind == "graduated" and self._domain != "pumpswap":
+            # The curve model knows bonding curves only. On PumpSwap, use the model trained on
+            # graduated pools if there is one (it was trained on exactly this restart: history
+            # without trade detail, wallets from scratch); else the online model carries on.
+            had_model = self._model is not None
+            self._model = self.after_graduation() if self.after_graduation is not None else None
+            self._domain = "pumpswap"
+            if self._model is not None:
+                self._resync("graduated: PumpSwap model on; online model continues")
+            elif had_model:
+                self._resync("graduated: global model off (it covers bonding curves only); online model continues on PumpSwap")
         if status.kind == "disconnected" and self.outage_from is None:
             self.outage_from = now
         elif status.kind == "connected" and self.outage_from is not None:
@@ -243,7 +254,7 @@ class CandleAgent:
             self.timeframe,
             self._coverage,
             model=self._model,
-            domain=info.domain,
+            domain=self._domain,
             launched_at=info.launched_at,
             creator_known=False,
         )
