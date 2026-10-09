@@ -57,10 +57,11 @@ which it never saw:
 
 The confidence is honest (it matches the hit rate within ~2 points), and the error is 2–12%
 smaller than the naive forecast. Most next-candle moves of young memecoins are noise, so expect
-modest confidence. One known gap: on the newest hours (12–15 UTC) every curve blend understates
-its trading-candle hit rate by 1.7–2.8 points (e.g. 1 m: hits 69.1%, states 67.4%); the cause is
-not yet found. The 5 m model's open, overconfident on v3.1's test hours, is calibrated on those
-newer hours (hits 74.8%, states 73.4%).
+modest confidence. One known gap: on the newest hours (12–16 UTC) every curve blend understates
+its trading-candle hit rate by 1–3 points. Part of it was a per-token direction calibrator
+re-tempering the global model's already calibrated odds; since 2026-10-09 it corrects only the
+online model's share (1 m gap on hours 14–16: +1.1 → +0.7 points). The rest moves with the market
+hour by hour, plus ~3 points at 5 m that wait for a retrain on newer data (predictor doc 8.4.1).
 
 **After graduation** (the token trades on its PumpSwap pool), separate **PumpSwap models** for
 15 s, 30 s and 1 m candles (350–460 graduated pools) take over. On later pools they make the
@@ -112,7 +113,7 @@ The one place on-chain costs are tiny is SOL-USD itself, which is what the user'
 | **PumpSwap 5 m model** | failed its install rule on 48 test pools; retry when there are more graduated pools | when data allows |
 | **More data** | recorders running in the active sessions; finished hours go to `handoff/data/` | ongoing |
 | **Real-fill cost measurement** (PumpPortal, ~0.05 SOL) | blocked until the API key is stored as a secret; owned by the clever session's successor (`handoff/experiments/real_fills.py`) | after the key |
-| Curve blends 1.7–2.8 points underconfident on trading candles | open; the prior and the direction calibrator are ruled out, next is the flat-vs-move call (STATUS log 17:20) | next |
+| **Retrain the curve models on the newer recordings** (v3.2: `raw-clever` 12–16, `raw-clever2`, `raw-v3`) | open; the 5 m blend is ~3 points underconfident on these hours (predictor doc 8.4.1) | next |
 
 ## 6. Decisions the user has made
 

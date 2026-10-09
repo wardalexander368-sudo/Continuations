@@ -180,6 +180,20 @@ def test_global_model_save_load_and_blend(tiny_model, sim_dataset, sim_tokens, t
     assert live.direction == "up" and live.confidence > 0.9
 
 
+def test_direction_calibrator_tempers_only_the_online_share_on_curves(tiny_model, sim_tokens):
+    token = max(sim_tokens, key=lambda t: len(t.ticks))
+    for model in (tiny_model, None):
+        fc = Forecaster(60, model=model, domain="trades", launched_at=token.created, creator_known=True)
+        for candle in token.candles[:20]:
+            fc.observe(candle)
+        fc.calibrator._a = 0.2  # this token's moves made its odds look uninformative
+        f, w = fc._lock(), fc.global_weight
+        slope = 1.0 + (0.2 - 1.0) * (1.0 - w)  # a calibrated global model's odds are left alone
+        q_up = f.p_up / (f.p_up + f.p_down)
+        assert q_up == pytest.approx(1.0 / (1.0 + math.exp(-slope * fc._raw_log_odds)))
+        assert (0.9 < w < 1.0) if model is not None else w == 0.0
+
+
 def test_evaluate_report(tiny_model, sim_dataset):
     report = evaluate(tiny_model, sim_dataset, replay_tokens=3, log=lambda m: None)
     fractions = [row["f"] for row in report["test_by_fraction"]]

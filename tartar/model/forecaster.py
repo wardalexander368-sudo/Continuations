@@ -181,6 +181,7 @@ class Forecaster:
             raise ValueError("coverage must be in [0.5, 1)")
         self.timeframe = timeframe
         self.coverage = coverage
+        self.domain = domain
         self.engine = FeatureEngine(timeframe, launched_at, creator_known, domain=domain)
         self.wallets = WalletTracker(launched_at)
         if domain in TRADE_DOMAINS:
@@ -378,7 +379,10 @@ class Forecaster:
         band_mass = (1.0 - mass) * float(cont_high - cont_low) + (mass if q_low <= x0 <= q_high else 0.0)
 
         q_raw = 1.0 - float(cont_cdf(np.array([0.0]))[0])
-        q_up = self.calibrator.apply(q_raw, weight=remaining)
+        # The calibrator can only temper, fitted on this token's few moves. The global model's odds
+        # are already calibrated across tokens, so tempering them too made curve forecasts
+        # underconfident (predictor doc 8.4.1): on curves it corrects the online model's share only.
+        q_up = self.calibrator.apply(q_raw, weight=remaining * (1.0 - w) if self.domain == "trades" else remaining)
         p_up, p_down, p_flat = (1.0 - mass) * q_up, (1.0 - mass) * (1.0 - q_up), 0.0
         if x0 > 0:
             p_up += mass

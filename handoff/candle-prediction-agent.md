@@ -672,6 +672,51 @@ Every choice was made on **validation** and checked once on test:
     → **+7.8%**
   - live band (all candles): covers 93.3% and states 91.9%
 
+### 8.4.1 The curve blends' trading-candle underconfidence (2026-10-09, handoff session)
+
+STATUS item (b): on hours v3.1 never saw, every curve blend states less than it hits on trading
+candles. `handoff/experiments/blend_calibration.py` replays the installed `trades-*` models on
+`raw-clever` hours 12–15 plus `raw-v3` hour 16 (launches after v3.1's data; `train.replay`'s
+masking), recording each open forecast's parts. `blend_calibration_sim.py` then re-simulates the
+direction calibrator offline (exact: it matches the replay to 1e-15), so variants are compared on
+the same forecasts.
+
+**Where the gap is (1m, 28,576 trading candles, hit 68.1% vs stated 66.7%):**
+* Not the flat-vs-move call: blended P(flat) 44.2% vs 43.3% observed, calibrated bin by bin.
+* The up/down call: down calls hit 61.2% vs 58.5% stated, up calls 47.0% vs 49.8%. P(up | move)
+  is too high in its middle range (0.45–0.60 stated → 3–6 points fewer ups).
+* It moves with the hour: the gap is +3.5 / +0.7 / −0.1 / +2.1 / +1.5 points in hours 12–16 and
+  follows how much more often tokens fell than forecast that hour (q_up bias +2.7 / +0.7 / 0.0 /
+  +2.6 / +0.8). A single-token watcher can't see that market-wide drift.
+* The global model's own P(up | move) is calibrated on average (0.345 vs 0.343). The per-token
+  `DirectionCalibrator` moved it to 0.356: it can only temper (slope ≤ 1) and is fitted on one
+  token's few moves, so on odds that are already calibrated across tokens it can only lower
+  confidence on average.
+
+**Variants** (gap = hit − stated on trading candles; selection hours 12–13, confirmation 14–16):
+
+| Candle | Current: gap 12–13 / 14–16, log loss 14–16 | Calibrator on the online share only (`× (1 − w)`) | Calibrator may also sharpen (slope ≤ 1.5) |
+|---|---|---|---|
+| 15 s | +1.85 / +1.17, 0.7677 | **+1.29 / +0.41**, 0.7686 | +1.59 / +0.98, 0.7681 |
+| 30 s | +1.79 / +0.34, 0.7409 | **+1.31 / −0.38**, 0.7415 | +1.62 / +0.21, 0.7412 |
+| 1 m | +1.87 / +1.12, 0.6927 | **+1.47 / +0.69**, 0.6927 | +1.75 / +1.05, 0.6928 |
+| 5 m | +2.91 / +3.01, 0.6470 | **+2.82 / +2.87**, 0.6468 | +2.88 / +2.96, 0.6469 |
+
+**Installed:** on curves (`domain == "trades"`) the calibrator now corrects only the online
+model's share of the blend (`weight × (1 − w)`; `Forecaster._predict`). It narrows the gap in
+both splits at every length. Log loss is unchanged on the selection hours (±0.0003) and up to
+0.0009 worse on the confirmation hours at 15s/30s, so the per-token tempering carried a little
+information there. This is an honesty fix, not an accuracy gain. Hit rates, medians and bands
+don't change (the calibrator touches only P(up | move)). Online-only forecasts and the
+`pumpswap` domain are unchanged; its blends were already calibrated (8.2.3).
+
+**What is left:** ~0.4–1.5 points at 15s–1m that follow the hour, and ~3 points at 5m. There the
+global model's own odds are off on these hours: direction right 79.0% vs 77.4% stated; its
+P(up | move) above 0.7 hit 96.6% vs 86.0% stated and 0.3–0.4 hit 28% vs 35%, while below 0.1 it
+is over-sharp (12% vs 7%); flat mass is compressed toward the middle (0.3–0.9 stated → 4–6 points
+more flats). That is for the next retrain on newer recordings (`raw-clever` 12–16, `raw-clever2`,
+`raw-v3`), not for a correction fitted on six hours.
+
 ## 9. Scam filtering
 
 - **Risk levels:** `ok`, `caution`, `danger`, `scam` (or `unknown`), each with
@@ -1003,6 +1048,11 @@ reviewers' scripts are in the session scratchpad (not persisted).
   - The current recorder was started at 18:32 UTC on 2026-10-08 with
     `--hours 20`. It logs every disconnect to `data/logs/record.log` (expect one
     every 10–30 s on the public RPC). Stop it with SIGTERM; SIGINT does not.
+- **Never let LightGBM share busy cores.** It uses every core by default, and when anything else
+  is CPU-bound (another training, a replay, pytest's fixtures) it slows down 10–50×: on 2026-10-09
+  a sweep setting took 31 min instead of 2, and a 13 s test ran past 10 min. Run one LightGBM job
+  at a time, or cap each with `OMP_NUM_THREADS` below the free cores (replays: `OMP_NUM_THREADS=1`;
+  single-row predictions gain nothing from threads). The container has 4 cores and 15 GB.
 - **Train into a scratch directory first, then install.** For example
   `tartar train --raw <snapshot> --out /tmp/m --force`, read the table, then
   copy `trades-60s.{txt,json,report.json}` into `tartar/models/`. Train on a

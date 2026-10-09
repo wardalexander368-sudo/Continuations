@@ -56,10 +56,7 @@ next. Topic documents hold the detail:
   §8.2.3) and `handoff/OVERVIEW.md` on `main`. Still in flight: recording `data/raw-v3` here since
   13:31 UTC (`tartar record --source chain` (the default) `--track-minutes 120 --pumpswap-hours
   4`, `SOLANA_COMMITMENT=processed`); finished hours go to `handoff/data/raw-v3/` (13–16 so far).
-  It dies when this session goes idle. **Now (17:21 UTC): item (b), the curve blends'
-  1.7–2.8 point underconfidence on trading candles** (unclaimed after the clever session's
-  17:20 notes): decompose the gap into the flat-vs-move call and the up/down call on unseen
-  hours; any change stays `domain == "trades"`.
+  It dies when this session goes idle. **Item (b) done (19:10 UTC):** see the log entry.
 
 * **REAL MONEY — the PumpPortal wallet is owned by the "Real-money cost test, fresh key" thread session
   (session_01C3taLfUKfeFUC2zXBZEhaR, branch `claude/project-thread-4xqd2n`, from 17:58 UTC
@@ -322,6 +319,18 @@ next. Topic documents hold the detail:
   branch `claude/profitability-backtest`, on `main`).
 
 ## Log (newest first)
+
+* **2026-10-09 19:10 UTC, handoff session: item (b), the curve blends' underconfidence**
+  (predictor doc §8.4.1). Replayed every `trades-*` model on unseen hours 12–16. The flat-vs-move
+  call is calibrated; the gap is in the up/down call and moves with the hour (1m: +3.5 / +0.7 /
+  −0.1 / +2.1 / +1.5 points), following market-wide drift a single-token watcher can't see. One
+  fixable part: the per-token `DirectionCalibrator` (temper-only) was re-tempering the global
+  model's already calibrated odds. **Changed:** on curves it now corrects only the online share
+  (`× (1 − w)`), chosen on hours 12–13 and confirmed on 14–16: trading gap 15s +1.17 → +0.41,
+  30s +0.34 → −0.38, 1m +1.12 → +0.69, 5m +3.01 → +2.87; log loss ±0.0009 (honesty fix, not an
+  accuracy gain). PumpSwap and online-only forecasts unchanged. 147 tests pass. **Next
+  (unclaimed): retrain the curve models on the newer recordings** (5m still ~3 points under).
+  Also: LightGBM slows 10–50× on shared cores, cap `OMP_NUM_THREADS` (predictor doc §14).
 
 * **2026-10-09 17:46 UTC, same-slot entry thread: closed, not worth building** (profitability
   §3.18; 17,098 launches + 200 fetched blocks). §3.9's creation-slot edge comes from the
