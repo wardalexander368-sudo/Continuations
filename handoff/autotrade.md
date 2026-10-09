@@ -1,8 +1,8 @@
 # The automated paper-trading agent (`tartar/autotrade`)
 
 Built 2026-10-09 by the agent-machinery thread for the project goal "a fully automated trading
-agent, focused on profitability and self improvement". **Paper, with dry live twins** (see *Going live*). It runs hourly on GitHub
-Actions (`.github/workflows/autotrade.yml`, :15 past each hour) without any Claude session and
+agent, focused on profitability and self improvement". **Paper, with dry live twins** (see *Going live*). It runs every 5 minutes on GitHub
+Actions (`.github/workflows/autotrade.yml`, every 5 minutes since 2026-10-09 23:20 UTC; hourly before) without any Claude session and
 commits its state to `autotrade/`. Read `autotrade/REPORT.md` for the current picture.
 
 ## What one run does
@@ -135,10 +135,9 @@ A failed live sell also records an orphan and halts that strategy's live entries
 
 ### Known gaps (decisions for the user)
 
-1. **Cadence.** The Action runs hourly, and the dip strategy acts on 5-minute bars up to 65 minutes
-   old, so most dip entries are older than `max_signal_age_s` and won't be mirrored. Live trading of
-   dip needs a faster run (`*/5` cron) or a larger age limit; the latter changes what is traded.
-2. **Perps.** `xs_momentum`, `pumpflow` and other Hyperliquid rules have no live route. They would
-   need a Hyperliquid executor and an API wallet.
+1. **Cadence: resolved 2026-10-09 23:20 UTC.** The user chose a run every 5 minutes, so dip entries
+   reach the broker within ~10 minutes of their bar, inside `max_signal_age_s` (900 s).
+2. **Perps.** `xs_momentum`, `pumpflow` and other Hyperliquid rules have no live route. They need a
+   Hyperliquid executor and an API wallet (taken by the edge-hunt E thread, 2026-10-09 23:16 UTC).
 3. **Lightning** reads fills from chain for its custodial wallet, so `live.lightning_wallet` must be set
    before that route can be used; Jupiter needs only the key.
