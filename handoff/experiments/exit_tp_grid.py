@@ -16,5 +16,5 @@ for size, fee, net, name in ((0.02, 0.0125, 0.000011, "Jupiter 0.02 SOL"), (0.1,
         for hold in (600, 1800):
             for sl in (None, 0.5):
                 r = {"hold": hold, "tp": tp, "sl": sl}
-                dv = np.array([x for x in (w.exit_at(exit_time(w, r), 1.0) for L, w in W if L["created"] < TEST_FROM) if x is not None])
+                dv = np.array([x for x in (w.exit_at(exit_time(w, r), 1.0, w.entry_t + r["hold"]) for L, w in W if L["created"] < TEST_FROM) if x is not None])
                 print(f"  TP {tp:4g} hold {hold:5d} SL {sl}: dev {fmt(stats(dv))}")

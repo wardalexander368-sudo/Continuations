@@ -23,10 +23,10 @@ rows = []
 for L, w in zip(launches, wins):
     if w.tokens is None:
         continue
-    base = w.exit_at(w.entry_t + 180, LAT)
+    base = w.exit_at(w.entry_t + 180, LAT, w.entry_t + 180)
     n = int(np.searchsorted(w.t, w.entry_t + 180, side="right"))
     mover = bool(((w.value[:n] - 0.1 - 0.0004) / 0.1 > 0).any())
-    trade = w.exit_at(exit_time(w, {"hold": 180, "tp": 1.0}), LAT)
+    trade = w.exit_at(exit_time(w, {"hold": 180, "tp": 1.0}), LAT, w.entry_t + 180)
     rows.append({"t": L["t"], "created": L["created"], "done": w.entry_t + 180 + LAT, "base": base, "mover": mover, "trade": trade, "flags_ok": FILTERS["live skip flags"](L)})
 rows.sort(key=lambda r: r["t"])
 done = sorted((r["done"], r["base"], r["mover"]) for r in rows if r["base"] is not None)

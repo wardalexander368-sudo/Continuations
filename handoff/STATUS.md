@@ -378,9 +378,10 @@ next. Topic documents hold the detail:
   loses** (profitability §3.21; 22,363 screened launches, dev before 16:00, test 16:00–20:20 UTC).
   Two thirds of launches never offer a sale above cost after a +20 s entry (oracle median −3.45%),
   and the risk filters remove the ones that move (flags + P(rug) < 0.1: oracle +1.5%). On the live
-  skip-flag policy, TP +100% / 30 min hold / no stop beats the fixed 180 s hold by 4 points on
-  test (−2.6% vs −6.8%); stops always hurt. Jupiter + 0.02 SOL + the measured 0.000011 SOL network
-  fee add ~1 point: −1.57% [−3.09, +0.05] on test. Regime gates: no signal. Lightning also strands
+  skip-flag policy, TP +100% / no stop beats the fixed 180 s hold by ~3 points on test (−3.7% vs
+  −6.8%); stops always hurt. Jupiter + 0.02 SOL + the measured 0.000011 SOL network fee add ~1
+  point: −2.88% [−4.11, −1.60] on test. (Corrected 21:55 UTC: the first numbers, −1.57%, kept
+  early take-profits near recording ends; fixed in the scripts and §3.21.) Regime gates: no signal. Lightning also strands
   0.0015 SOL rent per new token (fresh launches ~7% per round trip at 0.1 SOL). Not worth a
   forward test. Scripts `exit_study.py`, `regime_gate.py`, `exit_tp_grid.py`. Nothing half-done;
   claim cleared.

@@ -24,7 +24,7 @@ Where each family stands (2026-10-09):
 | Graduated tokens in their first hour on PumpSwap (fees 1.20–1.25%/side, §3.13) | closed, loses (pre-registered, 264 pools) | §3.16 |
 | Established memecoins: dip buying | rolling forward test, scored 2026-10-30 | §3.11 |
 | Predictor v3.1 candle calls + P(rug), held to the candle close (1m, 5m) | closed, loses (pre-registered, 108 trades) | §3.20 |
-| Smarter exits, regime gating and cheaper execution on launch buys | best: skip flags + TP +100% / 30 min, Jupiter, 0.02 SOL: −1.6% [−3.1, +0.05]; still loses | §3.21 |
+| Smarter exits, regime gating and cheaper execution on launch buys | best: skip flags + TP +100%, Jupiter, 0.02 SOL: −2.9% [−4.1, −1.6]; still loses | §3.21 |
 | SOL-USD with Jev (the user's jevtrader) | sealed test ends 2026-10-23; on-chain costs ≈ 0.5 bps/fill | §3.12, `handoff/jevtrader.md` |
 
 ## 2. How it is measured (`tartar/profit.py`, `tartar profit`)
@@ -796,64 +796,67 @@ fee). Data: every screened SOL launch on the five newest recordings (`raw-eager`
 `raw-clever2`, `raw-v3`, `raw-pred`; one copy per mint), **22,363 launches**: dev = created before
 16:00 UTC 10-09 (15,068), test = 16:00–20:20 UTC (7,295; after the installed P(rug) model's
 training data). State at +20 s is the fast loop's own (`_screens` replay, flags included); fills on
-the recorded reserves after 1 s, as `profit.round_trip`; a trade is dropped only when the
-recorder was down or stopped following the token. Scripts: `handoff/experiments/exit_study.py`
-(`extract`, `run`), `regime_gate.py`, `exit_tp_grid.py`; outputs `handoff/data/exit-study/`.
+the recorded reserves after 1 s, as `profit.round_trip`. A trade counts only if the recording
+covers its whole holding period up to the rule's max hold (decided at entry, never by when it
+exited). Scripts: `handoff/experiments/exit_study.py` (`extract`, `run`), `regime_gate.py`,
+`exit_tp_grid.py`; outputs `handoff/data/exit-study/`.
+
+*Correction (21:55 UTC):* the first version of this section (20:45) kept a trade when its exit
+fell inside the recording, so near the end of each recording early take-profits were kept and
+full-length losers dropped (§3.10's lesson). That flattered the 30-minute TP rules by ~1 point.
+All numbers below are from the fixed scripts.
 
 **1. The ceiling: two thirds of launches never offer a sale above cost.** An *oracle* exit (the
 best sale in the next 30 minutes, chosen with hindsight) still has a median of −3.45% on every
-launch: only 32% of launches ever trade above our break-even after a +20 s entry. Its mean is
+launch: only 33% of launches ever trade above our break-even after a +20 s entry. Its mean is
 +44% on test, all from the few that run. Risk filters remove exactly those:
 
-| Entry filter (test) | Oracle exit mean | Oracle win | Current exit (hold 180 s) | Best exit chosen on dev |
+| Entry filter (test, paper costs) | Oracle exit mean | Oracle win | Current exit (hold 180 s) | Best exit chosen on dev |
 |---|---|---|---|---|
-| every launch | +43.8% | 32% | −5.0% | −4.6% (hold 60 s, TP +30%, trail 10%, dev-sell, dump) |
-| live skip flags (`concentrated`, `sniped`, `dev_bag`) | +18.3% | 14% | −6.8% | **−2.6%** (TP +100%, hold 30 min) |
-| P(rug) < 0.1 | +12.3% | 21% | −6.3% | −4.6% |
-| flags + P(rug) < 0.1 | **+1.5%** | 7% | −3.9% | −3.9% (hold 180 s) |
+| every launch | +44.1% | 33% | −5.0% | −4.6% (hold 60 s, TP +30%, trail 10%, dev-sell, dump) |
+| live skip flags (`concentrated`, `sniped`, `dev_bag`) | +15.6% | 14% | −6.8% | **−3.7%** (TP +100%) |
+| P(rug) < 0.1 | +14.2% | 21% | −6.3% | −4.6% |
+| flags + P(rug) < 0.1 | **+1.8%** | 7% | −3.9% | −3.8% (hold 180 s) |
 
 (0.1 SOL, 1.25% per side, 0.0002 SOL per transaction, as the paper model.) Filtering for safety
 cuts losses by removing the launches that move: with flags and P(rug) < 0.1 even perfect hindsight
-makes only +1.5%. No exit rule can rescue an entry whose oracle is near zero.
+makes only +1.8%. No exit rule can rescue an entry whose oracle is near zero.
 
-**2. Exits: take profit, don't stop out.** 360 causal rules (max hold 60 s–30 min × trailing stop
-10–50% × TP +30%/+100% × sell on the creator's first sell × sell after a single sell ≥ 10%/25% of
-the curve's SOL), chosen on dev. On the live skip-flag policy a **TP of +100% with a 30-minute
-hold** wins on dev and holds on test: −2.6% vs −6.8% for the current fixed 180 s hold, a 4-point
-gain. Every stop-loss and trailing stop makes that policy worse or no better (SL −50% costs up to 1
+**2. Exits: take profit at +100%, don't stop out.** 360 causal rules (max hold 60 s–30 min ×
+trailing stop 10–50% × TP +30%/+100% × sell on the creator's first sell × sell after a single sell
+≥ 10%/25% of the curve's SOL), chosen on dev. On the live skip-flag policy a **TP of +100%** wins
+on dev and holds on test: −3.7% vs −6.8% for the current fixed 180 s hold, a 3-point gain. Once
+the TP is on, the max hold barely matters (180 s, 10 min and 30 min within 0.3 points on dev).
+Every stop-loss and trailing stop makes that policy worse or no better (SL −50% costs up to 1
 point; `tp-grid-live-flags.txt`): curve prices dip and recover often, and a stop sells the dip. TP
-levels from +50% to +500% are within ~0.7 points of each other on dev. On unfiltered launches
-the best rules are tight (trail 10%, TP +30%, 60 s) and gain only ~0.4 points over a 60 s hold.
-Selling on the creator's first sell or on a large dump never adds more than 0.1 point.
+levels from +50% to +150% are within ~0.5 points. On unfiltered launches the best rules are tight
+(trail 10%, TP +30%, 60 s) and gain only ~0.4 points over a 60 s hold. Selling on the creator's
+first sell or on a large dump never adds more than 0.1 point. The fast loop's default exit is now
+TP +100%, 30 min, no stop.
 
 **3. Execution: route, size and the real network fee add ~1 point.** The paper model charges
 0.0002 SOL per transaction; the real fills paid 0.000011 (STATUS real-money entry). With the
 Jupiter route (no route fee, §3.19), the measured network fee and 0.02 SOL per entry (less
-impact on ~30-SOL curves), the round-trip floor falls from −3.52% to −2.72%. The same live
-skip-flag + TP +100% / 30 min rule then makes **−1.57% [−3.09, +0.05]** on test (2,113 trades,
-win 7.6%; dev −1.75%). At Lightning's 1% per side it is −4.2%, and Lightning also strands
-0.0015 SOL of token-account rent per new token (1.5 points at 0.1 SOL, 7.5 at 0.02), which no
-row here charges: **fresh launches through Lightning cost ~7% per round trip at 0.1 SOL.**
+impact on ~30-SOL curves), the round-trip floor falls from −3.52% to −2.72%. The live skip-flag
+policy with TP +100% (hold 180 s, chosen on dev at these costs) then makes **−2.88% [−4.11, −1.60]**
+on test (2,588 trades, win 7.4%; dev −2.3%). At Lightning's 1% per side it is −5.3%, and Lightning
+also strands 0.0015 SOL of token-account rent per new token (1.5 points at 0.1 SOL, 7.5 at 0.02),
+which no row here charges: **fresh launches through Lightning cost ~7% per round trip at 0.1 SOL.**
 
 **4. Market regime: no signal.** Three causal gates at each decision (mean net of the last 30
 minutes' completed launch trades, the share of them that ever cleared cost, launches in the last
 10 minutes): rank correlation with the trade's result −0.02 to +0.01 on dev; gates chosen on dev
-don't hold on test (e.g. −4.0% vs −3.8% ungated) or never fire there. Launch outcomes don't
-cluster in time in a way a gate can use.
+don't hold on test (e.g. −4.1% vs −3.9% ungated) or never fire there.
 
 **Reading:**
-* The agent's exit skill had real room: a fixed 180 s hold is the worst shape for a payoff whose
-  value sits in a few runners. TP +100% with a long hold and no stop is worth ~4 points per trade
-  on the live policy. Execution choices are worth ~1 more. Together they take the best launch
-  policy from −6.8% to −1.6%, **still a loss**, with the interval touching zero only at its edge.
-* Not worth a forward test: the test numbers above were looked at, the dev surface is flat around
-  −1.8% to −2.5% with nothing positive, and the remaining gap is the round-trip floor on launches
-  that never trade again. Something new would have to pick the ~30% of launches that move
-  *without* the risk filters removing them (§3.5–3.8 and §3.20 already tried flow, wallets,
-  language and the predictor).
-* For any future launch rule (or a revival of the fast loop): default to TP +100% / 30 min hold,
-  no stop-loss; size small; charge the real route's fee and the rent; Jupiter with our own key,
-  never Lightning, for fresh tokens.
+* The agent's exit skill had room: a fixed hold is the wrong shape for a payoff whose value sits
+  in a few runners. TP +100% with no stop is worth ~3 points per trade on the live policy, and
+  execution ~1 more. Together they take the best launch policy from −6.8% to −2.9%, **still a
+  loss**.
+* The remaining gap is the round-trip floor on launches that never trade again. Something new has
+  to pick the ~30% of launches that move *without* the risk filters removing them (§3.22).
+* For any launch rule: TP +100%, no stop-loss; size small; charge the real route's fee and the
+  rent; Jupiter with our own key, never Lightning, for fresh tokens.
 
 ## 4. What this means for the plan
 

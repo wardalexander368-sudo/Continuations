@@ -137,10 +137,16 @@ class Window:
             self.value[k:] = self.value[max(k - 1, 0)] * (1 - HAIRCUT)
         self.ok_until = L["known_until"]
 
-    def exit_at(self, t_decide: float, latency: float) -> float | None:
-        """Net return of selling at the state `latency` after `t_decide`; None if unknown then."""
+    def exit_at(self, t_decide: float, latency: float, deadline: float) -> float | None:
+        """Net return of selling at the state `latency` after `t_decide`.
+
+        None unless the recording covers the whole holding period up to the rule's `deadline`
+        (its max hold): whether a trade counts must not depend on when it happened to exit
+        (an early take-profit near the end of a recording would otherwise be kept while the
+        losers that hold to the deadline were dropped; profitability 3.10's lesson).
+        """
         t_out = t_decide + latency
-        if t_out + 5.0 > self.ok_until:
+        if max(t_out, deadline + latency) + 5.0 > self.ok_until:
             return None
         k = int(np.searchsorted(self.t, t_out, side="right")) - 1
         return (self.value[k] - self.size - 2 * self.net) / self.size
@@ -248,6 +254,8 @@ def run(pkls: list[str], fee: float = 0.0125, size: float = 0.1, net: float = 0.
         def oracle(part):
             v = []
             for L, w in part:
+                if w.entry_t + MAX_AFTER + latency + 5.0 > w.ok_until:
+                    continue  # the recording doesn't cover the whole 30 minutes
                 ok = w.t + latency + 5.0 <= w.ok_until
                 if ok.any():
                     v.append((w.value[ok].max() - w.size - 2 * w.net) / w.size)
@@ -256,7 +264,7 @@ def run(pkls: list[str], fee: float = 0.0125, size: float = 0.1, net: float = 0.
         print(f"  oracle exit (hindsight, 30 min)   dev {fmt(stats(oracle(dev), rng))}")
         results = []
         for r in rs:
-            dv = [w.exit_at(exit_time(w, r), latency) for L, w in dev]
+            dv = [w.exit_at(exit_time(w, r), latency, w.entry_t + r["hold"]) for L, w in dev]
             dv = np.array([x for x in dv if x is not None])
             results.append((r, dv))
         base = {r["hold"]: dv for r, dv in results if not r["trail"] and not r["tp"] and not r["dev"] and not r["dump"]}
@@ -267,11 +275,11 @@ def run(pkls: list[str], fee: float = 0.0125, size: float = 0.1, net: float = 0.
         for r, dv in results[:5]:
             print(f"    {label(r):45s} dev {fmt(stats(dv, rng))}")
         best = results[0][0]
-        tv = np.array([x for x in (w.exit_at(exit_time(w, best), latency) for L, w in test) if x is not None])
+        tv = np.array([x for x in (w.exit_at(exit_time(w, best), latency, w.entry_t + best["hold"]) for L, w in test) if x is not None])
         print(f"  TEST, best dev rule ({label(best)}): {fmt(stats(tv, rng))}")
         for h in (180, 600):
             r0 = {"hold": h}
-            tv0 = np.array([x for x in (w.exit_at(exit_time(w, r0), latency) for L, w in test) if x is not None])
+            tv0 = np.array([x for x in (w.exit_at(exit_time(w, r0), latency, w.entry_t + h) for L, w in test) if x is not None])
             print(f"  TEST, baseline hold {h}s: {fmt(stats(tv0, rng))}")
         print(f"  TEST oracle: {fmt(stats(oracle(test), rng))}")
 
