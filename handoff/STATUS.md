@@ -37,8 +37,6 @@ next. Topic documents hold the detail:
 
 
 
-* **Profitability session** (session_01U4x5qUJYMStcujpyLJgQ8N), since 01:00 UTC 10-09: **queue item 10, entry latency in slots**: how many slots after a launch a buy must land to beat costs (V1 and V2 fees), from `handoff/data/raw-slots`. Branch `claude/slot-profit`.
-
 ## Blockers (need the user)
 
 * ~~Network~~: **resolved 22:35 UTC**, the user enabled full network access.
@@ -46,7 +44,8 @@ next. Topic documents hold the detail:
   as an environment secret (new sessions see it). **Never ask for the key in chat.**
 * **Private RPC:** the public RPC misses ~7% of a typical token's trades, more
   for busy ones, and adds delay. A Helius, QuickNode or Triton websocket in
-  `SOLANA_RPC_WS` fixes both. Ask the user.
+  `SOLANA_RPC_WS` fixes both. Ask the user. Note (§3.9): it improves
+  data quality only. It won't make launch buying profitable.
 
 ## Queue (ranked by expected effect on profit)
 
@@ -121,10 +120,19 @@ next. Topic documents hold the detail:
    the raw creates carry `"quote"`, so skip those launches. A quote-paired
    curve has no SOL price, and paper fills on it would be meaningless.
 
-10. **Entry latency in slots** (profitability session). Rerun §3.4 in slots:
-    net result of buying at launch slot + k for k = 0…100, at 1.25% and 3.45%
-    per side. That tells whether a private RPC or Jito-speed execution
-    could ever pay.
+10. ~~**Entry latency in slots**~~ **done 01:40 UTC 10-09**
+    (`profitability.md` §3.9). Fees on current SOL launches are 1.25%/side
+    (212 sampled trades; no 2.5% creator fee on SOL curves). Only a buy
+    bundled into the creation transaction profits (+6.8% at 10 s). Landing
+    first in slot +1, the best any outsider can do, loses 5.3%, and still
+    −1.8% with zero fees and tips. **Launch buying is closed as a strategy
+    family; faster infrastructure can't fix it.**
+11. **Next strategy families** (unclaimed): (a) graduated tokens on
+    PumpSwap: record them with the new decoder, then measure entries
+    around graduation and after it with `tartar profit`-style net results;
+    (b) longer-lived tokens (hours old, real liquidity) via DexScreener or
+    PumpSwap trades; (c) a liquid market like SOL-USD where costs are tiny,
+    e.g. Jev on news (the user's earlier `jevtrader` idea).
 
 ## Rules that hold across sessions
 
@@ -154,6 +162,14 @@ next. Topic documents hold the detail:
   branch `claude/profitability-backtest`, on `main`).
 
 ## Log (newest first)
+
+* **2026-10-09 01:40 UTC, profitability session:** Queue item 10 is done
+  (§3.9). Measured fees from 212 recent TradeEvents: 1.25%/side on SOL
+  curves. Simulated entries in slots on the slot recording: only the
+  creation-slot bundle profits, and every outside entry loses, even with no
+  fees. Launch buying is closed; added queue item 11 (next strategy
+  families). New scripts: `handoff/experiments/fee_sample.py` and
+  `slot_profit.py`.
 
 * **2026-10-09 01:15 UTC, predictor session:**
   - `--raw` now takes several recorder directories (`A,B`), one timeline each.
