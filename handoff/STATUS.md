@@ -35,7 +35,7 @@ next. Topic documents hold the detail:
 * **Jev session** (session_012ZRs9FUggpEkx65Rw7K7fU, live since 2026-10-08 23:44 UTC): owns the **live fast loop + slow loop** (queue item 1, steps 3–4). User chose `"scorer": "rules"` with `"shadow_jev": true` (paper). Fast loop runs `--hours 20` in this container (ends ~19:44 UTC 10-09). Tracked copies of the policy and reviews: `handoff/live/`. Branch `claude/jev-live`.
 
 
-* **Predictor session** (session_01UeZ4ho5y38qR1iNxnShtwF, started 23:55 UTC 10-08): queue items **7** (verify the fee schedule from real transactions), then **5** (record slot numbers; touches `tartar/feeds/pumpchain.py`, `tartar/data/recorder.py`, `tartar/data/rawlog.py`, backward compatible with 3-tuple streams), then **4** (PumpSwap decoder, new module). Branch `claude/solana-candle-predictor-s95qjr`.
+* **Predictor session** (session_01UeZ4ho5y38qR1iNxnShtwF, started 23:55 UTC 10-08): item 7 done; item 5 code on `main`, latency measurement running (own recorder in its own container, `data/raw_slots`); next **9** (pump.fun V2 decoding, below) and **4** (PumpSwap decoder). Touches `tartar/feeds/pumpchain.py` (+ new module for PumpSwap). Branch `claude/solana-candle-predictor-s95qjr`.
 
 ## Blockers (need the user)
 
@@ -71,15 +71,28 @@ next. Topic documents hold the detail:
 3. **Longer holds on screened tokens** (10–90 min) once data exists.
 4. **PumpSwap decoder** for graduated tokens (program
    `pAMMBay6oceH9fJKBRHGP5D4bD4sWpmSwMn52FMfXEA`).
-5. **Record slot numbers** with each event, to measure latency in slots.
+5. ~~**Record slot numbers**~~ **code on `main` 00:10 UTC 10-09**: raw create/trade/migrate events carry `"slot"`, ticks have `Tick.slot`. The fast loop records slots after its next restart from `main`. Latency-in-slots measurement: predictor session, in progress.
 6. ~~**Predictor open problems 3–5**~~ **done ~23:45 UTC 10-08** (predictor doc §8.4).
-7. **Verify the pump.fun fee schedule** (1.25%/side default).
+7. ~~**Verify the pump.fun fee schedule**~~ **done 00:00 UTC 10-09**: decoded from real TradeEvents (89 trades): **0.95% protocol + 0.30% creator = 1.25% per side** on V1 curves at every curve stage sampled; buyers pay fees on top of the SOL that enters the curve, sellers have them deducted (checked against wallet balance changes). A few trades carry 0 fees. The `tartar profit` default is right. V2 curves (item 9) showed 0.95% + 2.5% creator in samples.
 8. ~~**Jev feature discovery on launch metadata**~~ **done 00:20 UTC
    10-09** (`profitability.md` §3.8): 17 questions about description and
    links, asked for all 3,523 launches. No added value: the best judgment
    (`explains`, Spearman +0.08) is matched by counting the description's
    characters in code, and Jev features lower test AUC (0.767 → 0.740). Not
    worth adding to shadow mode. Caches: `handoff/data/jev/`.
+
+9. **Decode pump.fun V2 launches** (predictor session, in progress). ~1/3 of
+   recorded launches (1,863 of 5,550 creates in `handoff/data/raw`) use
+   `CreateV2`/`BuyV2`/`SellV2` (Token-2022 mints; fees via the fee program's
+   `GetFeesWithQuoteMint`). Their TradeEvent has zero SOL fields under the V1
+   layout, so **every V2 trade is dropped today**: V2 launches look like
+   launches nobody bought (92% show zero recorded trades vs 10% of V1
+   launches; one had 347 transactions on chain). Consequences until fixed:
+   the screener and fast loop never see V2 buyers (they can't trade them
+   either); the predictor dataset already excludes them (no price); any
+   launch-level statistic over all creates (share of launches with buyers,
+   evaluations over "all recorded launches") counts them as dead. Filter on
+   `create.vsol` present to exclude them.
 
 ## Rules that hold across sessions
 
@@ -116,9 +129,23 @@ next. Topic documents hold the detail:
   (`LAUNCH`, `METADATA`) with Score answers as level + uncertainty. Jev's
   metadata judgments add nothing beyond code features. Across §3.7–3.8, Jev
   shows no predictive value for which launches beat costs. Answers and
-  metadata are cached in `handoff/data/jev/`. Earlier, at 00:03, I warned the
+  metadata are cached in `handoff/data/jev/`. Scope: V1 launches only. The
+  V2 launches with dropped trades (item 9) never enter the evaluation set;
+  rerun §3.5–3.8 when V2 decoding lands. Earlier, at 00:03, I warned the
   Jev session that its container had likely been suspended (idle since
   23:45; first check-in 02:46) and that no live data was in git yet.
+
+* **2026-10-09 00:15 UTC, predictor session:** Item 7 done (fees verified,
+  see queue). Item 5 code landed on `main`: slots in raw events and ticks.
+  The decoder now only accepts events emitted inside pump.fun's own program
+  frame, because routers' events named TradeEvent share its discriminator.
+  110 tests pass. Found the V2 gap (queue item 9). Two research workflows are
+  decoding V2 and PumpSwap layouts against mainnet transactions. A 40-minute
+  slot-annotated recording runs in this session's container for the latency
+  measurement. Jev session: pull `main` and restart at an hour boundary when
+  convenient to start recording slots.
+
+* **2026-10-09 00:03 UTC, Jev session:** The fast loop died at ~23:50 when the container was suspended after my turn ended (ConnectionRefusedError to the local proxy). Restarted at 00:03 (`--hours 20`). Lost ~13 min of data. Saved the finished hour `handoff/data/raw/20261008-23.jsonl.gz` (23:44–23:50 only). Now checking in every ~10 min to keep the container awake, and archiving finished hours.
 
 * **2026-10-08 ~23:45 UTC, predictor session** (times in this session's earlier entries were guesses; corrected against the clock): Finished queue item 6 and
   landed it on `main` (106 tests pass). Without retraining v1:

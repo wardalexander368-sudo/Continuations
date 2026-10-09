@@ -19,7 +19,7 @@ import os
 import struct
 import time
 from dataclasses import dataclass
-from typing import AsyncIterator, Iterable
+from typing import AsyncIterator, Callable, Iterable, Iterator
 
 from websockets.asyncio.client import connect
 from websockets.exceptions import WebSocketException
@@ -52,6 +52,17 @@ def b58encode(raw: bytes) -> str:
         n, r = divmod(n, 58)
         out = _B58[r] + out
     return "1" * (len(raw) - len(raw.lstrip(b"\0"))) + out
+
+
+def b58decode(text: str, size: int = 32) -> bytes:
+    n = 0
+    for ch in text:
+        n = n * 58 + _B58.index(ch)
+    body = n.to_bytes((n.bit_length() + 7) // 8, "big") if n else b""
+    raw = b"\0" * (len(text) - len(text.lstrip("1"))) + body
+    if len(raw) != size:
+        raise ValueError(f"not a {size}-byte base58 key: {text}")
+    return raw
 
 
 def rpc_urls() -> tuple[str, ...]:
@@ -158,19 +169,35 @@ def decode_event(data: bytes) -> ChainTrade | ChainCreate | ChainComplete | None
     return None
 
 
-def events_from_logs(logs: Iterable[str]) -> list[ChainTrade | ChainCreate | ChainComplete]:
-    events = []
+def program_data(logs: Iterable[str], program: str) -> Iterator[bytes]:
+    """Payloads of the `Program data` lines that `program` itself emitted.
+
+    Only lines logged while `program` is the innermost running program count: routers
+    and other launchpads in the same transaction emit their own Anchor events, whose
+    discriminators depend only on the event name (another program's TradeEvent has
+    pump.fun's). Logs without invoke lines are taken as the program's own.
+    """
+    frames: list[str] = []
     for line in logs:
         if not line.startswith("Program data: "):
+            parts = line.split(" ", 3)
+            if len(parts) >= 3 and parts[0] == "Program":
+                if parts[2] == "invoke":
+                    frames.append(parts[1])
+                elif (parts[2] == "success" or parts[2].startswith("failed")) and frames and frames[-1] == parts[1]:
+                    frames.pop()
+            continue
+        if frames and frames[-1] != program:
             continue
         try:
-            data = base64.b64decode(line[14:], validate=True)
+            yield base64.b64decode(line[14:], validate=True)
         except (binascii.Error, ValueError):
             continue
-        event = decode_event(data)
-        if event is not None:
-            events.append(event)
-    return events
+
+
+def events_from_logs(logs: Iterable[str], program: str = PUMP_PROGRAM) -> list[ChainTrade | ChainCreate | ChainComplete]:
+    """pump.fun events in a transaction's logs (see `program_data`)."""
+    return [event for data in program_data(logs, program) if (event := decode_event(data)) is not None]
 
 
 def capture_rate(trades: Iterable[tuple[float, bool, float | None, float]]) -> float | None:
@@ -223,14 +250,23 @@ def create_to_message(create: ChainCreate, first_trade: ChainTrade | None = None
     return msg
 
 
+def stream_item(item: tuple) -> tuple[float, str, list, int | None]:
+    """(receive time, signature, events, slot) from a stream item; slot is None if absent."""
+    return item[0], item[1], item[2], (item[3] if len(item) > 3 else None)
+
+
 async def stream_program_events(
     urls: tuple[str, ...] | None = None,
     *,
     commitment: str = "confirmed",
     max_backoff: float = 30.0,
-) -> AsyncIterator[tuple[float, str, list] | Status]:
-    """Yield (receive time, signature, events) for every successful pump.fun transaction,
-    plus Status messages (kind connected/disconnected) on (re)connection.
+    mentions: str = PUMP_PROGRAM,
+    decode: Callable[[list[str]], list] = events_from_logs,
+) -> AsyncIterator[tuple[float, str, list, int | None] | Status]:
+    """Yield (receive time, signature, events, slot) for every successful pump.fun
+    transaction, plus Status messages (kind connected/disconnected) on (re)connection.
+    Consumers that predate the slot read the first three items (`stream_item`).
+    `mentions` and `decode` select another account (e.g. one PumpSwap pool) and decoder.
 
     After a drop it reconnects to the same endpoint; it only moves to the next of
     `urls` after repeated failures to connect. Trades during a disconnection are
@@ -242,7 +278,7 @@ async def stream_program_events(
         connected = False
         try:
             async with connect(url, open_timeout=15, ping_interval=None, max_size=None, max_queue=None) as ws:
-                request = {"jsonrpc": "2.0", "id": 1, "method": "logsSubscribe", "params": [{"mentions": [PUMP_PROGRAM]}, {"commitment": commitment}]}
+                request = {"jsonrpc": "2.0", "id": 1, "method": "logsSubscribe", "params": [{"mentions": [mentions]}, {"commitment": commitment}]}
                 await ws.send(json.dumps(request))
                 reply = json.loads(await asyncio.wait_for(ws.recv(), 15))
                 if "error" in reply:
@@ -253,14 +289,16 @@ async def stream_program_events(
                 while True:
                     raw = await asyncio.wait_for(ws.recv(), 60)  # pump.fun is never quiet for a minute
                     try:
-                        value = json.loads(raw)["params"]["result"]["value"]
+                        result = json.loads(raw)["params"]["result"]
+                        value = result["value"]
                     except (ValueError, KeyError, TypeError):
                         continue
                     if value.get("err") is not None:
                         continue  # failed transactions change nothing
-                    events = events_from_logs(value.get("logs") or ())
+                    events = decode(value.get("logs") or [])
                     if events:
-                        yield time.time(), value.get("signature", ""), events
+                        slot = (result.get("context") or {}).get("slot")
+                        yield time.time(), value.get("signature", ""), events, slot if isinstance(slot, int) else None
         except (OSError, WebSocketException, asyncio.TimeoutError, ConnectionError, ValueError) as exc:
             yield Status(f"{url} disconnected ({exc.__class__.__name__}: {str(exc)[:120]}); retrying in {backoff:.0f}s", "warn", kind="disconnected")
         if not connected:
@@ -303,7 +341,7 @@ class PumpChainFeed(LiveFeed):
             if isinstance(item, Status):
                 yield item
                 continue
-            _, _, events = item
+            _, _, events, _ = stream_item(item)
             for event in events:
                 if isinstance(event, ChainTrade) and event.mint == self.mint:
                     if not self.creator and event.creator:

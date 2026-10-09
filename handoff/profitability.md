@@ -245,6 +245,12 @@ With hold 600 s, TP +100%, SL −30%, every set loses on test (−4.2% to
   never trade (a certain −3.5% loss) from launches that do. They don't
   tell winners from losers after costs.
 
+**Scope:** all evaluations here use the tokens `load_trade_tokens` keeps,
+which excludes pump.fun V2 launches whose trades the decoder drops (STATUS
+queue item 9): 130 of the 3,523 tokens lack create reserves, and every one
+of them has recorded trades. So the results describe V1 launches. Rerun
+them once V2 decoding lands.
+
 **Conclusion across §3.7–3.8:** with three question designs (the direct
 question, name judgments, metadata judgments), Jev adds no predictive value
 for which pump.fun launches beat costs. What separates launches here is

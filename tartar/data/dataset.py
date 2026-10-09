@@ -112,6 +112,7 @@ def tick_from_event(event: dict, creator: str) -> Tick | None:
         liquidity=_real_sol(event),
         tokens=event.get("tok") or 0.0,
         virtual_sol=event.get("vsol") or 0.0,
+        slot=event.get("slot"),
     )
 
 
