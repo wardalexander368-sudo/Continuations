@@ -190,3 +190,84 @@ def test_jev_shadow_answers_are_journaled_not_acted_on(raw, tmp_path):
     assert "Jev shadow answers" in to_markdown(result)
     with pytest.raises(PolicyError):
         FastLoop(open_policy(shadow_jev=True), Journal(tmp_path / "k"))  # no Jev client configured
+
+
+K_CURVE = 30.0 * 1_073_000_000.0  # standard curve: virtual SOL x virtual tokens
+
+
+def curve_event(kind, t, raised, sol=0.5, side="b", mint="RUN", **extra):
+    vsol = 30.0 + raised
+    event = {"e": kind, "t": t, "mint": mint, "sol": sol, "tok": 1.0, "vsol": vsol, "vtok": K_CURVE / vsol, "rsol": raised, **extra}
+    if kind == "trade":
+        event.update(side=side, trader=f"w{t}")
+    else:
+        event.update(creator="dev", name="Run", symbol="RUN", uri="")
+    return event
+
+
+def test_graduation_runup_entry_matches_the_hand_computation(tmp_path):
+    from tartar.profit import buy_tokens, sell_sol
+
+    policy = open_policy(runup_enter_sol=75.0, runup_exit_sol=80.0, runup_hold_seconds=600.0, skip_flags=[], min_buyers=1000)
+    loop = FastLoop(policy, Journal(tmp_path / "j"))
+    events = [curve_event("create", 0.0, 1.0)] + [
+        curve_event("trade", t, r) for t, r in ((50.0, 50.0), (99.0, 70.0), (100.0, 76.0), (100.5, 78.0), (101.5, 79.0), (110.0, 81.0), (111.5, 82.0), (200.0, 83.0))
+    ]
+    loop.start(0.0)
+    for event in events:
+        loop.on_event(event)
+    loop.finish(300.0)
+    (runup,) = journal_events(tmp_path / "j", "runup")
+    assert runup["raised"] == 76.0 and "skip" not in runup
+    (fill,) = journal_events(tmp_path / "j", "fill")
+    (exit_,) = journal_events(tmp_path / "j", "exit")
+    assert fill["kind"] == exit_["kind"] == "runup" and exit_["reason"] == "raised"
+    # decided at 100.0 -> fills 1 s later at the state after the 100.5 trade (78 SOL raised);
+    # 81 SOL raised at 110.0 triggers the exit, which fills at 111.0: still the 110.0 state.
+    costs = policy.costs()
+    v_in, v_out = 30.0 + 78.0, 30.0 + 81.0
+    tokens = buy_tokens(v_in, K_CURVE / v_in, costs.size_sol, costs.fee)
+    pnl = sell_sol(v_out, K_CURVE / v_out, tokens, costs.fee) - costs.size_sol - 2 * costs.network_sol
+    assert exit_["pnl_sol"] == pytest.approx(pnl, rel=1e-9) and exit_["pnl_sol"] > 0
+    review_text = to_markdown(review(load_journal(tmp_path / "j")))
+    assert "runup entries" in review_text and "run-ups triggered: 1" in review_text
+
+
+def test_runup_policy_limits_and_quote_launches(tmp_path):
+    with pytest.raises(PolicyError):
+        Policy.from_dict({"runup_enter_sol": 80.0, "runup_exit_sol": 75.0})
+    with pytest.raises(PolicyError):
+        Policy.from_dict({"runup_enter_sol": 90.0})
+    assert Policy.from_dict({}).runup_enter_sol is None  # off unless asked for
+    loop = FastLoop(open_policy(runup_enter_sol=75.0), Journal(tmp_path / "j"))
+    loop.on_event(curve_event("create", 0.0, 1.0, mint="Q", quote="USDC"))
+    loop.on_event(curve_event("trade", 5.0, 80.0, mint="Q", quote="USDC"))
+    summary = loop.finish(100.0)
+    assert summary["launches"] == 0 and summary["runups"] == 0  # quote-paired curves are ignored
+
+
+def test_completed_curves_cancel_buys_and_haircut_late_exits(tmp_path):
+    policy = open_policy(runup_enter_sol=60.0, runup_exit_sol=80.0, runup_hold_seconds=600.0, graduation_haircut=0.2, min_buyers=1000)
+    loop = FastLoop(policy, Journal(tmp_path / "j"))
+    loop.start(0.0)
+    # A: crosses 60 and completes in the same second, so the buy can't land.
+    for event in (curve_event("create", 0.0, 1.0, mint="A"), curve_event("trade", 10.0, 61.0, mint="A"), curve_event("trade", 10.2, 85.0, mint="A")):
+        loop.on_event(event)
+    loop.on_event({"e": "migrate", "t": 10.3, "mint": "A"})
+    # B: crosses 60, fills, then jumps from 79 to complete before the 80-level exit can land.
+    for event in (curve_event("create", 20.0, 1.0, mint="B"), curve_event("trade", 30.0, 61.0, mint="B"), curve_event("trade", 32.0, 70.0, mint="B"),
+                  curve_event("trade", 40.0, 79.0, mint="B"), curve_event("trade", 40.5, 85.0, mint="B")):  # fmt: skip
+        loop.on_event(event)
+    loop.on_event({"e": "migrate", "t": 40.6, "mint": "B"})
+    loop.on_event(curve_event("trade", 100.0, 5.0, mint="OTHER"))
+    loop.finish(1000.0)
+    cancels = {r["mint"]: r for r in journal_events(tmp_path / "j", "cancel")}
+    exits = {r["mint"]: r for r in journal_events(tmp_path / "j", "exit")}
+    assert "completed" in cancels["A"]["reason"] and "A" not in exits
+    assert exits["B"]["reason"] == "after_graduation"
+    from tartar.profit import buy_tokens, sell_sol
+
+    c = policy.costs()
+    tokens = buy_tokens(91.0, K_CURVE / 91.0, c.size_sol, c.fee)  # filled at the 61 SOL state (30.0 + 1 s)
+    expected = sell_sol(115.0, K_CURVE / 115.0, tokens, c.fee) * 0.8 - c.size_sol - 2 * c.network_sol
+    assert exits["B"]["pnl_sol"] == pytest.approx(expected, rel=1e-9)

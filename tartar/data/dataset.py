@@ -116,19 +116,24 @@ def tick_from_event(event: dict, creator: str) -> Tick | None:
     )
 
 
-def load_trade_tokens(raw_dir: str | Path | Sequence[str | Path], timeframe: int, max_gap: float = 10.0) -> list[TokenData]:
+def load_trade_tokens(raw_dir: str | Path | Sequence[str | Path], timeframe: int, max_gap: float = 10.0, min_candles: int = 3) -> list[TokenData]:
     """Group recorded events by token and rebuild each token's candles over the
     window in which its trades were completely recorded.
 
     `raw_dir` may name several directories (a sequence, or comma-separated): one per
     recorder, since each directory is read as one recorder's timeline. A launch two
     recorders both caught keeps the copy with the most candles.
+
+    Tokens with fewer than `min_candles` closed candles are dropped (training needs a few).
+    Trading studies should pass `min_candles=0` (keep every token with a recorded trade): the
+    default drops every token that graduates within ~2 minutes of launch, which is selection
+    on the outcome.
     """
     dirs = [d for d in (raw_dir.split(",") if isinstance(raw_dir, str) else raw_dir if isinstance(raw_dir, (list, tuple)) else [raw_dir]) if str(d).strip()]
     if len(dirs) > 1:
         merged: dict[str, TokenData] = {}
         for d in dirs:
-            for token in load_trade_tokens(str(d).strip(), timeframe, max_gap):
+            for token in load_trade_tokens(str(d).strip(), timeframe, max_gap, min_candles):
                 if token.mint not in merged or len(token.candles) > len(merged[token.mint].candles):
                     merged[token.mint] = token
         return sorted(merged.values(), key=lambda t: t.created)
@@ -216,7 +221,7 @@ def load_trade_tokens(raw_dir: str | Path | Sequence[str | Path], timeframe: int
             token.ticks.setdefault(book.period(tick.ts), []).append((tick, new_trader))
             token.candles += book.add_tick(tick)
         token.candles += book.advance(end)
-        if len(token.candles) >= 3:
+        if len(token.candles) >= min_candles and (min_candles > 0 or token.ticks):
             token.simulated = simulated
             tokens.append(token)
     return tokens
