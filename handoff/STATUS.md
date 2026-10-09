@@ -43,6 +43,10 @@ next. Topic documents hold the detail:
   Action runs `handoff/experiments/jlp_paper.py snapshot` every 4 h (:40) and commits
   `handoff/data/jlp-paper/snapshots.jsonl`; score with `evaluate --final` on 2027-01-08.
   Commits by `tartar-paper-tests` are this Action's; no Claude session is needed for either job.
+  **Owns the cross-sectional momentum forward test (edge hunt D)**, pre-registered
+  (`handoff/preregistration/xs-momentum/SPEC.md`): 14-day momentum, weekly long-short on every
+  Hyperliquid perp, signal Mondays 2026-10-12 .. 2027-10-11, scored from Hyperliquid history by
+  `handoff/experiments/xs_momentum_forward.py` (no live collection). Edge hunt C is closed.
 
 * **Predictor-strategy thread** (session continuing session_01YLnqLnTQzvD6HHUTvnNpVm, since 2026-10-09
   17:33 UTC, branch `claude/project-thread-mwc92g`). The user asked for continuous work toward profit
@@ -326,6 +330,13 @@ next. Topic documents hold the detail:
   branch `claude/profitability-backtest`, on `main`).
 
 ## Log (newest first)
+
+* **2026-10-09 19:17 UTC, dip/jevtrader session: edge hunt C closed, D pre-registered**
+  (`edge-hunt.md` §C–D). C: LP on graduated PumpSwap pools keeps a mean 0.67x of its SOL after
+  1 h (194 pools); fees add ~0.2–2 points; fresh tokens have no short. D: on all 234 Hyperliquid
+  perps (56 delisted), 14-day momentum chosen on train makes +1.50%/week on 2026 test weeks after
+  costs and funding, 90% CI [−0.12, +3.31]; registered as a 52-week forward test (scorer checked on
+  2026-07..09: +1.44%/week). The JLP and dip data now come from the `paper-tests` Action.
 
 * **2026-10-09 19:10 UTC, handoff session: item (b), the curve blends' underconfidence**
   (predictor doc §8.4.1). Replayed every `trades-*` model on unseen hours 12–16. The flat-vs-move

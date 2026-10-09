@@ -114,9 +114,35 @@ Scripts: `handoff/experiments/edge-hunt/microstructure/`, in the order they ran:
 
 Live Binance, Coinbase and Jupiter samples: `handoff/data/edge-hunt/live-sol-quotes/`.
 
-### C. Memecoin liquidity side, D. established cross-section, E. TARTAR's assets
+### C. Memecoin liquidity and the short side (2026-10-09, dip/jevtrader session): closed
 
-Not run. Their briefs are in *Resume*.
+- **LP on graduated PumpSwap pools loses.** In SOL terms, from each pool's first recorded swap
+  (`raw-v3`, `raw-clever`, `raw-clever2`), LP value is a mean 0.67x after 1 h (194 pools, median
+  0.45x) and 0.70x after 4 h (53 pools, which are the survivors). LP fees add only +0.2 points
+  at the 0.02% LP share these pools pay, and +1.8 to +2.0 points even at 0.20% (median fee growth
+  1.8% at 1 h). Impermanent loss on dying tokens is ~15x the fee income.
+- **No short exists on fresh tokens.** Hyperliquid lists perps only for established memes
+  (DOGE, kPEPE, kSHIB, kBONK, WIF, BOME, POPCAT, MEW, GOAT, MOODENG, PNUT, CHILLGUY, PENGU,
+  FARTCOIN, SPX, TRUMP, MELANIA, PUMP), so P(rug) can't be traded as a short signal. Those
+  memes fall inside angle D's universe.
+
+### D. Established tokens, weekly cross-section (2026-10-09, dip/jevtrader session): pre-registered
+
+Universe: all 234 Hyperliquid perps, 56 of them delisted (daily candles from 2023,
+`handoff/data/edge-hunt/hl-daily/`). Weekly Monday rebalance, quintile long-short, $2M median
+volume filter, 10 bps per side. 12 rules (lookback 1/3/7/14/28/56 days x momentum/reversal):
+**every momentum lookback beats its reversal twin in train**; chosen on train, **14-day momentum**:
+train +2.20%/week, validation +1.80%, test (2026-01..10) +1.76% [+0.15, +3.55]. After actual
+hourly funding: +2.08 / +1.79 / **+1.50%/week [−0.12, +3.31]** (39 test weeks). With a 1-day
+execution lag and 20 bps per side it holds (+1.44 / +0.81 / +1.64% before funding). Not proven:
+12 rules were looked at, and the test CI touches zero. **Pre-registered as a 52-week forward test**
+(`handoff/preregistration/xs-momentum/SPEC.md`, scorer `handoff/experiments/xs_momentum_forward.py`),
+scored from Hyperliquid's history alone, so no data collection is needed. Scripts:
+`handoff/experiments/edge-hunt/crosssection/`.
+
+### E. TARTAR's assets
+
+Not run. Its brief is in *Resume*.
 
 ## What looks worth doing when the hunt resumes
 
