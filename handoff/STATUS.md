@@ -202,6 +202,8 @@ next. Topic documents hold the detail:
 
 ## Log (newest first)
 
+* **2026-10-09 05:52 UTC, Jev session, slow-loop cycle 2:** Reviewed all live data (23:44–03:39 UTC in bursts, 352 screened launches with outcomes; `handoff/live/reviews/20261009-0552.md`). Paper trades: 68, mean **−1.4%** (90% CI −9.2 … +7.8%). Buying every screened launch: −9.2% (CI −13.0 … −4.8%). The skip flags remove losers (skipped: −13.5%). **Jev shadow: no signal.** Spearman with net is buy +0.02, copycat +0.07, low_effort +0.06, meme −0.07, scam_wording +0.08, and no quintile pattern is monotone. That agrees with the offline result (§3.7). Paper results are negative for the 2nd cycle in a row (CI spans 0). `odd_curve` looks like a skip candidate (with −19.2%, n=100; without −5.3%), but it's in-sample, without intervals. Check it with `tartar decide` before adding it. **No policy change.** The fast loop is **stopped** pending the user's Jev-policy decision and somewhere always-on to run it; no further cycles are scheduled.
+
 * **2026-10-09 05:36 UTC, predictor session (handing off; no claim open, nothing half-done):**
   (1) The point forecast's median shrink is now fitted on out-of-fold training medians
   (3 token-wise folds) plus validation (`train.oof_medians`, `train_global(shrink_folds=3)`).
