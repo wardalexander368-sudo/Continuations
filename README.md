@@ -96,7 +96,9 @@ tartar watch <TOKEN_MINT>         # now uses the global model automatically
 
 Graduated tokens get their own model: record with `--pumpswap-hours N` (the recorder then
 follows each graduated token's PumpSwap pool), and `tartar train --raw data/raw --pumpswap`
-trains the model `watch` switches to when a token it is watching graduates.
+trains the model `watch` switches to when a token it is watching graduates. A 1-minute
+PumpSwap model (`tartar/models/pumpswap-60s`, 348 graduated pools) ships with the repo; at
+other candle lengths the online model carries on alone after graduation.
 
 Or let it run unattended. `learn` records continuously and retrains every few
 hours; a new model is only installed if it beats the current one on the newest

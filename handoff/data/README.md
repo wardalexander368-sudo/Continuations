@@ -110,7 +110,10 @@ container was lost at ~13:25 before any hour was saved. The handoff session rest
 13:31 UTC with the same flags. Later hours are copied here as they finish:
 
 - `20261009-13`: 13:31–13:59 UTC, 1,064 launches, 87,485 curve trades, 16 graduated SOL pools,
-  30,463 PumpSwap swaps. Use them alongside `raw-eager`/`raw-clever` for
+  30,463 PumpSwap swaps.
+- `20261009-14`: 14:00–14:59 UTC, 2,026 launches, 332,768 curve trades, 51 graduated SOL pools,
+  239,033 PumpSwap swaps (more curve trades per launch than `raw-clever`: tokens are followed
+  for 2 h instead of 1 h). Use them alongside `raw-eager`/`raw-clever` for
 the predictor (queue 2) and the edge-hunt studies.
 - `20261009-13`: 13:00–13:59 UTC, 2,065 launches, 205,918 curve trades, 39 graduated SOL pools,
   288,918 PumpSwap swaps.
