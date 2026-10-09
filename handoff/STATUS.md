@@ -51,6 +51,8 @@ next. Topic documents hold the detail:
   decision instrument" as Never, with `jevtrader` as the only signed carve-out. TARTAR's
   shadow mode and `jev` scorer aren't covered. Ask the user whether TARTAR needs its own
   carve-out (paper only, own key, ledger, spend tripwire) before running Jev live here again.
+  **A draft is ready for the user: `handoff/jev-carveout-DRAFT.md`** (not in force; lists the
+  code guards still missing: ledger, tripwire, pinned model, ≤ 1 retry, signature gate).
 * **GitHub write access (10-09 ~03:40 UTC):** the profitability session got `403 Resource not
   accessible by integration` on push and on the API. Fix: github.com/settings/installations →
   Claude → Configure → TARTAR selected (accept updated permissions if asked). If you can push,
