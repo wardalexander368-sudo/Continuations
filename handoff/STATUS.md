@@ -401,7 +401,7 @@ deep pools match the model, a thin one was 2.4x it). The `launch_selector` slot 
   test +2.9% [−28.3, +24.9] (7). `preregistration/listing-fade/RESULT-2026-10-09.md`. Nothing
   half-done; F2 on hold, F3-F6 dropped (no data or no events).
 
-* **2026-10-09 23:40 UTC, trading-skills thread (new markets): vault following closed; HLP
+* **2026-10-09 23:20 UTC, trading-skills thread (new markets): vault following closed; HLP
   holding pre-registered** (`edge-hunt.md` §G). 3,206 vaults incl. closed ones, 18 follow-the-winner
   rules: none has train and validation both positive. HLP itself beat cash in every split (test
   +1.33%/month); registered a 180-day test against a 5% hurdle (`preregistration/hlp-hold/`,

@@ -1,6 +1,6 @@
 # Pre-registration: holding HLP (Hyperliquid's protocol vault) against a 5% cash hurdle (paper, 180 days)
 
-Registered 2026-10-09 (~23:40 UTC) by the trading-skills thread (new-markets lane). The commit that
+Registered 2026-10-09 (~23:20 UTC) by the trading-skills thread (new-markets lane). The commit that
 adds this file is the registration. The window starts 2026-10-12, so no test data exists yet.
 Paper only. Scored from Hyperliquid's public history by
 `handoff/experiments/edge-hunt/vaults/hlp_forward.py`; nothing has to be recorded live.
