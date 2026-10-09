@@ -140,6 +140,15 @@ execution lag and 20 bps per side it holds (+1.44 / +0.81 / +1.64% before fundin
 scored from Hyperliquid's history alone, so no data collection is needed. Scripts:
 `handoff/experiments/edge-hunt/crosssection/`.
 
+### D2. Cross-sectional funding carry on Hyperliquid perps (2026-10-09): closed
+
+Same universe, schedule, costs and splits as D; funding for all 231 perps with history
+(`fetch_hl_funding.py`, cache not committed). Collecting funding (short the highest-funding
+quintile, long the lowest) **loses in train at every lookback** (1/7/28 days: −0.55, −0.89,
+−2.31%/week). The reverse, chosen on train (28-day, long high funding), makes +0.73%/week on
+validation and **+0.78% [−0.44, +2.13] on test**, and its weekly returns correlate 0.55 with D's
+momentum: mostly momentum again, weaker. Not registered. Script: `crosssection/xs_carry.py`.
+
 ### E. TARTAR's assets
 
 Covered by the fee-research thread's predictor + P(rug) strategy forward test (see STATUS.md);
@@ -154,6 +163,7 @@ not duplicated here.
 3. **A2, LST cash-and-carry:** real but decaying to ~0 in 2026; not worth a slot now.
 4. **B, crash reversal:** real on Binance only, needs a CEX account; on-chain median −7.6 bps.
 5. **A3, funding dispersion:** chosen from 5 pairs, sign flips; weakest.
+6. **D2, funding carry across perps:** loses; its reverse is weaker momentum (closed).
 Closed: C (PumpSwap LP, memecoin shorts), B's lead-lag/seasonality/seconds-scale prediction.
 
 
