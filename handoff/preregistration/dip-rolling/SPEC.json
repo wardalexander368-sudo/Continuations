@@ -1,0 +1,30 @@
+{
+  "design": "rolling pre-registration: each cohort file registers pools that pass the mechanical universe rule at its registered_at; each cohort is scored only on bars after its own registered_at; results pool over cohorts (a token already in an earlier cohort is not re-added).",
+  "hypothesis": "Short-term mean reversion in established pump.fun memecoins on PumpSwap: buying after a >5% drop over 1 hour and holding 4 hours beats random entries in the same pools, net of costs.",
+  "rule": {
+    "family": "dip",
+    "lookback_bars": 12,
+    "drop": 0.05,
+    "hold_bars": 48,
+    "bar_seconds": 300,
+    "entry": "next bar open",
+    "exit": "close of bar t+48",
+    "one_position_per_pool": true
+  },
+  "costs": {
+    "fee_per_side": 0.005,
+    "size_usd": 200,
+    "network_usd_per_tx": 0.05,
+    "impact": "size / (liquidity_usd / 2) per side, liquidity as registered",
+    "note": "PumpSwap charges ~0.30%/side (LP + protocol + creator); 0.50% leaves room for routing and priority fees"
+  },
+  "universe_rule": "GeckoTerminal solana dex 'pumpswap' pools by 24h volume, pages 1-10; SOL-quoted; base not SOL/stable/LST; one pool per token (the busiest); liquidity >= $30k; 24h volume >= $100k; age >= 1 day.",
+  "evaluation": {
+    "period": "each cohort from its registered_at; score when the pooled data reaches >= 200 trades or 21 days after the first cohort, whichever comes first",
+    "data": "5-minute OHLCV (USD) from GeckoTerminal for every registered pool, including pools that lost liquidity or died (their history stays available)",
+    "primary": "mean of (trade net return - mean net return of entering the same pool at every bar of the period with the same hold), over all trades; 90% CI by pool bootstrap",
+    "success": "primary excess > 0 with the 90% CI above 0, AND mean net return per trade > 0",
+    "script": "handoff/experiments/established_prereg_eval.py <cohort files...>"
+  },
+  "history": "v1 (mixed volume-ranked universe) and v2 (PumpSwap, with a filter bug) were superseded before any out-of-sample data existed; the rule and costs were fixed from v1's in-sample study and have not changed."
+}

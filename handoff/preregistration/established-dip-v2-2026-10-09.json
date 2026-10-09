@@ -121,5 +121,6 @@
     "script": "handoff/experiments/established_rules.py (fixed config) on data fetched after the period"
   },
   "in_sample_result": "none yet for this universe (registered first). v1's in-sample result came from a different, mixed universe.",
-  "supersedes": "established-dip-2026-10-09.json (universe correction only; rule and costs unchanged)"
+  "supersedes": "established-dip-2026-10-09.json (universe correction only; rule and costs unchanged)",
+  "status": "SUPERSEDED at 2026-10-09T02:24:32Z, before any out-of-sample data existed, by the rolling design (handoff/preregistration/dip-rolling/): v2 included USDC / SOL (filter bug: stablecoin base) and only 10 pools."
 }
