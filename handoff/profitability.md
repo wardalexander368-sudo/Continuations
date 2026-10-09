@@ -510,6 +510,31 @@ window. Rule chosen on the first 60% of launches, reported once on the rest:
 Together with §3.2–3.10 this closes buying pump.fun launches at any entry delay up to 10
 minutes and any hold up to 45 minutes.
 
+### 3.15 Copy-trading wallets whose buys paid off: no edge
+
+`handoff/experiments/copytrade.py`: follow a wallet's buy 1 s after it was received (about 2.5 s
+after its block), on the curve at the recorded state, at 1.25% per side; exit after 30 s / 2 min /
+10 min, or 1 s after the wallet's own next sell ("mirror", capped at 10 min). A wallet's score is
+the mean net return of *following* its buys in a learning period (shrunk: sum / (n + 5)), so it
+measures only the skill a follower can capture. One entry per token, on the first qualifying buy.
+Learning / validation / test = consecutive 50 / 25 / 25% of buys by time; recorder-downtime
+exclusion only; the creator's own buys aren't followed. Data: every recording before 10-09 02:00
+(9,320 SOL launches, 207,178 buys; 1,098 wallets bought ≥ 10 distinct launches).
+
+| Validation | 30 s | 2 min | 10 min | mirror |
+|---|---|---|---|---|
+| follow every buy | −8.0% | −14.0% | −29.2% | −13.4% |
+| best of 12 wallet filters | −3.7% | −2.2% [−11.6, +6.8] | −13.6% | −7.3% |
+
+**Test, the rule chosen on validation** (2 min, ≥ 10 learning buys, score > +10%, wallets
+re-learned through validation): **−21.0% per trade [−31.0, −10.5]**, 109 trades, win 22%.
+
+**Reading:** a buy is followed by reversion. Copying any buy 2.5 s late loses 4–5 points beyond
+the ~3.5% cost floor at 30 s, and more the longer it's held. Wallets whose buys were good to
+follow earlier are less bad to follow later, but never good. Their edge is being early (often
+bundled with the launch), which a follower can't copy. No forward test is worth running: the best
+in-sample rule already loses.
+
 ## 4. What this means for the plan
 
 1. **Don't trade the current predictions.** The confidence is honest about
