@@ -138,3 +138,8 @@ recorders overlap in time, and the loaders keep one copy of each token.
   236,229 PumpSwap swaps.
 - `20261009-16`: 16:00–16:59 UTC, 1,945 launches, 130,561 curve trades, 57 graduated SOL pools,
   315,333 PumpSwap swaps.
+- `20261009-17`: 17:00–17:59 UTC, 1,898 launches, 142,049 curve trades, 46 graduated SOL pools,
+  246,044 PumpSwap swaps. **169 short disconnects** (median ~1.3 s each; 86 of them in 17:50–17:59),
+  against 36–48 per hour in 13–15; 16 had a burst of 99 at 16:40–16:49. The container was not
+  CPU-starved (load ~2.5 of 4 cores, recorder ~9%), so this looks like the public RPC. Gaps under
+  10 s are not cut by the loaders, so expect slightly lower capture in these hours.
