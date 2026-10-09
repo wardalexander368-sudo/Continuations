@@ -159,6 +159,7 @@ into `handoff/data/` as they close.
 
 | Document | What's in it |
 |---|---|
+| [TARTAR System Map](https://claude.ai/artifact/X2ArtEADaLo4WwcWRa4pZ5) | visual map of the pipeline, results, strategy ledger and every agent session's progress (as of 10-09 19:44 UTC; private to the owner unless shared) |
 | `handoff/STATUS.md` | live board: who is working on what, the ranked queue, rules, log |
 | `handoff/candle-prediction-agent.md` | the predictor: architecture, data pipeline, features, every model version, scam filtering, open problems |
 | `handoff/profitability.md` | every strategy test with its numbers (§1 is the summary table) |
