@@ -269,6 +269,49 @@ is cost, not a new family: E's rule gains ~2 points per round trip if real trade
 Jupiter or our own instructions instead of Lightning (§3.19). A new study should come from a new
 idea with a payer and measured costs, not from re-running these angles.
 
+## F. Pump.fun: who is trading (2026-10-09 ~23:20 UTC, retrain thread)
+
+The coordinator's round under the user's "keep finding things": pump.fun-native signals built on
+*who* trades, big enough to beat the ~2.7% (Jupiter / own instructions) to ~5% (Lightning) round
+trip. Already closed, and not re-run: copying wallets that won before (§3.15), same-slot sniping and
+bundles (§3.18), early-flow features incl. buyer mix, repeat bots, holders, creator history and buy
+size (§3.22: movers predictable but they collapse; small creator buys +2 points over buy-all, still
+−2.2%), and curve triggers (§3.23: a 70% dip after a 40-SOL run is break-even, −0.3% on test).
+
+**Proposals.** Each conditions on the trader identities in the recorded paths (`exit_study.py
+extract` keeps every trade's wallet).
+
+* **F1 Who sold the dip.** §3.23's dip family is the closest rule to break-even. Split its signals by
+  who caused the drawdown: the share of sell SOL from the run's peak to the signal that came from the
+  creator and the top 3 sellers. Hypothesis: a concentrated dump that has *finished* (those wallets
+  hold nothing more, or have stopped selling) leaves no overhang, so the bounce is cleaner than when
+  the selling is broad (interest dying).
+* **F2 Who buys the dip.** Within the same signals, whether wallets with a causal track record
+  (earlier launches only: their buys were followed by a price above cost within 2 min) buy during the
+  drawdown. §3.15 found such wallets less bad to follow at launch; the dip is a different context.
+* **F3 Overhang left.** At any moment after +60 s, the share of the tokens bought in the first 2 s
+  (the bundle) still held by those wallets. Enter when it falls to ~0 while buyers are still
+  arriving, i.e. the snipers are out and the token is still alive.
+* **F4 Creator reputation.** Serial creators whose earlier launches graduated. Overlaps §3.22's dev
+  group (creator's earlier launches and rugs), so low novelty.
+* **F5 Holder dispersion.** Gini / top-10 share at +60 s. Overlaps §3.22's holders group, and
+  §2's top-10 flag; low novelty.
+
+**Scoring** (one session; the three lenses as in *Judging*, 1-5):
+
+| | Econ | Test | Fit | Note |
+|---|---|---|---|---|
+| F1 | 3: conditions the only family near zero; needs ≥ +3 points from the split | 4: dev/test split exists, signals already defined, a few dozen variants | 5 | **run** |
+| F2 | 2: §3.15's track records never turned positive | 4 | 5 | **run** (cheap beside F1) |
+| F3 | 3: new mechanism (overhang), untested | 3: more definitions to choose | 5 | **run** on dev, any time after +60 s |
+| F4 | 1: covered by §3.22 | 4 | 5 | drop |
+| F5 | 1: covered by §3.22 / §2 | 4 | 5 | drop |
+
+**Protocol.** Explore on dev only (launches created before 16:00 UTC 10-09, as §3.21-3.23).
+Anything positive on dev's later half is pre-registered (`handoff/preregistration/who-trades/`)
+before the test launches (created ≥ 16:00) are scored once. Paper only, Jupiter costs (1.25%/side,
+0.02 SOL) with Lightning (+1%/side) as a second line.
+
 ## What looks worth doing when the hunt resumes
 
 1. Pre-register and start the **hedged-JLP 90-day paper forward test** (A1). It needs only an
