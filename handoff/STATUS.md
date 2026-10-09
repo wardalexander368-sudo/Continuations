@@ -40,14 +40,16 @@ next. Topic documents hold the detail:
   recordings (~20k launches, not 1,347)?
 
 * **Dip/jevtrader session** (session_01Htqh7pc1Lh1PP6Dkm1rVvz, since 2026-10-09 17:33 UTC, `main`
-  only): continues the profitability session. **Owns the dip forward test (queue 11b)**: a daily
-  routine adds a cohort at 02:24 UTC (`established_cohort.py` + `pumpswap_fees.py --cohort`) and
-  scores it on 2026-10-30 or at 200 trades. **Owns the jevtrader day-28 readout (queue 12)**: a
+  only): continues the profitability session. **Owns the dip forward test (queue 11b)**: the GitHub
+  Action `.github/workflows/paper-tests.yml` adds a cohort at 02:24 UTC daily
+  (`established_cohort.py` + `pumpswap_fees.py --cohort`) and commits it; this session scores it
+  on 2026-10-30. **Owns the jevtrader day-28 readout (queue 12)**: a
   routine checks on 2026-10-24. Other sessions: no need to add cohorts by hand any more.
   **Owns the hedged-JLP paper forward test (queue 14, edge hunt A1)**, pre-registered
-  (`handoff/preregistration/jlp-hedged/SPEC.md`), window 2026-10-10 .. 2027-01-08: a routine
-  runs `handoff/experiments/jlp_paper.py snapshot` every 4 h and commits
+  (`handoff/preregistration/jlp-hedged/SPEC.md`), window 2026-10-10 .. 2027-01-08: the same
+  Action runs `handoff/experiments/jlp_paper.py snapshot` every 4 h (:40) and commits
   `handoff/data/jlp-paper/snapshots.jsonl`; score with `evaluate --final` on 2027-01-08.
+  Commits by `tartar-paper-tests` are this Action's; no Claude session is needed for either job.
 
 * **Predictor-strategy thread** (session continuing session_01YLnqLnTQzvD6HHUTvnNpVm, since 2026-10-09
   17:33 UTC, branch `claude/project-thread-mwc92g`). The user asked for continuous work toward profit
