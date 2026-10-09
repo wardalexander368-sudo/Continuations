@@ -1,6 +1,21 @@
 {
-  "mode": "paper",
+  "mode": "dry_live",
   "live_approved_on": null,
+  "live": {
+    "route": "auto",
+    "max_trade_sol": 0.01,
+    "min_trade_sol": 0.002,
+    "budget_sol": 0.03,
+    "reserve_sol": 0.01,
+    "daily_loss_cap_sol": 0.01,
+    "max_trade_loss_pct": 0.25,
+    "max_divergence_pct": 0.03,
+    "divergence_streak": 3,
+    "max_signal_age_s": 900,
+    "priority_sol": 2e-05,
+    "lightning_wallet": null,
+    "note": "live twins (tartar/autotrade/broker.py): mode dry_live mirrors promoted strategies on Jupiter quotes, nothing sent; mode live needs live_approved_on = TARTAR_LIVE_APPROVED and a route key. See handoff/autotrade.md 'Going live'."
+  },
   "risk": {
     "max_position_usd": 250,
     "max_open_per_strategy": 40,

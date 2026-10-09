@@ -32,17 +32,6 @@ next. Topic documents hold the detail:
 
 ## Active
 
-* **Go-live path thread** (project thread session, since 2026-10-09 23:05 UTC, branch
-  `claude/project-thread-kytb6q`). **No keys, no real orders; dry-run and paper only.** Task (the
-  user's 22:58 check-in, via the coordinator): make `tartar/autotrade` able to trade a promoted
-  strategy live without manual steps once the user has given a standing approval: route selection
-  (Jupiter with `TARTAR_WALLET_KEY`, else Lightning with `PUMPPORTAL_API_KEY`), live sizing in SOL,
-  per-trade and daily loss limits, a live kill switch, and a fill log comparing each live fill with
-  its paper twin. Builds on the execution-cost thread's §3.19 and `jupiter_fills.py` (no route
-  re-measuring). **Agent-machinery thread:** I touch `broker.py` (wire `LiveBroker`), add
-  `tartar/autotrade/execution.py`, and add small hooks in `runner.py`/`risk.py`; config stays `paper`.
-  Please ping me (via the coordinator) before changing those parts.
-
 * **Trading-skills thread → new markets** (project thread session, since 2026-10-09 22:45 UTC,
   branch `claude/project-thread-x7fh45`). Task (coordinator, under the user's "work nonstop"):
   (1) Hyperliquid vaults / top traders: does following past winners beat cash after fees, with
@@ -89,11 +78,15 @@ deep pools match the model, a thin one was 2.4x it). The `launch_selector` slot 
   data, run `python3 handoff/experiments/fetch_gha_raw.py --dirs` and pass the printed dirs to `--raw`.
 
 * **Curve-model retrain thread** (project thread session, branch `claude/project-thread-6oh2s6`):
-  **v3.2 trained, waiting for the user's OK to install** (predictor doc 8.2.2e; gzipped in
-  `handoff/experiments/predictor-v32/candidates/`). The predictor-strategy test that pinned the
-  model hashes was scored at 20:20 UTC, so nothing else blocks it. Market-wide recalibration study
+  **v3.2 installed 23:15 UTC 10-09 at the user's go** (all four `trades-*` models; predictor doc
+  8.2.2e; v3.1 is in git history). Market-wide recalibration study
   done (profitability §3.24, closed). Next here: PumpSwap 5m retry once the recorder thread has
   more graduated pools.
+  **Since 23:15 UTC:** pump.fun who-is-trading signals (coordinator, under the user's "keep finding
+  things"): angles §3.15/§3.18/§3.22 didn't test, chiefly *who sells into* §3.23's deep dip after a
+  run (creator/bundle dump vs dispersed selling; whether past winners buy the dip). Edge-hunt
+  protocol: proposals, three-lens scoring, pre-registration before any hour ≥ 16:00 UTC 10-09 is
+  scored. Paper only. Not touching the low-cost-venue round (other thread).
 
 * **Dip/jevtrader session** (session_01Htqh7pc1Lh1PP6Dkm1rVvz, since 2026-10-09 17:33 UTC, `main`
   only): continues the profitability session. **Owns the dip forward test (queue 11b)**: the GitHub
@@ -399,6 +392,22 @@ deep pools match the model, a thin one was 2.4x it). The `launch_selector` slot 
   data, run once: train loses at every rule (squeezes), validation +5.7% [−9.4, +19.6] (51),
   test +2.9% [−28.3, +24.9] (7). `preregistration/listing-fade/RESULT-2026-10-09.md`. Nothing
   half-done; F2 on hold, F3-F6 dropped (no data or no events).
+
+* **2026-10-09 23:35 UTC, go-live path thread: live twins built, dry only** (`handoff/autotrade.md`
+  *Going live*). `LiveBroker` keeps the paper book and mirrors each entry of a **promoted** strategy
+  with a twin in SOL: route Jupiter (`TARTAR_WALLET_KEY`) else Lightning (`PUMPPORTAL_API_KEY` +
+  `live.lightning_wallet`) else none (`execution.py`). Live-only limits in SOL (0.01/trade, 0.03
+  budget, 0.01 reserve, 0.01/day loss cap, 25% per-trade and 3-point fill-vs-paper divergence halts),
+  kill switches `HALT_LIVE` / Actions var `TARTAR_LIVE_KILL`, orphan tracking, `fills.jsonl` with
+  each twin against its paper twin, `preflight` and `dry-swap` commands; 18 tests. Committed config
+  is now `dry_live` (quote-only twins, nothing signed); `autotrade.yml` passes the secrets through
+  (unset = off). Real twins need the user once: `mode: live`, `live_approved_on` = Actions secret
+  `TARTAR_LIVE_APPROVED`, plus `TARTAR_WALLET_KEY`. **Gaps for the user:** the hourly Action makes
+  dip signals too old to mirror (needs a `*/5` run), and perps rules have no live route. Claim cleared.
+
+* **2026-10-09 23:15 UTC, retrain thread: predictor v3.2 installed** (user's go on the thread's card;
+  the predictor-strategy test that pinned the hashes was scored at 20:20). `trades-{15,30,60,300}s`
+  replaced; `.report.json` now holds the v3.2 study results. 163 tests pass.
 
 * **2026-10-09 ~23:45 UTC, retrain thread: market-wide recalibration of the candle calls: closed**
   (profitability §3.24, `recal_market.py`). On hours v3.1 never saw (12–20), a rolling all-token

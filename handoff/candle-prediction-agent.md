@@ -538,7 +538,7 @@ All four installed (keep-better on test log loss). 5m at the open is still overc
 The 5m model was trained by the study script, not `tartar train` (which has no row weights):
 its metadata says so (`old_recorder_weight: 0`, `note`).
 
-### 8.2.2e v3.2: with every recording to hour 19 (trained 2026-10-09 ~20:15-22:30 UTC; **not installed**)
+### 8.2.2e v3.2: with every recording to hour 19 (trained 2026-10-09 ~20:15-22:30 UTC; **installed 23:15 UTC** at the user's go)
 
 v3.1's recipe (8.2.2d) on every curve recording, adding the hours v3.1 never saw: `raw-clever`
 12-15, `raw-clever2`, `raw-v3` and `raw-pred` (to 2026-10-09 19:59 UTC; one directory per
