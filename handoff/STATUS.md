@@ -33,12 +33,6 @@ next. Topic documents hold the detail:
 ## Active
 
 * **Jev session** (session_012ZRs9FUggpEkx65Rw7K7fU, live since 2026-10-08 23:44 UTC): owns the **live fast loop + slow loop** (queue item 1, steps 3–4). User chose `"scorer": "rules"` with `"shadow_jev": true` (paper). Fast loop runs `--hours 20` in this container (ends ~19:44 UTC 10-09). Tracked copies of the policy and reviews: `handoff/live/`. Branch `claude/jev-live`.
-* **Research session** (session_01YLnqLnTQzvD6HHUTvnNpVm, since 2026-10-09 04:05 UTC), branch
-  `claude/eager-archimedes-k8pn4q` (this session may only push that branch, so this claim
-  reaches `main` when the user merges it). Tasks: queue **12 next** (SOL-USD quote decay,
-  costs at more times of day), **11a** (trading graduated tokens on PumpSwap: fees, then a
-  strategy study) and **3** (longer holds on screened launches). Runs its own recorder in its
-  container (`tartar record --pumpswap-hours 4`, `data/raw-eager`); no Jev calls.
 
 
 
@@ -88,6 +82,10 @@ next. Topic documents hold the detail:
       at a time, with the reason in the policy note and the log.
 2. **More data.** The fast loop records as it runs. After 24 h+:
    `tartar train --raw data/raw`, `tartar profit`, `tartar decide`.
+   **Predictor v3 (unclaimed):** train on every recording including `handoff/data/raw-eager`
+   (much better capture: median 100% / mean 97%) with `--num-leaves 31 --min-leaf 2000`
+   (sweep, predictor doc §8.2.2b: ~1% better test log loss than the defaults); also retrain
+   15s/30s/5m. Keep-better decides.
 3. ~~**Longer holds on screened tokens**~~ **done 04:45 UTC 10-09: no edge** (§3.14). Fast-loop
    replays on every recording, screen 20 s–10 min × hold 10–45 min: all 24 rules lose on
    validation; the chosen one makes −12.5% [−17.6, −7.6] per trade on test. The median trade is
@@ -182,9 +180,16 @@ next. Topic documents hold the detail:
     so its day-28 break-even fees (f*_X per fill) can be read against a
     venue cheaper than Coinbase's 90 bps taker. See `handoff/jevtrader.md`.
     **First table done 03:50 UTC 10-09** (§3.12): ~0.5 bps per fill on-chain
-    (quotes) vs 90 at Coinbase. Next: rerun `sol_dex_costs.py sample
-    --minutes 60` at several times of day, and measure how much a quote
-    moves in ~2 s (quote decay), so quotes become realistic fills.
+    (quotes) vs 90 at Coinbase. **Quote decay measured 10-09 04:10–05:55 UTC**
+    (`jevtrader.md`): a quote re-taken 1–5 s later moves only with the market (|decay| p90
+    ≈ 1–2.5 bps, no expected cost, no 50 bps slippage failures); filling at the later quote
+    ≈ 0.4 bps/fill. Samples in `handoff/data/sol-dex/`. **Still open (unclaimed):** the same
+    run at European and US hours (e.g. 08–10 and 13–16 UTC: `sol_dex_costs.py sample
+    --minutes 120 --out data/sol-dex/costs-<date>.jsonl`), then commit the samples.
+13. **Ship a calibrated P(rug)** (unclaimed; predictor doc problem 6). The displayed risk
+    level barely ranks rugs (AUC 0.57), while a LightGBM P(rug) on the +20 s screen numbers
+    reaches AUC 0.93 on later launches. Train it like the global model, show it beside the
+    level, and stop `sniped` / `concentrated` / `dev_dumped` alone from making "danger".
 
 ## Rules that hold across sessions
 
