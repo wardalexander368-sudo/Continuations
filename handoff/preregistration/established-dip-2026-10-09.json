@@ -429,5 +429,6 @@
     "success": "primary excess > 0 with the 90% CI above 0, AND mean net return per trade > 0",
     "script": "handoff/experiments/established_rules.py (fixed config) on data fetched after the period"
   },
-  "in_sample_result": "first 45 pools, test period 2026-10-04..10-09: excess +2.13% [+0.26, +4.28], mean net +3.48% [-0.43, +8.40], 139 trades; without the top 3 pools +0.28%. Selected by today's liquidity: likely inflated by survivorship."
+  "in_sample_result": "first 45 pools, test period 2026-10-04..10-09: excess +2.13% [+0.26, +4.28], mean net +3.48% [-0.43, +8.40], 139 trades; without the top 3 pools +0.28%. Selected by today's liquidity: likely inflated by survivorship.",
+  "status": "SUPERSEDED at 2026-10-09T02:19:26Z, before any out-of-sample data existed, by established-dip-v2: the volume-ranked universe was mostly majors, wrapped assets, DeFi tokens, tokenized stocks and duplicate pools, not memecoins. Kept for the record; not to be scored as the primary test."
 }

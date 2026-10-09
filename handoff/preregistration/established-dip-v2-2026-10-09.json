@@ -1,0 +1,125 @@
+{
+  "registered_at": "2026-10-09T02:19:26Z",
+  "hypothesis": "Short-term mean reversion in established pump.fun memecoins trading on PumpSwap: buying after a >5% drop over 1 hour and holding 4 hours beats random entries in the same pools, net of costs.",
+  "rule": {
+    "family": "dip",
+    "lookback_bars": 12,
+    "drop": 0.05,
+    "hold_bars": 48,
+    "bar_seconds": 300,
+    "entry": "next bar open",
+    "exit": "close of bar t+48",
+    "one_position_per_pool": true
+  },
+  "costs": {
+    "fee_per_side": 0.005,
+    "size_usd": 200,
+    "network_usd_per_tx": 0.05,
+    "impact": "size / (liquidity_usd / 2) per side, liquidity as registered",
+    "note": "PumpSwap charges ~0.30%/side (LP + protocol + creator); 0.50% leaves room for routing and priority fees"
+  },
+  "universe": {
+    "selection": "GeckoTerminal solana dex 'pumpswap' pools by 24h volume, pages 1-10; SOL-quoted; one pool per token (the busiest); liquidity >= $50k; 24h volume >= $100k; age >= 2 days; as of registered_at. Registered before collecting or looking at any of these pools' data.",
+    "pools": [
+      {
+        "pool": "3NBq9zynLPDQQDvYf8xiMbWywQfKZD7m7fyprY524efq",
+        "name": "TWEETCRAFT / SOL",
+        "token": "solana_HzYCHqAN2uoHGRnL9v2ChCfFQX3bvJuJd5zu2Hd5MZQy",
+        "dex": "pumpswap",
+        "liquidity_usd": 143221.3342,
+        "volume24_usd": 5530769.44448811,
+        "age_days": 2.24
+      },
+      {
+        "pool": "867dKvaCcyRrUDP66bqNXbujXfjaxsNB9wTpc4CmBdAD",
+        "name": "MISTAKE / SOL",
+        "token": "solana_HKZDfZnkHZxd9agRDNPyDv4iT6LmAurJnpRtj9wpump",
+        "dex": "pumpswap",
+        "liquidity_usd": 208343.9465,
+        "volume24_usd": 3754673.93426175,
+        "age_days": 28.0
+      },
+      {
+        "pool": "Gf7sXMoP8iRw4iiXmJ1nq4vxcRycbGXy5RL8a8LnTd3v",
+        "name": "USDC / SOL",
+        "token": "solana_EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v",
+        "dex": "pumpswap",
+        "liquidity_usd": 7745379.1772,
+        "volume24_usd": 2551685.32616747,
+        "age_days": 591.93
+      },
+      {
+        "pool": "8ewuF2o8ACro7fqWepZ3tKhkbBjndZU4Ldk9scRPw83d",
+        "name": "swordcat / SOL",
+        "token": "solana_5tCju6YNxHq5zrA6tGndr6F7TK42mpUFmeE31cSFpump",
+        "dex": "pumpswap",
+        "liquidity_usd": 249587.7273,
+        "volume24_usd": 2076329.7763916,
+        "age_days": 10.71
+      },
+      {
+        "pool": "4JAnKFddd5fFTk5PxDj3PpTWJuTEfSWQEjZJcgKQ9KwW",
+        "name": "e/acc / SOL",
+        "token": "solana_CbcyNo7m1amFWqEQm2m4PLv1UNvpcL3C1Ujm6AkzpKoU",
+        "dex": "pumpswap",
+        "liquidity_usd": 257951.2853,
+        "volume24_usd": 1979398.76648254,
+        "age_days": 13.21
+      },
+      {
+        "pool": "HMzvsEEmtzHhvZNw9uwbaG85HCTmFnkbhzUx16cy7ca3",
+        "name": "CATE / SOL",
+        "token": "solana_Ai66LHZG9MCzg1WKdawwqduVAXpNDUuV8M3uyq5ppump",
+        "dex": "pumpswap",
+        "liquidity_usd": 2632760.1523,
+        "volume24_usd": 1864443.36695272,
+        "age_days": 74.41
+      },
+      {
+        "pool": "CyJwKnLiiY4fmiwqMCSWFSHxo7T9Ubshgs2uRAuJCrk5",
+        "name": "Agency / SOL",
+        "token": "solana_7VertkgF9KLhxxJXHX6uaWuoYZTP9LdGj2bWmVXVpump",
+        "dex": "pumpswap",
+        "liquidity_usd": 355504.3951,
+        "volume24_usd": 1775949.6104787,
+        "age_days": 7.15
+      },
+      {
+        "pool": "2B8tftZ5ww8TREMr3pgkgERLNjJyJxEAPWMENViGMsL4",
+        "name": "CRAWL / SOL",
+        "token": "solana_BXoHJddsWJLHtAopeiSbKUSELsu8hSFMs8baGMDkpump",
+        "dex": "pumpswap",
+        "liquidity_usd": 253510.4762,
+        "volume24_usd": 1709377.00341648,
+        "age_days": 5.17
+      },
+      {
+        "pool": "6QyYdc6jgeKnfP1FWhiexMYq3JQ3sidSYoubjWUTo3rm",
+        "name": "HeeHaw / SOL",
+        "token": "solana_EEpng77ZPn9FbgbT4xsRjwuxNCcMBYq3HTwEscyTpump",
+        "dex": "pumpswap",
+        "liquidity_usd": 332770.6686,
+        "volume24_usd": 1674234.72290009,
+        "age_days": 39.42
+      },
+      {
+        "pool": "745ATaSSWxvry5qt1XVv9eXuG884hDvNJfvA2o82dNBi",
+        "name": "Frank / SOL",
+        "token": "solana_HbPDWSqu8hpVMX6gMjwMDGe5rVgicWo3Qh3Jaojypump",
+        "dex": "pumpswap",
+        "liquidity_usd": 81261.0323,
+        "volume24_usd": 1575120.33996283,
+        "age_days": 4.17
+      }
+    ]
+  },
+  "evaluation": {
+    "period": "from registered_at to the evaluation date (at least 7 days later); only bars after registered_at",
+    "data": "5-minute OHLCV (USD) from GeckoTerminal for every registered pool, including pools that lost liquidity or died (their history stays available)",
+    "primary": "mean of (trade net return - mean net return of entering the same pool at every bar of the period with the same hold), over all trades; 90% CI by pool bootstrap",
+    "success": "primary excess > 0 with the 90% CI above 0, AND mean net return per trade > 0",
+    "script": "handoff/experiments/established_rules.py (fixed config) on data fetched after the period"
+  },
+  "in_sample_result": "none yet for this universe (registered first). v1's in-sample result came from a different, mixed universe.",
+  "supersedes": "established-dip-2026-10-09.json (universe correction only; rule and costs unchanged)"
+}
