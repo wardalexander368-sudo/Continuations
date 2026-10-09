@@ -40,6 +40,12 @@ next. Topic documents hold the detail:
   only, paper, train/test, every rule counted. Scripts in `handoff/experiments/edge-hunt/vaults/`
   and `.../predmkt/`.
 
+* **Edge hunt E thread, E1b** (same session, since 2026-10-09 23:05 UTC, branch
+  `claude/project-thread-9op3pf`). Paper only. Fresh check of E1 on 8 other buyback /
+  revenue-share tokens with Hyperliquid perps (HYPE, JUP, AAVE, DYDX, GMX, CAKE, SKY, BANANA),
+  token list, rule and criteria pre-registered in `handoff/preregistration/revflow/SPEC.md`
+  before any of their data was read.
+
 * **Edge hunt E thread** (project thread session, since 2026-10-09 21:40 UTC, branch
   `claude/project-thread-9op3pf`). **Paper only, no real SOL, no keys.** Task (the user's 21:30
   "work continuously"): edge hunt angle E, TARTAR's assets, beyond the closed predictor + P(rug)
