@@ -60,6 +60,21 @@ def fit_temperature(raw: np.ndarray, labels: np.ndarray, weights: np.ndarray) ->
     return math.exp((lo + hi) / 2)
 
 
+_LGB_PARAMS = {
+    "objective": "multiclass",
+    "num_class": N_CLASSES,
+    "learning_rate": 0.05,
+    "num_leaves": 63,
+    "min_data_in_leaf": 100,
+    "feature_fraction": 0.8,
+    "bagging_fraction": 0.8,
+    "bagging_freq": 1,
+    "lambda_l2": 1.0,
+    "verbose": -1,
+    "seed": 7,
+}
+
+
 def train_global(
     ds: Dataset,
     *,
@@ -69,6 +84,7 @@ def train_global(
     num_leaves: int = 63,
     min_data_in_leaf: int = 100,
     threads: int = 0,
+    shrink_folds: int = 3,
     log: Callable[[str], None] = print,
 ) -> GlobalModel:
     import lightgbm as lgb
@@ -79,20 +95,7 @@ def train_global(
     features = list(FEATURES) if ds.domain == "trades" else list(OHLCV_FEATURES)
     cols = [FEATURES.index(name) for name in features]
     X_train, X_valid = ds.X[train][:, cols], ds.X[valid][:, cols]
-    params = {
-        "objective": "multiclass",
-        "num_class": N_CLASSES,
-        "learning_rate": learning_rate,
-        "num_leaves": num_leaves,
-        "min_data_in_leaf": min_data_in_leaf,
-        "feature_fraction": 0.8,
-        "bagging_fraction": 0.8,
-        "bagging_freq": 1,
-        "lambda_l2": 1.0,
-        "num_threads": threads,
-        "verbose": -1,
-        "seed": 7,
-    }
+    params = dict(_LGB_PARAMS, learning_rate=learning_rate, num_leaves=num_leaves, min_data_in_leaf=min_data_in_leaf, num_threads=threads)
     dtrain = lgb.Dataset(X_train, ds.label[train], weight=ds.weight[train], feature_name=features, free_raw_data=False)
     dvalid = lgb.Dataset(X_valid, ds.label[valid], weight=ds.weight[valid], reference=dtrain)
     started = time.time()
@@ -130,30 +133,69 @@ def train_global(
         "train_seconds": round(time.time() - started, 1),
     }
     model = GlobalModel(booster, meta)
-    meta["median_shrink"] = fit_median_shrink(model, ds, valid)
+    q = oof_medians(model, ds, train, folds=shrink_folds, params=params) if shrink_folds else None
+    meta["median_shrink"] = fit_median_shrink(model, ds, (train | valid) if shrink_folds else valid, q)
     log(f"trained {meta['best_iteration']} rounds in {meta['train_seconds']}s, temperature {temperature:.3f}")
     return model
 
 
-def fit_median_shrink(model: GlobalModel, ds: Dataset, mask: np.ndarray) -> list[list[float]]:
-    """[[f, s], ...]: how far to move the point forecast from the price now toward the model's
-    median, per fraction of the candle elapsed, chosen to minimize absolute error on `mask` (validation).
+def oof_medians(model: GlobalModel, ds: Dataset, mask: np.ndarray, folds: int = 3, params: dict | None = None) -> np.ndarray:
+    """Out-of-fold medians for the rows in `mask` (NaN elsewhere), each from a model trained the
+    way `model` was (same parameters and rounds, its temperature and tails) on the other folds.
 
-    Late in a candle the median's small, mostly downward shifts lost to the current price on
-    held-out launches, while early on the full median helped; the fitted factor falls with f.
+    Folds split by token, so no launch is in both a model's training rows and its predictions.
+    """
+    import hashlib
+
+    import lightgbm as lgb
+
+    features = model.meta["features"]
+    cols = [FEATURES.index(name) for name in features]
+    params = dict(params or _LGB_PARAMS)
+    rounds = int(model.meta.get("best_iteration") or 1)
+    temperature = float(model.meta.get("temperature", 1.0))
+    tl, th = model.meta.get("tail_low", 1.0), model.meta.get("tail_high", 1.0)
+    token_fold = np.array([int(hashlib.blake2b(t.mint.encode(), digest_size=4).hexdigest(), 16) % folds for t in ds.tokens])
+    fold = token_fold[ds.token]
+    q = np.full(len(ds), np.nan)
+    for k in range(folds):
+        fit_rows, held = mask & (fold != k), mask & (fold == k)
+        if not held.any() or fit_rows.sum() < 100:
+            continue
+        data = lgb.Dataset(ds.X[fit_rows][:, cols], ds.label[fit_rows], weight=ds.weight[fit_rows], feature_name=features)
+        booster = lgb.train(params, data, num_boost_round=rounds)
+        raw = np.asarray(booster.predict(ds.X[held][:, cols], raw_score=True)).reshape(-1, N_CLASSES) / temperature
+        raw -= raw.max(axis=1, keepdims=True)
+        probs = np.exp(raw) / np.exp(raw).sum(axis=1, keepdims=True)
+        q[held] = batch_quantile(probs, 0.5, tl, th) * np.sqrt(1.0 - ds.f[held])
+    return q
+
+
+def fit_median_shrink(model: GlobalModel, ds: Dataset, mask: np.ndarray, q: np.ndarray | None = None) -> list[list[float]]:
+    """[[f, s], ...]: how far to move the point forecast from the price now toward the model's
+    median, per fraction of the candle elapsed, chosen to minimize absolute error on `mask`.
+
+    `q` supplies out-of-sample medians (NaN where absent; the model predicts those rows).
+    `train_global` fits on out-of-fold training medians plus validation: validation alone was
+    too small to size the effect (on two datasets it either missed it or shrank the open).
+    Late in a candle the median's small, mostly downward shifts lose to the current price;
+    early on the full median helps, so the fitted factor stays at 1 and falls late.
     """
     if not mask.any():
         return []
-    probs = model.predict_proba(ds.X[mask])
     tl, th = model.meta.get("tail_low", 1.0), model.meta.get("tail_high", 1.0)
+    medians = np.full(len(ds), np.nan) if q is None else q.copy()
+    need = mask & np.isnan(medians)
+    if need.any():
+        medians[need] = batch_quantile(model.predict_proba(ds.X[need]), 0.5, tl, th) * np.sqrt(1.0 - ds.f[need])
     f, x0, sigma, ref, close, w = ds.f[mask], ds.x0[mask], ds.sigma[mask], ds.ref[mask], ds.close[mask], ds.weight[mask]
-    q = batch_quantile(probs, 0.5, tl, th) * np.sqrt(1.0 - f)
+    q_m = medians[mask]
     grid = np.linspace(0.0, 1.0, 11)
     out = []
     for frac in sorted(set(f.tolist())):
         m = f == frac
         target = np.log(close[m] / ref[m]) / sigma[m] - x0[m]  # the remaining move, in sigma units
-        errors = [float((np.abs(target - s * q[m]) * sigma[m] * w[m]).sum()) for s in grid]
+        errors = [float((np.abs(target - s * q_m[m]) * sigma[m] * w[m]).sum()) for s in grid]
         out.append([frac, float(grid[int(np.argmin(errors))])])
     return out
 
