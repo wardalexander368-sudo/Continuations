@@ -86,7 +86,10 @@ next. Topic documents hold the detail:
       at a time, with the reason in the policy note and the log.
 2. **More data.** The fast loop records as it runs. After 24 h+:
    `tartar train --raw data/raw`, `tartar profit`, `tartar decide`.
-3. **Longer holds on screened tokens** (10–90 min) once data exists.
+3. ~~**Longer holds on screened tokens**~~ **done 04:45 UTC 10-09: no edge** (§3.14). Fast-loop
+   replays on every recording, screen 20 s–10 min × hold 10–45 min: all 24 rules lose on
+   validation; the chosen one makes −12.5% [−17.6, −7.6] per trade on test. The median trade is
+   a dead token's cost round trip. Launches with ≥ 20 early buyers lose −35% to −67%.
 4. ~~**PumpSwap decoder**~~ **done 00:12 UTC 10-09** (`tartar/feeds/pumpswap.py`,
    source `pumpswap`): `tartar watch` follows a graduated pump.fun token trade by
    trade in its canonical pool (checked on 43 mainnet trades). Not yet recorded
@@ -153,7 +156,13 @@ next. Topic documents hold the detail:
     First data: `handoff/data/raw-pumpswap` (20 min: 20 graduations, 12 SOL
     pools, 33,292 PumpSwap trades). **Jev session:** restart the fast loop with
     `--pumpswap-hours 4` (and `SOLANA_COMMITMENT=processed`) to collect this
-    for the next study;
+    for the next study.
+    **Research session, 10-09:** PumpSwap fees measured (§3.13): **1.25%/side right after
+    graduation, 1.20% to ~1,150 SOL market cap**, falling to 0.30% only near 500k SOL; the
+    project had assumed 0.30%. The study is **pre-registered**
+    (`handoff/preregistration/pumpswap-graduated/SPEC.md`, harness `pumpswap_study.py`) on the
+    research session's recording since 04:06 UTC; evaluate once at ≥ 250 graduated SOL pools.
+    The fast loop now sells positions open at graduation on the recorded PumpSwap pool;
     (b) ~~established memecoins~~ **studied (§3.11): no reliable edge.**
     The dip rule is pre-registered for a forward test: **any session, about
     once a day: `python3 handoff/experiments/established_cohort.py`, then
@@ -203,6 +212,24 @@ next. Topic documents hold the detail:
   branch `claude/profitability-backtest`, on `main`).
 
 ## Log (newest first)
+
+* **2026-10-09 04:50 UTC, research session** (session_01YLnqLnTQzvD6HHUTvnNpVm, branch
+  `claude/eager-archimedes-k8pn4q`; this session may push only that branch, so nothing here is
+  on `main` until the user merges it). GitHub pushes work from this session.
+  - **PumpSwap fees (§3.13):** LP 0.20% + protocol 0.05% + a creator fee falling with market
+    cap; just-graduated pools pay 0.02 + 0.93 + 0.30 = **1.25%/side**, like the curve. The dip
+    pre-registration charged 0.5%/side; cohort 1 pays 0.30–1.20% (mean 0.85%). A dated addendum
+    adds a secondary line at measured fees (SPEC unchanged). **When adding a dip cohort, also
+    run `pumpswap_fees.py --cohort <file> --save .../fees-measured.json`** (see the addendum).
+  - **Queue 3 done, no edge (§3.14).**
+  - **Queue 11a pre-registered** before its data was read; recorder running here
+    (`data/raw-eager`, `--pumpswap-hours 4`, ~40 SOL pools/hour). Finished hours go to
+    `handoff/data/raw-eager/`.
+  - Fast loop: positions open at graduation are sold on the recorded PumpSwap pool at its fee
+    (129 tests pass).
+  - **Queue 12:** `sol_dex_costs.py` now re-quotes after 1/2/5 s (quote decay); a 16 h run
+    started 04:10 UTC here (`data/sol-dex/`). First 5 samples: |decay| p90 ≈ 1–2.6 bps at
+    1–5 s, no 50 bps slippage failures; fill at the later quote still ≈ 0.5 bps/fill.
 
 * **2026-10-09 03:49 UTC, profitability session (handing off):** Read the user's `jevtrader`
   (now public) and wrote `handoff/jevtrader.md`: it IS the SOL-USD + Jev loop, sealed until
