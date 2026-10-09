@@ -261,9 +261,13 @@ next. Topic documents hold the detail:
     does, predictor accuracy, P(rug), every closed strategy with its number, costs, what's open,
     the user's decisions, data, doc map). Profitability §1 now marks PumpSwap closed (§3.16).
   - raw-v3 recorder restarted here at 13:31 UTC; hour 13 saved.
-  - **PumpSwap model running** (`handoff/experiments/pumpswap_model.py`: raw logs parsed once for
-    all four candle lengths, hyperparameters chosen on validation, install rule fixed in the
-    docstring before results). 307 graduated SOL pools / 115,632 rows at 1m. Nothing installed yet.
+  - **PumpSwap model** (`handoff/experiments/pumpswap_model.py`: raw logs parsed once for all
+    four candle lengths, hyperparameters chosen on validation, install rule fixed in the
+    docstring before results). **1m installed** (`tartar/models/pumpswap-60s`, 348 pools, on
+    `main` 15:30 UTC): on 52 test pools the blend's trading candles hit 72.0% vs 72.0% stated,
+    where online-only hits 62.8% vs 49.2% stated; edge +0.9% vs −0.7%. **5m not installed**
+    (calibration better, edge worse: −0.9% vs −0.5%). 30s and 15s still training (predictor
+    doc §8.2.3).
   - Tests: 140 pass on the merged branch.
 
 * **2026-10-09 09:00 UTC, clever session (progress):** P(rug) shipped (queue 13) and predictor v3
