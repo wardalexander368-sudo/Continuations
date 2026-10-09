@@ -78,15 +78,8 @@ deep pools match the model, a thin one was 2.4x it). The `launch_selector` slot 
   data, run `python3 handoff/experiments/fetch_gha_raw.py --dirs` and pass the printed dirs to `--raw`.
 
 * **Curve-model retrain thread** (project thread session, branch `claude/project-thread-6oh2s6`):
-  **v3.2 installed 23:15 UTC 10-09 at the user's go** (all four `trades-*` models; predictor doc
-  8.2.2e; v3.1 is in git history). Market-wide recalibration study
-  done (profitability §3.24, closed). Next here: PumpSwap 5m retry once the recorder thread has
-  more graduated pools.
-  **Since 23:15 UTC:** pump.fun who-is-trading signals (coordinator, under the user's "keep finding
-  things"): angles §3.15/§3.18/§3.22 didn't test, chiefly *who sells into* §3.23's deep dip after a
-  run (creator/bundle dump vs dispersed selling; whether past winners buy the dip). Edge-hunt
-  protocol: proposals, three-lens scoring, pre-registration before any hour ≥ 16:00 UTC 10-09 is
-  scored. Paper only. Not touching the low-cost-venue round (other thread).
+  v3.2 installed; recalibration (§3.24) and edge hunt F (§3.25) closed. Next here: PumpSwap 5m retry
+  once the recorder thread has more graduated pools.
 
 * **Dip/jevtrader session** (session_01Htqh7pc1Lh1PP6Dkm1rVvz, since 2026-10-09 17:33 UTC, `main`
   only): continues the profitability session. **Owns the dip forward test (queue 11b)**: the GitHub
@@ -386,6 +379,12 @@ deep pools match the model, a thin one was 2.4x it). The `launch_selector` slot 
   branch `claude/profitability-backtest`, on `main`).
 
 ## Log (newest first)
+
+* **2026-10-10 ~00:05 UTC, retrain thread: edge hunt F (pump.fun who-is-trading) closed** (profitability
+  §3.25, `edge-hunt.md` F). Five proposals scored; F2 (smart wallets buying the dip) and F3 (bundle
+  overhang gone) found nothing on dev; F1 (a 70% dip after a 40-SOL run, > 96% of its selling by the
+  creator and one other wallet) pre-registered and scored once on 7,295 launches after 16:00 10-09:
+  +1.12% [−6.30, +8.49] on 175 at curve fees, −4.69% via Lightning. Not confirmed. Nothing half-done.
 
 * **2026-10-09 23:55 UTC, perps route for live twins: dry, landed** (claim cleared). `tartar/autotrade/perps.py`
   + `broker.py` hooks: intents with `meta.venue == "hyperliquid"` (xs_momentum's legs) get perp twins

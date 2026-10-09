@@ -336,6 +336,10 @@ Anything positive on dev's later half is pre-registered (`handoff/preregistratio
 before the test launches (created ≥ 16:00) are scored once. Paper only, Jupiter costs (1.25%/side,
 0.02 SOL) with Lightning (+1%/side) as a second line.
 
+**Result (2026-10-10 ~00:05 UTC):** F2 and F3 found nothing on dev. F1 (a deep dip sold by the
+creator and one other wallet) was pre-registered and scored once: **+1.12% [−6.30, +8.49] on 175
+test trades at curve fees, −4.69% via Lightning: not confirmed** (profitability §3.25). F is closed.
+
 ## What looks worth doing when the hunt resumes
 
 1. Pre-register and start the **hedged-JLP 90-day paper forward test** (A1). It needs only an
