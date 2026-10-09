@@ -40,6 +40,13 @@ next. Topic documents hold the detail:
   only, paper, train/test, every rule counted. Scripts in `handoff/experiments/edge-hunt/vaults/`
   and `.../predmkt/`.
 
+* **Agent health + pumpflow in the agent** (edge hunt E thread session, since 2026-10-09 23:30 UTC,
+  branch `claude/project-thread-9op3pf`). No keys, no orders. (1) `pumpflow` as an agent strategy
+  (reads the pumpflow-paper snapshots; dry perp twins on PUMP). (2) `health.yml` hourly + Health section
+  at the top of `autotrade/REPORT.md`: failed/skipped Action runs, recorder hour gaps, stale paper-test
+  inputs, twin drift and orphans; the job fails while anything is red. Touches `tartar/autotrade/`
+  (new `health.py`, `strategies/pumpflow.py`, report header) and `autotrade/config.json` (one strategy).
+
 * **Edge hunt E thread** (project thread session, since 2026-10-09 21:40 UTC, branch
   `claude/project-thread-9op3pf`). **Paper only, no real SOL, no keys.** Task (the user's 21:30
   "work continuously"): edge hunt angle E, TARTAR's assets, beyond the closed predictor + P(rug)
