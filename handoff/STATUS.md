@@ -38,6 +38,8 @@ next. Topic documents hold the detail:
 
 
 
+* **Profitability session** (session_01U4x5qUJYMStcujpyLJgQ8N), since 03:35 UTC 10-09: **queue item 12, on-chain SOL-USD cost table** for the user's `jevtrader` day-28 fee arithmetic (Jupiter round-trip quotes vs Coinbase book, $1,000). Read-only toward `jevtrader`; branch `claude/sol-dex-costs`.
+
 ## Blockers (need the user)
 
 * ~~Network~~: **resolved 22:35 UTC**, the user enabled full network access.
@@ -144,6 +146,16 @@ next. Topic documents hold the detail:
     commit and push the new cohort file at once.** Score with
     `established_prereg_eval.py` at ≥ 200 trades or on 2026-10-30; (c) a liquid market like SOL-USD where costs are tiny,
     e.g. Jev on news (the user's earlier `jevtrader` idea).
+
+12. **The user's `jevtrader` (github.com/AJW9991/jevtrader, public, read-only for us).**
+    It is the SOL-USD + Jev loop: a sealed 28-day pre-registered paper test
+    running on the user's Mac (T0 2026-09-25 21:40Z, `make results` on
+    2026-10-23). **Never unblind or disturb it:** don't run its reports on
+    its data, don't push to it, don't feed its outcomes into anything. Its
+    PROTOCOL keeps it separate from the user's `crypto-trading-system` repo.
+    TARTAR's contribution is a measured **on-chain cost table** for SOL-USD,
+    so its day-28 break-even fees (f*_X per fill) can be read against a
+    venue cheaper than Coinbase's 90 bps taker. See `handoff/jevtrader.md`.
 
 ## Rules that hold across sessions
 
