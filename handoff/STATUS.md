@@ -32,6 +32,17 @@ next. Topic documents hold the detail:
 
 ## Active
 
+* **Go-live path thread** (project thread session, since 2026-10-09 23:05 UTC, branch
+  `claude/project-thread-kytb6q`). **No keys, no real orders; dry-run and paper only.** Task (the
+  user's 22:58 check-in, via the coordinator): make `tartar/autotrade` able to trade a promoted
+  strategy live without manual steps once the user has given a standing approval: route selection
+  (Jupiter with `TARTAR_WALLET_KEY`, else Lightning with `PUMPPORTAL_API_KEY`), live sizing in SOL,
+  per-trade and daily loss limits, a live kill switch, and a fill log comparing each live fill with
+  its paper twin. Builds on the execution-cost thread's §3.19 and `jupiter_fills.py` (no route
+  re-measuring). **Agent-machinery thread:** I touch `broker.py` (wire `LiveBroker`), add
+  `tartar/autotrade/execution.py`, and add small hooks in `runner.py`/`risk.py`; config stays `paper`.
+  Please ping me (via the coordinator) before changing those parts.
+
 * **Trading-skills thread → new markets** (project thread session, since 2026-10-09 22:45 UTC,
   branch `claude/project-thread-x7fh45`). Task (coordinator, under the user's "work nonstop"):
   (1) Hyperliquid vaults / top traders: does following past winners beat cash after fees, with
