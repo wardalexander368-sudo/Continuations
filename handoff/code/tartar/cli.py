@@ -171,6 +171,7 @@ def build_parser() -> argparse.ArgumentParser:
     fast.add_argument("--replay", help="run over recorded raw logs instead of the live chain")
     fast.add_argument("--out", default="data/raw", help="live: also record raw logs here (default data/raw)")
     fast.add_argument("--hours", type=float, help="live: stop after this many hours")
+    fast.add_argument("--pumpswap-hours", type=float, default=0.0, help="live: also record each graduated token's PumpSwap pool for this long (default off)")
     fast.set_defaults(func=cmd_fast)
 
     rv = sub.add_parser("review", help="the slow loop's input: the fast loop's results and what every screened launch would have earned")
@@ -744,7 +745,7 @@ async def cmd_fast(args) -> int:
         loop = FastLoop(
             policy, Journal(args.journal), jev_factory=jev, decider_factory=lambda scorer: ThreadDecider(scorer), creators=creators, shadow_factory=shadow_factory()
         )
-        recorder = ChainRecorder(args.out, track_minutes=90, idle_minutes=20)
+        recorder = ChainRecorder(args.out, track_minutes=90, idle_minutes=20, pumpswap_hours=args.pumpswap_hours)
         recorder.on_event = loop.on_event
         recorder.on_status = lambda message: console.print(f"[yellow]{message}[/yellow]")
         loop.start(time.time())
