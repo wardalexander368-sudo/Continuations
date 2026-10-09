@@ -9,7 +9,7 @@ Event types (short keys keep files small):
     {"e": "track",   "t": ts, "mint"}                      # trades are being recorded from here
     {"e": "untrack", "t": ts, "mint", "reason"}            # ...until here
     {"e": "session", "t": ts, "state": "connected"|"disconnected"|"stopped"}
-    {"e": "graduate", "t": ts, "mint", "pool"}             # curve completed; its PumpSwap pool is recorded
+    {"e": "graduate", "t": ts, "mint", "pool" | "quote"}   # curve completed; its SOL pool is recorded (or quote: not SOL)
     {"e": "swap",    "t": ts, "mint", "pool", "side", "trader", "tok", "sol", "paid", "tok_after", "sol_after"}
     {"e": "unwatch", "t": ts, "mint", "pool", "reason"}    # ...until here (age or idle)
 

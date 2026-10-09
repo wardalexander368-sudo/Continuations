@@ -180,7 +180,7 @@ async def test_recorder_follows_graduated_tokens_on_pumpswap(tmp_path, monkeypat
 
     async def fake_stream(urls=None, extra=None):
         yield Status("connected", kind="connected")
-        yield T0, "g", [ChainComplete(mint)], 500
+        yield T0, "g", [ChainComplete(mint), ChainComplete("QuotedMint1111111111111111111111111111111pump"[:44], "USDCmint")], 500
         asked.append(dict(extra()))
         now[0] = T0 + 5
         yield now[0], "s1", [SwapTrade(pool, True, 1000.0, 0.01, 0.0101, "u1", int(T0), 9e8, 90.0, "dev")], 510
@@ -194,7 +194,8 @@ async def test_recorder_follows_graduated_tokens_on_pumpswap(tmp_path, monkeypat
     recorder = ChainRecorder(tmp_path, clock=lambda: now[0], pumpswap_hours=2, housekeeping=0)
     await recorder.run(duration=0.5)
     events = list(read_events(raw_files(tmp_path)))
-    (grad,) = [e for e in events if e["e"] == "graduate"]
+    grad, quoted = [e for e in events if e["e"] == "graduate"]
+    assert quoted["quote"] == "USDCmint" and "pool" not in quoted  # not paired with SOL: not watched
     swaps = [e for e in events if e["e"] == "swap"]
     assert grad == {"e": "graduate", "t": T0, "mint": mint, "pool": pool, "slot": 500}
     assert len(swaps) == 1 and swaps[0]["mint"] == mint and swaps[0]["sol_after"] / swaps[0]["tok_after"] == pytest.approx(1e-7)

@@ -666,9 +666,19 @@ reviewers' scripts are in the session scratchpad (not persisted).
      thresholds.
 7. ~~**Graduated tokens** only through DexScreener polls~~ **done 2026-10-09:**
    `tartar watch` follows a graduated pump.fun token trade by trade in its
-   canonical PumpSwap pool. Still open: no PumpSwap data is recorded for
-   training, and a token that graduates during a watch ends the feed. Run
-   `watch` again to follow it on PumpSwap.
+   canonical PumpSwap pool. **Recording too (2026-10-09):**
+   `tartar record --pumpswap-hours N` (and `tartar fast --pumpswap-hours N`)
+   works as follows on each graduation:
+   - It subscribes to the token's canonical pool on the same websocket.
+   - It writes `graduate`, `swap` and `unwatch` events (format in
+     `tartar/data/rawlog.py`).
+   - Recording stops after N hours, or after 30 minutes without a trade.
+
+   PumpSwap as a whole runs ~356 successful tx/s, which is why only
+   graduated pools are followed. Still open: no loader or `tartar profit`
+   support for swap events yet (queue item 11a, part 2). A token that
+   graduates during a `watch` ends the feed; run `watch` again to follow it on
+   PumpSwap.
 8. **The candle-only (OHLCV) model is untrained.**
    - GeckoTerminal returns 429 from this container; collect from another IP.
    - Live DexScreener-polled candles differ from GeckoTerminal OHLC: ranges

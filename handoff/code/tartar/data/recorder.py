@@ -209,16 +209,20 @@ class ChainRecorder(Recorder):
 
         return {pool: swap_events_from_logs for pool in self.pools}
 
-    def _graduated(self, mint: str, slot: int | None) -> None:
+    def _graduated(self, mint: str, slot: int | None, quote_mint: str = "") -> None:
         from ..feeds.pumpswap import canonical_pool
 
+        now = self.clock()
+        event = {"e": "graduate", "t": now, "mint": mint} | ({"slot": slot} if slot is not None else {})
+        if quote_mint:  # its pool pairs with that token, not SOL: no SOL prices to record
+            self._emit(event | {"quote": quote_mint})
+            return
         try:
             pool = canonical_pool(mint)
         except ValueError:
             return
-        now = self.clock()
         self.pools[pool] = _Pool(mint, now, now)
-        self._emit({"e": "graduate", "t": now, "mint": mint, "pool": pool} | ({"slot": slot} if slot is not None else {}))
+        self._emit(event | {"pool": pool})
 
     def _swap(self, trade, slot: int | None) -> None:
         pool = self.pools.get(trade.pool)
@@ -305,7 +309,7 @@ class ChainRecorder(Recorder):
                     elif isinstance(event, ChainComplete):
                         self.handle({"txType": "migrate", "mint": event.mint, "slot": slot})
                         if self.pumpswap_seconds > 0:
-                            self._graduated(event.mint, slot)
+                            self._graduated(event.mint, slot, event.quote_mint)
                     elif isinstance(event, SwapTrade):
                         self._swap(event, slot)
                 if now - last_housekeeping >= self.housekeeping:

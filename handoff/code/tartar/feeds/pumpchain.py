@@ -113,6 +113,7 @@ class ChainCreate:
 @dataclass(frozen=True)
 class ChainComplete:
     mint: str
+    quote_mint: str = ""  # the curve's quote token; empty for SOL
 
 
 class _Reader:
@@ -187,7 +188,13 @@ def decode_event(data: bytes) -> ChainTrade | ChainCreate | ChainComplete | None
         if head == COMPLETE:
             r = _Reader(data)
             r.key()  # user
-            return ChainComplete(r.key())
+            mint, quote_mint = r.key(), ""
+            try:
+                r.key(), r.i64()  # bonding curve, timestamp
+                quote_mint = r.key()
+            except ValueError:
+                pass  # an older, shorter layout: SOL-quoted
+            return ChainComplete(mint, "" if quote_mint == SOL_QUOTE else quote_mint)
     except (ValueError, struct.error):
         return None
     return None

@@ -27,3 +27,19 @@ decoder from before 2026-10-09 00:20. Quote-paired curves (not SOL) therefore
 appear as creates without a first buy, and their trades are missing. Filter on
 `create.vsol`. Analyse with
 `python3 handoff/experiments/slot_latency.py handoff/data/raw-slots`.
+
+## `raw-pumpswap/` (predictor session, 2026-10-09 01:30–01:50 UTC)
+
+The first recording with `tartar record --pumpswap-hours 2`: 698 launches,
+44,286 bonding-curve trades, 20 graduations and 33,292 PumpSwap trades.
+
+- 12 graduated SOL pools were followed. Busy ones logged 2,000–10,800 trades
+  in their first minutes, with the first trade 4–46 slots after graduation.
+- The other 8 graduations were quote-paired curves (another pump coin or a
+  tokenized stock), whose pools are not token/WSOL. They recorded no swaps,
+  because the recorder at that time subscribed to the WSOL pool. Since commit
+  "Skip quote-paired graduations" it marks them `quote` and does not watch
+  them.
+
+Event formats are in `tartar/data/rawlog.py`. Price after a swap =
+`sol_after / tok_after` (SOL per token).
