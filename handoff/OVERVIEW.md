@@ -62,7 +62,8 @@ modest confidence. One known gap: the 5 m model is still overconfident at the ca
 
 **Scam filtering:** a live risk level (ok / caution / danger / scam) with reasons, plus a learned
 **P(rug)**, the chance a launch collapses 80% within 30 minutes, judged on its first 20 seconds.
-P(rug) ranks collapses at AUC 0.91 on later launches, against 0.74 for the rule-based level.
+P(rug) held AUC 0.924 on 7,075 launches recorded after it was trained, against 0.69 for the
+rule-based level, and the retrained model (12,342 launches) reaches 0.935.
 
 ## 4. Does it make money? No, not so far
 

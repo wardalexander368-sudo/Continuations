@@ -105,6 +105,10 @@ before the 11a evaluation** (`handoff/preregistration/pumpswap-graduated/SPEC.md
 `tartar record --track-minutes 120 --pumpswap-hours 4` with `SOLANA_COMMITMENT=processed`
 (each launch followed for up to 2 h, each graduated SOL token's PumpSwap pool for 4 h).
 One recorder, one directory. `20261009-06` covers only 06:25–06:31 UTC: the container was
-suspended and the recorder died. Recording restarted at 12:55 UTC, so the gap is 06:31–12:55.
-Later hours are copied here as they finish. Use them alongside `raw-eager`/`raw-clever` for
+suspended and the recorder died. The predictor session restarted it at 12:55 UTC, but that
+container was lost at ~13:25 before any hour was saved. The handoff session restarted it at
+13:31 UTC with the same flags. Later hours are copied here as they finish:
+
+- `20261009-13`: 13:31–13:59 UTC, 1,064 launches, 87,485 curve trades, 16 graduated SOL pools,
+  30,463 PumpSwap swaps. Use them alongside `raw-eager`/`raw-clever` for
 the predictor (queue 2) and the edge-hunt studies.
