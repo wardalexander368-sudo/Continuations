@@ -197,8 +197,10 @@ next. Topic documents hold the detail:
     UTC: `sol_dex_costs.py sample --minutes 120 --out data/sol-dex/costs-<date>.jsonl`), then
     commit the samples. Real fills stay unmeasured (no real-money code without the user).
 13. ~~**Ship a calibrated P(rug)**~~ **done 07:15 UTC 10-09** (clever session; predictor doc
-    §9.1). `tartar train --raw DIRS --rug` → `tartar/models/rug-20s.*` (installed, 5,267
-    launches). Test AUC **0.913** on the latest 791 launches; the risk level now reaches 0.735
+    §9.1). `tartar train --raw DIRS --rug` → `tartar/models/rug-20s.*` (installed; retrained
+    13:50 UTC on 12,342 launches incl. `raw-clever`: AUC **0.935** on the latest 1,852, calibrated
+    by decile; the first model held AUC 0.924 forward on 7,075 unseen launches). First model: AUC
+    0.913 on the latest 791 launches; the risk level now reaches 0.735
     (was 0.585) since `sniped` / `concentrated` / `dev_dumped` alone are a caution. The
     `--next-launch` screen still skips those three (`ScamReport.avoid`), so its picks are
     unchanged; it shows P(rug) on every verdict and beside the watched token's level.
