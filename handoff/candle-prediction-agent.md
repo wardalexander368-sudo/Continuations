@@ -509,7 +509,9 @@ once `raw-clever` has more hours; script `handoff/experiments/predictor_old_weig
 
 The same at **1m** (10,184 tokens; training 68% old rows): validation log loss × 1 0.4144,
 × 0.25 0.4140, × 0 0.4197; test 0.5090 / 0.5119 / 0.5220 (installed v3: 0.5136). The old rows
-help at 1m, and down-weighting is a 5m fix. Also on these `raw-clever` test launches, the 1m
+help at 1m, and down-weighting is a 5m fix. **30s** agrees (validation 0.3540 / 0.3545 / 0.3611,
+test 0.4219 / 0.4233 / 0.4318; installed 0.4255). Plan for v3.1: 15s/30s/1m on every recording
+at full weight; 5m with the old-row weight chosen on validation. Also on these `raw-clever` test launches, the 1m
 live blend is **under**confident on trading candles: 69% hit vs 64% stated (all variants). Check
 the blend's global prior (0.95, §8.4) on new-style data when v3.1 is trained.
 
