@@ -492,6 +492,21 @@ rows changed nothing (test log loss 1.1418 → 1.1410). **Fix:** retrain once `r
 few hours (it records the same way as `raw-eager`), so most 5m training rows are new-style; try
 down-weighting or dropping the old `raw` rows at 5m, and check calibration first.
 
+**Preview (08:30 UTC, nothing installed):** 5m with `raw-clever` 06–07 added (5,414 tokens; the
+time split makes training 91% old-recorder rows, validation and test 0%), old rows weighted in
+training only:
+
+| Old-recorder training rows | Validation log loss | Test log loss | Hit vs stated at open | Live replay edge |
+|---|---|---|---|---|
+| (installed v3) | | 1.1081 | 64.6% vs 69.9% | +12.7% |
+| × 1 | 1.0879 | 1.0729 | 67.4% vs 69.1% | +13.9% |
+| × 0.25 | 1.0711 | **1.0578** | 69.6% vs 70.3% | **+14.8%** |
+| × 0 | **1.0674** | 1.0672 | 74.7% vs 72.8% | +9.2% |
+
+Validation picks × 0 by a hair, test favours × 0.25, and × 0 loses a lot of point accuracy
+(it trains on ~9% of the rows). Choose the weight on validation from a grid (1, 0.5, 0.25, 0.1, 0)
+once `raw-clever` has more hours; script `handoff/experiments/predictor_old_weight.py`.
+
 ### 8.2.3 A model for graduated tokens on PumpSwap (code 2026-10-09; trained once data allows)
 
 `tartar watch` follows a token through graduation onto its PumpSwap pool, but until now it then
