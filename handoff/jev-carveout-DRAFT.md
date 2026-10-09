@@ -1,6 +1,9 @@
 # DRAFT: a JEV-protocol carve-out for TARTAR's Jev calls
 
-**Status: DRAFT, not in force.** Written 2026-10-09 by the research session for the user to
+**Status: NOT ADOPTED.** On 2026-10-09 06:35 UTC the user chose to keep Jev off in TARTAR
+and retire the live fast loop, so no carve-out is needed. Kept for the record.
+
+**Original status: DRAFT, not in force.** Written 2026-10-09 by the research session for the user to
 accept, change or reject (STATUS blocker "Jev usage policy"). Modelled on jevtrader's
 `PROTOCOL.md` (read at `9ce9b7b`; jevtrader itself is untouched). Until the user signs §5, the
 honest reading is that TARTAR's always-on Jev use is outside the user's JEV protocol.

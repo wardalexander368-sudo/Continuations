@@ -1,5 +1,9 @@
 # The fast loop and the slow loop
 
+**Retired 2026-10-09 by the user's decision** (STATUS queue item 1): Jev stays off in TARTAR,
+and the live paper loop is not run. `tartar fast --replay` remains a study tool. Kept for the
+record.
+
 **Fast loop** (`tartar fast`, a long-running process, no Claude in it): for
 every pump.fun launch on the chain stream it waits `screen_seconds`, builds
 the launch state, applies the policy's skip rules, asks the scorer (TypeSafe

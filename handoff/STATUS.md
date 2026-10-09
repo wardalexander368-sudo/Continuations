@@ -33,22 +33,16 @@ next. Topic documents hold the detail:
 ## Active
 
 * **Clever session** (session_01R61Ym2543SdY4GEWPsLin6, since 2026-10-09 06:19 UTC, branch
-  `claude/clever-pascal-p4m7ub`; may push only that branch unless the user allows `main`).
+  `claude/clever-pascal-p4m7ub`; the user allows it to fast-forward `main`).
   Merged the research session's branch with `main` (135 tests). Recording for queue 11a in this
   container since 06:24 UTC (`data/raw-clever`, `--pumpswap-hours 4`; finished hours go to
   `handoff/data/raw-clever/`). Next, while it records: predictor v3 (queue 2), P(rug) (queue 13).
 
-* **Jev session** (session_012ZRs9FUggpEkx65Rw7K7fU, live since 2026-10-08 23:44 UTC): owns the **live fast loop + slow loop** (queue item 1, steps 3–4). User chose `"scorer": "rules"` with `"shadow_jev": true` (paper). Fast loop runs `--hours 20` in this container (ends ~19:44 UTC 10-09). Tracked copies of the policy and reviews: `handoff/live/`. Branch `claude/jev-live`.
-
 ## Blockers (need the user)
 
-* **Jev usage policy (raised 10-09):** the user's own JEV protocol (`jevtrader`'s
-  PROTOCOL §2 quotes it) lists "always-on hook that makes a model call" and "`jev ask` as a
-  decision instrument" as Never, with `jevtrader` as the only signed carve-out. TARTAR's
-  shadow mode and `jev` scorer aren't covered. Ask the user whether TARTAR needs its own
-  carve-out (paper only, own key, ledger, spend tripwire) before running Jev live here again.
-  **A draft is ready for the user: `handoff/jev-carveout-DRAFT.md`** (not in force; lists the
-  code guards still missing: ledger, tripwire, pinned model, ≤ 1 retry, signature gate).
+* ~~Jev usage policy~~: **decided by the user 2026-10-09 06:35 UTC: Jev stays off in TARTAR**
+  and the live fast loop is retired (see *Rules*). The carve-out draft
+  (`handoff/jev-carveout-DRAFT.md`) was not adopted.
 * **GitHub write access (10-09 ~03:40 UTC):** the profitability session got `403 Resource not
   accessible by integration` on push and on the API. Fix: github.com/settings/installations →
   Claude → Configure → TARTAR selected (accept updated permissions if asked). If you can push,
@@ -57,31 +51,17 @@ next. Topic documents hold the detail:
 * ~~Network~~: **resolved 22:35 UTC**, the user enabled full network access.
 * ~~TypeSafe Jev key~~: **resolved 22:40 UTC**, `TYPESAFE_API_KEY` is set
   as an environment secret (new sessions see it). **Never ask for the key in chat.**
-* **Private RPC:** the public RPC misses ~7% of a typical token's trades, more
-  for busy ones, and adds delay. A Helius, QuickNode or Triton websocket in
-  `SOLANA_RPC_WS` fixes both. Ask the user. Note (§3.9): it improves
-  data quality only. It won't make launch buying profitable.
+* ~~Private RPC~~: **the user declined for now (2026-10-09 06:35 UTC).** The public RPC's
+  capture is median 100% / mean 97% on `raw-eager`, and faster data can't make launch buying
+  profitable (§3.9). Don't ask again unless a study needs it.
 
 ## Queue (ranked by expected effect on profit)
 
-1. **Jev in the fast loop** (user request: Jev = fast loop, Claude = slow
-   loop; paper trading first). Procedure: `handoff/slow-loop.md`.
-   1. ~~Verify `tartar/jev.py`~~ **done 23:05 UTC**: it matches
-      docs.typesafe.ai/api and follows the TypeSafe agent skill (read
-      `github.com/typesafe-ai/skills` → `skills/typesafe-ai/SKILL.md` and
-      `docs.typesafe.ai/llms.txt` before changing Jev code; the user asked
-      for this). The proxy supplies credentials (no env var needed).
-   2. ~~`tartar decide --jev`~~ **done**: Jev finds no edge (direct answer
-      −9.2% on test, overconfident ~2×; name judgments weak). See
-      `profitability.md` §3.7.
-   3. Run the fast loop live (paper). Use `"scorer": "rules"` (Jev's direct
-      answer lost more than buying everything) **and add Jev shadow mode**:
-      ask Jev about every screened launch and journal the answers without
-      acting on them, so `tartar review` can test them on fresh launches.
-      Shadow mode is built: set `"shadow_jev": true` in data/policy.json.
-      The fast loop also records raw data (queue item 2).
-   4. Slow-loop cycles every few hours (`tartar review`), one policy change
-      at a time, with the reason in the policy note and the log.
+1. ~~**Jev in the fast loop**~~ **closed 2026-10-09 06:35 UTC by the user's decision: Jev off,
+   fast loop retired.** Jev showed no signal in three tests (§3.7 offline, §3.8 metadata, live
+   shadow cycle 2: `handoff/live/reviews/20261009-0552.md`), and launch buying is closed as a
+   strategy family (§3.9, §3.14). `tartar fast --replay` stays useful for studies; live
+   recording is `tartar record`.
 2. **More data.** The fast loop records as it runs. After 24 h+:
    `tartar train --raw data/raw`, `tartar profit`, `tartar decide`.
    **Predictor v3 (unclaimed):** train on every recording including `handoff/data/raw-eager`
@@ -212,6 +192,9 @@ next. Topic documents hold the detail:
   launches. Pick thresholds on validation only, and quote 90% intervals by
   token.
 * No real-money trading code without the user's explicit request.
+* **No Jev calls from TARTAR** (user, 2026-10-09): no shadow mode, no `jev` scorer, no new
+  batch asks. Cached answers in `handoff/data/jev/` may be read offline. Asking the user again
+  needs new evidence, not a new idea.
 * Never trade the v1 model's expected return: it loses ~43% per trade on test
   launches (see `profitability.md` §3.2).
 
@@ -226,6 +209,18 @@ next. Topic documents hold the detail:
   branch `claude/profitability-backtest`, on `main`).
 
 ## Log (newest first)
+
+* **2026-10-09 06:40 UTC, clever session** (session_01R61Ym2543SdY4GEWPsLin6, branch
+  `claude/clever-pascal-p4m7ub`):
+  - Merged the research session's branch (`claude/eager-archimedes-k8pn4q`) with `main` and landed
+    it (135 tests). Conflicts were docs only (both sessions measured SOL quote decay; both kept,
+    they agree). The auto-merge broke `sol_dex_costs.py decay` (`quote()` now returns a dict):
+    fixed and smoke-tested. The predictor session's 04:33–05:33 cost samples were never committed;
+    the docs now say so.
+  - **User decisions (06:35 UTC):** Jev stays off in TARTAR and the live fast loop is retired
+    (queue 1 closed; carve-out not adopted); no private RPC for now; this session may fast-forward
+    `main` after each unit that passes pytest; keep working the queue while the 11a recorder runs.
+  - Recorder for 11a running here since 06:24 UTC (`data/raw-clever`, `--pumpswap-hours 4`).
 
 * **2026-10-09 06:05 UTC, research session, handing off** (branch
   `claude/eager-archimedes-k8pn4q`, everything pushed; **not on `main`: this session may push
