@@ -61,7 +61,15 @@ next. Topic documents hold the detail:
   17:20 notes): decompose the gap into the flat-vs-move call and the up/down call on unseen
   hours; any change stays `domain == "trades"`.
 
-* **REAL MONEY — the PumpPortal wallet is owned by the "Real-money cost test" thread session
+* **REAL MONEY — the PumpPortal wallet is owned by the "Real-money cost test, fresh key" thread session
+  (session_01C3taLfUKfeFUC2zXBZEhaR, branch `claude/project-thread-4xqd2n`, from 17:58 UTC
+  2026-10-09).** Started after the user re-added the key. **Probe 18:00 UTC: still 403 "Must supply
+  a valid API key", nothing traded or spent.** `PUMPPORTAL_API_KEY` is still not in the environment;
+  the key again shows up only as a proxy network secret for `pumpportal.fun`, and PumpPortal ignores
+  wherever the proxy puts it (it reads only the `?api-key=` query parameter). Needs the user: add it
+  as a plain environment variable `PUMPPORTAL_API_KEY=<key>` (Environment variables, not Network
+  secrets), then start a new session. Every real trade waits for the user's go in the thread.
+* (was) **REAL MONEY — the PumpPortal wallet was owned by the "Real-money cost test" thread session
   (session_016pSxch8d3Jna6ZzEsLhFVC, branch `claude/project-thread-yy6153`, from 17:40 UTC
   2026-10-09).** Started after the host fix; this container's proxy injects the PumpPortal key for
   the bare `pumpportal.fun`. Only this session sends `/api/trade` requests. Every real trade waits
