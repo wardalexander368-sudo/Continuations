@@ -574,7 +574,7 @@ dropped the global model (trained on bonding curves) and ran the online model al
   They apply when the forecaster restarts at graduation (it does whenever a model was on before
   or a PumpSwap model is found).
 
-**First models (2026-10-09 ~15:00 UTC, handoff session): 1m installed, 5m not.**
+**First models (2026-10-09 15:00–16:00 UTC, handoff session): 30s and 1m installed, 5m not.**
 `handoff/experiments/pumpswap_model.py handoff/data/raw-pumpswap,raw-eager,raw-clever,raw-v3 OUT`
 (the raw logs parsed once for every candle length; `tartar train --pumpswap`'s dataset and split,
 pools 70 / 15 / 15% by graduation time; num_leaves {15, 31, 63} × min_data_in_leaf {100, 400,
@@ -586,6 +586,7 @@ online-only on edge (all and trading candles), keep the trading-candle calibrati
 
 | Candle | Pools / rows | Chosen | Test pools | Online only, trading: hit vs stated, edge | Global + online, trading: hit vs stated, edge | All candles: edge, online → blend | Verdict |
 |---|---|---|---|---|---|---|---|
+| 30 s | 350 / 247k | 31 leaves, 400 | 52 (1,839 trading candles) | 64.5% vs **50.4%**, +0.3% | **73.8% vs 73.5%**, **+1.7%** | +0.3% → **+1.6%** | **installed** (`pumpswap-30s`) |
 | 1 m | 348 / 136k | 15 leaves, 100 | 52 (993 trading candles) | 62.8% vs **49.2%**, −0.7% | **72.0% vs 72.0%**, **+0.9%** | −0.7% → **+0.8%** | **installed** (`pumpswap-60s`) |
 | 5 m | 323 / 34k | 15 leaves, 400 | 48 (266) | 49.6% vs 45.4%, −0.5% | 62.4% vs 63.3%, −0.9% | −0.4% → −0.9% | not installed (edge) |
 
@@ -594,7 +595,8 @@ online-only on edge (all and trading candles), keep the trading-candle calibrati
   why was not studied). The blend states what it hits. Its point
   forecast is barely better than "close = last price" (test edge +0.5% at the open, 0 near the
   close). At the open: hit 81.2% vs stated 80.1%, 1.14 bits per row over the base rate, band
-  87.3% vs 85.6% stated.
+  87.3% vs 85.6% stated. 30s is the same picture with a little more point edge (at the open:
+  hit 83.8% vs 82.6% stated, edge +1.7%, 1.17 bits per row).
 * 5m improves calibration too but loses point accuracy, so the rule keeps it out. With 48 test
   pools and 404 candles both numbers are noisy; retry with more pools.
 * Hyperparameters barely matter here (1m validation 0.7592–0.7645 over the grid); small trees win
