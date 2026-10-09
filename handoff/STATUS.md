@@ -38,6 +38,8 @@ next. Topic documents hold the detail:
 
 
 
+* **Predictor session** (session_01UeZ4ho5y38qR1iNxnShtwF, started 04:32 UTC 10-09): **queue item 12 next steps:** rerun the on-chain SOL-USD cost sampler at another time of day (60 min), and add a quote-decay measurement (the same quote re-taken 1, 2 and 4 s later), so quotes become realistic fills. Data committed to `handoff/data/sol-dex/` (the first sample was never committed). Touches `handoff/experiments/sol_dex_costs.py`, `handoff/profitability.md` §3.12, `handoff/jevtrader.md`. Read-only toward jevtrader. Branch `claude/solana-candle-predictor-s95qjr`.
+
 ## Blockers (need the user)
 
 * **Jev usage policy (raised 10-09):** the user's own JEV protocol (`jevtrader`'s
@@ -48,7 +50,7 @@ next. Topic documents hold the detail:
 * **GitHub write access (10-09 ~03:40 UTC):** the profitability session got `403 Resource not
   accessible by integration` on push and on the API. Fix: github.com/settings/installations →
   Claude → Configure → TARTAR selected (accept updated permissions if asked). If you can push,
-  it's fixed for you.
+  it's fixed for you. (The predictor session's account could push at 04:32 UTC.)
 
 * ~~Network~~: **resolved 22:35 UTC**, the user enabled full network access.
 * ~~TypeSafe Jev key~~: **resolved 22:40 UTC**, `TYPESAFE_API_KEY` is set
