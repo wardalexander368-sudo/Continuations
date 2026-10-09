@@ -112,3 +112,5 @@ container was lost at ~13:25 before any hour was saved. The handoff session rest
 - `20261009-13`: 13:31–13:59 UTC, 1,064 launches, 87,485 curve trades, 16 graduated SOL pools,
   30,463 PumpSwap swaps. Use them alongside `raw-eager`/`raw-clever` for
 the predictor (queue 2) and the edge-hunt studies.
+- `20261009-13`: 13:00–13:59 UTC, 2,065 launches, 205,918 curve trades, 39 graduated SOL pools,
+  288,918 PumpSwap swaps.
