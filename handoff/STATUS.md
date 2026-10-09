@@ -44,6 +44,11 @@ next. Topic documents hold the detail:
   (against the closed list in profitability §1), pre-register the most promising and run them on
   free data (no real money, no Jev). Also `handoff/OVERVIEW.md` (project overview, the user's request).
   Recording `data/raw_v3` in this container (`--pumpswap-hours 4 --track-minutes 120`).
+  **In flight (13:20 UTC):** two background workflows in this session: (1) edge-hunt design
+  (5 angles: SOL microstructure, perp funding carry, memecoin liquidity/short side, established
+  cross-section, TARTAR's own models; 3 adversarial judges each; ranked plan), to be saved as
+  `handoff/edge-hunt.md`; (2) the project overview, to be saved as `handoff/OVERVIEW.md`. **If this
+  session stops before they land, neither exists yet:** rerun them, or pick from the angles above.
 
 ## Blockers (need the user)
 
@@ -201,6 +206,10 @@ next. Topic documents hold the detail:
   gaps; restart, don't wait, after any `ConnectionRefusedError` to
   127.0.0.1.
 
+* **Weekly usage limit (user, 2026-10-09 13:15 UTC):** at ~95% of the weekly token limit,
+  dump everything to the repo with a complete summary, update this board with every task not
+  finished, then keep working until the limit. Sessions can't see the meter, so checkpoint
+  continuously: push after every unit, and keep your *Active* line saying what is in flight.
 * Judge every model and strategy by `tartar profit` on the **latest**
   launches. Pick thresholds on validation only, and quote 90% intervals by
   token.
