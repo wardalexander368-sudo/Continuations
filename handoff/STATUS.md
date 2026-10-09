@@ -32,25 +32,16 @@ next. Topic documents hold the detail:
 
 ## Active
 
-* **Predictor session** (session_01UeZ4ho5y38qR1iNxnShtwF, since 2026-10-09 12:55 UTC, branch
-  `claude/solana-candle-predictor-s95qjr`): **edge hunt ON HOLD (user, ~13:25 UTC)**, with progress
-  saved in `handoff/edge-hunt.md`. Now: **the PumpSwap model** (`tartar train --raw raw-eager,raw-clever
-  --pumpswap`, compared with online-only; install only if it helps) and a `pumpswap` flat-candle
-  prior (the research session's after-11a list). Also `handoff/OVERVIEW.md` (project overview, the
-  user's request; a background workflow in this session, not yet landed). Recording `data/raw_v3`
-  here (`--pumpswap-hours 4 --track-minutes 120`); finished hours go to `handoff/data/raw-v3/`.
-  **Stopped ~13:25 UTC (usage limit, per the user); its container is gone, so the overview
-  draft and raw-v3 hours after 06 are lost.** Its open tasks (the PumpSwap model, `OVERVIEW.md`,
-  the raw-v3 recorder) are taken over by the handoff session below.
-
 * **Handoff session** (session_01GAoiXJ4NHWXq6DnP61icSU, since 2026-10-09 13:28 UTC, branch
   `claude/handoff-overview`), continuing the predictor session's claim: (1) **PumpSwap models**
   (`handoff/experiments/pumpswap_model.py`, predictor doc §8.2.3): **30s and 1m installed, 5m
-  not** (fails the pre-set rule on edge); **15s training now** (started 16:00 UTC, before the
-  sync request; ~1 h; installed only if it passes the same rule). (2) `handoff/OVERVIEW.md`:
+  not** (fails the pre-set rule on edge); **15s training now** (installed only if it passes
+  the same rule; ~1–1.5 h). (2) `handoff/OVERVIEW.md`:
   on `main`, kept current. (3) Recording `data/raw-v3` here since 13:31 UTC (same flags plus
-  `SOLANA_COMMITMENT=processed`); finished hours go to `handoff/data/raw-v3/`. It is the only
-  recorder since `raw-clever` ended at 16:00, and it dies when this session goes idle.
+  `SOLANA_COMMITMENT=processed`); finished hours go to `handoff/data/raw-v3/` (13–15 so far).
+  It dies when this session goes idle; `raw-clever2` (clever session) runs alongside.
+  15s note: the 16:00 run was OOM-killed building 15s (the event cache for all lengths, ~14 GB);
+  rerunning 15s alone since 16:10 on the current data (458 pools, incl. `raw-clever` 14–15).
 
 * **Clever session** (session_01R61Ym2543SdY4GEWPsLin6, since 16:05 UTC 2026-10-09, branch
   `claude/clever-pascal-p4m7ub`). **Synced with the handoff session (its answer 16:06 on `main`):**
@@ -255,6 +246,12 @@ next. Topic documents hold the detail:
   branch `claude/profitability-backtest`, on `main`).
 
 ## Log (newest first)
+
+* **2026-10-09 16:20 UTC, handoff session:** the predictor session's *Active* entry is removed
+  (it stopped ~13:25 UTC at its usage limit; its container and the unsaved overview draft are gone).
+  Everything it had open is done or carried by the handoff session's line: OVERVIEW.md (landed),
+  PumpSwap models (30s/1m installed, 5m not, 15s training), raw-v3 recording (hours 13–15 saved).
+  The edge hunt stays on hold (`handoff/edge-hunt.md`).
 
 * **2026-10-09 16:05 UTC, clever session, handing off** (session_01R61Ym2543SdY4GEWPsLin6, branch
   `claude/clever-pascal-p4m7ub`; everything is on `main`; no claim open, nothing half-done; its

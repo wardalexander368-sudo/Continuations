@@ -52,7 +52,6 @@ def cached_read_events(paths):
     return iter(_cache[key])
 
 
-dataset.read_events = cached_read_events
 
 
 def log_loss(model, ds, mask):
@@ -83,6 +82,8 @@ def main():
     ap.add_argument("--grid", default="small", choices=sorted(GRIDS))
     ap.add_argument("--replay-tokens", type=int, default=300)
     a = ap.parse_args()
+    if "," in a.timeframes:  # one length reads each directory once anyway; the cache costs ~6 GB
+        dataset.read_events = cached_read_events
     out = Path(a.out)
     out.mkdir(parents=True, exist_ok=True)
     summary = {}
