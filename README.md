@@ -80,7 +80,7 @@ keep-better rule as the price models).
 ## Getting the most accurate predictions: train the global model
 
 Models for 15-second, 30-second, 1-minute and 5-minute candles
-(`tartar/models/trades-{15s,30s,60s,300s}`, trained on ~5,800 real pump.fun
+(`tartar/models/trades-{15s,30s,60s,300s}`, trained on 4,700–9,200 real pump.fun
 launches) ship with the repo and are used automatically for pump.fun tokens at
 those timeframes. Without a trained model, the agent learns each token from
 scratch while it watches.

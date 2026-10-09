@@ -44,7 +44,7 @@ split by launch), plus a candle-by-candle replay of the live forecaster.
 |---|---|
 | Repo / branch / PR | `StaticPush7217/TARTAR`. All work is on `main` (fast-forwarded from branch `claude/solana-candle-predictor-s95qjr`, PR #1) |
 | Live agent (`tartar watch`) | Works end to end against real tokens (pump.fun via chain, others via DexScreener/GeckoTerminal) |
-| Global models | **v2 installed** (2026-10-09) for 1m candles, plus **15s, 30s and 5m models** (section 8.2.2): `tartar/models/trades-{15s,30s,60s,300s}.*`, ~5,800 real pump.fun launches. v1 (3,523 launches, 1m only) is described in 8.2 |
+| Global models | **v3 installed** (2026-10-09, section 8.2.2c) for **15s, 30s, 1m and 5m** candles: `tartar/models/trades-{15s,30s,60s,300s}.*`, 4,700–9,200 real pump.fun launches (31 leaves, 2,000 rows per leaf). v2 is in 8.2.1–8.2.2, v1 (3,523 launches, 1m only) in 8.2 |
 | Real-data result (v1, held-out later launches) | At candle open: hit 85.3% vs stated 85.2%, error **4.7% below naive**, 0.61 bits/row of information over the base rate; the 80% band covers 91.9% and states 91.3% (calibrated; the excess over 80% is the "no further trade" mass, section 8.2). Live replay (global + online): **edge +7.5%** on all candles, **+7.8%** on candles where the token is trading; hit 69.0% vs stated 67.8% there |
 | Online-only fallback | Fixed by the online-model review (section 11.1): now calibrated on real tokens (hit 79.3% vs stated 78.8%; trading 46.0% vs 45.1%), edge 0 (was −5.3%, and 23% hit at 52% stated on trading candles) |
 | Data recording | `tartar record` running in this container into `data/raw` (not in git; snapshot in `handoff/data/raw`) |
@@ -444,6 +444,32 @@ same 70 / 15 / 15% split), choosing on validation log loss:
 better on test, flat between 1,500 and 4,000 rows. `tartar train --num-leaves 31 --min-leaf 2000`
 for v3 (scale min rows with the data: these are ~0.6–1.5% of rows); defaults unchanged until a
 model trained this way wins the keep-better check.
+
+### 8.2.2c v3: more data, smaller trees (installed 2026-10-09, all four candle lengths)
+
+`tartar train --raw <every curve recording> -t TF --num-leaves 31 --min-leaf 2000` on
+`handoff/data/raw`, `raw-slots`, `raw-slots-processed`, `raw-pumpswap` and `raw-eager` (the new
+recording with median 100% capture): 8,560 launches / 382k rows at 1m (v2: 5,790 / 251k), 9,184
+at 15s, 8,927 at 30s and 4,683 at 5m. Each candidate was scored against the installed v2-era
+model on **the candidate's own test launches** (the latest 15%, mostly `raw-eager`) with
+`handoff/experiments/predictor_compare.py`; results in `handoff/experiments/predictor-v3/`.
+
+| Candle | Test log loss, v2 → v3 | Edge at the open | Live replay edge, all / trading | Trading candles: hit vs stated, v3 (v2) |
+|---|---|---|---|---|
+| 15 s | 0.2899 → **0.2835** | +2.5% → **+3.7%** | +1.6 / +1.8% → **+1.8 / +1.9%** | 62.3% vs 60.1% (61.4% vs 60.1%) |
+| 30 s | 0.3474 → **0.3386** | +4.4% → **+5.6%** | +4.5 / +4.8% → +4.4 / +4.7% | 65.9% vs 63.6% (64.4% vs 64.1%) |
+| 1 m | 0.4253 → **0.4129** | +6.7% → **+9.1%** | +4.7 / +5.0% → **+6.2 / +6.5%** | 65.5% vs 66.0% (64.6% vs 65.6%) |
+| 5 m | 1.1895 → **1.1418** | +5.1% → **+6.9%** | +4.6 / +4.6% → **+6.5 / +6.5%** | 63.3% vs 68.0% (62.1% vs 70.3%) |
+
+All four installed by the keep-better rule (test log loss). The 1m point edge, v2's weak spot
+(8.2.1), is back above v1's. 30s gains in log loss and at the open but not in the live replay.
+The model files now record `num_leaves` / `min_data_in_leaf` in their metadata.
+
+**Open: the 5m model is overconfident on these newer launches.** At the open it states 70.6%
+and hits 60.9% (v2: 73.4% vs 59.9%), and the live blend's trading candles state 68.0% vs
+63.3%. Both models were trained mostly on older, lossier data. Its temperature and the blend's
+prior should be refitted when more `raw-eager`-quality data exists. 15s and 30s lean the other
+way: ~2 points underconfident on trading candles.
 
 ### 8.2.3 A model for graduated tokens on PumpSwap (code 2026-10-09; trained once data allows)
 

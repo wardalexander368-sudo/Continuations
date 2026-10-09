@@ -126,6 +126,8 @@ def train_global(
         "tail_high": float(np.mean(high - EDGES[-1])) if len(high) else 1.0,
         "nowcast": bool(ds.domain in TRADE_DOMAINS and (ds.f > 0).any()),
         "best_iteration": int(booster.best_iteration or booster.current_iteration()),
+        "num_leaves": num_leaves,
+        "min_data_in_leaf": min_data_in_leaf,
         "train_rows": int(train.sum()),
         "valid_rows": int(valid.sum()),
         "tokens": len(ds.tokens),

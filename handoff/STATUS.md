@@ -64,10 +64,11 @@ next. Topic documents hold the detail:
    recording is `tartar record`.
 2. **More data.** The fast loop records as it runs. After 24 h+:
    `tartar train --raw data/raw`, `tartar profit`, `tartar decide`.
-   **Predictor v3 (unclaimed):** train on every recording including `handoff/data/raw-eager`
-   (much better capture: median 100% / mean 97%) with `--num-leaves 31 --min-leaf 2000`
-   (sweep, predictor doc §8.2.2b: ~1% better test log loss than the defaults); also retrain
-   15s/30s/5m. Keep-better decides.
+   ~~**Predictor v3**~~ **installed 07:50 UTC 10-09** (clever session, predictor doc §8.2.2c):
+   every curve recording incl. `raw-eager`, `--num-leaves 31 --min-leaf 2000`, all four candle
+   lengths. On the same test launches it beats the installed models everywhere on log loss;
+   1m live edge +6.2% vs +4.7%, 5m +6.5% vs +4.6%. **Open:** the 5m model states ~70% at the open
+   and hits ~61% on the newer launches; refit its calibration when more such data exists.
 3. ~~**Longer holds on screened tokens**~~ **done 04:45 UTC 10-09: no edge** (§3.14). Fast-loop
    replays on every recording, screen 20 s–10 min × hold 10–45 min: all 24 rules lose on
    validation; the chosen one makes −12.5% [−17.6, −7.6] per trade on test. The median trade is
