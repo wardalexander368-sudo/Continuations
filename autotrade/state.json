@@ -2,61 +2,171 @@
  "daily": {},
  "halted": null,
  "last_run": {
-  "at": 1791582093.409894,
+  "at": 1791583272.7720497,
   "closed": 0,
   "errors": {},
   "halted": null,
-  "opened": 0,
+  "new_halts": [],
+  "opened": 4,
   "rejected": 0
  },
- "positions": [],
+ "positions": [
+  {
+   "asset": "3NBq9zynLPDQQDvYf8xiMbWywQfKZD7m7fyprY524efq",
+   "entry_at": 1791582000.0,
+   "entry_cost_usd": 1.6057263294847641,
+   "entry_price": 0.000818895154015866,
+   "id": "1abaa66db6de",
+   "mark_at": 1791583200.0,
+   "mark_price": 0.0008128540677006787,
+   "meta": {
+    "alt_cost": {
+     "fee": 0.0095,
+     "fixed_usd": 0.05,
+     "impact": 0.0027786316474238204
+    },
+    "exit_t": 1791596100.0,
+    "key": "3NBq9zynLPDQQDvYf8xiMbWywQfKZD7m7fyprY524efq:1791581700",
+    "label": "TWEETCRAFT / SOL",
+    "liquidity_usd": 143955.749,
+    "pool": "3NBq9zynLPDQQDvYf8xiMbWywQfKZD7m7fyprY524efq",
+    "shadow": false,
+    "signal_t": 1791581700.0
+   },
+   "mode": "paper",
+   "notional_usd": 200.0,
+   "side": 1,
+   "strategy": "dip"
+  },
+  {
+   "asset": "6QyYdc6jgeKnfP1FWhiexMYq3JQ3sidSYoubjWUTo3rm",
+   "entry_at": 1791582000.0,
+   "entry_cost_usd": 1.2929270109385917,
+   "entry_price": 0.0018624616463054086,
+   "id": "6a4ee0fc545f",
+   "mark_at": 1791583200.0,
+   "mark_price": 0.0016390604159137853,
+   "meta": {
+    "alt_cost": {
+     "fee": 0.006,
+     "fixed_usd": 0.05,
+     "impact": 0.0012146350546929578
+    },
+    "exit_t": 1791596100.0,
+    "key": "6QyYdc6jgeKnfP1FWhiexMYq3JQ3sidSYoubjWUTo3rm:1791581700",
+    "label": "HeeHaw / SOL",
+    "liquidity_usd": 329317.0228,
+    "pool": "6QyYdc6jgeKnfP1FWhiexMYq3JQ3sidSYoubjWUTo3rm",
+    "shadow": false,
+    "signal_t": 1791581700.0
+   },
+   "mode": "paper",
+   "notional_usd": 200.0,
+   "side": 1,
+   "strategy": "dip"
+  },
+  {
+   "asset": "2B8tftZ5ww8TREMr3pgkgERLNjJyJxEAPWMENViGMsL4",
+   "entry_at": 1791582000.0,
+   "entry_cost_usd": 1.3654958847128915,
+   "entry_price": 0.004850957318968349,
+   "id": "68389ed1813a",
+   "mark_at": 1791583200.0,
+   "mark_price": 0.00469862445626768,
+   "meta": {
+    "alt_cost": {
+     "fee": 0.0075,
+     "fixed_usd": 0.05,
+     "impact": 0.0015774794235644573
+    },
+    "exit_t": 1791596100.0,
+    "key": "2B8tftZ5ww8TREMr3pgkgERLNjJyJxEAPWMENViGMsL4:1791581700",
+    "label": "CRAWL / SOL",
+    "liquidity_usd": 253569.0761,
+    "pool": "2B8tftZ5ww8TREMr3pgkgERLNjJyJxEAPWMENViGMsL4",
+    "shadow": false,
+    "signal_t": 1791581700.0
+   },
+   "mode": "paper",
+   "notional_usd": 200.0,
+   "side": 1,
+   "strategy": "dip"
+  },
+  {
+   "asset": "A7nWJWGUjNyWbVNPA5RrvLoF37j3ovdh8DKdgxYefcdk",
+   "entry_at": 1791582000.0,
+   "entry_cost_usd": 3.35807588105279,
+   "entry_price": 5.5982527817631284e-05,
+   "id": "b5e7e27fe071",
+   "mark_at": 1791583200.0,
+   "mark_price": 5.428826654606242e-05,
+   "meta": {
+    "alt_cost": {
+     "fee": 0.012,
+     "fixed_usd": 0.05,
+     "impact": 0.01154037940526395
+    },
+    "exit_t": 1791596100.0,
+    "key": "A7nWJWGUjNyWbVNPA5RrvLoF37j3ovdh8DKdgxYefcdk:1791581700",
+    "label": "SENTS / SOL",
+    "liquidity_usd": 34660.9055,
+    "pool": "A7nWJWGUjNyWbVNPA5RrvLoF37j3ovdh8DKdgxYefcdk",
+    "shadow": false,
+    "signal_t": 1791581700.0
+   },
+   "mode": "paper",
+   "notional_usd": 200.0,
+   "side": 1,
+   "strategy": "dip"
+  }
+ ],
  "strategies": {
   "dip": {
    "data": {
     "pools": {
      "2B8tftZ5ww8TREMr3pgkgERLNjJyJxEAPWMENViGMsL4": {
-      "busy_until": 0.0,
-      "cursor": 1791581400.0,
+      "busy_until": 1791596100.0,
+      "cursor": 1791582600.0,
       "first_bar": 1791581400.0
      },
      "3NBq9zynLPDQQDvYf8xiMbWywQfKZD7m7fyprY524efq": {
-      "busy_until": 0.0,
-      "cursor": 1791581400.0,
+      "busy_until": 1791596100.0,
+      "cursor": 1791582600.0,
       "first_bar": 1791581400.0
      },
      "4JAnKFddd5fFTk5PxDj3PpTWJuTEfSWQEjZJcgKQ9KwW": {
       "busy_until": 0.0,
-      "cursor": 1791581400.0,
+      "cursor": 1791582600.0,
       "first_bar": 1791581400.0
      },
      "65GHmCbyRME3XwKjTqDB7pMJw2gvj2LZryfWKczoAqFR": {
       "busy_until": 0.0,
-      "cursor": 1791581400.0,
+      "cursor": 1791582600.0,
       "first_bar": 1791581400.0
      },
      "6QyYdc6jgeKnfP1FWhiexMYq3JQ3sidSYoubjWUTo3rm": {
-      "busy_until": 0.0,
-      "cursor": 1791581400.0,
+      "busy_until": 1791596100.0,
+      "cursor": 1791582600.0,
       "first_bar": 1791581400.0
      },
      "745ATaSSWxvry5qt1XVv9eXuG884hDvNJfvA2o82dNBi": {
       "busy_until": 0.0,
-      "cursor": 1791581400.0,
+      "cursor": 1791582600.0,
       "first_bar": 1791581400.0
      },
      "867dKvaCcyRrUDP66bqNXbujXfjaxsNB9wTpc4CmBdAD": {
       "busy_until": 0.0,
-      "cursor": 1791581400.0,
+      "cursor": 1791582600.0,
       "first_bar": 1791581400.0
      },
      "8ewuF2o8ACro7fqWepZ3tKhkbBjndZU4Ldk9scRPw83d": {
       "busy_until": 0.0,
-      "cursor": 1791581400.0,
+      "cursor": 1791582600.0,
       "first_bar": 1791581400.0
      },
      "A7nWJWGUjNyWbVNPA5RrvLoF37j3ovdh8DKdgxYefcdk": {
-      "busy_until": 0.0,
-      "cursor": 1791581400.0,
+      "busy_until": 1791596100.0,
+      "cursor": 1791582600.0,
       "first_bar": 1791581400.0
      },
      "CR5dTgvTddGAqDjP8dGHTL51N6PKRaXqxFBp9FQ5PrKn": {
@@ -66,21 +176,638 @@
      },
      "CyJwKnLiiY4fmiwqMCSWFSHxo7T9Ubshgs2uRAuJCrk5": {
       "busy_until": 0.0,
-      "cursor": 1791581400.0,
+      "cursor": 1791582600.0,
       "first_bar": 1791581400.0
      },
      "HMzvsEEmtzHhvZNw9uwbaG85HCTmFnkbhzUx16cy7ca3": {
       "busy_until": 0.0,
-      "cursor": 1791581400.0,
+      "cursor": 1791582600.0,
       "first_bar": 1791581400.0
      }
     }
    },
    "errors": 0,
+   "registered_at": 1791583272.7720497,
    "size_factor": 1.0,
    "status": "paper",
    "verdict": {
-    "at": 1791582093.409894,
+    "at": 1791583272.7720497,
+    "decision": "pending",
+    "n": 0,
+    "reason": "no closed trades yet",
+    "stats": {}
+   }
+  },
+  "dip~drop=0.03~hold_bars=24": {
+   "data": {
+    "pools": {
+     "2B8tftZ5ww8TREMr3pgkgERLNjJyJxEAPWMENViGMsL4": {
+      "busy_until": 0.0,
+      "cursor": 1791582900.0,
+      "first_bar": 1791582900.0
+     },
+     "3NBq9zynLPDQQDvYf8xiMbWywQfKZD7m7fyprY524efq": {
+      "busy_until": 0.0,
+      "cursor": 1791582900.0,
+      "first_bar": 1791582900.0
+     },
+     "4JAnKFddd5fFTk5PxDj3PpTWJuTEfSWQEjZJcgKQ9KwW": {
+      "busy_until": 0.0,
+      "cursor": 1791582900.0,
+      "first_bar": 1791582900.0
+     },
+     "65GHmCbyRME3XwKjTqDB7pMJw2gvj2LZryfWKczoAqFR": {
+      "busy_until": 0.0,
+      "cursor": 1791582900.0,
+      "first_bar": 1791582900.0
+     },
+     "6QyYdc6jgeKnfP1FWhiexMYq3JQ3sidSYoubjWUTo3rm": {
+      "busy_until": 0.0,
+      "cursor": 1791582900.0,
+      "first_bar": 1791582900.0
+     },
+     "745ATaSSWxvry5qt1XVv9eXuG884hDvNJfvA2o82dNBi": {
+      "busy_until": 0.0,
+      "cursor": 1791582900.0,
+      "first_bar": 1791582900.0
+     },
+     "867dKvaCcyRrUDP66bqNXbujXfjaxsNB9wTpc4CmBdAD": {
+      "busy_until": 0.0,
+      "cursor": 1791582900.0,
+      "first_bar": 1791582900.0
+     },
+     "8ewuF2o8ACro7fqWepZ3tKhkbBjndZU4Ldk9scRPw83d": {
+      "busy_until": 0.0,
+      "cursor": 1791582900.0,
+      "first_bar": 1791582900.0
+     },
+     "A7nWJWGUjNyWbVNPA5RrvLoF37j3ovdh8DKdgxYefcdk": {
+      "busy_until": 0.0,
+      "cursor": 1791582900.0,
+      "first_bar": 1791582900.0
+     },
+     "CR5dTgvTddGAqDjP8dGHTL51N6PKRaXqxFBp9FQ5PrKn": {
+      "busy_until": 0.0,
+      "cursor": 1791577500.0,
+      "first_bar": 1791577500.0
+     },
+     "CyJwKnLiiY4fmiwqMCSWFSHxo7T9Ubshgs2uRAuJCrk5": {
+      "busy_until": 0.0,
+      "cursor": 1791582900.0,
+      "first_bar": 1791582900.0
+     },
+     "HMzvsEEmtzHhvZNw9uwbaG85HCTmFnkbhzUx16cy7ca3": {
+      "busy_until": 0.0,
+      "cursor": 1791582900.0,
+      "first_bar": 1791582900.0
+     }
+    }
+   },
+   "errors": 0,
+   "registered_at": 1791583272.7720497,
+   "size_factor": 1.0,
+   "status": "paper",
+   "verdict": {
+    "at": 1791583272.7720497,
+    "decision": "pending",
+    "n": 0,
+    "reason": "no closed trades yet",
+    "stats": {}
+   }
+  },
+  "dip~drop=0.03~hold_bars=48": {
+   "data": {
+    "pools": {
+     "2B8tftZ5ww8TREMr3pgkgERLNjJyJxEAPWMENViGMsL4": {
+      "busy_until": 0.0,
+      "cursor": 1791582900.0,
+      "first_bar": 1791582900.0
+     },
+     "3NBq9zynLPDQQDvYf8xiMbWywQfKZD7m7fyprY524efq": {
+      "busy_until": 0.0,
+      "cursor": 1791582900.0,
+      "first_bar": 1791582900.0
+     },
+     "4JAnKFddd5fFTk5PxDj3PpTWJuTEfSWQEjZJcgKQ9KwW": {
+      "busy_until": 0.0,
+      "cursor": 1791582900.0,
+      "first_bar": 1791582900.0
+     },
+     "65GHmCbyRME3XwKjTqDB7pMJw2gvj2LZryfWKczoAqFR": {
+      "busy_until": 0.0,
+      "cursor": 1791582900.0,
+      "first_bar": 1791582900.0
+     },
+     "6QyYdc6jgeKnfP1FWhiexMYq3JQ3sidSYoubjWUTo3rm": {
+      "busy_until": 0.0,
+      "cursor": 1791582900.0,
+      "first_bar": 1791582900.0
+     },
+     "745ATaSSWxvry5qt1XVv9eXuG884hDvNJfvA2o82dNBi": {
+      "busy_until": 0.0,
+      "cursor": 1791582900.0,
+      "first_bar": 1791582900.0
+     },
+     "867dKvaCcyRrUDP66bqNXbujXfjaxsNB9wTpc4CmBdAD": {
+      "busy_until": 0.0,
+      "cursor": 1791582900.0,
+      "first_bar": 1791582900.0
+     },
+     "8ewuF2o8ACro7fqWepZ3tKhkbBjndZU4Ldk9scRPw83d": {
+      "busy_until": 0.0,
+      "cursor": 1791582900.0,
+      "first_bar": 1791582900.0
+     },
+     "A7nWJWGUjNyWbVNPA5RrvLoF37j3ovdh8DKdgxYefcdk": {
+      "busy_until": 0.0,
+      "cursor": 1791582900.0,
+      "first_bar": 1791582900.0
+     },
+     "CR5dTgvTddGAqDjP8dGHTL51N6PKRaXqxFBp9FQ5PrKn": {
+      "busy_until": 0.0,
+      "cursor": 1791577500.0,
+      "first_bar": 1791577500.0
+     },
+     "CyJwKnLiiY4fmiwqMCSWFSHxo7T9Ubshgs2uRAuJCrk5": {
+      "busy_until": 0.0,
+      "cursor": 1791582900.0,
+      "first_bar": 1791582900.0
+     },
+     "HMzvsEEmtzHhvZNw9uwbaG85HCTmFnkbhzUx16cy7ca3": {
+      "busy_until": 0.0,
+      "cursor": 1791582900.0,
+      "first_bar": 1791582900.0
+     }
+    }
+   },
+   "errors": 0,
+   "registered_at": 1791583272.7720497,
+   "size_factor": 1.0,
+   "status": "paper",
+   "verdict": {
+    "at": 1791583272.7720497,
+    "decision": "pending",
+    "n": 0,
+    "reason": "no closed trades yet",
+    "stats": {}
+   }
+  },
+  "dip~drop=0.03~hold_bars=96": {
+   "data": {
+    "pools": {
+     "2B8tftZ5ww8TREMr3pgkgERLNjJyJxEAPWMENViGMsL4": {
+      "busy_until": 0.0,
+      "cursor": 1791582900.0,
+      "first_bar": 1791582900.0
+     },
+     "3NBq9zynLPDQQDvYf8xiMbWywQfKZD7m7fyprY524efq": {
+      "busy_until": 0.0,
+      "cursor": 1791582900.0,
+      "first_bar": 1791582900.0
+     },
+     "4JAnKFddd5fFTk5PxDj3PpTWJuTEfSWQEjZJcgKQ9KwW": {
+      "busy_until": 0.0,
+      "cursor": 1791582900.0,
+      "first_bar": 1791582900.0
+     },
+     "65GHmCbyRME3XwKjTqDB7pMJw2gvj2LZryfWKczoAqFR": {
+      "busy_until": 0.0,
+      "cursor": 1791582900.0,
+      "first_bar": 1791582900.0
+     },
+     "6QyYdc6jgeKnfP1FWhiexMYq3JQ3sidSYoubjWUTo3rm": {
+      "busy_until": 0.0,
+      "cursor": 1791582900.0,
+      "first_bar": 1791582900.0
+     },
+     "745ATaSSWxvry5qt1XVv9eXuG884hDvNJfvA2o82dNBi": {
+      "busy_until": 0.0,
+      "cursor": 1791582900.0,
+      "first_bar": 1791582900.0
+     },
+     "867dKvaCcyRrUDP66bqNXbujXfjaxsNB9wTpc4CmBdAD": {
+      "busy_until": 0.0,
+      "cursor": 1791582900.0,
+      "first_bar": 1791582900.0
+     },
+     "8ewuF2o8ACro7fqWepZ3tKhkbBjndZU4Ldk9scRPw83d": {
+      "busy_until": 0.0,
+      "cursor": 1791582900.0,
+      "first_bar": 1791582900.0
+     },
+     "A7nWJWGUjNyWbVNPA5RrvLoF37j3ovdh8DKdgxYefcdk": {
+      "busy_until": 0.0,
+      "cursor": 1791582900.0,
+      "first_bar": 1791582900.0
+     },
+     "CR5dTgvTddGAqDjP8dGHTL51N6PKRaXqxFBp9FQ5PrKn": {
+      "busy_until": 0.0,
+      "cursor": 1791577500.0,
+      "first_bar": 1791577500.0
+     },
+     "CyJwKnLiiY4fmiwqMCSWFSHxo7T9Ubshgs2uRAuJCrk5": {
+      "busy_until": 0.0,
+      "cursor": 1791582900.0,
+      "first_bar": 1791582900.0
+     },
+     "HMzvsEEmtzHhvZNw9uwbaG85HCTmFnkbhzUx16cy7ca3": {
+      "busy_until": 0.0,
+      "cursor": 1791582900.0,
+      "first_bar": 1791582900.0
+     }
+    }
+   },
+   "errors": 0,
+   "registered_at": 1791583272.7720497,
+   "size_factor": 1.0,
+   "status": "paper",
+   "verdict": {
+    "at": 1791583272.7720497,
+    "decision": "pending",
+    "n": 0,
+    "reason": "no closed trades yet",
+    "stats": {}
+   }
+  },
+  "dip~drop=0.05~hold_bars=24": {
+   "data": {
+    "pools": {
+     "2B8tftZ5ww8TREMr3pgkgERLNjJyJxEAPWMENViGMsL4": {
+      "busy_until": 0.0,
+      "cursor": 1791582900.0,
+      "first_bar": 1791582900.0
+     },
+     "3NBq9zynLPDQQDvYf8xiMbWywQfKZD7m7fyprY524efq": {
+      "busy_until": 0.0,
+      "cursor": 1791582900.0,
+      "first_bar": 1791582900.0
+     },
+     "4JAnKFddd5fFTk5PxDj3PpTWJuTEfSWQEjZJcgKQ9KwW": {
+      "busy_until": 0.0,
+      "cursor": 1791582900.0,
+      "first_bar": 1791582900.0
+     },
+     "65GHmCbyRME3XwKjTqDB7pMJw2gvj2LZryfWKczoAqFR": {
+      "busy_until": 0.0,
+      "cursor": 1791582900.0,
+      "first_bar": 1791582900.0
+     },
+     "6QyYdc6jgeKnfP1FWhiexMYq3JQ3sidSYoubjWUTo3rm": {
+      "busy_until": 0.0,
+      "cursor": 1791582900.0,
+      "first_bar": 1791582900.0
+     },
+     "745ATaSSWxvry5qt1XVv9eXuG884hDvNJfvA2o82dNBi": {
+      "busy_until": 0.0,
+      "cursor": 1791582900.0,
+      "first_bar": 1791582900.0
+     },
+     "867dKvaCcyRrUDP66bqNXbujXfjaxsNB9wTpc4CmBdAD": {
+      "busy_until": 0.0,
+      "cursor": 1791582900.0,
+      "first_bar": 1791582900.0
+     },
+     "8ewuF2o8ACro7fqWepZ3tKhkbBjndZU4Ldk9scRPw83d": {
+      "busy_until": 0.0,
+      "cursor": 1791582900.0,
+      "first_bar": 1791582900.0
+     },
+     "A7nWJWGUjNyWbVNPA5RrvLoF37j3ovdh8DKdgxYefcdk": {
+      "busy_until": 0.0,
+      "cursor": 1791582900.0,
+      "first_bar": 1791582900.0
+     },
+     "CR5dTgvTddGAqDjP8dGHTL51N6PKRaXqxFBp9FQ5PrKn": {
+      "busy_until": 0.0,
+      "cursor": 1791577500.0,
+      "first_bar": 1791577500.0
+     },
+     "CyJwKnLiiY4fmiwqMCSWFSHxo7T9Ubshgs2uRAuJCrk5": {
+      "busy_until": 0.0,
+      "cursor": 1791582900.0,
+      "first_bar": 1791582900.0
+     },
+     "HMzvsEEmtzHhvZNw9uwbaG85HCTmFnkbhzUx16cy7ca3": {
+      "busy_until": 0.0,
+      "cursor": 1791582900.0,
+      "first_bar": 1791582900.0
+     }
+    }
+   },
+   "errors": 0,
+   "registered_at": 1791583272.7720497,
+   "size_factor": 1.0,
+   "status": "paper",
+   "verdict": {
+    "at": 1791583272.7720497,
+    "decision": "pending",
+    "n": 0,
+    "reason": "no closed trades yet",
+    "stats": {}
+   }
+  },
+  "dip~drop=0.05~hold_bars=96": {
+   "data": {
+    "pools": {
+     "2B8tftZ5ww8TREMr3pgkgERLNjJyJxEAPWMENViGMsL4": {
+      "busy_until": 0.0,
+      "cursor": 1791582900.0,
+      "first_bar": 1791582900.0
+     },
+     "3NBq9zynLPDQQDvYf8xiMbWywQfKZD7m7fyprY524efq": {
+      "busy_until": 0.0,
+      "cursor": 1791582900.0,
+      "first_bar": 1791582900.0
+     },
+     "4JAnKFddd5fFTk5PxDj3PpTWJuTEfSWQEjZJcgKQ9KwW": {
+      "busy_until": 0.0,
+      "cursor": 1791582900.0,
+      "first_bar": 1791582900.0
+     },
+     "65GHmCbyRME3XwKjTqDB7pMJw2gvj2LZryfWKczoAqFR": {
+      "busy_until": 0.0,
+      "cursor": 1791582900.0,
+      "first_bar": 1791582900.0
+     },
+     "6QyYdc6jgeKnfP1FWhiexMYq3JQ3sidSYoubjWUTo3rm": {
+      "busy_until": 0.0,
+      "cursor": 1791582900.0,
+      "first_bar": 1791582900.0
+     },
+     "745ATaSSWxvry5qt1XVv9eXuG884hDvNJfvA2o82dNBi": {
+      "busy_until": 0.0,
+      "cursor": 1791582900.0,
+      "first_bar": 1791582900.0
+     },
+     "867dKvaCcyRrUDP66bqNXbujXfjaxsNB9wTpc4CmBdAD": {
+      "busy_until": 0.0,
+      "cursor": 1791582900.0,
+      "first_bar": 1791582900.0
+     },
+     "8ewuF2o8ACro7fqWepZ3tKhkbBjndZU4Ldk9scRPw83d": {
+      "busy_until": 0.0,
+      "cursor": 1791582900.0,
+      "first_bar": 1791582900.0
+     },
+     "A7nWJWGUjNyWbVNPA5RrvLoF37j3ovdh8DKdgxYefcdk": {
+      "busy_until": 0.0,
+      "cursor": 1791582900.0,
+      "first_bar": 1791582900.0
+     },
+     "CR5dTgvTddGAqDjP8dGHTL51N6PKRaXqxFBp9FQ5PrKn": {
+      "busy_until": 0.0,
+      "cursor": 1791577500.0,
+      "first_bar": 1791577500.0
+     },
+     "CyJwKnLiiY4fmiwqMCSWFSHxo7T9Ubshgs2uRAuJCrk5": {
+      "busy_until": 0.0,
+      "cursor": 1791582900.0,
+      "first_bar": 1791582900.0
+     },
+     "HMzvsEEmtzHhvZNw9uwbaG85HCTmFnkbhzUx16cy7ca3": {
+      "busy_until": 0.0,
+      "cursor": 1791582900.0,
+      "first_bar": 1791582900.0
+     }
+    }
+   },
+   "errors": 0,
+   "registered_at": 1791583272.7720497,
+   "size_factor": 1.0,
+   "status": "paper",
+   "verdict": {
+    "at": 1791583272.7720497,
+    "decision": "pending",
+    "n": 0,
+    "reason": "no closed trades yet",
+    "stats": {}
+   }
+  },
+  "dip~drop=0.08~hold_bars=24": {
+   "data": {
+    "pools": {
+     "2B8tftZ5ww8TREMr3pgkgERLNjJyJxEAPWMENViGMsL4": {
+      "busy_until": 0.0,
+      "cursor": 1791582900.0,
+      "first_bar": 1791582900.0
+     },
+     "3NBq9zynLPDQQDvYf8xiMbWywQfKZD7m7fyprY524efq": {
+      "busy_until": 0.0,
+      "cursor": 1791582900.0,
+      "first_bar": 1791582900.0
+     },
+     "4JAnKFddd5fFTk5PxDj3PpTWJuTEfSWQEjZJcgKQ9KwW": {
+      "busy_until": 0.0,
+      "cursor": 1791582900.0,
+      "first_bar": 1791582900.0
+     },
+     "65GHmCbyRME3XwKjTqDB7pMJw2gvj2LZryfWKczoAqFR": {
+      "busy_until": 0.0,
+      "cursor": 1791582900.0,
+      "first_bar": 1791582900.0
+     },
+     "6QyYdc6jgeKnfP1FWhiexMYq3JQ3sidSYoubjWUTo3rm": {
+      "busy_until": 0.0,
+      "cursor": 1791582900.0,
+      "first_bar": 1791582900.0
+     },
+     "745ATaSSWxvry5qt1XVv9eXuG884hDvNJfvA2o82dNBi": {
+      "busy_until": 0.0,
+      "cursor": 1791582900.0,
+      "first_bar": 1791582900.0
+     },
+     "867dKvaCcyRrUDP66bqNXbujXfjaxsNB9wTpc4CmBdAD": {
+      "busy_until": 0.0,
+      "cursor": 1791582900.0,
+      "first_bar": 1791582900.0
+     },
+     "8ewuF2o8ACro7fqWepZ3tKhkbBjndZU4Ldk9scRPw83d": {
+      "busy_until": 0.0,
+      "cursor": 1791582900.0,
+      "first_bar": 1791582900.0
+     },
+     "A7nWJWGUjNyWbVNPA5RrvLoF37j3ovdh8DKdgxYefcdk": {
+      "busy_until": 0.0,
+      "cursor": 1791582900.0,
+      "first_bar": 1791582900.0
+     },
+     "CR5dTgvTddGAqDjP8dGHTL51N6PKRaXqxFBp9FQ5PrKn": {
+      "busy_until": 0.0,
+      "cursor": 1791577500.0,
+      "first_bar": 1791577500.0
+     },
+     "CyJwKnLiiY4fmiwqMCSWFSHxo7T9Ubshgs2uRAuJCrk5": {
+      "busy_until": 0.0,
+      "cursor": 1791582900.0,
+      "first_bar": 1791582900.0
+     },
+     "HMzvsEEmtzHhvZNw9uwbaG85HCTmFnkbhzUx16cy7ca3": {
+      "busy_until": 0.0,
+      "cursor": 1791582900.0,
+      "first_bar": 1791582900.0
+     }
+    }
+   },
+   "errors": 0,
+   "registered_at": 1791583272.7720497,
+   "size_factor": 1.0,
+   "status": "paper",
+   "verdict": {
+    "at": 1791583272.7720497,
+    "decision": "pending",
+    "n": 0,
+    "reason": "no closed trades yet",
+    "stats": {}
+   }
+  },
+  "dip~drop=0.08~hold_bars=48": {
+   "data": {
+    "pools": {
+     "2B8tftZ5ww8TREMr3pgkgERLNjJyJxEAPWMENViGMsL4": {
+      "busy_until": 0.0,
+      "cursor": 1791582900.0,
+      "first_bar": 1791582900.0
+     },
+     "3NBq9zynLPDQQDvYf8xiMbWywQfKZD7m7fyprY524efq": {
+      "busy_until": 0.0,
+      "cursor": 1791582900.0,
+      "first_bar": 1791582900.0
+     },
+     "4JAnKFddd5fFTk5PxDj3PpTWJuTEfSWQEjZJcgKQ9KwW": {
+      "busy_until": 0.0,
+      "cursor": 1791582900.0,
+      "first_bar": 1791582900.0
+     },
+     "65GHmCbyRME3XwKjTqDB7pMJw2gvj2LZryfWKczoAqFR": {
+      "busy_until": 0.0,
+      "cursor": 1791582900.0,
+      "first_bar": 1791582900.0
+     },
+     "6QyYdc6jgeKnfP1FWhiexMYq3JQ3sidSYoubjWUTo3rm": {
+      "busy_until": 0.0,
+      "cursor": 1791582900.0,
+      "first_bar": 1791582900.0
+     },
+     "745ATaSSWxvry5qt1XVv9eXuG884hDvNJfvA2o82dNBi": {
+      "busy_until": 0.0,
+      "cursor": 1791582900.0,
+      "first_bar": 1791582900.0
+     },
+     "867dKvaCcyRrUDP66bqNXbujXfjaxsNB9wTpc4CmBdAD": {
+      "busy_until": 0.0,
+      "cursor": 1791582900.0,
+      "first_bar": 1791582900.0
+     },
+     "8ewuF2o8ACro7fqWepZ3tKhkbBjndZU4Ldk9scRPw83d": {
+      "busy_until": 0.0,
+      "cursor": 1791582900.0,
+      "first_bar": 1791582900.0
+     },
+     "A7nWJWGUjNyWbVNPA5RrvLoF37j3ovdh8DKdgxYefcdk": {
+      "busy_until": 0.0,
+      "cursor": 1791582900.0,
+      "first_bar": 1791582900.0
+     },
+     "CR5dTgvTddGAqDjP8dGHTL51N6PKRaXqxFBp9FQ5PrKn": {
+      "busy_until": 0.0,
+      "cursor": 1791577500.0,
+      "first_bar": 1791577500.0
+     },
+     "CyJwKnLiiY4fmiwqMCSWFSHxo7T9Ubshgs2uRAuJCrk5": {
+      "busy_until": 0.0,
+      "cursor": 1791582900.0,
+      "first_bar": 1791582900.0
+     },
+     "HMzvsEEmtzHhvZNw9uwbaG85HCTmFnkbhzUx16cy7ca3": {
+      "busy_until": 0.0,
+      "cursor": 1791582900.0,
+      "first_bar": 1791582900.0
+     }
+    }
+   },
+   "errors": 0,
+   "registered_at": 1791583272.7720497,
+   "size_factor": 1.0,
+   "status": "paper",
+   "verdict": {
+    "at": 1791583272.7720497,
+    "decision": "pending",
+    "n": 0,
+    "reason": "no closed trades yet",
+    "stats": {}
+   }
+  },
+  "dip~drop=0.08~hold_bars=96": {
+   "data": {
+    "pools": {
+     "2B8tftZ5ww8TREMr3pgkgERLNjJyJxEAPWMENViGMsL4": {
+      "busy_until": 0.0,
+      "cursor": 1791582900.0,
+      "first_bar": 1791582900.0
+     },
+     "3NBq9zynLPDQQDvYf8xiMbWywQfKZD7m7fyprY524efq": {
+      "busy_until": 0.0,
+      "cursor": 1791582900.0,
+      "first_bar": 1791582900.0
+     },
+     "4JAnKFddd5fFTk5PxDj3PpTWJuTEfSWQEjZJcgKQ9KwW": {
+      "busy_until": 0.0,
+      "cursor": 1791582900.0,
+      "first_bar": 1791582900.0
+     },
+     "65GHmCbyRME3XwKjTqDB7pMJw2gvj2LZryfWKczoAqFR": {
+      "busy_until": 0.0,
+      "cursor": 1791582900.0,
+      "first_bar": 1791582900.0
+     },
+     "6QyYdc6jgeKnfP1FWhiexMYq3JQ3sidSYoubjWUTo3rm": {
+      "busy_until": 0.0,
+      "cursor": 1791582900.0,
+      "first_bar": 1791582900.0
+     },
+     "745ATaSSWxvry5qt1XVv9eXuG884hDvNJfvA2o82dNBi": {
+      "busy_until": 0.0,
+      "cursor": 1791582900.0,
+      "first_bar": 1791582900.0
+     },
+     "867dKvaCcyRrUDP66bqNXbujXfjaxsNB9wTpc4CmBdAD": {
+      "busy_until": 0.0,
+      "cursor": 1791582900.0,
+      "first_bar": 1791582900.0
+     },
+     "8ewuF2o8ACro7fqWepZ3tKhkbBjndZU4Ldk9scRPw83d": {
+      "busy_until": 0.0,
+      "cursor": 1791582900.0,
+      "first_bar": 1791582900.0
+     },
+     "A7nWJWGUjNyWbVNPA5RrvLoF37j3ovdh8DKdgxYefcdk": {
+      "busy_until": 0.0,
+      "cursor": 1791582900.0,
+      "first_bar": 1791582900.0
+     },
+     "CR5dTgvTddGAqDjP8dGHTL51N6PKRaXqxFBp9FQ5PrKn": {
+      "busy_until": 0.0,
+      "cursor": 1791577500.0,
+      "first_bar": 1791577500.0
+     },
+     "CyJwKnLiiY4fmiwqMCSWFSHxo7T9Ubshgs2uRAuJCrk5": {
+      "busy_until": 0.0,
+      "cursor": 1791582900.0,
+      "first_bar": 1791582900.0
+     },
+     "HMzvsEEmtzHhvZNw9uwbaG85HCTmFnkbhzUx16cy7ca3": {
+      "busy_until": 0.0,
+      "cursor": 1791582900.0,
+      "first_bar": 1791582900.0
+     }
+    }
+   },
+   "errors": 0,
+   "registered_at": 1791583272.7720497,
+   "size_factor": 1.0,
+   "status": "paper",
+   "verdict": {
+    "at": 1791583272.7720497,
     "decision": "pending",
     "n": 0,
     "reason": "no closed trades yet",
@@ -90,10 +817,11 @@
   "xs_momentum": {
    "data": {},
    "errors": 0,
+   "registered_at": 1791583272.7720497,
    "size_factor": 1.0,
    "status": "paper",
    "verdict": {
-    "at": 1791582093.409894,
+    "at": 1791583272.7720497,
     "decision": "pending",
     "n": 0,
     "reason": "0 complete week(s); scored at 52 weeks (registered)",
