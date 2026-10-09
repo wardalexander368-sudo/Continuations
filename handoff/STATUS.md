@@ -39,6 +39,12 @@ next. Topic documents hold the detail:
   SOL cost sampler running 06:44–10:00 UTC (`data/sol-dex/costs-20261009-day.jsonl`). Then: 11a
   evaluation, predictor v3.1 (§8.2.2c plan), SOL sampler 13–16 UTC.
 
+* **Predictor session** (session_01UeZ4ho5y38qR1iNxnShtwF, since 2026-10-09 12:55 UTC, branch
+  `claude/solana-candle-predictor-s95qjr`): **edge hunt**: survey strategy families not yet tested
+  (against the closed list in profitability §1), pre-register the most promising and run them on
+  free data (no real money, no Jev). Also `handoff/OVERVIEW.md` (project overview, the user's request).
+  Recording `data/raw_v3` in this container (`--pumpswap-hours 4 --track-minutes 120`).
+
 ## Blockers (need the user)
 
 * ~~Jev usage policy~~: **decided by the user 2026-10-09 06:35 UTC: Jev stays off in TARTAR**
