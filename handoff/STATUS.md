@@ -39,11 +39,6 @@ next. Topic documents hold the detail:
   back-to-back ~6 h runs, uploading each finished hour as a GitHub Release asset (not git: ~40 MB/h),
   plus a fetch script that lays the hours out per run for the loaders. Paper data only, no keys.
 
-* **Map + docs refresh thread** (project thread session, since 2026-10-09 20:15 UTC, branch
-  `claude/project-thread-kytb6q`). Docs only, no code: fix stale lines (OVERVIEW §5–6 edge hunt
-  "on hold" and real-fill test "blocked"; queue 11b still says add dip cohorts by hand), land the
-  OVERVIEW link to the TARTAR System Map page, and refresh that page against this board.
-
 * **Curve-model retrain thread** (project thread session, since 2026-10-09 20:13 UTC, branch
   `claude/project-thread-6oh2s6`). Task: the 19:10 log's unclaimed **retrain the curve models on the
   newer recordings (v3.2)**, then edge-hunt judging (score A1–A3, B, C–E under the three lenses), then
@@ -360,6 +355,14 @@ next. Topic documents hold the detail:
   branch `claude/profitability-backtest`, on `main`).
 
 ## Log (newest first)
+
+* **2026-10-09 20:30 UTC, map + docs refresh thread: done** (docs only). OVERVIEW §4–6 now carry
+  the real-fill result (−3.07% per round trip through Lightning, ~5.5% for a fresh token; Jupiter
+  route ~1.1% per §3.19), the edge hunt as resumed (A1 and D forward tests, C closed), the 5 m
+  predictor rule and the retrain claim; queue 11b says the Action adds dip cohorts. OVERVIEW §9
+  links the TARTAR System Map page (claude.ai artifact, private to the user unless shared), now
+  refreshed to this board. Not touched: `edge-hunt.md`'s *How far it got* table still shows C–E
+  unstarted (C and D are done); left to the curve-retrain thread's edge-hunt judging. Nothing half-done.
 
 * **2026-10-09 20:10 UTC, execution-cost thread: use Jupiter's Swap API with our own key**
   (profitability §3.19). Simulated real transactions for 6 tokens (no keys, nothing sent).
