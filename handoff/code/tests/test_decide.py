@@ -113,3 +113,30 @@ def test_jev_client_auth_cache_retries_and_features(tmp_path):
     again = JevClient(api_key="", url="https://jev.test/v1/systemone", client=httpx.Client(transport=transport), cache=tmp_path / "c.jsonl")
     assert again.ask({"mint": "a", "name": "Dog"})["buy"] == 0.9 and seen["calls"] == calls
     assert again.headers == {}  # no key: the environment's proxy authenticates
+
+
+def test_metadata_question_set_and_score_answers():
+    from tartar.jev import LAUNCH, METADATA, describe_metadata
+
+    assert LAUNCH.version != METADATA.version and "narrative_unc" in METADATA.columns
+    state = {"name": "Boston Bot", "symbol": "BOSTON", "metadata": {"description": "x" * 900, "twitter": "https://x.com/a", "image": "skip me"}}
+    launch = describe_metadata(state)["launch"]
+    assert set(launch) == {"name", "symbol", "description", "twitter", "website"} and len(launch["description"]) == 600
+    body = {"answers": {qid: ({"type": "noul", "noul": 0.2} if q["type"] == "noul" else {"type": "score", "score": 1.5, "confidence": 0.7}) for qid, q in METADATA.questions.items()}}
+    answers = parse_answers(body, METADATA)
+    assert answers["explains"] == 0.2 and answers["narrative"] == 1.5 and answers["narrative_unc"] == pytest.approx(0.3)
+    assert set(answers) == set(METADATA.columns)
+    with pytest.raises(JevFormatError):
+        parse_answers({"answers": {"narrative": {"type": "score", "score": 1.0}}}, {"narrative": METADATA.questions["narrative"]})
+
+
+def test_metadata_urls_and_link_features():
+    from tartar.metadata import LINK_FEATURES, candidate_urls, link_features
+
+    assert candidate_urls("https://ipfs.io/ipfs/QmAbc")[0] == "https://pump.mypinata.cloud/ipfs/QmAbc"
+    assert candidate_urls("ipfs://bafyX")[0].endswith("/ipfs/bafyX")
+    assert candidate_urls("https://meta.uxento.io/x.json") == ["https://meta.uxento.io/x.json"]
+    assert candidate_urls("") == []
+    f = link_features({"description": "a real token", "twitter": "https://x.com/u/status/1", "website": "https://www.instagram.com/p/1"}, "https://meta.uxento.io/x")
+    assert f["desc_words"] == 3 and f["twitter_is_post"] == 1 and f["website_is_social"] == 1 and f["tool_uri"] == 1
+    assert link_features(None)["meta_found"] == 0 and tuple(link_features(None)) == LINK_FEATURES

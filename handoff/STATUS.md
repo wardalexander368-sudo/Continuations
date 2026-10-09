@@ -37,8 +37,6 @@ next. Topic documents hold the detail:
 
 * **Predictor session** (session_01UeZ4ho5y38qR1iNxnShtwF, started 23:55 UTC 10-08): queue items **7** (verify the fee schedule from real transactions), then **5** (record slot numbers; touches `tartar/feeds/pumpchain.py`, `tartar/data/recorder.py`, `tartar/data/rawlog.py`, backward compatible with 3-tuple streams), then **4** (PumpSwap decoder, new module). Branch `claude/solana-candle-predictor-s95qjr`.
 
-* **Profitability session** (session_01U4x5qUJYMStcujpyLJgQ8N), since 00:05 UTC 10-09: **queue item 8, Jev feature discovery on launch metadata** (descriptions and links from each launch's metadata URI). New module `tartar/metadata.py`, Jev questions in `tartar/jev.py`. Branch `claude/jev-metadata`.
-
 ## Blockers (need the user)
 
 * ~~Network~~: **resolved 22:35 UTC**, the user enabled full network access.
@@ -76,12 +74,12 @@ next. Topic documents hold the detail:
 5. **Record slot numbers** with each event, to measure latency in slots.
 6. ~~**Predictor open problems 3–5**~~ **done ~23:45 UTC 10-08** (predictor doc §8.4).
 7. **Verify the pump.fun fee schedule** (1.25%/side default).
-8. **Jev feature discovery on launch metadata** (the user asked to focus
-   on Jev). Jev has only seen the name and symbol so far. Fetch each
-   launch's metadata (description, links), ask Jev narrow questions about
-   the text (TypeSafe's feature-discovery pattern), and test the answers as
-   features: train on train launches, choose on validation, report test
-   once. Promising questions go into shadow mode for live validation.
+8. ~~**Jev feature discovery on launch metadata**~~ **done 00:20 UTC
+   10-09** (`profitability.md` §3.8): 17 questions about description and
+   links, asked for all 3,523 launches. No added value: the best judgment
+   (`explains`, Spearman +0.08) is matched by counting the description's
+   characters in code, and Jev features lower test AUC (0.767 → 0.740). Not
+   worth adding to shadow mode. Caches: `handoff/data/jev/`.
 
 ## Rules that hold across sessions
 
@@ -111,6 +109,16 @@ next. Topic documents hold the detail:
   branch `claude/profitability-backtest`, on `main`).
 
 ## Log (newest first)
+
+* **2026-10-09 00:20 UTC, profitability session:** Queue item 8 is done
+  (§3.8): `tartar/metadata.py` fetches launch metadata (Pinata gateway;
+  ipfs.io now refuses requests), and `tartar/jev.py` has question sets
+  (`LAUNCH`, `METADATA`) with Score answers as level + uncertainty. Jev's
+  metadata judgments add nothing beyond code features. Across §3.7–3.8, Jev
+  shows no predictive value for which launches beat costs. Answers and
+  metadata are cached in `handoff/data/jev/`. Earlier, at 00:03, I warned the
+  Jev session that its container had likely been suspended (idle since
+  23:45; first check-in 02:46) and that no live data was in git yet.
 
 * **2026-10-08 ~23:45 UTC, predictor session** (times in this session's earlier entries were guesses; corrected against the clock): Finished queue item 6 and
   landed it on `main` (106 tests pass). Without retraining v1:

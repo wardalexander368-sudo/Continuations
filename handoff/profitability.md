@@ -207,6 +207,51 @@ recorded launches agrees with the above: Spearman between −0.03 and +0.03
 for all five questions (`buy` +0.005). Run it live to test Jev on fresh
 launches. That's the only test left that could change this conclusion.
 
+### 3.8 Jev on launch metadata: feature discovery (queue item 8)
+
+Jev had only seen names and symbols, but every launch also links a metadata
+file with a description and social links. `tartar/metadata.py` fetches it
+(ipfs.io now refuses requests, so IPFS paths go through pump.fun's Pinata
+gateway). Metadata was found for 3,042 of 3,523 launches; 295 have no link.
+`tartar/jev.py` gained question sets. `METADATA` sends Jev only the name,
+symbol, description (≤600 chars) and links, and asks 15 narrow yes/no
+questions plus 2 Scores. Each Score is used as two columns, its level and
+its uncertainty, following TypeSafe's feature-discovery cookbook. The
+questions: explains, news_event, famous_person, famous_link, utility_claim,
+ai_theme, animal, spam_text, hype, relaunch, name_matches, copycat,
+low_effort, meme, scam_wording, narrative (Score), effort (Score). All
+launches were answered in 144 s: median 238 ms per call, ~1.4k input
+tokens each. Link features computed in code (description length, which
+links exist, launch-tool host) were tested alongside.
+Script: `handoff/experiments/jev_metadata_features.py`.
+
+| Features (LightGBM P(net > 0), buy at +20 s) | Hold 180 s: valid AUC | test AUC [90% CI] | test P&L (top 5% on valid) |
+|---|---|---|---|
+| A numeric launch state | 0.781 | 0.758 [0.697, 0.805] | −0.0% (22 trades) |
+| B + link features (code) | 0.785 | **0.767** [0.710, 0.813] | +9.6% (17; CI −24.5 … +49.7%) |
+| C + links + Jev answers | 0.790 | 0.740 [0.681, 0.792] | +4.4% (31; CI −21 … +34%) |
+| D + Jev answers | 0.784 | 0.724 [0.665, 0.777] | −7.1% (38) |
+
+With hold 600 s, TP +100%, SL −30%, every set loses on test (−4.2% to
+−8.3%), and the Jev sets have the lowest test AUC again (0.679 vs 0.691).
+
+* **Jev's best metadata judgment is `explains`** (Spearman +0.083 with net
+  return, train + validation). Counting the description's characters in
+  code does as well (+0.091). Everything else is within ±0.06.
+* **Adding Jev's answers lowers test AUC.** Validation AUC rises slightly
+  (0.785 → 0.790) while test falls (0.767 → 0.740): the model fits noise
+  in 19 extra columns.
+* **AUC ~0.76 doesn't mean profit.** The screens mostly tell launches that
+  never trade (a certain −3.5% loss) from launches that do. They don't
+  tell winners from losers after costs.
+
+**Conclusion across §3.7–3.8:** with three question designs (the direct
+question, name judgments, metadata judgments), Jev adds no predictive value
+for which pump.fun launches beat costs. What separates launches here is
+order flow and timing, not language. That fits TypeSafe's own positioning:
+Jev is built for semantic judgments, and our problem is market
+microstructure.
+
 ## 4. What this means for the plan
 
 1. **Don't trade the current predictions.** The confidence is honest about
