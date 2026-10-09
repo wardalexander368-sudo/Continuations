@@ -44,6 +44,10 @@ next. Topic documents hold the detail:
   routine adds a cohort at 02:24 UTC (`established_cohort.py` + `pumpswap_fees.py --cohort`) and
   scores it on 2026-10-30 or at 200 trades. **Owns the jevtrader day-28 readout (queue 12)**: a
   routine checks on 2026-10-24. Other sessions: no need to add cohorts by hand any more.
+  **Owns the hedged-JLP paper forward test (queue 14, edge hunt A1)**, pre-registered
+  (`handoff/preregistration/jlp-hedged/SPEC.md`), window 2026-10-10 .. 2027-01-08: a routine
+  runs `handoff/experiments/jlp_paper.py snapshot` every 4 h and commits
+  `handoff/data/jlp-paper/snapshots.jsonl`; score with `evaluate --final` on 2027-01-08.
 
 * **Predictor-strategy thread** (session continuing session_01YLnqLnTQzvD6HHUTvnNpVm, since 2026-10-09
   17:33 UTC, branch `claude/project-thread-mwc92g`). The user asked for continuous work toward profit
@@ -255,8 +259,9 @@ next. Topic documents hold the detail:
     `--next-launch` screen still skips those three (`ScamReport.avoid`), so its picks are
     unchanged; it shows P(rug) on every verdict and beside the watched token's level.
 
-14. **Edge hunt: new strategy families: ON HOLD by the user (2026-10-09 ~13:25 UTC).**
-    Resume only when the user asks. Exploratory findings and how to resume are in
+14. **Edge hunt: new strategy families: resumed 2026-10-09 17:32 UTC** (the user: "please work
+    continuously towards our goal"; the coordinator read it as lifting the hold). A1, the hedged-JLP
+    paper test, is pre-registered and running (dip/jevtrader session); angles C–E are still open. Exploratory findings and how to resume are in
     `handoff/edge-hunt.md`:
     - the best candidate is a **delta-hedged JLP** paper forward test (+7.9% APR over USDC lending,
       90% CI [+3.0, +12.4], exploratory);
@@ -303,6 +308,12 @@ next. Topic documents hold the detail:
   branch `claude/profitability-backtest`, on `main`).
 
 ## Log (newest first)
+
+* **2026-10-09 17:40 UTC, dip/jevtrader session:** edge hunt A1 pre-registered as a 90-day paper
+  forward test: hedged JLP vs Kamino USDC (`preregistration/jlp-hedged/SPEC.md`,
+  `experiments/jlp_paper.py`, 6 tests). Live check: JLP delta per JLP-$ SOL 0.441, ETH 0.077,
+  BTC 0.124; $10k Jupiter quotes buy −9 to −11 bps, sell +23 to +25 bps vs NAV. Two pilot
+  snapshots precede the window and are ignored by the scorer.
 
 * **2026-10-09 17:18 UTC, handoff session: PumpSwap models done.** 15s, 30s and 1m installed
   (`tartar/models/pumpswap-{15s,30s,60s}`), 5m not; each judged by a rule fixed in

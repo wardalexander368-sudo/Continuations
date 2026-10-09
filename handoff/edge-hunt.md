@@ -1,6 +1,7 @@
-# Edge hunt: new strategy families (ON HOLD)
+# Edge hunt: new strategy families
 
-**Status: on hold by the user (2026-10-09 ~13:25 UTC).** Picked up again only when the user asks.
+**Status: resumed 2026-10-09 17:32 UTC** (on hold 13:25–17:32). A1 is pre-registered and running as a
+paper forward test (`handoff/preregistration/jlp-hedged/SPEC.md`, `handoff/experiments/jlp_paper.py`).
 Predictor session, branch `claude/solana-candle-predictor-s95qjr`. Everything here is
 **exploratory**. Nothing is pre-registered, and every number below was seen before any rule
 was fixed. Treat them as reasons to test, not as results. No real-money code was written and
