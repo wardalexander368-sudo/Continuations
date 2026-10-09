@@ -1,8 +1,8 @@
 # The automated paper-trading agent (`tartar/autotrade`)
 
 Built 2026-10-09 by the agent-machinery thread for the project goal "a fully automated trading
-agent, focused on profitability and self improvement". **Paper, with dry live twins** (see *Going live*). It runs hourly on GitHub
-Actions (`.github/workflows/autotrade.yml`, :15 past each hour) without any Claude session and
+agent, focused on profitability and self improvement". **Paper, with dry live twins** (see *Going live*). It runs every 5 minutes on GitHub
+Actions (`.github/workflows/autotrade.yml`, every 5 minutes since 2026-10-09 23:20 UTC; hourly before) without any Claude session and
 commits its state to `autotrade/`. Read `autotrade/REPORT.md` for the current picture.
 
 ## What one run does
@@ -169,9 +169,8 @@ A failed live sell also records an orphan and halts that strategy's live entries
 
 ### Known gaps (decisions for the user)
 
-1. **Cadence.** The Action runs hourly, and the dip strategy acts on 5-minute bars up to 65 minutes
-   old, so most dip entries are older than `max_signal_age_s` and won't be mirrored. Live trading of
-   dip needs a faster run (`*/5` cron) or a larger age limit; the latter changes what is traded.
+1. **Cadence: resolved 2026-10-09 23:20 UTC.** The user chose a run every 5 minutes, so dip entries
+   reach the broker within ~10 minutes of their bar, inside `max_signal_age_s` (900 s).
 2. **Perps.** Dry perp twins exist (*Perp twins* above); real ones need the user's Hyperliquid API
    wallet (`HYPERLIQUID_AGENT_KEY`, `HYPERLIQUID_ACCOUNT`) and a live executor that isn't written yet.
 3. **Lightning** reads fills from chain for its custodial wallet, so `live.lightning_wallet` must be set
