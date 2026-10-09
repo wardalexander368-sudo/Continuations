@@ -1,0 +1,41 @@
+{
+  "mode": "paper",
+  "live_approved_on": null,
+  "risk": {
+    "max_position_usd": 250,
+    "max_open_per_strategy": 40,
+    "max_open_total": 120,
+    "max_gross_usd": 20000,
+    "daily_loss_cap_usd": 1000,
+    "max_consecutive_errors": 3,
+    "flatten_on_halt": false
+  },
+  "lifecycle": {
+    "rolling_window": 30,
+    "max_drawdown_pct": 0.25,
+    "demoted_size_factor": 0.5,
+    "retire_after_demoted_trades": 60
+  },
+  "strategies": {
+    "dip": {
+      "kind": "dip",
+      "enabled": true,
+      "prereg": "handoff/preregistration/dip-rolling",
+      "size_usd": 200
+    },
+    "xs_momentum": {
+      "kind": "xs_momentum",
+      "enabled": true,
+      "prereg": "handoff/preregistration/xs-momentum/SPEC.md",
+      "leg_usd": 1000
+    },
+    "launch_selector": {
+      "kind": "external",
+      "enabled": false,
+      "prereg": "set by the launch-selector thread when it registers a rule",
+      "signals": "autotrade/signals/launch_selector.jsonl",
+      "cost": {"fee": 0.0125, "impact": 0.006, "fixed_usd": 0.02},
+      "eval": {"min_trades": 100, "deadline_days": 30}
+    }
+  }
+}
