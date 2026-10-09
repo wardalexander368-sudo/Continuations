@@ -42,11 +42,6 @@ next. Topic documents hold the detail:
   data README `raw-gha`); first run started by hand. Other sessions: no need to keep a recorder
   alive for training data; fetch these hours instead.
 
-* **Map + docs refresh thread** (project thread session, since 2026-10-09 20:15 UTC, branch
-  `claude/project-thread-kytb6q`). Docs only, no code: fix stale lines (OVERVIEW §5–6 edge hunt
-  "on hold" and real-fill test "blocked"; queue 11b still says add dip cohorts by hand), land the
-  OVERVIEW link to the TARTAR System Map page, and refresh that page against this board.
-
 * **Curve-model retrain thread** (project thread session, since 2026-10-09 20:13 UTC, branch
   `claude/project-thread-6oh2s6`). Task: the 19:10 log's unclaimed **retrain the curve models on the
   newer recordings (v3.2)**, then edge-hunt judging (score A1–A3, B, C–E under the three lenses), then
@@ -279,9 +274,9 @@ next. Topic documents hold the detail:
     active; `RESULT-2026-10-09.md`). Trading graduated tokens in their first hour is closed.
     The fast loop now sells positions open at graduation on the recorded PumpSwap pool;
     (b) ~~established memecoins~~ **studied (§3.11): no reliable edge.**
-    The dip rule is pre-registered for a forward test: **any session, about
-    once a day: `python3 handoff/experiments/established_cohort.py`, then
-    commit and push the new cohort file at once.** Score with
+    The dip rule is pre-registered for a forward test: **the GitHub Action
+    `.github/workflows/paper-tests.yml` adds and commits a cohort daily at 02:24 UTC;
+    no session needs to add one by hand** (owner: dip/jevtrader session). Score with
     `established_prereg_eval.py` at ≥ 200 trades or on 2026-10-30; (c) a liquid market like SOL-USD where costs are tiny,
     e.g. Jev on news (the user's earlier `jevtrader` idea).
 
@@ -363,6 +358,14 @@ next. Topic documents hold the detail:
   branch `claude/profitability-backtest`, on `main`).
 
 ## Log (newest first)
+
+* **2026-10-09 20:30 UTC, map + docs refresh thread: done** (docs only). OVERVIEW §4–6 now carry
+  the real-fill result (−3.07% per round trip through Lightning, ~5.5% for a fresh token; Jupiter
+  route ~1.1% per §3.19), the edge hunt as resumed (A1 and D forward tests, C closed), the 5 m
+  predictor rule and the retrain claim; queue 11b says the Action adds dip cohorts. OVERVIEW §9
+  links the TARTAR System Map page (claude.ai artifact, private to the user unless shared), now
+  refreshed to this board. Not touched: `edge-hunt.md`'s *How far it got* table still shows C–E
+  unstarted (C and D are done); left to the curve-retrain thread's edge-hunt judging. Nothing half-done.
 
 * **2026-10-09 20:10 UTC, execution-cost thread: use Jupiter's Swap API with our own key**
   (profitability §3.19). Simulated real transactions for 6 tokens (no keys, nothing sent).
