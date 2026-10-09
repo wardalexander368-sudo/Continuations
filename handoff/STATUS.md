@@ -47,6 +47,17 @@ next. Topic documents hold the detail:
   prior (the research session's after-11a list). Also `handoff/OVERVIEW.md` (project overview, the
   user's request; a background workflow in this session, not yet landed). Recording `data/raw_v3`
   here (`--pumpswap-hours 4 --track-minutes 120`); finished hours go to `handoff/data/raw-v3/`.
+  **Stopped ~13:25 UTC (usage limit, per the user); its container is gone, so the overview
+  draft and raw-v3 hours after 06 are lost.** Its open tasks (the PumpSwap model, `OVERVIEW.md`,
+  the raw-v3 recorder) are taken over by the handoff session below.
+
+* **Handoff session** (session_01GAoiXJ4NHWXq6DnP61icSU, since 2026-10-09 13:28 UTC, branch
+  `claude/handoff-overview`), continuing the predictor session's claim: (1) **the PumpSwap
+  model** (`tartar train --raw ... --pumpswap`, compared with online-only; install only if it
+  helps); (2) `handoff/OVERVIEW.md`, from scratch (the user's request); (3) recording
+  `data/raw-v3` here again since 13:31 UTC (same flags plus `SOLANA_COMMITMENT=processed`);
+  finished hours go to `handoff/data/raw-v3/`. Not running a SOL sampler (the clever session's
+  covers 10–16 UTC).
 
 ## Blockers (need the user)
 
