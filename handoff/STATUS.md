@@ -383,11 +383,12 @@ deep pools match the model, a thin one was 2.4x it). The `launch_selector` slot 
 
 ## Log (newest first)
 
-* 2026-10-09 22:50 UTC, agent-machinery thread: the agent's execution check now measures price
+* 2026-10-09 22:36 UTC, agent-machinery thread: the agent's execution check now measures price
   impact as the full-size Jupiter quote's shortfall against a $1 probe. Jupiter's own
   `priceImpactPct` was misleading (0.7-2.6% at $1; the first report line said 1.82% vs a 0.16%
   model). Measured: e/acc 0.14% vs model 0.15%, swordcat 0.18% vs 0.16%, SharkTank 2.9% vs 1.2%.
   Closed trades carry `quoted_net_return`, shown in the dip verdict and REPORT.md.
+
 * **2026-10-09 22:35 UTC, curve-model retrain thread: v3.2 trained, not installed** (predictor doc
   8.2.2e). v3.1's recipe on every curve recording to hour 19 (13.8k launches at 5m, ~28k at the
   others), old recorder's rows weighted on validation (5m: 0; 1m: 1; 15s/30s: 1 only). Test = the
