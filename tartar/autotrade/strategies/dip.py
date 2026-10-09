@@ -156,7 +156,8 @@ class DipStrategy:
                                           asset=pid, side=1, notional_usd=self.size, cost=cost,
                                           meta={"pool": pid, "label": p["name"], "signal_t": float(t[i]), "exit_t": exit_t,
                                                 "key": key, "liquidity_usd": p["liquidity_usd"],
-                                                "alt_cost": self.measured_cost(pid, cost), "shadow": self.shadow}))
+                                                "alt_cost": self.measured_cost(pid, cost), "shadow": self.shadow,
+                                                "mint": p["token"].split("_", 1)[-1], "impact_assumed": cost.impact}))
                     st["busy_until"] = exit_t
                     idx = np.searchsorted(t, exit_t)
                     if idx < len(t) and t[idx] == exit_t:  # the whole hold is already in the data

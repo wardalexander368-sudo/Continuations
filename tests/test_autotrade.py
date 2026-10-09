@@ -293,3 +293,22 @@ def test_variants_expand_register_and_stay_outside_caps(tmp_path):
     assert s["opened"] == 1
     run_once(root, now=4000, strategies={"fake": Fake()})
     assert [c["kind"] for c in Ledger(root).changes()].count("registered") == 1
+
+
+def test_quote_check_records_beside_fill(monkeypatch):
+    from tartar.autotrade import quotes
+
+    class R:
+        def json(self):
+            return {"priceImpactPct": "0.004", "outAmount": "123", "routePlan": [{"swapInfo": {"label": "Pump.fun Amm"}}]}
+
+    class H:
+        def get(self, url, params):
+            assert params["amount"] == 200_000_000
+            return R()
+
+    o = opener(notional=200, at=1000)
+    o.meta["mint"] = "M"
+    out = quotes.quote_check(o, 1100, http=H())
+    assert out["jup_impact_pct"] == pytest.approx(0.4) and out["jup_route"] == ["Pump.fun Amm"]
+    assert quotes.quote_check(o, 1000 + 3600, http=H()) is None  # stale entry: no check
