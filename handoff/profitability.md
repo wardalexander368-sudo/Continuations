@@ -26,6 +26,7 @@ Where each family stands (2026-10-09):
 | Predictor v3.1 candle calls + P(rug), held to the candle close (1m, 5m) | closed, loses (pre-registered, 108 trades) | §3.20 |
 | Smarter exits, regime gating and cheaper execution on launch buys | best: skip flags + TP +100%, Jupiter, 0.02 SOL: −2.9% [−4.1, −1.6]; still loses | §3.21 |
 | Picking movers from early flow, wallets, holders, curve shape, the creator, the name | movers predictable (AUC 0.88) but they collapse; small creator buys beat buy-all by ~2–4 points, still −2.2% on test | §3.22 |
+| Curve-triggered entries: level crossings, dips after a run | crossings lose (−7.0% test); 70% dip after a 40-SOL run is break-even (−0.3% [−7.4, +6.7]) | §3.23 |
 | SOL-USD with Jev (the user's jevtrader) | sealed test ends 2026-10-23; on-chain costs ≈ 0.5 bps/fill | §3.12, `handoff/jevtrader.md` |
 
 ## 2. How it is measured (`tartar/profit.py`, `tartar profit`)
@@ -899,6 +900,25 @@ it makes **−2.2% [−6.7, +2.4]** on 468 test trades (+2.2 points over buying 
 separate *good* from *bad* only a little (small creator buys, the live flags). Neither is enough to
 clear a ~2.7% round trip. Not pre-registered: nothing positive on held-out launches. A forward
 test of the creator-buy rule would be expected to lose ~2%.
+
+### 3.23 Curve-triggered entries: level crossings lose, deep dips after a big run are break-even
+
+Two entry families on the same launches, split and costs as §3.22 (Jupiter, 0.02 SOL, exits:
+TP none/+30%/+100% × max hold 180 s/10 min/30 min, no stop; a position open at graduation valued
+at the last curve price less 10%; a signal counts only if the recording covers its max hold).
+Scripts `handoff/experiments/level_entry.py`, `curve_dip_entry.py`; outputs
+`handoff/data/exit-study/level-entry.txt`, `curve-dip-entry.txt`.
+
+* **Level crossing** (buy when the curve's real SOL first reaches 5/10/15/20/30/40 within 30 min):
+  every one of 54 rules loses on dev (−3.1% to −19.4%). Chosen (40 SOL, TP +30%, 180 s): dev
+  −3.1%, **test −7.0% [−10.6, −3.5]** on 730. Median trades are positive with TP +30% (win ~53%),
+  but the losers are rugs. Momentum on the curve is the copy-trading result again (§3.15).
+* **Dip after a run** (buy when the price is 30/50/70% below its running peak, once the peak
+  reached 10/20/40 SOL): the deeper the dip and the bigger the run, the better. Chosen (40 SOL
+  peak, 70% dip, TP +100%, 180 s): dev −0.4% [−5.2, +4.7] on 907, **test −0.3% [−7.4, +6.7]** on
+  448. It holds out of sample but at zero, with a wide interval and median −15% to −20%: the
+  closest any launch rule here has come, at the cheapest route's costs (−2 points more through
+  Lightning). Not pre-registered: nothing positive on dev or test.
 
 ## 4. What this means for the plan
 
