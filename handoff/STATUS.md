@@ -32,6 +32,13 @@ next. Topic documents hold the detail:
 
 ## Active
 
+* **Recorder thread** (project thread session, since 2026-10-09 20:20 UTC, branch
+  `claude/project-thread-9op3pf`). Task (the user's 20:12 go, continuous profit work): a raw
+  recorder that no Claude session has to keep alive. Plan: a GitHub Action (`recorder.yml`)
+  running `tartar record --track-minutes 120 --pumpswap-hours 4` (processed commitment) in
+  back-to-back ~6 h runs, uploading each finished hour as a GitHub Release asset (not git: ~40 MB/h),
+  plus a fetch script that lays the hours out per run for the loaders. Paper data only, no keys.
+
 * **Map + docs refresh thread** (project thread session, since 2026-10-09 20:15 UTC, branch
   `claude/project-thread-kytb6q`). Docs only, no code: fix stale lines (OVERVIEW §5–6 edge hunt
   "on hold" and real-fill test "blocked"; queue 11b still says add dip cohorts by hand), land the
