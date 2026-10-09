@@ -37,6 +37,7 @@ def extract(directory: str, out: str) -> None:
     creators: dict[str, tuple[float, str]] = {}
     graduated: dict[str, float] = {}
     aged: dict[str, float] = {}  # the recorder stopped following the token (tracking limit): price unknown after
+    wallets: dict[str, int] = {}  # column 6 of each path row: the trader's index in `wallets`
     times = []
     for e in read_events(raw_files(directory)):
         times.append(e["t"])
@@ -46,10 +47,10 @@ def extract(directory: str, out: str) -> None:
         if kind == "create":
             creators[e["mint"]] = (e["t"], e.get("creator") or "")
             if e.get("vsol") and e.get("vtok"):
-                paths[e["mint"]].append((e["t"], e["vsol"], e["vtok"], 1, e.get("sol") or 0.0, 1))
+                paths[e["mint"]].append((e["t"], e["vsol"], e["vtok"], 1, e.get("sol") or 0.0, 1, wallets.setdefault(e.get("creator") or "", len(wallets))))
         elif kind == "trade" and e.get("vsol") and e.get("vtok"):
             creator = creators.get(e["mint"], (0, ""))[1]
-            paths[e["mint"]].append((e["t"], e["vsol"], e["vtok"], 1 if e.get("side") == "b" else -1, e.get("sol") or 0.0, int(bool(creator) and e.get("trader") == creator)))
+            paths[e["mint"]].append((e["t"], e["vsol"], e["vtok"], 1 if e.get("side") == "b" else -1, e.get("sol") or 0.0, int(bool(creator) and e.get("trader") == creator), wallets.setdefault(e.get("trader") or "", len(wallets))))
         elif kind in ("migrate", "graduate"):
             graduated.setdefault(e["mint"], e["t"])
         elif kind == "untrack" and e.get("reason") == "age":
@@ -71,7 +72,7 @@ def extract(directory: str, out: str) -> None:
             continue
         launches.append({"mint": r["mint"], "t": r["t"], "created": creators[r["mint"]][0], "state": r["state"], "prug": float(p), "dir": directory})
     with open(out, "wb") as f:
-        pickle.dump({"dir": directory, "launches": launches, "paths": arrays, "graduated": graduated, "aged": aged, "gaps": gaps, "end": times[-1] if times else 0.0}, f)
+        pickle.dump({"dir": directory, "launches": launches, "paths": arrays, "graduated": graduated, "aged": aged, "wallets": list(wallets), "gaps": gaps, "end": times[-1] if times else 0.0}, f)
     print(f"{directory}: {len(launches)} screened launches, {len(arrays)} paths, {len(gaps)} gaps")
 
 

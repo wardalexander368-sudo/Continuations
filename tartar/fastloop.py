@@ -78,8 +78,10 @@ class Policy:
     skip_levels: list = field(default_factory=list)  # risk levels to skip, e.g. ["scam"]
     skip_flags: list = field(default_factory=lambda: ["concentrated", "sniped", "dev_bag"])
     threshold: float = 0.5  # buy when the scorer's probability is at least this
-    hold_seconds: float = 180.0
-    take_profit: float | None = None  # fraction, e.g. 1.0 = +100%
+    # Exit: take profit at +100%, else sell after 30 min, no stop-loss (profitability.md 3.21: 4 points
+    # better than a fixed 180 s hold on held-out launches; every stop made it worse).
+    hold_seconds: float = 1800.0
+    take_profit: float | None = 1.0  # fraction, e.g. 1.0 = +100%
     stop_loss: float | None = None  # fraction, e.g. 0.3 = -30%
     size_sol: float = 0.1
     fee: float = 0.0125

@@ -277,7 +277,7 @@ def test_exits_after_graduation_fill_on_the_recorded_pumpswap_pool(tmp_path):
     from tartar.feeds.pumpswap import fee_for_market_cap
     from tartar.profit import buy_tokens, sell_sol
 
-    policy = open_policy(screen_seconds=5.0, hold_seconds=600.0, graduation_haircut=0.5, min_buyers=0)
+    policy = open_policy(screen_seconds=5.0, hold_seconds=600.0, take_profit=None, graduation_haircut=0.5, min_buyers=0)
     loop = FastLoop(policy, Journal(tmp_path / "j"))
     loop.start(0.0)
     for event in (curve_event("create", 0.0, 1.0, mint="G"), curve_event("trade", 2.0, 10.0, mint="G"), curve_event("trade", 8.0, 20.0, mint="G"),
