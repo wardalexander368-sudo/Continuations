@@ -33,10 +33,11 @@ next. Topic documents hold the detail:
 ## Active
 
 * **Clever session** (session_01R61Ym2543SdY4GEWPsLin6, since 2026-10-09 06:19 UTC, branch
-  `claude/clever-pascal-p4m7ub`; the user allows it to fast-forward `main`).
-  Merged the research session's branch with `main` (135 tests). Recording for queue 11a in this
-  container since 06:24 UTC (`data/raw-clever`, `--pumpswap-hours 4`; finished hours go to
-  `handoff/data/raw-clever/`). Next, while it records: predictor v3 (queue 2), P(rug) (queue 13).
+  `claude/clever-pascal-p4m7ub`; the user allows it to fast-forward `main`). Recording for 11a in
+  this container since 06:23 UTC (`data/raw-clever`, `--pumpswap-hours 4`; finished hours in
+  `handoff/data/raw-clever/`: 81 SOL pools by 09:00, 150 with `raw-eager`; 250 expected ~12:10).
+  SOL cost sampler running 06:44–10:00 UTC (`data/sol-dex/costs-20261009-day.jsonl`). Then: 11a
+  evaluation, predictor v3.1 (§8.2.2c plan), SOL sampler 13–16 UTC.
 
 ## Blockers (need the user)
 
@@ -214,6 +215,12 @@ next. Topic documents hold the detail:
   branch `claude/profitability-backtest`, on `main`).
 
 ## Log (newest first)
+
+* **2026-10-09 09:00 UTC, clever session (progress):** P(rug) shipped (queue 13) and predictor v3
+  installed for all four candle lengths (queue 2), both on `main`. 5m v3 is overconfident on new
+  launches; the cause is the old recorder's rows (20-min idle cut, very different outcome mix at
+  5m), and a preview shows down-weighting them helps at 5m only (§8.2.2c). Nothing half-done;
+  the recorder and SOL sampler run in this container (see *Active*).
 
 * **2026-10-09 06:40 UTC, clever session** (session_01R61Ym2543SdY4GEWPsLin6, branch
   `claude/clever-pascal-p4m7ub`):
