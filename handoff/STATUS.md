@@ -32,6 +32,49 @@ next. Topic documents hold the detail:
 
 ## Active
 
+* **Trading-skills thread → perps lane** (project thread session, since 2026-10-09 21:50 UTC,
+  branch `claude/project-thread-x7fh45`). Task (coordinator, under the user's "work nonstop"): new
+  edges on Hyperliquid perps with D's data and cost model: time-series trend on the majors,
+  short-term reversal, volatility- / volume-scaled momentum, open interest / liquidations. Same
+  train / validation / test splits as D, every rule counted, fees + funding. **Does not touch D's
+  registered test** (owned by the dip/jevtrader session) or `autotrade/` (owned by the handoff
+  session). Scripts in `handoff/experiments/edge-hunt/perps/`.
+
+* **Edge hunt E thread** (project thread session, since 2026-10-09 21:40 UTC, branch
+  `claude/project-thread-9op3pf`). **Paper only, no real SOL, no keys.** Task (the user's 21:30
+  "work continuously"): edge hunt angle E, TARTAR's assets, beyond the closed predictor + P(rug)
+  rule (§3.20). First lead, E1: pump.fun's own activity (daily fees/revenue, which fund PUMP
+  buybacks; our decoder sees the same flow live) as a signal for cheap-to-trade Hyperliquid perps
+  (PUMP, SOL, memecoin perps), train/test by time after costs and funding; pre-register a forward
+  test if it holds. Doesn't touch the retrain thread's judging or the forward tests.
+  **22:15 UTC: E1 pre-registered** (`handoff/preregistration/pumpflow/SPEC.md`, edge-hunt.md §E1):
+  long/short the Hyperliquid PUMP perp on sign(log(pump.fun+PumpSwap revenue_d / its 7-day mean)),
+  entering when DefiLlama first publishes day d; backtest +0.76%/day train, +0.95% test after
+  0.10%/side + funding, both ~1.7 SE. 180-day paper test from 2026-10-10; the hourly Action
+  `pumpflow-paper.yml` records snapshots, no session needed; score `pumpflow_paper.py evaluate
+  --final` after 2027-04-08 (report-only look 2027-01-08). This thread owns the scoring.
+
+* **Agent-machinery thread** (project thread session, since 2026-10-09 21:30 UTC, branch
+  `claude/project-thread-12sv1q`). **Paper only, no real SOL, no keys.** The automated agent is
+  live: `tartar/autotrade/`, hourly Action `autotrade.yml`, state and `REPORT.md` in `autotrade/`,
+  guide `handoff/autotrade.md`. Since v1 (21:45 UTC): halts fail the Action (owner is emailed),
+  `equity.jsonl` per run, dip net at measured pool fees, 8 self-registered shadow variants of the
+  dip rule (Bonferroni-scored, outside the risk caps). The `launch_selector` slot is ready for the
+  trading-skills thread (signals file, `handoff/autotrade.md`). Don't run it locally against
+  `autotrade/`.
+
+* **Recorder thread** (project thread session, since 2026-10-09 20:20 UTC, branch
+  `claude/project-thread-9op3pf`). Task (the user's 20:12 go, continuous profit work): a raw
+  recorder that no Claude session has to keep alive. Plan: a GitHub Action (`recorder.yml`)
+  running `tartar record --track-minutes 120 --pumpswap-hours 4` (processed commitment) in
+  back-to-back ~6 h runs, uploading each finished hour as a GitHub Release asset (not git: ~40 MB/h),
+  plus a fetch script that lays the hours out per run for the loaders. Paper data only, no keys.
+  **20:30 UTC: landed** (`.github/workflows/recorder.yml`, `handoff/experiments/fetch_gha_raw.py`,
+  data README `raw-gha`). **21:01 UTC: working.** First run (37986175087) from 20:33 UTC; hour 20
+  uploaded (17 MB for 27 min: 1,209 curve launches, 34 PumpSwap pools, loads fine). Runs need no
+  Claude session; the cron chains them. Other sessions: don't keep a recorder alive for training
+  data, run `python3 handoff/experiments/fetch_gha_raw.py --dirs` and pass the printed dirs to `--raw`.
+
 * **Curve-model retrain thread** (project thread session, since 2026-10-09 20:13 UTC, branch
   `claude/project-thread-6oh2s6`). Task: the 19:10 log's unclaimed **retrain the curve models on the
   newer recordings (v3.2)**, then edge-hunt judging (score A1–A3, B, C–E under the three lenses), then
@@ -53,18 +96,6 @@ next. Topic documents hold the detail:
   (`handoff/preregistration/xs-momentum/SPEC.md`): 14-day momentum, weekly long-short on every
   Hyperliquid perp, signal Mondays 2026-10-12 .. 2027-10-11, scored from Hyperliquid history by
   `handoff/experiments/xs_momentum_forward.py` (no live collection). Edge hunt C is closed.
-
-* **Predictor-strategy thread** (session continuing session_01YLnqLnTQzvD6HHUTvnNpVm, since 2026-10-09
-  17:33 UTC, branch `claude/project-thread-mwc92g`). The user asked for continuous work toward profit
-  (17:32 UTC), which lifts the edge-hunt hold for this lane. **Task:** can predictor v3.1's live edge
-  plus P(rug) become a rule that is profitable after measured fees (1.25%/side on curves)? Pre-register,
-  paper-test on unseen launches, report net with n and 90% CI. No real SOL; stays off in-block
-  launch entry (the handoff thread's lead).
-  **18:55 UTC:** dev result (4 unseen hours): 1m loses at every threshold (best −3.6%), 5m noisy
-  (−6.4% earlier, +5.0% later, n=23). 5m rule pre-registered 18:36 UTC
-  (`handoff/preregistration/predictor-strategy/`); recorder `data/raw-pred` here since 17:33 UTC;
-  evaluate once at 100 primary trades or 2026-10-12. If this session dies, its unarchived
-  hours are lost; any recorder's hours after 18:36 UTC will do (`predictor_strategy.py evaluate DIR`).
 
 * **Handoff session** (session_01GAoiXJ4NHWXq6DnP61icSU, since 2026-10-09 13:28 UTC, branch
   `claude/handoff-overview`). **PumpSwap models done** (15s/30s/1m installed, 5m not; predictor doc
@@ -264,9 +295,9 @@ next. Topic documents hold the detail:
     active; `RESULT-2026-10-09.md`). Trading graduated tokens in their first hour is closed.
     The fast loop now sells positions open at graduation on the recorded PumpSwap pool;
     (b) ~~established memecoins~~ **studied (§3.11): no reliable edge.**
-    The dip rule is pre-registered for a forward test: **any session, about
-    once a day: `python3 handoff/experiments/established_cohort.py`, then
-    commit and push the new cohort file at once.** Score with
+    The dip rule is pre-registered for a forward test: **the GitHub Action
+    `.github/workflows/paper-tests.yml` adds and commits a cohort daily at 02:24 UTC;
+    no session needs to add one by hand** (owner: dip/jevtrader session). Score with
     `established_prereg_eval.py` at ≥ 200 trades or on 2026-10-30; (c) a liquid market like SOL-USD where costs are tiny,
     e.g. Jev on news (the user's earlier `jevtrader` idea).
 
@@ -348,6 +379,46 @@ next. Topic documents hold the detail:
   branch `claude/profitability-backtest`, on `main`).
 
 ## Log (newest first)
+
+* **2026-10-09 22:20 UTC, trading-skills thread: curve-triggered entries: no edge** (profitability
+  §3.23). Level crossings (5–40 SOL raised) lose on every rule (chosen: −7.0% on test). Buying a
+  70% dip after a 40-SOL run is break-even (dev −0.4%, test −0.3% [−7.4, +6.7]), the closest launch
+  rule so far, not positive. Nothing to pre-register or plug into autotrade's launch slot. The
+  launch-selection ideas from the coordinator's list are done (§3.21–3.23); metadata was §3.8.
+  Claim cleared.
+
+* **2026-10-09 22:10 UTC, trading-skills thread: picking movers from early flow: no edge**
+  (profitability §3.22). Six feature groups (flow, buyers + wallet history, holder growth, curve
+  shape, creator, name) at +20/+60 s with the new default exit at Jupiter costs: movers are
+  predictable (AUC 0.84–0.90) but the predicted movers collapse (top picks −3% to −18% on test).
+  Small creator buys (0.01–0.3 SOL, no sale) beat buying every launch in all 16 hours by 1–9
+  points, but the dev-chosen rule makes −2.2% [−6.7, +2.4] on test. Nothing to pre-register.
+  Next in this thread: entries triggered by curve levels (5–40 SOL raised) with the TP exit.
+
+* **2026-10-09 21:05 UTC, trading-skills thread: exits, regime gating and execution: helps, still
+  loses** (profitability §3.21; 22,363 screened launches, dev before 16:00, test 16:00–20:20 UTC).
+  Two thirds of launches never offer a sale above cost after a +20 s entry (oracle median −3.45%),
+  and the risk filters remove the ones that move (flags + P(rug) < 0.1: oracle +1.5%). On the live
+  skip-flag policy, TP +100% / no stop beats the fixed 180 s hold by ~3 points on test (−3.7% vs
+  −6.8%); stops always hurt. Jupiter + 0.02 SOL + the measured 0.000011 SOL network fee add ~1
+  point: −2.88% [−4.11, −1.60] on test. (Corrected 21:55 UTC: the first numbers, −1.57%, kept
+  early take-profits near recording ends; fixed in the scripts and §3.21.) Regime gates: no signal. Lightning also strands
+  0.0015 SOL rent per new token (fresh launches ~7% per round trip at 0.1 SOL). Not worth a
+  forward test. Scripts `exit_study.py`, `regime_gate.py`, `exit_tp_grid.py`. Nothing half-done;
+  claim cleared.
+
+* **2026-10-09 20:25 UTC, predictor-strategy thread: predictor v3.1 + P(rug) candle trading: no
+  edge** (profitability §3.20, pre-registered). Primary 5m rule −5.15% [−11.85, +2.52] on 108 fresh
+  trades (−7.07% at Lightning costs); 1m −4.92% [−6.63, −3.37] on 590. Data `handoff/data/raw-pred`
+  17:33–20:20 UTC. Recorder stopped; nothing half-done; claim cleared.
+
+* **2026-10-09 20:30 UTC, map + docs refresh thread: done** (docs only). OVERVIEW §4–6 now carry
+  the real-fill result (−3.07% per round trip through Lightning, ~5.5% for a fresh token; Jupiter
+  route ~1.1% per §3.19), the edge hunt as resumed (A1 and D forward tests, C closed), the 5 m
+  predictor rule and the retrain claim; queue 11b says the Action adds dip cohorts. OVERVIEW §9
+  links the TARTAR System Map page (claude.ai artifact, private to the user unless shared), now
+  refreshed to this board. Not touched: `edge-hunt.md`'s *How far it got* table still shows C–E
+  unstarted (C and D are done); left to the curve-retrain thread's edge-hunt judging. Nothing half-done.
 
 * **2026-10-09 20:10 UTC, execution-cost thread: use Jupiter's Swap API with our own key**
   (profitability §3.19). Simulated real transactions for 6 tokens (no keys, nothing sent).

@@ -1,0 +1,50 @@
+# The paper trading agent (tartar/autotrade), without a Claude session.
+# Paper only: no wallet, no keys, nothing signed. Each run steps every strategy, applies the risk
+# limits, books paper fills, scores strategies against their pre-registered rules (promote / demote /
+# retire), and commits autotrade/ (state, journal, trades, changes, REPORT.md) to main.
+# Kill switch: commit a file autotrade/HALT (its text is the reason); delete it to resume.
+# A run that halts the agent or a strategy fails after committing, so GitHub notifies the owner.
+name: autotrade
+
+on:
+  schedule:
+    - cron: "15 * * * *"
+  workflow_dispatch: {}
+
+permissions:
+  contents: write
+
+concurrency:
+  group: autotrade-main
+  cancel-in-progress: false
+
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install "httpx>=0.25" "numpy>=1.24"
+      - name: Run the agent once
+        run: |
+          set -o pipefail
+          python3 -m tartar.autotrade run | tee run.json
+          git config user.name "tartar-autotrade"
+          git config user.email "actions@users.noreply.github.com"
+          git add -f autotrade
+          if git diff --cached --quiet; then exit 0; fi
+          git commit -m "Autotrade (paper): $(python3 -c "import json;s=json.load(open('run.json'));print(f\"opened {s.get('opened',0)}, closed {s.get('closed',0)}, rejected {s.get('rejected',0)}, errors {len(s['errors'])}, changes {len(s['changes'])}\" + (f\", HALTED: {s['halted']}\" if s['halted'] else ''))")"
+          for i in 1 2 3 4; do
+            if git pull --rebase origin main && git push origin HEAD:main; then
+              # a new halt fails the job so GitHub emails the repository owner
+              python3 -c "import json,sys;s=json.load(open('run.json'));h=s.get('new_halts');print('NEW HALT:',h) if h else None;sys.exit(1 if h else 0)"
+              exit $?
+            fi
+            sleep $((2 ** i))
+          done
+          exit 1

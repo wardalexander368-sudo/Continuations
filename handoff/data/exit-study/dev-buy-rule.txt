@@ -1,0 +1,12 @@
+T 20 dev_buy 0.01-0.15 flags True buyers>=0: dev  +1.69% [ -1.28,  +4.55] n=  977 med  -2.93% win 13.7%
+T 60 dev_buy 0.01-0.15 flags False buyers>=3: dev  +0.35% [ -3.92,  +4.48] n=  792 med  -4.63% win 25.6%
+T 20 dev_buy 0.05-0.3 flags True buyers>=0: dev  +0.27% [ -3.07,  +3.52] n=  891 med  -3.36% win 15.7%
+T 20 dev_buy 0.01-0.15 flags False buyers>=3: dev  -0.09% [ -4.87,  +4.68] n=  871 med  -5.80% win 28.5%
+T 20 dev_buy 0.01-0.3 flags True buyers>=0: dev  -0.29% [ -2.68,  +2.03] n= 1246 med  -3.04% win 11.8%
+T 20 dev_buy 0.01-0.15 flags False buyers>=0: dev  -0.55% [ -2.84,  +1.66] n= 2695 med  -3.35% win 22.5%
+T 60 dev_buy 0.05-0.3 flags True buyers>=0: dev  -0.64% [ -3.50,  +2.14] n=  723 med  -3.23% win 11.1%
+T 60 dev_buy 0.05-0.3 flags False buyers>=3: dev  -0.74% [ -4.93,  +3.25] n= 1004 med  -5.84% win 28.3%
+
+CHOSEN T 20 dev_buy 0.01-0.15 flags True buyers>=0
+  dev   +1.69% [ -1.28,  +4.55] n=  977 med  -2.93% win 13.7%   (every launch -5.81%)
+  TEST  -2.20% [ -6.68,  +2.42] n=  468 med  -2.85% win 11.8%   (every launch -4.41%)

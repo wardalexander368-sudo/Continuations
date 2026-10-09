@@ -1,0 +1,59 @@
+# Always-on raw recorder: pump.fun launches and trades plus graduated tokens' PumpSwap pools,
+# from the free public Solana RPC, without a Claude session. Paper data only: no wallet, no keys.
+#
+# Each run records for ~5.75 h. Runs share one concurrency group, and the cron fires every 2 h,
+# so a run is always queued behind the current one and starts as it ends (gaps of a minute or two).
+# Finished hours go to a GitHub Release per UTC day (tag raw-gha-YYYYMMDD), not into git:
+# at ~40 MB/hour the repository would grow ~1 GB a day. Each run is one recorder's timeline, so
+# assets carry the run id; `handoff/experiments/fetch_gha_raw.py` lays them out one directory per run.
+name: recorder
+
+on:
+  schedule:
+    - cron: "7 */2 * * *"
+  workflow_dispatch:
+    inputs:
+      hours:
+        description: "hours to record"
+        default: "5.75"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: recorder
+  cancel-in-progress: false
+
+jobs:
+  record:
+    runs-on: ubuntu-latest
+    timeout-minutes: 360
+    env:
+      GH_TOKEN: ${{ github.token }}
+      RUN: ${{ github.run_id }}
+      OUT: rec
+      SOLANA_COMMITMENT: processed
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+          sparse-checkout: |
+            tartar
+            pyproject.toml
+            README.md
+            .github
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install -e .
+      - name: Record and upload each finished hour
+        run: |
+          bash .github/workflows/recorder-upload.sh loop &
+          uploader=$!
+          python3 -m tartar record --out "$OUT" --track-minutes 120 --pumpswap-hours 4 \
+            --hours "${{ github.event_name == 'workflow_dispatch' && inputs.hours || '5.75' }}" 2>&1 | tee "recorder-run$RUN.log" || true
+          kill "$uploader" 2>/dev/null || true
+          wait "$uploader" 2>/dev/null || true
+          bash .github/workflows/recorder-upload.sh once
+          gzip -f "recorder-run$RUN.log"
+          bash .github/workflows/recorder-upload.sh file "recorder-run$RUN.log.gz" "$(date -u +%Y%m%d)"

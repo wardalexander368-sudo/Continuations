@@ -1,7 +1,7 @@
 # TARTAR: project overview
 
 Written 2026-10-09 (~14:00 UTC) by the handoff session, at the user's request, from the repo as it
-stood then. This is the short version for the user and for any new session. The detail lives in
+stood then; sections 4–6 updated 20:20 UTC from the board. This is the short version for the user and for any new session. The detail lives in
 the topic documents (*Where to read more* below); `handoff/STATUS.md` is the live task board.
 
 ## 1. What TARTAR is
@@ -87,7 +87,11 @@ intervals by token. Measured costs:
 | SOL-USD on-chain via Jupiter | **~0.5 bps per fill** at every hour sampled, 03:37–15:55 UTC (p90 ~0.7 on the quote, ~1.3 with latency), against 90 bps taker at Coinbase |
 
 On pump.fun a round trip starts **~3.5% down** (fees, network, impact), and the typical launch is
-dead within minutes. Every strategy family tested loses:
+dead within minutes. That paper figure has no execution fee: the first **real** round trips
+(2026-10-09 19:46 UTC, 0.01 SOL on CATE through PumpPortal Lightning) lost **3.07%**, about 2 points
+of it Lightning's 1% per side, so a fresh-token round trip through Lightning costs ~5.5%. Jupiter's
+Swap API with our own wallet would cut that to ~1.1% on CATE and ~3.1% on a fresh token
+(profitability §3.19). Every strategy family tested loses:
 
 | Strategy family | Result on later launches |
 |---|---|
@@ -107,27 +111,30 @@ The one place on-chain costs are tiny is SOL-USD itself, which is what the user'
 
 | Item | State | When |
 |---|---|---|
-| **Dip-buying on established memecoins** | pre-registered rolling forward test; add a cohort about daily (`established_cohort.py`); next due ~02:24 UTC 10-10 | scored 2026-10-30 or at ≥ 200 trades |
+| **Dip-buying on established memecoins** | pre-registered rolling forward test; the GitHub Action `paper-tests.yml` adds a cohort daily at 02:24 UTC, no session needed (dip/jevtrader session scores it) | scored 2026-10-30 or at ≥ 200 trades |
+| **Predictor + P(rug) 5 m rule** | pre-registered 18:36 UTC 10-09 (`preregistration/predictor-strategy/`); dev hours: 1 m loses at every threshold, 5 m noisy (n=23); predictor-strategy thread | at 100 primary trades or 2026-10-12 |
 | **jevtrader** (the user's SOL-USD + Jev paper test, its own repo) | sealed until day 28; TARTAR only supplies the on-chain cost table and never touches it | results 2026-10-23 |
-| **Edge hunt** (new families) | **on hold by the user**. Best candidate so far: delta-hedged JLP, +7.9% APR over USDC lending, exploratory 90% CI [+3.0, +12.4]; worth a pre-registered 90-day paper forward test | when the user resumes it |
+| **Edge hunt** (new families) | **resumed 17:32 UTC 10-09.** A1, delta-hedged JLP (+7.9% APR over USDC lending, exploratory 90% CI [+3.0, +12.4]): 90-day paper forward test, snapshots by the `paper-tests` Action. D, 14-day cross-sectional momentum on Hyperliquid perps (+1.50%/week on test, CI [−0.12, +3.31]): 52-week forward test. C (PumpSwap LP, memecoin shorts) closed. Judging A–E is claimed by the curve-retrain thread (`edge-hunt.md`) | A1 2027-01-08; D 2027-10-11 |
 | **PumpSwap 5 m model** | failed its install rule on 48 test pools; retry when there are more graduated pools | when data allows |
 | **More data** | recorders running in the active sessions; finished hours go to `handoff/data/` | ongoing |
-| **Real-fill cost measurement** (PumpPortal, ~0.05 SOL) | blocked until the API key is stored as a secret; owned by the clever session's successor (`handoff/experiments/real_fills.py`) | after the key |
-| **Retrain the curve models on the newer recordings** (v3.2: `raw-clever` 12–16, `raw-clever2`, `raw-v3`) | open; the 5 m blend is ~3 points underconfident on these hours (predictor doc 8.4.1). Train now, but don't install over `trades-60s`, `trades-300s` or `rug-20s` before the predictor-strategy forward test is evaluated (≤ 2026-10-12): its `evaluate` asserts their SHA-256 | install after 10-12 |
+| **Real-fill cost measurement** (PumpPortal, ~0.05 SOL) | **done 19:46–19:49 UTC 10-09:** 2 round trips, −3.07% steady state, landed in 1.4 s first try (`handoff/data/real-fills/`, see section 4); ~0.0035 SOL spent. Next: confirm the cheaper Jupiter route (`jupiter_fills.py`, dry run tested) | needs `TARTAR_WALLET_KEY` from the user |
+| **Retrain the curve models on the newer recordings** (v3.2: `raw-clever` 12–16, `raw-clever2`, `raw-v3`) | open; the 5 m blend is ~3 points underconfident on these hours (predictor doc 8.4.1). Claimed by the curve-retrain thread (20:13 UTC 10-09). Train now, but don't install over `trades-60s`, `trades-300s` or `rug-20s` before the predictor-strategy forward test is evaluated (≤ 2026-10-12): its `evaluate` asserts their SHA-256 | install after 10-12 |
 
 ## 6. Decisions the user has made
 
 * **Real money only as the user directs.** On 2026-10-09 (~17:00 UTC) the user funded a PumpPortal
   wallet with ~0.05 SOL to measure real costs: two tiny round trips on one liquid PumpSwap token.
-  After that, real trades only for a rule that passes a pre-registered paper forward test. One
-  session owns the wallet, and nobody uses PumpPortal's metered streams.
+  Those two trips ran at 19:46–19:49 UTC (section 4). From here, real trades only for a rule that
+  passes a pre-registered paper forward test. One session owns the wallet, and nobody uses
+  PumpPortal's metered streams.
 * **Jev stays off in TARTAR** (2026-10-09): no shadow mode, no Jev scorer, no new asks. Cached
   answers may be read offline.
 * **The live fast loop is retired.**
 * **No private RPC for now.** The public RPC captures a median 100% of each token's trades on the
   current recorder, and faster data can't make launch buying pay (section 4).
 * **jevtrader is sealed:** never unblind, run, push to, or feed from it.
-* **Edge hunt on hold** until the user asks.
+* **Continuous work toward profit** (17:32 UTC 10-09, reaffirmed 20:12 UTC): the edge hunt is
+  resumed and sessions pick up suggested next steps without waiting.
 * **Weekly usage limit:** at ~95%, dump everything to the repo with a complete summary.
 
 ## 7. Data
@@ -159,10 +166,11 @@ into `handoff/data/` as they close.
 
 | Document | What's in it |
 |---|---|
+| [TARTAR System Map](https://claude.ai/artifact/X2ArtEADaLo4WwcWRa4pZ5) | visual map of the pipeline, results, strategy ledger and every agent session's progress (as of 10-09 20:20 UTC; private to the owner unless shared) |
 | `handoff/STATUS.md` | live board: who is working on what, the ranked queue, rules, log |
 | `handoff/candle-prediction-agent.md` | the predictor: architecture, data pipeline, features, every model version, scam filtering, open problems |
 | `handoff/profitability.md` | every strategy test with its numbers (§1 is the summary table) |
-| `handoff/edge-hunt.md` | the paused edge hunt: findings and how to resume |
+| `handoff/edge-hunt.md` | the edge hunt: findings, ranking and the open angles |
 | `handoff/jevtrader.md` | the user's jevtrader and TARTAR's SOL-USD cost table |
 | `handoff/preregistration/` | pre-registered studies and their results |
 | `handoff/experiments/` | the study scripts |

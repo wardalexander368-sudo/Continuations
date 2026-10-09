@@ -23,6 +23,10 @@ Where each family stands (2026-10-09):
 | Copy-trading wallets whose buys paid off | closed, loses | §3.15 |
 | Graduated tokens in their first hour on PumpSwap (fees 1.20–1.25%/side, §3.13) | closed, loses (pre-registered, 264 pools) | §3.16 |
 | Established memecoins: dip buying | rolling forward test, scored 2026-10-30 | §3.11 |
+| Predictor v3.1 candle calls + P(rug), held to the candle close (1m, 5m) | closed, loses (pre-registered, 108 trades) | §3.20 |
+| Smarter exits, regime gating and cheaper execution on launch buys | best: skip flags + TP +100%, Jupiter, 0.02 SOL: −2.9% [−4.1, −1.6]; still loses | §3.21 |
+| Picking movers from early flow, wallets, holders, curve shape, the creator, the name | movers predictable (AUC 0.88) but they collapse; small creator buys beat buy-all by ~2–4 points, still −2.2% on test | §3.22 |
+| Curve-triggered entries: level crossings, dips after a run | crossings lose (−7.0% test); 70% dip after a 40-SOL run is break-even (−0.3% [−7.4, +6.7]) | §3.23 |
 | SOL-USD with Jev (the user's jevtrader) | sealed test ends 2026-10-23; on-chain costs ≈ 0.5 bps/fill | §3.12, `handoff/jevtrader.md` |
 
 ## 2. How it is measured (`tartar/profit.py`, `tartar profit`)
@@ -763,6 +767,158 @@ token-account rent, routes to the best pool, costs nothing to use, and is built.
 two 0.01 SOL round trips on CATE with `jupiter_fills.py roundtrip --real`, by the wallet's
 holder, once the user adds the key. For every rule, the cost bar falls by ~2 points: fresh
 curve tokens ~3.1% per round trip, large pools ~1%.
+
+### 3.20 Trading the predictor's candle calls with P(rug): no edge (pre-registered)
+
+Predictor v3.1's "live edge" (+8.0% at 1m, +11.9% at 5m) is a forecast-accuracy measure (point
+error against "the price stays put"), not a return. Test: at every candle open of a launch at
+least 20 s old, buy when a signal from the model's distribution of the close is high and the
+launch's 20 s P(rug) is low; sell at the candle's close (`handoff/experiments/predictor_strategy.py`;
+signals `p_clear` = P(close clears the 3.5% cost floor), `p_up`, trimmed expected return).
+
+* **Development** (6,336 launches, `raw-clever` 13–15 + `raw-clever2` 16, unseen by both models;
+  thresholds on the earlier 60%): 1m loses at every threshold in both halves (best: `p_up` top 2%,
+  P(rug) < 0.1, −3.6% [−5.9, −1.6] on the later 40%), about break-even *before* costs. The trimmed
+  expected return is harmful at both lengths (top rows −35% to −90%, collapsing tokens, as in §3.2).
+  P(rug) < 0.1 helps every signal by a few points. 5m was noisy (−6.4% earlier, +5.0% later on 23).
+* **Pre-registered forward test** (`handoff/preregistration/predictor-strategy/`, registered 18:36
+  UTC, scored once on 2,800+ fresh launches): **5m `p_clear` > 0.362, P(rug) < 0.1: −5.15%
+  [−11.85, +2.52] on 108 trades; −7.07% at measured Lightning costs. Not confirmed.** The 1m line:
+  −4.92% [−6.63, −3.37] on 590.
+* **Reading:** the predictor calls direction and flat-vs-move well, but the candles it likes do not
+  move enough to pay a 2.5–5.5% round trip. Holding to one candle's close is the horizon the model
+  is built for; longer holds are already closed (§3.14).
+
+### 3.21 The agent's trading skills: exits, gating and execution (trading-skills audit)
+
+The user asked (2026-10-09 20:30 UTC) for improvements to the agent's trading skills. Entry
+families are closed (§3.2–3.20), so this audit changes the other parts of a trade: **how it
+exits**, **when it trades at all** (market regime), and **how it executes** (route, size, network
+fee). Data: every screened SOL launch on the five newest recordings (`raw-eager`, `raw-clever`,
+`raw-clever2`, `raw-v3`, `raw-pred`; one copy per mint), **22,363 launches**: dev = created before
+16:00 UTC 10-09 (15,068), test = 16:00–20:20 UTC (7,295; after the installed P(rug) model's
+training data). State at +20 s is the fast loop's own (`_screens` replay, flags included); fills on
+the recorded reserves after 1 s, as `profit.round_trip`. A trade counts only if the recording
+covers its whole holding period up to the rule's max hold (decided at entry, never by when it
+exited). Scripts: `handoff/experiments/exit_study.py` (`extract`, `run`), `regime_gate.py`,
+`exit_tp_grid.py`; outputs `handoff/data/exit-study/`.
+
+*Correction (21:55 UTC):* the first version of this section (20:45) kept a trade when its exit
+fell inside the recording, so near the end of each recording early take-profits were kept and
+full-length losers dropped (§3.10's lesson). That flattered the 30-minute TP rules by ~1 point.
+All numbers below are from the fixed scripts.
+
+**1. The ceiling: two thirds of launches never offer a sale above cost.** An *oracle* exit (the
+best sale in the next 30 minutes, chosen with hindsight) still has a median of −3.45% on every
+launch: only 33% of launches ever trade above our break-even after a +20 s entry. Its mean is
++44% on test, all from the few that run. Risk filters remove exactly those:
+
+| Entry filter (test, paper costs) | Oracle exit mean | Oracle win | Current exit (hold 180 s) | Best exit chosen on dev |
+|---|---|---|---|---|
+| every launch | +44.1% | 33% | −5.0% | −4.6% (hold 60 s, TP +30%, trail 10%, dev-sell, dump) |
+| live skip flags (`concentrated`, `sniped`, `dev_bag`) | +15.6% | 14% | −6.8% | **−3.7%** (TP +100%) |
+| P(rug) < 0.1 | +14.2% | 21% | −6.3% | −4.6% |
+| flags + P(rug) < 0.1 | **+1.8%** | 7% | −3.9% | −3.8% (hold 180 s) |
+
+(0.1 SOL, 1.25% per side, 0.0002 SOL per transaction, as the paper model.) Filtering for safety
+cuts losses by removing the launches that move: with flags and P(rug) < 0.1 even perfect hindsight
+makes only +1.8%. No exit rule can rescue an entry whose oracle is near zero.
+
+**2. Exits: take profit at +100%, don't stop out.** 360 causal rules (max hold 60 s–30 min ×
+trailing stop 10–50% × TP +30%/+100% × sell on the creator's first sell × sell after a single sell
+≥ 10%/25% of the curve's SOL), chosen on dev. On the live skip-flag policy a **TP of +100%** wins
+on dev and holds on test: −3.7% vs −6.8% for the current fixed 180 s hold, a 3-point gain. Once
+the TP is on, the max hold barely matters (180 s, 10 min and 30 min within 0.3 points on dev).
+Every stop-loss and trailing stop makes that policy worse or no better (SL −50% costs up to 1
+point; `tp-grid-live-flags.txt`): curve prices dip and recover often, and a stop sells the dip. TP
+levels from +50% to +150% are within ~0.5 points. On unfiltered launches the best rules are tight
+(trail 10%, TP +30%, 60 s) and gain only ~0.4 points over a 60 s hold. Selling on the creator's
+first sell or on a large dump never adds more than 0.1 point. The fast loop's default exit is now
+TP +100%, 30 min, no stop.
+
+**3. Execution: route, size and the real network fee add ~1 point.** The paper model charges
+0.0002 SOL per transaction; the real fills paid 0.000011 (STATUS real-money entry). With the
+Jupiter route (no route fee, §3.19), the measured network fee and 0.02 SOL per entry (less
+impact on ~30-SOL curves), the round-trip floor falls from −3.52% to −2.72%. The live skip-flag
+policy with TP +100% (hold 180 s, chosen on dev at these costs) then makes **−2.88% [−4.11, −1.60]**
+on test (2,588 trades, win 7.4%; dev −2.3%). At Lightning's 1% per side it is −5.3%, and Lightning
+also strands 0.0015 SOL of token-account rent per new token (1.5 points at 0.1 SOL, 7.5 at 0.02),
+which no row here charges: **fresh launches through Lightning cost ~7% per round trip at 0.1 SOL.**
+
+**4. Market regime: no signal.** Three causal gates at each decision (mean net of the last 30
+minutes' completed launch trades, the share of them that ever cleared cost, launches in the last
+10 minutes): rank correlation with the trade's result −0.02 to +0.01 on dev; gates chosen on dev
+don't hold on test (e.g. −4.1% vs −3.9% ungated) or never fire there.
+
+**Reading:**
+* The agent's exit skill had room: a fixed hold is the wrong shape for a payoff whose value sits
+  in a few runners. TP +100% with no stop is worth ~3 points per trade on the live policy, and
+  execution ~1 more. Together they take the best launch policy from −6.8% to −2.9%, **still a
+  loss**.
+* The remaining gap is the round-trip floor on launches that never trade again. Something new has
+  to pick the ~30% of launches that move *without* the risk filters removing them (§3.22).
+* For any launch rule: TP +100%, no stop-loss; size small; charge the real route's fee and the
+  rent; Jupiter with our own key, never Lightning, for fresh tokens.
+
+### 3.22 Picking the launches that move: early-flow features (trading-skills thread)
+
+§3.21 left one question: can anything pick the ~33% of launches that ever trade above cost,
+without the risk filters removing them? Same launches and split as §3.21 (dev before 16:00 UTC
+10-09, test after), entry at +20 s or +60 s, the paper policy's default exit (TP +100%, 30 min,
+no stop) at Jupiter costs (1.25% per side, 0.02 SOL, 0.000011 SOL per transaction). Script:
+`handoff/experiments/mover_study.py` (features from the full trade paths, including each buyer's
+history across every recording, causal); outputs `handoff/data/exit-study/mover-groups.txt`,
+`dev-buy-rule.txt`.
+
+Feature groups, each alone and all together: **flow** (buys, sells, SOL in and out, buyers,
+sellers, time since the last trade), **buyers and wallets** (buy sizes, round sizes, share of
+first-2 s SOL, share of fresh wallets / repeat bots (≥ 20 earlier launches) / in-between),
+**holders and growth** (holders, buyers in each half of the window), **curve shape** (real SOL at
+¼, ½, ¾ and all of the window, peak, drawdown, time of peak), **dev** (the creator's buys and
+sells, earlier launches and rugs), **name**. LightGBM trained on the first 70% of dev, a
+top-fraction threshold chosen on the last 30% of dev, test once; two targets: the trade's net,
+and "mover" (any sale in 30 min above cost).
+
+**Movers are easy to predict and lose money.** Mover AUC is 0.84–0.90 on test from flow, curve
+shape or holder growth alone, the same on dev and test. But the launches most likely to move are
+the ones about to collapse: their top 5–10% lose −3% to −18% on test with medians of −50% to −66%.
+"Will it move" is "is it volatile", and on the curve the downside is the bigger side. Models
+trained on the trade's net pick quiet launches that lose about the cost floor. No group, at
+either entry time, has a positive validation pick that holds on test (best: all features, +20 s,
+top 2%: valid +3.4%, test +1.4% [−6.2, +9.6] on 74 trades; buy-every-launch is −4.4% on test).
+
+**The one consistent signal: the creator's own buy size.** Launches where the creator bought
+nothing lose the floor (−3.3%); the loss grows steadily with the creator's buy above 0.3 SOL
+(−6% at 0.3–0.7, −12% at 2–3.5, −21% above 6 SOL on dev: big creator buys are the bundles that
+dump, §3.18). A small creator buy (0.01–0.3 SOL) with no creator sale by +20 s beats buying every
+launch in **every one of the 16 hours** (+0.8 to +9.0 points). But it doesn't pay: the grid of 60
+variants (`dev_buy_rule.py`: buy-size band × entry +20/+60 s × live flags × minimum buyers)
+picks creator buy 0.01–0.15 SOL + live flags at +20 s, +1.7% [−1.3, +4.6] on 977 dev trades, and
+it makes **−2.2% [−6.7, +2.4]** on 468 test trades (+2.2 points over buying every launch).
+
+**Reading:** the early trades separate *volatile* launches from dead ones very well, and
+separate *good* from *bad* only a little (small creator buys, the live flags). Neither is enough to
+clear a ~2.7% round trip. Not pre-registered: nothing positive on held-out launches. A forward
+test of the creator-buy rule would be expected to lose ~2%.
+
+### 3.23 Curve-triggered entries: level crossings lose, deep dips after a big run are break-even
+
+Two entry families on the same launches, split and costs as §3.22 (Jupiter, 0.02 SOL, exits:
+TP none/+30%/+100% × max hold 180 s/10 min/30 min, no stop; a position open at graduation valued
+at the last curve price less 10%; a signal counts only if the recording covers its max hold).
+Scripts `handoff/experiments/level_entry.py`, `curve_dip_entry.py`; outputs
+`handoff/data/exit-study/level-entry.txt`, `curve-dip-entry.txt`.
+
+* **Level crossing** (buy when the curve's real SOL first reaches 5/10/15/20/30/40 within 30 min):
+  every one of 54 rules loses on dev (−3.1% to −19.4%). Chosen (40 SOL, TP +30%, 180 s): dev
+  −3.1%, **test −7.0% [−10.6, −3.5]** on 730. Median trades are positive with TP +30% (win ~53%),
+  but the losers are rugs. Momentum on the curve is the copy-trading result again (§3.15).
+* **Dip after a run** (buy when the price is 30/50/70% below its running peak, once the peak
+  reached 10/20/40 SOL): the deeper the dip and the bigger the run, the better. Chosen (40 SOL
+  peak, 70% dip, TP +100%, 180 s): dev −0.4% [−5.2, +4.7] on 907, **test −0.3% [−7.4, +6.7]** on
+  448. It holds out of sample but at zero, with a wide interval and median −15% to −20%: the
+  closest any launch rule here has come, at the cheapest route's costs (−2 points more through
+  Lightning). Not pre-registered: nothing positive on dev or test.
 
 ## 4. What this means for the plan
 
