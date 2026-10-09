@@ -57,15 +57,17 @@ which it never saw:
 
 The confidence is honest (it matches the hit rate within ~2 points), and the error is 2–12%
 smaller than the naive forecast. Most next-candle moves of young memecoins are noise, so expect
-modest confidence. One known gap: the 5 m model is still overconfident at the candle open (states
-75.5%, hits 69.7%).
+modest confidence. One known gap: on the newest hours (12–15 UTC) every curve blend understates
+its trading-candle hit rate by 1.7–2.8 points (e.g. 1 m: hits 69.1%, states 67.4%); the cause is
+not yet found. The 5 m model's open, overconfident on v3.1's test hours, is calibrated on those
+newer hours (hits 74.8%, states 73.4%).
 
 **After graduation** (the token trades on its PumpSwap pool), separate **PumpSwap models** for
-30 s and 1 m candles (~350 graduated pools) take over. On 52 later pools they make the forecast
-honest: on trading candles the 1 m blend states 72.0% and hits 72.0% (30 s: 73.5% vs 73.8%), where
-the online model alone states ~50% and hits ~64%. Their point forecasts are barely better than
-naive (+0.9% and +1.7% edge). A 5 m version failed the install rule (worse edge), so at other
-lengths the online model carries on alone after graduation.
+15 s, 30 s and 1 m candles (350–460 graduated pools) take over. On later pools they make the
+forecast honest: on trading candles the 1 m blend states 72.0% and hits 72.0% (30 s: 73.5% vs
+73.8%; 15 s: 62.6% vs 62.4%), where the online model alone states ~49–50% and hits 54–64%. Their
+point forecasts are barely better than naive (+0.9% to +2.1% edge). A 5 m version failed the
+install rule (worse edge), so at 5 m the online model carries on alone after graduation.
 
 **Scam filtering:** a live risk level (ok / caution / danger / scam) with reasons, plus a learned
 **P(rug)**, the chance a launch collapses 80% within 30 minutes, judged on its first 20 seconds.
@@ -107,13 +109,17 @@ The one place on-chain costs are tiny is SOL-USD itself, which is what the user'
 | **Dip-buying on established memecoins** | pre-registered rolling forward test; add a cohort about daily (`established_cohort.py`); next due ~02:24 UTC 10-10 | scored 2026-10-30 or at ≥ 200 trades |
 | **jevtrader** (the user's SOL-USD + Jev paper test, its own repo) | sealed until day 28; TARTAR only supplies the on-chain cost table and never touches it | results 2026-10-23 |
 | **Edge hunt** (new families) | **on hold by the user**. Best candidate so far: delta-hedged JLP, +7.9% APR over USDC lending, exploratory 90% CI [+3.0, +12.4]; worth a pre-registered 90-day paper forward test | when the user resumes it |
-| **PumpSwap models** (predictions after graduation) | 30 s and 1 m installed; 5 m failed its install rule; 15 s in training (handoff session) | 10-09 |
+| **PumpSwap 5 m model** | failed its install rule on 48 test pools; retry when there are more graduated pools | when data allows |
 | **More data** | recorders running in the active sessions; finished hours go to `handoff/data/` | ongoing |
-| Curve models' remaining calibration gaps (5 m overconfident at the open; blends 1–2 points underconfident) | clever session | 10-09 |
+| **Real-fill cost measurement** (PumpPortal, ~0.05 SOL) | blocked until the API key is stored as a secret; owned by the clever session's successor (`handoff/experiments/real_fills.py`) | after the key |
+| Curve blends 1.7–2.8 points underconfident on trading candles | open; the prior and the direction calibrator are ruled out, next is the flat-vs-move call (STATUS log 17:20) | next |
 
 ## 6. Decisions the user has made
 
-* **Paper only.** No real-money trading code without an explicit request.
+* **Real money only as the user directs.** On 2026-10-09 (~17:00 UTC) the user funded a PumpPortal
+  wallet with ~0.05 SOL to measure real costs: two tiny round trips on one liquid PumpSwap token.
+  After that, real trades only for a rule that passes a pre-registered paper forward test. One
+  session owns the wallet, and nobody uses PumpPortal's metered streams.
 * **Jev stays off in TARTAR** (2026-10-09): no shadow mode, no Jev scorer, no new asks. Cached
   answers may be read offline.
 * **The live fast loop is retired.**

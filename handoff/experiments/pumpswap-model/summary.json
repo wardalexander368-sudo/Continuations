@@ -199,5 +199,72 @@
         "info_at_open": true
       }
     }
+  },
+  "15s": {
+    "pools": 458,
+    "rows": 592326,
+    "chosen": {
+      "valid": 0.7868893444578021,
+      "num_leaves": 63,
+      "min_leaf": 1500,
+      "rounds": 112
+    },
+    "test_log_loss": 0.8742650881090068,
+    "live_at_open": {
+      "tokens": 68,
+      "online_only": {
+        "all": {
+          "n": 9776,
+          "hit_rate": 0.7554,
+          "avg_confidence": 0.7245,
+          "band_coverage": 0.9087,
+          "band_stated": 0.8297,
+          "mae_pct": 4.2383,
+          "naive_mae_pct": 4.214,
+          "edge": -0.0058
+        },
+        "trading": {
+          "n": 4259,
+          "hit_rate": 0.5353,
+          "avg_confidence": 0.4874,
+          "band_coverage": 0.8535,
+          "band_stated": 0.7094,
+          "mae_pct": 8.9206,
+          "naive_mae_pct": 8.8649,
+          "edge": -0.0063
+        }
+      },
+      "global_plus_online": {
+        "all": {
+          "n": 9776,
+          "hit_rate": 0.7927,
+          "avg_confidence": 0.7853,
+          "band_coverage": 0.8973,
+          "band_stated": 0.8735,
+          "mae_pct": 4.1319,
+          "naive_mae_pct": 4.214,
+          "edge": 0.0195
+        },
+        "trading": {
+          "n": 4259,
+          "hit_rate": 0.6243,
+          "avg_confidence": 0.6263,
+          "band_coverage": 0.8143,
+          "band_stated": 0.7882,
+          "mae_pct": 8.6766,
+          "naive_mae_pct": 8.8649,
+          "edge": 0.0212
+        }
+      }
+    },
+    "verdict": {
+      "install": true,
+      "checks": {
+        "edge_all": true,
+        "edge_trading": true,
+        "calibration": true,
+        "info_at_open": true
+      }
+    }
   }
 }

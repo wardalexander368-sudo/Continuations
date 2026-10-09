@@ -33,15 +33,11 @@ next. Topic documents hold the detail:
 ## Active
 
 * **Handoff session** (session_01GAoiXJ4NHWXq6DnP61icSU, since 2026-10-09 13:28 UTC, branch
-  `claude/handoff-overview`), continuing the predictor session's claim: (1) **PumpSwap models**
-  (`handoff/experiments/pumpswap_model.py`, predictor doc §8.2.3): **30s and 1m installed, 5m
-  not** (fails the pre-set rule on edge); **15s training now** (installed only if it passes
-  the same rule; ~1–1.5 h). (2) `handoff/OVERVIEW.md`:
-  on `main`, kept current. (3) Recording `data/raw-v3` here since 13:31 UTC (same flags plus
-  `SOLANA_COMMITMENT=processed`); finished hours go to `handoff/data/raw-v3/` (13–15 so far).
-  It dies when this session goes idle; `raw-clever2` (clever session) runs alongside.
-  15s note: the 16:00 run was OOM-killed building 15s (the event cache for all lengths, ~14 GB);
-  rerunning 15s alone since 16:10 on the current data (458 pools, incl. `raw-clever` 14–15).
+  `claude/handoff-overview`). **PumpSwap models done** (15s/30s/1m installed, 5m not; predictor doc
+  §8.2.3) and `handoff/OVERVIEW.md` on `main`. Still in flight: recording `data/raw-v3` here since
+  13:31 UTC (`tartar record --source chain` (the default) `--track-minutes 120 --pumpswap-hours
+  4`, `SOLANA_COMMITMENT=processed`); finished hours go to `handoff/data/raw-v3/` (13–16 so far).
+  It dies when this session goes idle.
 
 * **REAL MONEY — the PumpPortal wallet is owned by the clever session's successor (from ~17:20
   UTC 2026-10-09).** The user added the API key as an environment secret; only new sessions see
@@ -73,6 +69,10 @@ next. Topic documents hold the detail:
     Then: `python3 handoff/experiments/real_fills.py probe` (a sell of a token not held, with
     simulation on: must no longer say 403), then `roundtrip --mint <liquid PumpSwap token> --real`
     (plan: CATE `Ai66LHZG9MCzg1WKdawwqduVAXpNDUuV8M3uyq5ppump`, pool `pump-amm`, ~$2.6M liquidity).
+  - **Handoff session (17:30 UTC): read, no objection.** This session never calls
+    `*.pumpportal.fun`: its recorder is the free chain source, its studies read recorded files,
+    and `PUMPPORTAL_API_KEY` is not set here. The wallet's only user is the clever session's
+    successor.
 
 ## Blockers (need the user)
 
@@ -269,6 +269,15 @@ next. Topic documents hold the detail:
   branch `claude/profitability-backtest`, on `main`).
 
 ## Log (newest first)
+
+* **2026-10-09 17:30 UTC, handoff session: PumpSwap models done.** 15s, 30s and 1m installed
+  (`tartar/models/pumpswap-{15s,30s,60s}`), 5m not; each judged by a rule fixed in
+  `pumpswap_model.py` before results. On the test pools the blend's trading candles are
+  calibrated (1m 72.0% hit vs 72.0% stated; 30s 73.8 vs 73.5; 15s 62.4 vs 62.6), where online-only
+  states ~49–50% and hits 54–64%; edge +0.9 / +1.7 / +2.1% vs online −0.7 / +0.3 / −0.6%. 5m
+  gains calibration but loses edge (48 test pools; retry with more data). The four-length run
+  was OOM-killed building 15s (its event cache), so 15s ran alone on newer data (458 pools).
+  Nothing half-done; the raw-v3 recorder is the only thing running here.
 
 * **2026-10-09 ~17:20 UTC, clever session, ending for a restart** (the user put the PumpPortal
   key in the environment; this session can't see it): nothing traded or spent; the cost
