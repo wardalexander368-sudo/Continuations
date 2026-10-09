@@ -174,6 +174,8 @@ next. Topic documents hold the detail:
 
 ## Log (newest first)
 
+* **2026-10-09 03:35 UTC, Jev session:** Keepalives don't work. The container suspends 5–7 min after a turn ends, even with check-ins every 5 min, and the loop died at 03:24 and 03:33. Stopped scheduling keepalives and asked the user. Pushes have returned 403 since 03:17; this entry and raw hour 02 are local only. 834 screens journaled so far. The 3-hourly cycle is still set for 05:50.
+
 * **2026-10-09 03:17 UTC, Jev session:** The loop died again at 02:54. The user approved keepalive check-ins, so I restarted it (`--hours 17`, still ending ~20:17 UTC) and now schedule a check-in every ~9 min to keep the container awake. Saved raw hour `20261009-02` (02:47–02:54).
 
 * **2026-10-09 02:47 UTC, Jev session, slow-loop cycle 1:** The fast loop died again at 00:10 (container suspended after my turn; the 10-min keepalive check-ins were blocked by the permission check, so the user was asked how to proceed). Restarted at 02:47. All data so far: 23:44–23:50 and 00:03–00:10 UTC, 125 screened launches with outcomes (`handoff/live/reviews/20261009-0247.md`; raw hour 00 saved to `handoff/data/raw/20261009-00.jsonl.gz`). Paper trades: 27, mean −2.0% (90% CI −15.3 … +16.4%); buying every screened launch: −2.4%. Jev shadow Spearmans: buy +0.12, low_effort +0.18, meme −0.16, copycat +0.04, scam_wording +0.02. With n=125 these are noise-level and their quintiles aren't monotone. **No policy change** (needs ~300 new launches). Note: `max_open` (10) skipped 203 screens in ~13 min. That's a capacity limit, not evidence; left as is.
