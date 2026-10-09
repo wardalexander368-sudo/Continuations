@@ -976,7 +976,7 @@ trade's wallet), same launches, dev/test split and fills as §3.21-3.23 (0.02 SO
 * **F2, smart money buying the dip** (wallets whose buys were followed by a rise, scored causally on
   other launches): no help; dips they bought did no better (or worse) on dev's later half.
 * **F3, bundle overhang gone** (the first-2-s buyers hold ≤ 5% / 20% of their peak while others keep
-  buying): every one of 16 rules loses on both dev halves (−1.9% to −9.9%).
+  buying): every one of 16 rules loses on both dev halves (−7.0% to −17.1%).
 
 **Pre-registered** (`handoff/preregistration/who-trades/`) before any test launch was scored, then
 scored once on 7,295 launches created after 16:00 UTC 10-09: **+1.12% [−6.30, +8.49] on 175 trades
