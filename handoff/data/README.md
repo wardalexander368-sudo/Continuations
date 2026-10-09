@@ -127,3 +127,5 @@ recorders overlap in time, and the loaders keep one copy of each token.
   239,033 PumpSwap swaps.
 - `20261009-15`: 15:00–15:59 UTC, 2,203 launches, 396,534 curve trades, 53 graduated SOL pools,
   236,229 PumpSwap swaps.
+- `20261009-16`: 16:00–16:59 UTC, 1,945 launches, 130,561 curve trades, 57 graduated SOL pools,
+  315,333 PumpSwap swaps.
