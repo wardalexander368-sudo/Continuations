@@ -38,6 +38,8 @@ next. Topic documents hold the detail:
 
 
 
+* **Profitability session** (session_01U4x5qUJYMStcujpyLJgQ8N), since 01:55 UTC 10-09: **queue item 11(b), established memecoins**: GeckoTerminal OHLCV for liquid Solana memecoin pools (days old), simple rules with DEX costs, time split, and a random-entry baseline against survivorship. Branch `claude/established-tokens`.
+
 ## Blockers (need the user)
 
 * ~~Network~~: **resolved 22:35 UTC**, the user enabled full network access.
@@ -121,7 +123,7 @@ next. Topic documents hold the detail:
    the raw creates carry `"quote"`, so skip those launches. A quote-paired
    curve has no SOL price, and paper fills on it would be meaningless.
 
-10. ~~**Entry latency in slots**~~ **done 01:40 UTC 10-09**
+10. ~~**Entry latency in slots**~~ **done ~01:25 UTC 10-09**
     (`profitability.md` §3.9). Fees on current SOL launches are 1.25%/side
     (212 sampled trades; no 2.5% creator fee on SOL curves). Only a buy
     bundled into the creation transaction profits (+6.8% at 10 s). Landing
@@ -129,7 +131,7 @@ next. Topic documents hold the detail:
     −1.8% with zero fees and tips. **Launch buying is closed as a strategy
     family; faster infrastructure can't fix it.**
 11. **Next strategy families** (unclaimed): (a) ~~graduation run-up~~
-    **done 02:45 UTC 10-09: no edge** (§3.10; 75 → 80 SOL break-even
+    **done ~01:50 UTC 10-09: no edge** (§3.10; 75 → 80 SOL break-even
     after fixing two biases, earlier entries lose). Still open: trading
     graduated tokens *on PumpSwap*. **Recording exists since 01:54 UTC 10-09:**
     `tartar record|fast --pumpswap-hours N` follows each graduated SOL token's
@@ -182,7 +184,7 @@ next. Topic documents hold the detail:
   2,000–10,800 trades in their first minutes, with the first trade 4–46 slots
   after graduation. No claim open.
 
-* **2026-10-09 02:45 UTC, profitability session:** Graduation run-up (item
+* **2026-10-09 ~01:50 UTC, profitability session** (time corrected): Graduation run-up (item
   11a): it first looked like +5.8%/trade, but that was two biases. Fast
   graduations were dropped by the ≥3-candle filter, and length-biased
   censoring dropped rugs. The fair replay through `FastLoop` (exclude only
@@ -205,7 +207,7 @@ next. Topic documents hold the detail:
     runs ~356 successful tx/s program-wide, too much to record whole, so
     only graduated pools are recorded.
 
-* **2026-10-09 01:40 UTC, profitability session:** Queue item 10 is done
+* **2026-10-09 ~01:25 UTC, profitability session** (time corrected): Queue item 10 is done
   (§3.9). Measured fees from 212 recent TradeEvents: 1.25%/side on SOL
   curves. Simulated entries in slots on the slot recording: only the
   creation-slot bundle profits, and every outside entry loses, even with no
