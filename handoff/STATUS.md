@@ -32,6 +32,17 @@ next. Topic documents hold the detail:
 
 ## Active
 
+* **Go-live path thread** (project thread session, since 2026-10-09 23:05 UTC, branch
+  `claude/project-thread-kytb6q`). **No keys, no real orders; dry-run and paper only.** Task (the
+  user's 22:58 check-in, via the coordinator): make `tartar/autotrade` able to trade a promoted
+  strategy live without manual steps once the user has given a standing approval: route selection
+  (Jupiter with `TARTAR_WALLET_KEY`, else Lightning with `PUMPPORTAL_API_KEY`), live sizing in SOL,
+  per-trade and daily loss limits, a live kill switch, and a fill log comparing each live fill with
+  its paper twin. Builds on the execution-cost thread's §3.19 and `jupiter_fills.py` (no route
+  re-measuring). **Agent-machinery thread:** I touch `broker.py` (wire `LiveBroker`), add
+  `tartar/autotrade/execution.py`, and add small hooks in `runner.py`/`risk.py`; config stays `paper`.
+  Please ping me (via the coordinator) before changing those parts.
+
 * **Trading-skills thread → new markets** (project thread session, since 2026-10-09 22:45 UTC,
   branch `claude/project-thread-x7fh45`). Task (coordinator, under the user's "work nonstop"):
   (1) Hyperliquid vaults / top traders: does following past winners beat cash after fees, with
@@ -39,6 +50,12 @@ next. Topic documents hold the detail:
   late-resolution drift on resolved-market history, net of fees and spread. Free public history
   only, paper, train/test, every rule counted. Scripts in `handoff/experiments/edge-hunt/vaults/`
   and `.../predmkt/`.
+
+* **Edge hunt E thread, E1b** (same session, since 2026-10-09 23:05 UTC, branch
+  `claude/project-thread-9op3pf`). Paper only. Fresh check of E1 on 8 other buyback /
+  revenue-share tokens with Hyperliquid perps (HYPE, JUP, AAVE, DYDX, GMX, CAKE, SKY, BANANA),
+  token list, rule and criteria pre-registered in `handoff/preregistration/revflow/SPEC.md`
+  before any of their data was read.
 
 * **Edge hunt E thread** (project thread session, since 2026-10-09 21:40 UTC, branch
   `claude/project-thread-9op3pf`). **Paper only, no real SOL, no keys.** Task (the user's 21:30
@@ -83,6 +100,11 @@ deep pools match the model, a thin one was 2.4x it). The `launch_selector` slot 
   the predictor-strategy test is evaluated (≤ 2026-10-12)**, not before: its `evaluate` asserts the
   SHA-256 of `trades-60s` / `trades-300s`. This thread does the install when it is woken after that;
   if it is gone, any session may (the doc gives the two commands).
+  **Since 23:05 UTC:** market-wide recalibration study (coordinator, under the user's "work
+  continuously"): the 1m/5m blends swing between over- and underconfident with market-wide drift
+  (8.2.2e). Try a calibration layer fitted on recent resolved candles across all tokens, judged by
+  the predictor-strategy signal's net return at Jupiter (curve fees) and Lightning costs, on hours
+  v3.1 never saw. Research only; touches no installed model file.
 
 * **Dip/jevtrader session** (session_01Htqh7pc1Lh1PP6Dkm1rVvz, since 2026-10-09 17:33 UTC, `main`
   only): continues the profitability session. **Owns the dip forward test (queue 11b)**: the GitHub
