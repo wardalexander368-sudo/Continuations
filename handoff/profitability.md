@@ -477,6 +477,39 @@ differs slightly from price × 1e9.) A handful of wallets trade fee-free (protoc
 * §3.11's in-sample memecoin numbers used 0.5%/side as well; at real fees the memecoin
   mean net falls by ~0.7 points per trade, and the excess is unchanged.
 
+### 3.14 Longer holds on screened launches: no edge (queue item 3)
+
+`handoff/experiments/long_holds.py`: the fast loop itself replayed on the full raw stream of
+every recording before 2026-10-09 02:00 (`handoff/data/raw`, `raw-slots`, `raw-slots-processed`,
+`raw-pumpswap`; 9,591 SOL launches), excluding a trade only when the recorder was down during
+it. Grid: screen 20 / 120 / 600 s × hold 10 / 20 / 30 / 45 min × {the live skip flags; the same
+plus ≥ 20 distinct buyers by the screen}. Holds end inside the recorder's 60-minute tracking
+window. Rule chosen on the first 60% of launches, reported once on the rest:
+
+| | Trades | Mean net | 90% CI | Median | Win |
+|---|---|---|---|---|---|
+| validation, best of 24 (screen 20 s, hold 20 min, flags) | 695 | −5.3% | −8.8 … −2.0% | −3.5% | 4.0% |
+| **test, same rule** | 102 | **−12.5%** | −17.6 … −7.6% | −3.7% | 3.9% |
+| validation range over the 12 "flags" rules | 260–1,032 | −5.3 … −9.5% | all CIs below 0 | −3.5% | 0.5–4.6% |
+| validation, "+ ≥ 20 buyers" rules | 21–57 | −36 … −67% | all below 0 | | |
+
+**Reading:**
+* The median trade is the cost round trip on a token that never trades again (−3.5%: 2 × 1.25%
+  fee, 0.4% network on 0.1 SOL, ~0.6% impact). After 20 s–10 min most screened launches are
+  already dead, and the few that move don't pay for the rest (win rate ~1–5%).
+* Waiting longer before buying doesn't help: a 2- or 10-minute screen is worse than 20 s.
+* Launches with ≥ 20 distinct buyers early are the worst by far (−35% to −67% per trade): heavy
+  early buying marks pump-and-dumps. A good *skip* signal, but skipping doesn't make the rest
+  profitable.
+* Caveats: `tartar record` stops following a token after 10 idle minutes (the fast loop after
+  20), so a token that revives after a quiet spell is valued at its stale price; revivals are
+  rare, but they'd be winners. Old recordings value graduation exits at the final curve price
+  less 10% (positions still open at graduation were very rare here: every test exit was at the
+  horizon); since 2026-10-09 the fast loop sells them on the recorded PumpSwap pool instead.
+
+Together with §3.2–3.10 this closes buying pump.fun launches at any entry delay up to 10
+minutes and any hold up to 45 minutes.
+
 ## 4. What this means for the plan
 
 1. **Don't trade the current predictions.** The confidence is honest about
