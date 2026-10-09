@@ -154,6 +154,20 @@ momentum: mostly momentum again, weaker. Not registered. Script: `crosssection/x
 Covered by the fee-research thread's predictor + P(rug) strategy forward test (see STATUS.md);
 not duplicated here.
 
+**E1. pump.fun's own revenue -> PUMP perp (2026-10-09, edge hunt E thread): pre-registered.**
+pump.fun buys back PUMP with its revenue, and our decoder sees that flow live. On DefiLlama's daily
+revenue (pump.fun + PumpSwap, 2024-03..2026-10) and Hyperliquid perps, `surprise = log(rev_d /
+mean of the 7 days before)` times PUMP's next day: long-short sign(surprise), 0.10%/side + funding,
++0.76%/day train [−0.01, +1.49] (n 265), +0.95% test [+0.08, +1.86] (n 191); the part not
+explained by PUMP's trend is +0.75% / +0.82%, and it is not PUMP's own momentum. It fades over day
+d+1 (+0.72% entering at 00:00, +0.50% at 16:00 UTC) and is gone a day later. No other perp (SOL,
+BTC, five memecoins) shows it. 80 signal x perp x lag cells were looked at; PUMP was named first.
+**Forward test:** `handoff/preregistration/pumpflow/SPEC.md`, 180 days from 2026-10-10, entering
+when DefiLlama first publishes the day (hourly Action `pumpflow-paper.yml`), scored from
+Hyperliquid's history. If it holds, the live version (our own decoder's revenue estimate at
+00:00 UTC) is the next step. Scripts and outputs: `experiments/edge-hunt/pumpflow/`,
+`data/edge-hunt/pumpflow/`.
+
 ## Ranking (2026-10-09, dip/jevtrader session)
 
 1. **D, 14-day cross-sectional momentum on Hyperliquid perps:** test +1.50%/week after costs and
@@ -163,6 +177,8 @@ not duplicated here.
 3. **A2, LST cash-and-carry:** real but decaying to ~0 in 2026; not worth a slot now.
 4. **B, crash reversal:** real on Binance only, needs a CEX account; on-chain median −7.6 bps.
 5. **A3, funding dispersion:** chosen from 5 pairs, sign flips; weakest.
+* (added) **E1, pump.fun revenue surprise -> PUMP perp:** both halves positive after costs, each
+  ~1.7 SE, beyond-trend part positive. **Forward test registered** (180 days, hourly Action).
 6. **D2, funding carry across perps:** loses; its reverse is weaker momentum (closed).
 Closed: C (PumpSwap LP, memecoin shorts), B's lead-lag/seasonality/seconds-scale prediction.
 

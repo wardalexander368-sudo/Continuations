@@ -47,15 +47,25 @@ next. Topic documents hold the detail:
   buybacks; our decoder sees the same flow live) as a signal for cheap-to-trade Hyperliquid perps
   (PUMP, SOL, memecoin perps), train/test by time after costs and funding; pre-register a forward
   test if it holds. Doesn't touch the retrain thread's judging or the forward tests.
+  **22:15 UTC: E1 pre-registered** (`handoff/preregistration/pumpflow/SPEC.md`, edge-hunt.md §E1):
+  long/short the Hyperliquid PUMP perp on sign(log(pump.fun+PumpSwap revenue_d / its 7-day mean)),
+  entering when DefiLlama first publishes day d; backtest +0.76%/day train, +0.95% test after
+  0.10%/side + funding, both ~1.7 SE. 180-day paper test from 2026-10-10; the hourly Action
+  `pumpflow-paper.yml` records snapshots, no session needed; score `pumpflow_paper.py evaluate
+  --final` after 2027-04-08 (report-only look 2027-01-08). This thread owns the scoring.
 
 * **Agent-machinery thread** (project thread session, since 2026-10-09 21:30 UTC, branch
   `claude/project-thread-12sv1q`). **Paper only, no real SOL, no keys.** Task (the user's 21:28 ask;
-  project goal "fully automated trading agent, profitability and self improvement"): a paper-mode
-  agent loop in `tartar/autotrade/`: strategy interface (dip, perps momentum, launch selector plug
-  in), execution through the Jupiter route with a paper/live switch locked to paper, risk limits +
-  kill switch, and a self-improvement loop that scores paper results against each strategy's
-  pre-registered rule and promotes/demotes/retires with a logged change. Runs on GitHub Actions,
-  no Claude needed. Does not change the existing forward tests or their Action jobs.
+  project goal "fully automated trading agent, profitability and self improvement"). **21:45 UTC:
+  v1 landed** (`tartar/autotrade/`, config and outputs in `autotrade/`, hourly Action
+  `.github/workflows/autotrade.yml`, tests `tests/test_autotrade.py`): strategy interface with the
+  dip rule and the Hyperliquid momentum rule plugged in, a disabled `launch_selector` slot fed by
+  `autotrade/signals/launch_selector.jsonl` (for the launch-selector thread), PaperBroker with a
+  LiveBroker that refuses unless approved (config stays `mode: paper`), risk caps + daily loss cap +
+  error halts + kill switch (`autotrade/HALT`), lifecycle that scores each strategy against its
+  registration and promotes / demotes / retires with `autotrade/changes.jsonl`. Read
+  `autotrade/REPORT.md`. Don't run it locally against `autotrade/` (the Action owns that state; use
+  `--root /tmp/x`). Next: check the first Action runs, then improvements.
 
 * **Recorder thread** (project thread session, since 2026-10-09 20:20 UTC, branch
   `claude/project-thread-9op3pf`). Task (the user's 20:12 go, continuous profit work): a raw

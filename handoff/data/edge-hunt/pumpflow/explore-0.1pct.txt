@@ -1,0 +1,52 @@
+days 2024-03-01..2026-10-08, cost 0.10%/side
+
+=== lag 0: IC train / test (n) ===
+signal                             BTC          FARTCOIN            POPCAT              PUMP               SOL               WIF             kBONK             kPEPE
+fees_surprise            -0.005/-0.074     -0.036/-0.065     -0.019/-0.099     +0.078/+0.039     +0.036/-0.033     -0.000/-0.061     +0.007/-0.069     +0.004/-0.124
+fees_trend               +0.015/+0.088     +0.003/+0.030     -0.066/+0.030     +0.017/-0.039     +0.024/+0.041     -0.018/-0.023     -0.025/+0.071     -0.019/-0.017
+rev_surprise             -0.005/-0.028     -0.044/-0.013     -0.022/-0.044     +0.080/+0.055     +0.037/+0.003     +0.001/-0.006     +0.008/+0.003     +0.002/-0.045
+launchpad_surprise       -0.007/-0.017     -0.044/-0.030     -0.025/-0.066     +0.069/+0.028     +0.036/-0.025     +0.000/-0.024     +0.004/-0.015     -0.000/-0.048
+launchpad_trend          +0.005/+0.095     -0.015/+0.077     -0.079/+0.091     -0.015/+0.030     +0.005/+0.069     -0.029/+0.063     -0.033/+0.117     -0.028/+0.054
+
+=== lag 1: IC train / test (n) ===
+signal                             BTC          FARTCOIN            POPCAT              PUMP               SOL               WIF             kBONK             kPEPE
+fees_surprise            +0.005/+0.074     +0.027/-0.002     +0.002/-0.016     +0.067/+0.015     +0.034/+0.062     +0.001/+0.027     +0.008/+0.060     -0.029/+0.002
+fees_trend               +0.008/+0.103     -0.024/+0.045     -0.071/+0.052     -0.013/-0.033     -0.001/+0.052     -0.016/-0.027     -0.022/+0.084     -0.024/+0.004
+rev_surprise             -0.001/+0.056     +0.022/+0.006     -0.004/+0.024     +0.047/+0.028     +0.029/+0.050     -0.002/+0.038     +0.004/+0.087     -0.033/+0.027
+launchpad_surprise       -0.006/+0.046     +0.014/-0.014     -0.011/+0.003     +0.024/+0.048     +0.025/+0.039     -0.008/+0.031     -0.004/+0.083     -0.040/+0.031
+launchpad_trend          +0.003/+0.106     -0.037/+0.080     -0.083/+0.093     -0.048/+0.021     -0.019/+0.076     -0.025/+0.047     -0.029/+0.117     -0.029/+0.052
+
+=== PUMP rules (mean daily net, 90% block-bootstrap CI, n) ===
+lag0 rev_surprise        long-short train +0.764% [-0.006%,+1.490%] n=265   test +0.954% [+0.077%,+1.861%] n=191
+lag0 rev_surprise        long-only  train +0.299% [-0.190%,+0.814%] n=265   test +0.865% [+0.133%,+1.689%] n=191
+lag0 fees_surprise       long-short train +0.300% [-0.569%,+1.125%] n=265   test +0.834% [+0.119%,+1.567%] n=191
+lag0 fees_surprise       long-only  train +0.067% [-0.537%,+0.660%] n=265   test +0.805% [+0.160%,+1.529%] n=191
+lag0 launchpad_surprise  long-short train +0.662% [-0.124%,+1.409%] n=265   test +0.899% [+0.070%,+1.757%] n=191
+lag0 launchpad_surprise  long-only  train +0.248% [-0.236%,+0.749%] n=265   test +0.838% [+0.124%,+1.616%] n=191
+lag0 buy-and-hold PUMP test +0.777%/day
+lag1 rev_surprise        long-short train +0.041% [-0.721%,+0.774%] n=266   test +0.343% [-0.321%,+1.034%] n=190
+lag1 rev_surprise        long-only  train -0.068% [-0.634%,+0.488%] n=266   test +0.570% [+0.013%,+1.204%] n=190
+lag1 fees_surprise       long-short train -0.002% [-0.813%,+0.752%] n=266   test +0.515% [-0.120%,+1.196%] n=190
+lag1 fees_surprise       long-only  train -0.090% [-0.675%,+0.493%] n=266   test +0.656% [+0.129%,+1.258%] n=190
+lag1 launchpad_surprise  long-short train +0.022% [-0.694%,+0.729%] n=266   test +0.406% [-0.310%,+1.174%] n=190
+lag1 launchpad_surprise  long-only  train -0.078% [-0.614%,+0.450%] n=266   test +0.602% [+0.007%,+1.257%] n=190
+lag1 buy-and-hold PUMP test +0.797%/day
+same-day IC rev_surprise vs PUMP: (0.2101474606891064, 264) (0.16840555249379993, 191)
+
+=== timing vs beta (long-short sign(surprise)): mean pos, net, beta part, timing part ===
+lag0 BTC       train long 47% net -0.032% beta +0.001% timing -0.033% [-0.169%,+0.112%] | test long 59% net -0.160% beta +0.018% timing -0.178% [-0.374%,+0.023%]
+lag0 FARTCOIN  train long 43% net -0.648% beta -0.014% timing -0.635% [-1.391%,+0.143%] | test long 59% net -0.396% beta +0.017% timing -0.413% [-1.060%,+0.210%]
+lag0 POPCAT    train long 46% net -0.165% beta +0.001% timing -0.166% [-0.684%,+0.390%] | test long 59% net -0.048% beta +0.015% timing -0.063% [-0.559%,+0.422%]
+lag0 PUMP      train long 45% net +0.764% beta +0.017% timing +0.747% [+0.007%,+1.482%] | test long 59% net +0.954% beta +0.134% timing +0.820% [+0.048%,+1.607%]
+lag0 SOL       train long 47% net +0.031% beta +0.001% timing +0.030% [-0.215%,+0.277%] | test long 59% net -0.017% beta +0.032% timing -0.049% [-0.332%,+0.241%]
+lag0 WIF       train long 47% net +0.222% beta +0.007% timing +0.215% [-0.243%,+0.679%] | test long 59% net +0.067% beta +0.028% timing +0.038% [-0.443%,+0.535%]
+lag0 kBONK     train long 47% net +0.092% beta +0.003% timing +0.089% [-0.346%,+0.537%] | test long 59% net -0.175% beta -0.034% timing -0.141% [-0.591%,+0.364%]
+lag0 kPEPE     train long 47% net +0.032% beta -0.000% timing +0.032% [-0.399%,+0.479%] | test long 59% net +0.007% beta +0.025% timing -0.018% [-0.456%,+0.486%]
+lag1 BTC       train long 47% net -0.079% beta +0.001% timing -0.080% [-0.209%,+0.054%] | test long 59% net +0.107% beta +0.020% timing +0.087% [-0.140%,+0.306%]
+lag1 FARTCOIN  train long 43% net -0.644% beta -0.012% timing -0.632% [-1.367%,+0.099%] | test long 59% net -0.128% beta +0.024% timing -0.151% [-0.891%,+0.600%]
+lag1 POPCAT    train long 46% net -0.389% beta +0.001% timing -0.390% [-0.937%,+0.150%] | test long 59% net -0.178% beta +0.018% timing -0.196% [-0.870%,+0.433%]
+lag1 PUMP      train long 45% net +0.041% beta +0.019% timing +0.023% [-0.765%,+0.750%] | test long 59% net +0.343% beta +0.143% timing +0.200% [-0.423%,+0.850%]
+lag1 SOL       train long 47% net +0.025% beta +0.001% timing +0.023% [-0.215%,+0.265%] | test long 59% net +0.136% beta +0.036% timing +0.099% [-0.256%,+0.465%]
+lag1 WIF       train long 47% net +0.001% beta +0.007% timing -0.006% [-0.466%,+0.474%] | test long 59% net +0.078% beta +0.031% timing +0.047% [-0.600%,+0.686%]
+lag1 kBONK     train long 47% net -0.032% beta +0.005% timing -0.037% [-0.437%,+0.377%] | test long 59% net +0.122% beta -0.031% timing +0.153% [-0.438%,+0.751%]
+lag1 kPEPE     train long 47% net -0.126% beta +0.002% timing -0.128% [-0.515%,+0.292%] | test long 59% net +0.173% beta +0.028% timing +0.145% [-0.397%,+0.724%]
