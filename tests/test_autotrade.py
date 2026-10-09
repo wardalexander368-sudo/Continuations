@@ -248,3 +248,26 @@ def test_xs_momentum_books_weekly_legs(tmp_path):
     assert len(kept) == 12  # same ranking: every leg kept, no turnover cost
     v = strat.evaluate(led.trades(), close_ts(tue + timedelta(days=7)) + 3600, {})
     assert v.decision == "pending" and v.n == 1
+
+
+def test_new_halts_reported_and_equity_logged(tmp_path):
+    root = setup(tmp_path)
+    s = None
+    for t in range(3):
+        s = run_once(root, now=3000 + t, strategies={"fake": Fake(fail=True)})
+    assert s["new_halts"] and s["new_halts"][0]["scope"] == "fake"
+    s = run_once(root, now=4000, strategies={"fake": Fake(fail=True)})
+    assert not s["new_halts"]  # already halted: not reported again
+    assert len((root / "equity.jsonl").read_text().splitlines()) == 4
+
+
+def test_alt_cost_reported_beside_registered():
+    from tartar.autotrade.broker import PaperBroker
+
+    b = PaperBroker()
+    o = opener(cost=CostModel(fee=0.005))
+    o.meta["alt_cost"] = {"fee": 0.0125, "impact": 0.0, "fixed_usd": 0.0}
+    pos, _ = b.open(o)
+    trade, _ = b.close(pos, closer(price=1.0, cost=CostModel(fee=0.005)))
+    assert trade.net_return == pytest.approx(-0.01)
+    assert trade.meta["alt_net_return"] == pytest.approx(-0.025)

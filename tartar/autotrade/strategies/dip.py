@@ -38,6 +38,8 @@ class DipStrategy:
         spec = json.loads((Path(self.prereg) / "SPEC.json").read_text())
         self.rule, self.costs, self.eval = spec["rule"], spec["costs"], spec["evaluation"]
         self.size = float(cfg.get("size_usd", self.costs["size_usd"]))
+        measured = Path(self.prereg) / "fees-measured.json"  # per-pool PumpSwap fees measured on chain (addendum)
+        self.measured = json.loads(measured.read_text()) if measured.exists() else {}
         self._grids: dict[str, tuple[np.ndarray, np.ndarray, np.ndarray]] = {}
         self._last_call = 0.0
         self.fetch = cfg.get("_fetch") or self._fetch  # tests inject a fake fetcher
@@ -144,7 +146,8 @@ class DipStrategy:
                                           f"close fell {100 * (1 - c[i] / c[i - L]):.1f}% over {L} bars",
                                           asset=pid, side=1, notional_usd=self.size, cost=cost,
                                           meta={"pool": pid, "label": p["name"], "signal_t": float(t[i]), "exit_t": exit_t,
-                                                "key": key, "liquidity_usd": p["liquidity_usd"]}))
+                                                "key": key, "liquidity_usd": p["liquidity_usd"],
+                                                "alt_cost": self.measured_cost(pid, cost)}))
                     st["busy_until"] = exit_t
                     idx = np.searchsorted(t, exit_t)
                     if idx < len(t) and t[idx] == exit_t:  # the whole hold is already in the data
@@ -155,6 +158,11 @@ class DipStrategy:
         if pools and failures == len(pools):
             raise RuntimeError(f"no pool data this run ({failures} fetch failures)")
         return intents
+
+    def measured_cost(self, pool: str, cost: CostModel) -> dict:
+        """The registered cost model with the pool's measured PumpSwap fee (secondary, ADDENDUM-2026-10-09-fees)."""
+        fee = self.measured.get(pool, {}).get("fee_per_side", cost.fee)
+        return {"fee": fee, "impact": cost.impact, "fixed_usd": cost.fixed_usd}
 
     def baseline(self, t, o, c, first_bar, exit_t, cost: CostModel) -> float:
         """Mean net of entering this pool at every bar since the agent first saw it, same hold."""
@@ -191,8 +199,12 @@ class DipStrategy:
         if valid:
             e, lo_e, hi_e = bootstrap_ci([x for x, _ in valid], [g for _, g in valid])
             stats.update(excess=e, excess_lo=lo_e, excess_hi=hi_e)
+        alt = [t.meta["alt_net_return"] for t in trades if "alt_net_return" in t.meta]
+        if alt:
+            stats["mean_net_measured_fees"] = float(np.mean(alt))
         due = n >= 200 or days >= 21
         summary = (f"{n} trades over {days:.1f} days: mean net {100 * m:+.2f}% [{100 * lo_m:+.2f}, {100 * hi_m:+.2f}]"
+                   + (f" ({100 * stats['mean_net_measured_fees']:+.2f}% at measured pool fees)" if alt else "")
                    + (f", excess over random entries {100 * stats['excess']:+.2f}% [{100 * stats['excess_lo']:+.2f}, {100 * stats['excess_hi']:+.2f}]" if valid else ""))
         if not due:
             return Verdict("pending", n, stats, f"{summary}; scored at 200 trades or 21 days")

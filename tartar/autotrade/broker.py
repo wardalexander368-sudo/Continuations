@@ -8,7 +8,7 @@ from __future__ import annotations
 
 import os
 
-from .core import Intent, Position, Trade
+from .core import CostModel, Intent, Position, Trade
 
 
 class LiveNotAllowed(RuntimeError):
@@ -31,6 +31,10 @@ class PaperBroker:
         extra = float(intent.meta.get("carry_usd", 0.0))  # e.g. perp funding over the holding period
         pnl = gross - pos.entry_cost_usd - exit_cost + extra
         meta = {**pos.meta, **intent.meta}
+        alt = meta.get("alt_cost")  # a second cost model to report beside the registered one
+        if alt:
+            alt_cost = CostModel(**alt).side_cost(pos.notional_usd)
+            meta["alt_net_return"] = (gross - 2 * alt_cost + extra) / pos.notional_usd
         trade = Trade(id=pos.id, strategy=pos.strategy, asset=pos.asset, side=pos.side, notional_usd=pos.notional_usd,
                       entry_price=pos.entry_price, entry_at=pos.entry_at, exit_price=intent.price, exit_at=intent.at,
                       cost_usd=pos.entry_cost_usd + exit_cost, pnl_usd=pnl, net_return=pnl / pos.notional_usd,

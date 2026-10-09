@@ -50,6 +50,7 @@ def run_once(root: Path = ROOT, now: float | None = None, strategies: dict | Non
     risk = Risk(config, root, ledger)
     strategies = build_strategies(config) if strategies is None else strategies
     summary = {"at": now, "opened": 0, "closed": 0, "rejected": 0, "errors": {}}
+    n_changes = len(ledger.changes())
 
     for name, strat in strategies.items():
         rec = ledger.strategy(name)
@@ -91,7 +92,12 @@ def run_once(root: Path = ROOT, now: float | None = None, strategies: dict | Non
     risk.check_daily(now, ledger.positions)
     summary["changes"] = lifecycle.review(ledger, strategies, now, config.get("lifecycle", {}))
     summary["halted"] = risk.kill_reason()
+    summary["new_halts"] = [c for c in ledger.changes()[n_changes:] if c.get("kind") == "halt"]
     ledger.state["last_run"] = {k: v for k, v in summary.items() if k != "changes"}
+    ledger._append("equity.jsonl", {
+        "t": now, "realized_usd": round(sum(t.pnl_usd for t in ledger.trades()), 4),
+        "unrealized_usd": round(sum(p.unrealized() for p in ledger.positions), 4), "open": len(ledger.positions),
+        "by_strategy": {n: round(sum(t.pnl_usd for t in ledger.trades(n)), 4) for n in strategies}})
     ledger.save()
     write_report(root, ledger, strategies, now, risk)
     return summary
