@@ -292,7 +292,7 @@ def stream_item(item: tuple) -> tuple[float, str, list, int | None]:
 async def stream_program_events(
     urls: tuple[str, ...] | None = None,
     *,
-    commitment: str = "confirmed",
+    commitment: str | None = None,
     max_backoff: float = 30.0,
     mentions: str = PUMP_PROGRAM,
     decode: Callable[[list[str]], list] = events_from_logs,
@@ -301,11 +301,14 @@ async def stream_program_events(
     transaction, plus Status messages (kind connected/disconnected) on (re)connection.
     Consumers that predate the slot read the first three items (`stream_item`).
     `mentions` and `decode` select another account (e.g. one PumpSwap pool) and decoder.
+    `commitment` defaults to $SOLANA_COMMITMENT, else "confirmed". "processed" reports
+    transactions about a second sooner, but rarely one from a block that is then dropped.
 
     After a drop it reconnects to the same endpoint; it only moves to the next of
     `urls` after repeated failures to connect. Trades during a disconnection are
     lost, so consumers must treat that time as unobserved."""
     urls = urls or rpc_urls()
+    commitment = commitment or os.environ.get("SOLANA_COMMITMENT") or "confirmed"
     index, failures, backoff = 0, 0, 1.0
     while True:
         url = urls[index % len(urls)]
