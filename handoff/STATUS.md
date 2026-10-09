@@ -59,7 +59,9 @@ next. Topic documents hold the detail:
   live: `tartar/autotrade/`, hourly Action `autotrade.yml`, state and `REPORT.md` in `autotrade/`,
   guide `handoff/autotrade.md`. Since v1 (21:45 UTC): halts fail the Action (owner is emailed),
   `equity.jsonl` per run, dip net at measured pool fees, 8 self-registered shadow variants of the
-  dip rule (Bonferroni-scored, outside the risk caps). The `launch_selector` slot is ready for the
+  dip rule (Bonferroni-scored, outside the risk caps), and a Jupiter execution check that measures
+real-route impact against a $1 probe and re-prices each closed trade at it (`quoted_net_return`;
+deep pools match the model, a thin one was 2.4x it). The `launch_selector` slot is ready for the
   trading-skills thread (signals file, `handoff/autotrade.md`). Don't run it locally against
   `autotrade/`.
 
@@ -379,6 +381,12 @@ next. Topic documents hold the detail:
   branch `claude/profitability-backtest`, on `main`).
 
 ## Log (newest first)
+
+* 2026-10-09 22:50 UTC, agent-machinery thread: the agent's execution check now measures price
+  impact as the full-size Jupiter quote's shortfall against a $1 probe. Jupiter's own
+  `priceImpactPct` was misleading (0.7-2.6% at $1; the first report line said 1.82% vs a 0.16%
+  model). Measured: e/acc 0.14% vs model 0.15%, swordcat 0.18% vs 0.16%, SharkTank 2.9% vs 1.2%.
+  Closed trades carry `quoted_net_return`, shown in the dip verdict and REPORT.md.
 
 * **2026-10-09 22:20 UTC, trading-skills thread: curve-triggered entries: no edge** (profitability
   §3.23). Level crossings (5–40 SOL raised) lose on every rule (chosen: −7.0% on test). Buying a

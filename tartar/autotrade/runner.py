@@ -192,11 +192,17 @@ def write_report(root: Path, ledger: Ledger, strategies: dict, now: float, risk:
         n_open = sum(1 for p in ledger.positions if p.strategy == name)
         lines.append(f"| {name} | {rec['status']} | {n_open} | {len(tr)} | {mean} | {pnl:+.2f} | "
                      f"{v.get('decision', '-')}: {v.get('reason', '')} |")
-    checked = [x for x in [*(t.meta for t in ledger.trades()), *(p.meta for p in ledger.positions)] if "jup_impact_pct" in x]
+    checked = [x for x in [*(t.meta for t in ledger.trades()), *(p.meta for p in ledger.positions)] if "jup_impact_measured_pct" in x]
     if checked:
-        lines += ["", f"Execution check (Jupiter quotes at entry, same USD size, {len(checked)} entries): quoted price impact "
-                  f"median {sorted(x['jup_impact_pct'] for x in checked)[len(checked) // 2]:.2f}% vs the cost model's "
-                  f"median {100 * sorted(x.get('impact_assumed', 0) for x in checked)[len(checked) // 2]:.2f}% per side."]
+        q = sorted(x["jup_impact_measured_pct"] for x in checked)
+        a = sorted(100 * x.get("impact_assumed", 0) for x in checked)
+        worse = sum(1 for x in checked if x["jup_impact_measured_pct"] > 2 * 100 * x.get("impact_assumed", 0) + 0.1)
+        qn = [t.meta["quoted_net_return"] for t in ledger.trades() if "quoted_net_return" in t.meta and "~" not in t.strategy]
+        lines += ["", f"Execution check (Jupiter quotes at entry, same USD size against a $1 probe, {len(checked)} entries): "
+                  f"measured price impact median {q[len(q) // 2]:.2f}% (max {q[-1]:.2f}%) vs the cost model's median "
+                  f"{a[len(a) // 2]:.2f}% per side; {worse} entries more than twice the model."
+                  + (f" Registered strategies' closed trades at the measured impact: mean net {100 * sum(qn) / len(qn):+.2f}% "
+                     f"over {len(qn)} trades." if qn else "")]
     unreal = sum(p.unrealized() for p in ledger.positions if not p.meta.get("shadow"))
     lines += ["", f"Realized PnL {total:+.2f} USD (registered strategies; variants listed above); open positions {len(ledger.positions)}, unrealized {unreal:+.2f} USD "
               f"(entry costs included); today {risk.day_pnl(now, ledger.positions):+.2f} USD "

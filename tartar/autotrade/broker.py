@@ -35,6 +35,11 @@ class PaperBroker:
         if alt:
             alt_cost = CostModel(**alt).side_cost(pos.notional_usd)
             meta["alt_net_return"] = (gross - 2 * alt_cost + extra) / pos.notional_usd
+        measured = meta.get("jup_impact_measured_pct")  # impact measured on the real route at entry (quotes.py)
+        if measured is not None:
+            base = CostModel(**alt) if alt else intent.cost
+            q_cost = CostModel(fee=base.fee, impact=max(measured, 0.0) / 100, fixed_usd=base.fixed_usd).side_cost(pos.notional_usd)
+            meta["quoted_net_return"] = (gross - 2 * q_cost + extra) / pos.notional_usd  # exit assumed as deep as entry
         trade = Trade(id=pos.id, strategy=pos.strategy, asset=pos.asset, side=pos.side, notional_usd=pos.notional_usd,
                       entry_price=pos.entry_price, entry_at=pos.entry_at, exit_price=intent.price, exit_at=intent.at,
                       cost_usd=pos.entry_cost_usd + exit_cost, pnl_usd=pnl, net_return=pnl / pos.notional_usd,
