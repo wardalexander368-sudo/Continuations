@@ -225,6 +225,8 @@ class Dashboard(Sink):
         if risk is not None and risk.level != "unknown":
             text.append("\n")
             text.append(f" RISK {risk.level.upper()} ", style=RISK_STYLE[risk.level])
+            if risk.p_rug is not None:
+                text.append(f" {risk.p_rug_text()} ", style="bold")
             text.append(f"  {risk.summary()}", style="dim" if risk.level == "ok" else "")
         return Panel(text, box=box.ROUNDED, border_style=RISK_BORDER.get(risk.level if risk else "", "magenta"))
 

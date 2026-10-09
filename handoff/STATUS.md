@@ -171,10 +171,12 @@ next. Topic documents hold the detail:
     **Still open (unclaimed):** the same run at European and US hours (e.g. 08–10 and 13–16
     UTC: `sol_dex_costs.py sample --minutes 120 --out data/sol-dex/costs-<date>.jsonl`), then
     commit the samples. Real fills stay unmeasured (no real-money code without the user).
-13. **Ship a calibrated P(rug)** (unclaimed; predictor doc problem 6). The displayed risk
-    level barely ranks rugs (AUC 0.57), while a LightGBM P(rug) on the +20 s screen numbers
-    reaches AUC 0.93 on later launches. Train it like the global model, show it beside the
-    level, and stop `sniped` / `concentrated` / `dev_dumped` alone from making "danger".
+13. ~~**Ship a calibrated P(rug)**~~ **done 07:15 UTC 10-09** (clever session; predictor doc
+    §9.1). `tartar train --raw DIRS --rug` → `tartar/models/rug-20s.*` (installed, 5,267
+    launches). Test AUC **0.913** on the latest 791 launches; the risk level now reaches 0.735
+    (was 0.585) since `sniped` / `concentrated` / `dev_dumped` alone are a caution. The
+    `--next-launch` screen still skips those three (`ScamReport.avoid`), so its picks are
+    unchanged; it shows P(rug) on every verdict and beside the watched token's level.
 
 ## Rules that hold across sessions
 

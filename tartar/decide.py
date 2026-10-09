@@ -141,9 +141,22 @@ class LaunchStateBuilder:
             "trades_per_wallet": snap["trades_per_wallet"],
             "nonstandard_curve": snap["nonstandard_curve"],
             "risk": report.level,
+            "avoid": report.avoid,  # what the --next-launch screen skips
             "risk_rank": LEVEL_RANK[report.level],
             "flags": sorted({f.code for f in report.flags}),
         }
+
+
+def state_from_ticks(
+    mint: str, created: float, creator: str, ticks: list[Tick], now: float, creators: CreatorIndex | None = None,
+    name: str = "", symbol: str = "", uri: str = "",
+) -> dict:
+    """One launch's state at `now` from its ticks so far, as the fast loop would build it live."""
+    builder = LaunchStateBuilder(creators)
+    builder.create(mint, created, creator, name, symbol, uri)
+    for tick in ticks:
+        builder.tick(mint, tick)
+    return builder.state(mint, now)
 
 
 def launch_states(tokens, curves: list[Curve], seconds: float = 20.0) -> list[dict]:

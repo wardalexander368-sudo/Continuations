@@ -62,10 +62,20 @@ tartar new --safe                    # newest pools with scam-flagged ones hidde
 ```
 
 `--next-launch` follows each new launch for 20 seconds (`--screen`). It skips
-launches with fewer than 3 real buyers (`--min-buyers`), and any flagged danger
-or scam (`--allow-risky` to keep them). The behavioural signals are also inputs
-to the global model, so a dev dump or a bundled launch shapes the price
-prediction as well as the warning.
+launches with fewer than 3 real buyers (`--min-buyers`), any flagged danger
+or scam, and any whose supply was mostly sniped, held by 10 wallets (70%+) or
+dumped by its creator (`--allow-risky` to keep them all). Those three mark worse
+trades, but on recorded launches they go with *fewer* later collapses, so on
+their own they make a launch "caution", not "danger". The behavioural signals
+are also inputs to the global model, so a dev dump or a bundled launch shapes
+the price prediction as well as the warning.
+
+**P(rug).** With a trained P(rug) model installed, `--next-launch` shows, beside
+the risk level, the chance that the launch collapses (price down 80% or more,
+not graduated) within 30 minutes, judged on its first 20 seconds. It ranks
+collapses far better than the level does; it is shown, not used to skip.
+Train it on your recordings with `tartar train --raw DIRS --rug` (the same
+keep-better rule as the price models).
 
 ## Getting the most accurate predictions: train the global model
 

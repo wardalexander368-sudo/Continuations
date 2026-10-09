@@ -59,7 +59,8 @@ def test_assess_flags_a_dump_and_a_clean_token():
     dump.update(trade(T0 + 60, "dev", 5000, buy=False, creator=True, price=5e-8))  # -50%: dumped, not (yet) collapsed
     report = assess(dump)
     codes = {f.code for f in report.flags}
-    assert {"dev_dumped", "sniped"} <= codes and report.level == "danger"
+    # Alone, these mark worse trades but not later collapses: caution, still skipped by screens.
+    assert {"dev_dumped", "sniped"} <= codes and report.level == "caution" and report.avoid
 
     clean = WalletTracker(launched_at=T0)
     clean.update(trade(T0, "dev", 100, creator=True))
@@ -214,8 +215,9 @@ async def test_agent_reports_risk(tmp_path):
 
     out = io.StringIO()
     info = MarketInfo("MintZ", "Z", "", "SOL", "script", creator="dev", launched_at=T0)
-    agent = CandleAgent(Market(info, Feed(), None, clock), 60, sinks=[JsonLines(out, every=0)], update_interval=0.02, scam_checks=False)
+    agent = CandleAgent(Market(info, Feed(), None, clock), 60, sinks=[JsonLines(out, every=0)], update_interval=0.02, scam_checks=False, p_rug=0.3)
     await asyncio.wait_for(agent.run(max_candles=2), timeout=10)
     risks = [json.loads(line) for line in out.getvalue().splitlines() if '"risk"' in line]
-    assert risks and risks[-1]["level"] == "danger"
+    assert risks and risks[-1]["level"] == "caution"
     assert any(f["code"] == "dev_dumped" for f in risks[-1]["flags"])
+    assert risks[-1]["p_rug"] == 0.3  # the launch screen's P(rug) travels with the risk report

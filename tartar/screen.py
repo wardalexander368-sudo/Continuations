@@ -45,13 +45,23 @@ class Verdict:
     passed: bool
     reason: str
 
+    @property
+    def p_rug(self) -> float | None:
+        return self.report.p_rug
 
-def judge(candidate: Candidate, creators: CreatorIndex | None, *, min_buyers: int, allow_risky: bool) -> Verdict:
+
+def judge(candidate: Candidate, creators: CreatorIndex | None, *, min_buyers: int, allow_risky: bool, rug_model=None, now: float | None = None) -> Verdict:
     c = candidate.create
     report = assess(candidate.tracker, None, creators, mint=c.mint, creator=c.creator, name=c.name, symbol=c.symbol, uri=c.uri)
+    if rug_model is not None:
+        from .decide import state_from_ticks
+
+        when = candidate.seen_at + rug_model.meta.get("screen", 20.0) if now is None else now
+        state = state_from_ticks(c.mint, candidate.seen_at, c.creator, candidate.ticks, when, creators, c.name, c.symbol, c.uri)
+        report.p_rug = rug_model.predict(state)
     if len(candidate.buyers) < min_buyers:
         return Verdict(candidate, report, False, f"only {len(candidate.buyers)} buyer(s) besides the creator")
-    if report.is_scam_or_danger and not allow_risky:
+    if report.avoid and not allow_risky:
         return Verdict(candidate, report, False, f"{report.level}: {report.summary()}")
     return Verdict(candidate, report, True, report.summary())
 
@@ -65,8 +75,13 @@ async def next_clean_launch(
     creators: CreatorIndex | None = None,
     on_verdict: Callable[[Verdict], None] = lambda verdict: None,
     clock: Callable[[], float] = time.time,
+    rug_model=None,
 ) -> Verdict:
-    """Consume `stream` (from stream_program_events) until a launch passes screening."""
+    """Consume `stream` (from stream_program_events) until a launch passes screening.
+
+    With `rug_model` (rug.RugModel), each verdict's report carries P(rug); it is shown, not used
+    to skip launches.
+    """
     candidates: dict[str, Candidate] = {}
     async for item in stream:
         if isinstance(item, Status):
@@ -96,7 +111,7 @@ async def next_clean_launch(
                     candidate.add(tick)
         now = clock()
         for mint in [m for m, c in candidates.items() if now - c.seen_at >= screen_seconds]:
-            verdict = judge(candidates.pop(mint), creators, min_buyers=min_buyers, allow_risky=allow_risky)
+            verdict = judge(candidates.pop(mint), creators, min_buyers=min_buyers, allow_risky=allow_risky, rug_model=rug_model, now=now)
             on_verdict(verdict)
             if verdict.passed:
                 return verdict

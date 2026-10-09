@@ -151,7 +151,8 @@ class PlainPrinter(Sink):
 
     def risk(self, report) -> None:
         if report.level != "unknown":
-            self._print(f"  risk {report.level.upper()}: {report.summary(limit=5)}")
+            p_rug = f" · {report.p_rug_text()}" if report.p_rug is not None else ""
+            self._print(f"  risk {report.level.upper()}{p_rug}: {report.summary(limit=5)}")
 
     def stop(self, board: Scoreboard) -> None:
         for line in summary_lines(board):

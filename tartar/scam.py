@@ -131,6 +131,7 @@ class Flag:
     code: str
     severity: str  # caution | danger | scam
     message: str
+    bad_trade: bool = False  # marks a worse trade, though not a later collapse: screens still skip it
 
 
 @dataclass
@@ -138,9 +139,16 @@ class ScamReport:
     level: str = "unknown"
     flags: list[Flag] = field(default_factory=list)
 
+    p_rug: float | None = None  # learned chance of a collapse within 30 min, judged 20 s after launch
+
     @property
     def is_scam_or_danger(self) -> bool:
         return self.level in ("danger", "scam")
+
+    @property
+    def avoid(self) -> bool:
+        """Skip it when picking a launch: danger or scam, or a flag that marks worse trades."""
+        return self.is_scam_or_danger or any(f.bad_trade for f in self.flags)
 
     def summary(self, limit: int = 3) -> str:
         if not self.flags:
@@ -148,8 +156,15 @@ class ScamReport:
         order = {"scam": 0, "danger": 1, "caution": 2}
         return " · ".join(f.message for f in sorted(self.flags, key=lambda f: order[f.severity])[:limit])
 
+    def p_rug_text(self) -> str:
+        """P(rug) for display, e.g. 'P(rug) 12% in 30 min (judged at +20 s)', or ''."""
+        return "" if self.p_rug is None else f"P(rug) {self.p_rug:.0%} in 30 min (judged at +20 s)"
+
     def to_dict(self) -> dict:
-        return {"level": self.level, "flags": [{"code": f.code, "severity": f.severity, "message": f.message} for f in self.flags]}
+        out = {"level": self.level, "flags": [{"code": f.code, "severity": f.severity, "message": f.message} for f in self.flags]}
+        if self.p_rug is not None:
+            out["p_rug"] = round(self.p_rug, 4)
+        return out
 
 
 @dataclass
@@ -252,16 +267,19 @@ def assess(
     """Combine every available signal into a risk level with reasons."""
     flags: list[Flag] = []
 
-    def flag(code: str, severity: str, message: str) -> None:
-        flags.append(Flag(code, severity, message))
+    def flag(code: str, severity: str, message: str, bad_trade: bool = False) -> None:
+        flags.append(Flag(code, severity, message, bad_trade))
 
     evidence = False
     if tracker is not None and tracker.trades >= 3:
         evidence = True
         snap = tracker.snapshot()
+        # sniped, concentrated and dev_dumped mark worse trades (the damage is done in the first
+        # seconds) but *fewer* later collapses (lift 0.3-0.6, predictor doc problem 6), so alone
+        # they are a caution, not a danger.
         sold = tracker.creator_sold_share
         if sold is not None and sold >= 0.9:
-            flag("dev_dumped", "danger", f"creator sold {sold:.0%} of their tokens")
+            flag("dev_dumped", "caution", f"creator sold {sold:.0%} of their tokens", bad_trade=True)
         elif sold is not None and sold >= 0.5:
             flag("dev_selling", "caution", f"creator sold {sold:.0%} of their tokens")
         drawdown = tracker.drawdown
@@ -269,17 +287,15 @@ def assess(
             flag("collapsed", "scam", f"price {drawdown:.0%} from its peak")
         top10, holders = snap["top10_share"], tracker.holders
         if not math.isnan(top10) and holders >= 15:
-            if top10 >= 0.7:
-                flag("concentrated", "danger", f"top 10 wallets hold {top10:.0%}")
-            elif top10 >= 0.5:
-                flag("concentrated", "caution", f"top 10 wallets hold {top10:.0%}")
+            if top10 >= 0.5:
+                flag("concentrated", "caution", f"top 10 wallets hold {top10:.0%}", bad_trade=top10 >= 0.7)
         creator_share = snap["creator_share"]
         if not math.isnan(creator_share) and creator_share >= 0.2:
             flag("dev_bag", "danger" if creator_share >= 0.4 else "caution", f"creator holds {creator_share:.0%}")
         sniped = snap["sniper_share"]
         if not math.isnan(sniped):
             if sniped >= 0.5:
-                flag("sniped", "danger", f"{sniped:.0%} of buys sniped in the first {SNIPE_SECONDS:.0f}s (likely bundled)")
+                flag("sniped", "caution", f"{sniped:.0%} of buys sniped in the first {SNIPE_SECONDS:.0f}s (likely bundled)", bad_trade=True)
             elif sniped >= 0.25:
                 flag("sniped", "caution", f"{sniped:.0%} of buys sniped in the first {SNIPE_SECONDS:.0f}s")
         wash, per_wallet = snap["wash_share"], snap["trades_per_wallet"]

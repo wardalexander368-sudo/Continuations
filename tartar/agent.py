@@ -75,6 +75,7 @@ class CandleAgent:
         creators: CreatorIndex | None = None,
         static_refresh: float = 600.0,
         after_graduation: Callable[[], GlobalModel | None] | None = None,
+        p_rug: float | None = None,
     ):
         self.market = market
         self.timeframe = timeframe
@@ -99,6 +100,7 @@ class CandleAgent:
         self.static: StaticReport | None = None
         self.static_refresh = static_refresh
         self.risk_report: ScamReport | None = None
+        self.p_rug = p_rug  # P(rug) judged at the launch screen (rug.py), shown beside the risk level
         self._model = model
         self._domain = info.domain
         # At graduation the curve model no longer applies; this finds the PumpSwap model, if any.
@@ -152,6 +154,7 @@ class CandleAgent:
             symbol=info.symbol,
             uri=info.uri,
         )
+        report.p_rug = self.p_rug
         previous = self.risk_report
         if previous is None or previous.level != report.level or {f.code for f in previous.flags} != {f.code for f in report.flags}:
             self._emit("risk", report)

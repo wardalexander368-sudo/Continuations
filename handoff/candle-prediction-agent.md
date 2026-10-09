@@ -50,7 +50,7 @@ split by launch), plus a candle-by-candle replay of the live forecaster.
 | Data recording | `tartar record` running in this container into `data/raw` (not in git; snapshot in `handoff/data/raw`) |
 | Biggest open problem | The free public Solana RPC drops trade notifications (median capture 93% per token in the v1 data, much lower on busy tokens) and now closes the connection every ~30 s. Fix with a private RPC (section 12) |
 | Tests | 81 passing (`pytest`) |
-| Scam filtering | Built and live-tested (section 9); signals not yet validated statistically |
+| Scam filtering | Built, live-tested and validated (section 9); **P(rug)** (9.1) ranks 30-min collapses at AUC 0.91 vs the level's 0.74 |
 | Profitability | `tartar profit` (net SOL after fees, slippage, latency). **No strategy is profitable on the recorded data**; see `handoff/profitability.md` |
 
 ## 3. Running it
@@ -535,11 +535,11 @@ Every choice was made on **validation** and checked once on test:
   reasons. Shown in the dashboard header, as plain lines, and as JSON `risk`
   events.
 - **Behaviour** (`WalletTracker`, from trades):
-  - creator sold ≥50% of their tokens (caution) / ≥90% (danger)
+  - creator sold ≥50% / ≥90% of their tokens (both caution since 2026-10-09; ≥90% was danger)
   - collapse ≥90% from the peak (scam)
-  - top-10 wallets ≥50% / ≥70% of trader-held tokens (with 15+ holders)
+  - top-10 wallets ≥50% of trader-held tokens (with 15+ holders; caution, ≥70% was danger)
   - creator holds ≥20% / ≥40%
-  - ≥25% / ≥50% of bought tokens sniped in the first 5s
+  - ≥25% / ≥50% of bought tokens sniped in the first 5s (caution; ≥50% was danger)
   - ≥50% quick round trips (wash trading)
   - ≥8 trades per wallet
   - non-standard curve
@@ -552,11 +552,60 @@ Every choice was made on **validation** and checked once on test:
   launches in a day, ≥2 other launches, and copycat name/metadata. The judged
   token is excluded from its own history.
 - **`--next-launch` screening:** observe each launch for 20s; require 3+ buyers
-  besides the creator; reject danger/scam. In a live run it rejected 71
+  besides the creator; reject danger/scam, and the three flags above at their
+  former danger thresholds (`Flag.bad_trade`, `ScamReport.avoid`): they mark
+  worse trades (profitability §3.5), so the screen's choices are unchanged.
+  Earlier note: in a live run it rejected 71
   launches before passing one (mostly zero buyers; several bundled rugs). The
   passed token's creator then dumped within 30s and the badge flipped to DANGER.
-- **Thresholds are hand-set and not yet validated** (next steps). The
-  behavioural signals are also model inputs.
+- **Validated 2026-10-09** (problem 6): the old level barely ranked later
+  collapses (AUC 0.57–0.59). `dev_dumped`, `sniped` and `concentrated` go with
+  *fewer* collapses (lift 0.3–0.6), so alone they are now a caution; the level's
+  test AUC rose to 0.735 (9.1 below). The behavioural signals are also model
+  inputs.
+
+### 9.1 P(rug) (shipped 2026-10-09; `tartar/rug.py`)
+
+A LightGBM classifier on the 18 numbers of a launch's state 20 s after launch
+(`decide.NUMERIC`), predicting a **rug**: 30 min after the screen the price is
+≥80% below the screen's and the token has not graduated. States come from a
+fast-loop replay that screens every launch and buys none (causal creator
+history), outcomes from the full raw stream; a launch is left out only when the
+recorder was down in between. Split by time 70 / 15 / 15; validation drives
+early stopping and a Platt recalibration (a 0.86, b −0.02).
+
+`tartar train --raw DIRS --rug` → `tartar/models/rug-20s.{txt,json,report.json}`
+(keep-better on test log loss). `watch --next-launch` prints P(rug) on every
+verdict line and the watched token's risk line / dashboard header shows it
+beside the level ("P(rug) 12% in 30 min (judged at +20 s)"). It is shown, not
+used to skip.
+
+Trained on every curve recording (raw, raw-slots, raw-slots-processed,
+raw-pumpswap, raw-eager): 5,267 launches with a recorded outcome, test = the
+latest 791 (rug rate 9.5%):
+
+| | test |
+|---|---|
+| AUC | **0.913** (risk level: 0.735 now, 0.585 with the old weights) |
+| Log loss | 0.199 (uncalibrated 0.202; base rate 0.317) |
+| Brier | 0.063 |
+
+| P(rug) band | share of test launches | observed rug | observed moon (2× or graduated) |
+|---|---|---|---|
+| < 5% | 72.6% | 1.0% | 0.9% |
+| 5–15% | 5.8% | 10.9% | 4.3% |
+| 15–30% | 5.6% | 27.3% | 6.8% |
+| 30–50% | 9.2% | 34.2% | 8.2% |
+| ≥ 50% | 6.8% | 50.0% | 13.0% |
+
+By decile it is calibrated except the top one (56% predicted, 44% observed).
+Top features: `nonstandard_curve` 45%, `raised_sol` 17%, then
+`trades_per_wallet`, `sniper_share`, `holders`, `creator_launches` (4–5% each).
+Launches that pass the `--next-launch` screen are rare (2.9% of test launches)
+and rug often (30%, n = 23); P(rug) still ranks them (AUC 0.96, few rows).
+**Reading:** high P(rug) also means more moons. It measures how likely a
+launch is to *move*, then collapse; it is a warning, not a trading signal (the
+fast-loop studies already close launch buying, profitability §3.9, §3.14).
 
 ## 10. Key decisions and why
 
@@ -712,7 +761,8 @@ reviewers' scripts are in the session scratchpad (not persisted).
    the continuous part for very active tokens late in a candle, remains.
 5. ~~Blend underconfident on trading candles~~ **mostly resolved (8.4):**
    global prior 0.95; 69.0% hit vs 67.8% stated (was 64.8%).
-6. **Scam signals: validated 2026-10-09; the risk level needs rework**
+6. ~~**Scam signals: the risk level needs rework**~~ **done 2026-10-09:** P(rug) shipped
+   and the level reweighted (section 9.1). Original notes:
    (`handoff/experiments/scam_validation.py`). 3,659 launches from every
    recording before 10-09 02:00, judged at +20 s exactly as the fast loop
    judges them (causal creator history). Outcome 30 min later: **rug** = price
@@ -734,10 +784,7 @@ reviewers' scripts are in the session scratchpad (not persisted).
      trained on the first 70% of launches) reaches **AUC 0.93** on the rest,
      reasonably calibrated (top decile 52% predicted vs 45% observed; next
      24% vs 31%); mostly `nonstandard_curve` and `raised_sol`.
-   - **Next:** ship a calibrated P(rug) (train with `tartar train`-style
-     splits, store next to the global models) and show it beside the level;
-     re-weight the level so `sniped` / `concentrated` / `dev_dumped` alone
-     don't make "danger".
+   - ~~Next: ship a calibrated P(rug) and re-weight the level~~ done (9.1).
 7. ~~**Graduated tokens** only through DexScreener polls~~ **done 2026-10-09:**
    `tartar watch` follows a graduated pump.fun token trade by trade in its
    canonical PumpSwap pool. **Recording too (2026-10-09):**

@@ -148,6 +148,11 @@ def build_parser() -> argparse.ArgumentParser:
         help="train the model for graduated tokens on their PumpSwap pools (`watch` switches to it at graduation); "
         "needs recordings made with --pumpswap-hours",
     )  # fmt: skip
+    train.add_argument(
+        "--rug", action="store_true",
+        help="train P(rug) instead: the chance a launch collapses (-80%%, not graduated) within 30 min, judged 20 s "
+        "after launch; `watch --next-launch` shows it beside the risk level (needs --raw)",
+    )  # fmt: skip
     train.set_defaults(func=cmd_train)
 
     profit = sub.add_parser("profit", help="net SOL of trading strategies on recorded launches, after fees, slippage and latency")
@@ -251,7 +256,7 @@ def _creator_index(path: str | None) -> CreatorIndex | None:
     return CreatorIndex.from_raw(path)
 
 
-async def _run_agent(market: Market, args, timeframe: int, creators: CreatorIndex | None = None) -> None:
+async def _run_agent(market: Market, args, timeframe: int, creators: CreatorIndex | None = None, p_rug: float | None = None) -> None:
     console = Console()
     model = _load_model(market, args, timeframe)
     sinks, interval = _make_sinks(args, console)
@@ -268,6 +273,7 @@ async def _run_agent(market: Market, args, timeframe: int, creators: CreatorInde
         scam_checks=not simulated and not getattr(args, "no_scam_check", False),
         creators=creators,
         after_graduation=None if args.no_model or simulated else lambda: find_model("pumpswap", timeframe, args.model_dir),
+        p_rug=p_rug,
     )
     try:
         await agent.run(max_candles=args.candles)
@@ -290,15 +296,23 @@ async def cmd_watch(args) -> int:
             f"({args.screen:g}s observation, ≥{args.min_buyers} buyers{', risky allowed' if args.allow_risky else ''})…"
         )
 
+        from .rug import find_rug_model
+
+        rug_model = None if args.no_model else find_rug_model(args.model_dir)
+        if rug_model is not None and abs(rug_model.meta.get("screen", 20.0) - args.screen) > 1e-9:
+            err.print(f"[dim]P(rug) was trained on launches judged at +{rug_model.meta.get('screen', 20.0):g}s; at +{args.screen:g}s treat it as rough[/dim]")
+
         def show(verdict) -> None:
             c = verdict.candidate.create
             mark = "[green]✓[/green]" if verdict.passed else "[dim]✗[/dim]"
-            err.print(f"{mark} {c.symbol[:12]:<12} {c.mint[:6]}…  {verdict.reason}", highlight=False)
+            p_rug = f"P(rug) {verdict.p_rug:4.0%}  " if verdict.p_rug is not None else ""
+            err.print(f"{mark} {c.symbol[:12]:<12} {c.mint[:6]}…  {p_rug}{verdict.reason}", highlight=False)
 
         stream = stream_program_events()
         verdict = await next_clean_launch(
-            stream, screen_seconds=args.screen, min_buyers=args.min_buyers, allow_risky=args.allow_risky, creators=creators, on_verdict=show
-        )
+            stream, screen_seconds=args.screen, min_buyers=args.min_buyers, allow_risky=args.allow_risky, creators=creators, on_verdict=show,
+            rug_model=rug_model,
+        )  # fmt: skip
         c = verdict.candidate.create
         err.print(f"Watching [bold]{c.symbol}[/bold] {c.name} {c.mint}")
         market = launch_market(
@@ -311,7 +325,7 @@ async def cmd_watch(args) -> int:
             initial=verdict.candidate.ticks,
             stream=stream,
         )
-        await _run_agent(market, args, timeframe, creators)
+        await _run_agent(market, args, timeframe, creators, p_rug=verdict.p_rug)
         return 0
     elif args.address:
         market = await open_market(
@@ -536,6 +550,8 @@ async def cmd_train(args) -> int:
 
     from .train import evaluate, test_log_loss, train_global
 
+    if args.rug:
+        return _train_rug(args)
     timeframe = parse_timeframe(args.timeframe)
     console = Console()
     if args.pumpswap and not args.raw:
@@ -620,6 +636,49 @@ async def cmd_train(args) -> int:
     return 0
 
 
+def _train_rug(args) -> int:
+    import json
+
+    from .rug import RugModel, labelled_states, rug_model_name, rug_report, train_rug
+
+    console = Console()
+    if not args.raw:
+        raise SystemExit("--rug needs --raw (recordings from `tartar record`)")
+    console.print("replaying launches (screen every launch at +20 s, outcome 30 min later)…")
+    rows = labelled_states(args.raw)
+    if len(rows) < 200:
+        raise SystemExit(f"only {len(rows)} launches with a recorded outcome; record more data first")
+    if any(r["simulated"] for r in rows) and args.out is None:
+        raise SystemExit("this is simulated data; pass --out DIR so the model is not used for real tokens")
+    model, report = train_rug(rows, log=console.print)
+    target = model_dir(args.out) / rug_model_name()
+    new_loss = report["test"]["log_loss"]
+    if target.with_suffix(".txt").exists() and not args.force:
+        try:
+            old_loss = rug_report(RugModel.load(target), rows)["test"]["log_loss"]
+        except Exception:  # unreadable or incompatible: replace it
+            old_loss = None
+        if old_loss is not None and old_loss <= new_loss:
+            console.print(f"[yellow]kept the installed P(rug) model: it scores better on these test launches (log loss {old_loss:.4f} vs {new_loss:.4f}); use --force to replace it[/yellow]")
+            return 0
+        if old_loss is not None:
+            console.print(f"new P(rug) model beats the installed one (log loss {new_loss:.4f} vs {old_loss:.4f})")
+    path = model.save(target)
+    path.with_suffix(".report.json").write_text(json.dumps(report, indent=2))
+    t = report["test"]
+    n = report["launches"]
+    console.print(
+        f"test: {n['test']} latest launches (train {n['train']}, validation {n['valid']}), rug rate {100 * report['base_rate']['test']:.1f}%\n"
+        f"  AUC {t['auc']:.3f} (risk level alone {t['auc_risk_level']:.3f}); log loss {t['log_loss']:.4f} "
+        f"(uncalibrated {t['log_loss_uncalibrated']:.4f}, base rate {t['log_loss_base_rate']:.4f}); Brier {t['brier']:.4f}"
+    )
+    console.print("  by decile of P(rug), predicted → observed: " + ", ".join(f"{100 * d['predicted']:.0f}→{100 * d['observed']:.0f}%" for d in t["deciles"]))
+    console.print("  by risk level: " + ", ".join(f"{k} {100 * v['share']:.0f}% of launches, rug {100 * v['rug_rate']:.1f}%" for k, v in t["by_level"].items()))
+    console.print("  top features: " + ", ".join(f"{k} {v:.0%}" for k, v in list(report["feature_gain"].items())[:6]))
+    console.print(f"saved {path} (+ .json metadata, .report.json)")
+    return 0
+
+
 async def cmd_profit(args) -> int:
     import json
 
@@ -689,7 +748,7 @@ async def cmd_decide(args) -> int:
     valid = [s for s, p in zip(states, split) if p == 1]
     scorers = [
         FunctionScorer("buy every launch", lambda s: 1.0),
-        FunctionScorer("pass the --next-launch screen", lambda s: float(s["buyers"] >= 3 and s["risk"] not in ("danger", "scam"))),
+        FunctionScorer("pass the --next-launch screen", lambda s: float(s["buyers"] >= 3 and not s["avoid"])),
         FlagScorer(train, labels[split == 0]),
         LightGBMScorer(train, labels[split == 0], valid, labels[split == 1]),
     ]
