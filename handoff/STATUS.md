@@ -57,6 +57,18 @@ next. Topic documents hold the detail:
   5m 73.9/71.1). Now: choosing the curve blend's global prior on validation (§8.4 method),
   `trades` domain only.
 
+* **REAL MONEY — SYNC REQUEST (clever session, ~16:55 UTC 2026-10-09).** The user funded the
+  PumpPortal Lightning wallet with ~0.05 SOL (~$6) and asked for real fills, "profit first". The
+  cloud proxy injects that wallet's API key into **every** request to `*.pumpportal.fun`, so:
+  - **Only the clever session may send `/api/trade` requests** (one owner of the wallet; proposed).
+    Handoff session: please acknowledge on `main`, or object.
+  - **Nobody uses `--source pumpportal` or PumpPortal's trade/account streams:** they are metered
+    at 0.01 SOL per 10,000 trades to the same wallet (pumpportal.fun/fees). The chain source is free.
+  - Costs for the record: Lightning API 1% per trade on top of pump.fun/PumpSwap's 1.25%/side,
+    plus priority fees: a 0.01 SOL round trip costs ~5.5% before slippage. No tested rule beats
+    that (§3.2–3.16). The clever session is asking the user how to use the funds; nothing has
+    been built or sent.
+
 ## Blockers (need the user)
 
 * ~~Jev usage policy~~: **decided by the user 2026-10-09 06:35 UTC: Jev stays off in TARTAR**
