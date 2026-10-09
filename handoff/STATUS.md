@@ -32,6 +32,14 @@ next. Topic documents hold the detail:
 
 ## Active
 
+* **Trading-skills thread** (project thread session, since 2026-10-09 21:30 UTC, branch
+  `claude/project-thread-x7fh45`). Task (the user's 21:25 / 21:29 "work continuously, nonstop"):
+  find a way to pick the ~30% of launches that move without the risk filters removing them
+  (profitability §3.21). Hypotheses one at a time on the same split (dev < 16:00 UTC 10-09, test
+  after): buyer composition / wallet history, holder growth, curve shape in the first 60 s, dev
+  behaviour, metadata. Every idea scored with the new default exit (TP +100%, 30 min, no stop,
+  now on `main`). Offline only, no recorder, no wallet.
+
 * **Edge hunt E thread** (project thread session, since 2026-10-09 21:40 UTC, branch
   `claude/project-thread-9op3pf`). **Paper only, no real SOL, no keys.** Task (the user's 21:30
   "work continuously"): edge hunt angle E, TARTAR's assets, beyond the closed predictor + P(rug)
