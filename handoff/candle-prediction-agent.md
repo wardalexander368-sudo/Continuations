@@ -538,6 +538,37 @@ All four installed (keep-better on test log loss). 5m at the open is still overc
 The 5m model was trained by the study script, not `tartar train` (which has no row weights):
 its metadata says so (`old_recorder_weight: 0`, `note`).
 
+### 8.2.2e v3.2: with every recording to hour 19 (trained 2026-10-09 ~20:15-22:30 UTC; **not installed**)
+
+v3.1's recipe (8.2.2d) on every curve recording, adding the hours v3.1 never saw: `raw-clever`
+12-15, `raw-clever2`, `raw-v3` and `raw-pred` (to 2026-10-09 19:59 UTC; one directory per
+recorder, duplicate launches keep the longest copy). 31 leaves / 2,000 rows per leaf; the old
+recorder's (`raw`) training rows weighted by w, w chosen on validation log loss (validation and
+test hold no old rows). Script `handoff/experiments/predictor_v32.py`; results and the chosen
+candidates (gzipped) in `handoff/experiments/predictor-v32/`. Test = the latest 15% of launches
+(from ~17:00 UTC, 4,200-4,300 launches), which neither model trained on.
+
+| Candle | Launches / rows | w (validation LL by w) | Test log loss, v3.1 → v3.2 | Edge at the open | Live replay edge, all / trading | Trading candles: hit vs stated, v3.2 (v3.1) |
+|---|---|---|---|---|---|---|
+| 15 s | 28,795 / 2.93M | 1 (only w tried) | 0.3214 → 15S_LL | +1.9% → 15S_EDGE | 15S_LIVE | 15S_CAL |
+| 30 s | 28,500 / 1.94M | 1 (only w tried) | 0.3912 → **0.3870** | +3.1% → **+3.5%** | +3.4 / +3.7% → +3.5 / +3.7% | 62.3% vs 63.6% (61.2% vs 62.7%) |
+| 1 m | 28,022 / 1.46M | **1** (0.4147 / 0.4162 / 0.4185 at 1 / 0.25 / 0) | 0.4712 → **0.4641** | +4.0% → +4.0% | +3.1 / +3.3% → **+3.7 / +4.0%** | 64.4% vs 66.5% (64.6% vs 65.4%) |
+| 5 m | 13,833 / 258k | **0** (0.9728 / 0.9681 / 0.9629 / 0.9605 / 0.9589 at 1 / 0.5 / 0.25 / 0.1 / 0) | 1.1184 → **1.0779** | +6.1% → **+7.3%** | +7.4 / +7.7% → **+9.3 / +9.8%** | 68.3% vs 71.2% (68.5% vs 70.3%) |
+
+Every length beats v3.1 on test log loss, so all four pass the keep-better rule. **Not installed:**
+the predictor-strategy forward test's `evaluate` asserts the SHA-256 of `trades-60s`,
+`trades-300s` and `rug-20s` (≤ 2026-10-12). To install after it is scored: `gunzip -c
+handoff/experiments/predictor-v32/candidates/trades-<s>s.txt.gz > tartar/models/trades-<s>s.txt`
+and copy the `.json` beside it (`.report.json` stays v3.1's; these were trained by the study
+script, which writes no report). 15s and 30s were trained at w = 1 only (v3.1's choice at those
+lengths; each fit there takes ~25-40 min and ~10 GB).
+
+**Calibration flipped sign with the hour.** On hours 12-16 the blends were underconfident on
+trading candles (8.4.1); on these test hours (17-19) the 1m and 5m blends are **over**confident
+by 2-3 points, for v3.1 and v3.2 alike. It is the market-wide drift 8.4.1 describes, not a model
+fault: no fixed correction would hold across both periods. At 5m the open forecast is now
+calibrated (72.5% hit vs 72.7% stated; v3.1 on these launches 71.6% vs 71.4%).
+
 ### 8.2.3 A model for graduated tokens on PumpSwap (code 2026-10-09; trained once data allows)
 
 `tartar watch` follows a token through graduation onto its PumpSwap pool, but until now it then
