@@ -58,6 +58,28 @@ class VolatilityEstimator:
         self.count += 1
 
 
+# P(flat | previous candle traded), P(flat | previous candle flat) by candle length, measured on
+# recorded pump.fun launches (training split, 5,790 launches, 2026-10-09).
+_TRADES_FLAT_PRIORS = ((15, 0.372, 0.980), (30, 0.422, 0.974), (60, 0.487, 0.965), (300, 0.610, 0.943))
+
+
+def trades_flat_priors(timeframe: int) -> tuple[float, float]:
+    """Starting flat odds for a pump.fun launch watched trade by trade, interpolated in log time."""
+    x = math.log(max(timeframe, 1))
+    xs = [math.log(tf) for tf, _, _ in _TRADES_FLAT_PRIORS]
+
+    def interp(values: list[float]) -> float:
+        if x <= xs[0]:
+            return values[0]
+        if x >= xs[-1]:
+            return values[-1]
+        i = next(k for k in range(1, len(xs)) if x <= xs[k])
+        w = (x - xs[i - 1]) / (xs[i] - xs[i - 1])
+        return values[i - 1] + w * (values[i] - values[i - 1])
+
+    return interp([a for _, a, _ in _TRADES_FLAT_PRIORS]), interp([b for _, _, b in _TRADES_FLAT_PRIORS])
+
+
 class ActivityEstimator:
     """How likely the price is to stay exactly where it is (nothing else trades).
 

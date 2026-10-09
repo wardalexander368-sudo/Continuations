@@ -254,3 +254,12 @@ def test_band_states_its_own_probability():
     t = Tally()
     t.add(fc.observe(Candle.flat(f.target_start, f.ref_price)))
     assert t.to_dict()["band_stated"] == pytest.approx(f.band_mass, abs=1e-4)
+
+
+def test_flat_priors_follow_the_candle_length():
+    from tartar.model.volatility import trades_flat_priors
+
+    short, minute, five = trades_flat_priors(15), trades_flat_priors(60), trades_flat_priors(300)
+    assert short[0] < minute[0] < five[0] and short[1] > minute[1] > five[1]
+    assert trades_flat_priors(5) == short and trades_flat_priors(3600) == five  # held flat outside the measured range
+    assert Forecaster(30, domain="trades").activity.flat_rate == pytest.approx(sum(trades_flat_priors(30)) / 2)

@@ -37,7 +37,7 @@ next. Topic documents hold the detail:
 
 
 
-* **Predictor session** (session_01UeZ4ho5y38qR1iNxnShtwF, started 01:06 UTC 10-09): (A) robust median shrink for the point forecast (fixes v2's ~1.5 pt point-error regression), then (B) global models for 15s, 30s and 5m candles (only 1m has one). Touches `tartar/train.py`, `tartar/model/global_model.py`, `tartar/models/`. Branch `claude/solana-candle-predictor-s95qjr`.
+* **Predictor session** (session_01UeZ4ho5y38qR1iNxnShtwF, started 01:26 UTC 10-09): **queue item 11(a), part 1: record graduated tokens on PumpSwap.** On every graduation, subscribe to the token's canonical pool on the same websocket and record its trades for N hours (`tartar record --pumpswap-hours N`; off by default, so the fast loop is unchanged until it opts in). Touches `tartar/feeds/pumpchain.py` (extra subscriptions), `tartar/data/recorder.py`, `tartar/data/rawlog.py`. Branch `claude/solana-candle-predictor-s95qjr`.
 
 ## Blockers (need the user)
 
@@ -177,6 +177,18 @@ next. Topic documents hold the detail:
   curves, and values post-graduation exits with `graduation_haircut`.
   **Everyone: for long-hold studies, replay through `FastLoop`; don't use
   `load_trade_tokens` windows** (§3.10 lesson).
+
+* **2026-10-09 01:26 UTC, predictor session:**
+  - Installed global models for 15s, 30s and 5m candles, on the same ~5,800
+    launches as v2. Live replay edge, all candles: +3.8%, +3.7% and +12.0%;
+    the online model alone is about even with naive. Predictor doc §8.2.2.
+  - Flat priors for the online model now depend on the candle length.
+  - Median shrink study: no fitting method beats "none" under
+    within-validation cross-validation. A late-candle shrink helps on test,
+    but validation can't size it. v2's point gap is not the shrink (§8.2.1).
+  - Next: record PumpSwap trades of graduating tokens (item 11a). PumpSwap
+    runs ~356 successful tx/s program-wide, too much to record whole, so
+    only graduated pools are recorded.
 
 * **2026-10-09 01:40 UTC, profitability session:** Queue item 10 is done
   (§3.9). Measured fees from 212 recent TradeEvents: 1.25%/side on SOL
