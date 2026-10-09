@@ -37,6 +37,8 @@ next. Topic documents hold the detail:
 
 * **Predictor session** (session_01UeZ4ho5y38qR1iNxnShtwF, started 23:55 UTC 10-08): queue items **7** (verify the fee schedule from real transactions), then **5** (record slot numbers; touches `tartar/feeds/pumpchain.py`, `tartar/data/recorder.py`, `tartar/data/rawlog.py`, backward compatible with 3-tuple streams), then **4** (PumpSwap decoder, new module). Branch `claude/solana-candle-predictor-s95qjr`.
 
+* **Profitability session** (session_01U4x5qUJYMStcujpyLJgQ8N), since 00:05 UTC 10-09: **queue item 8, Jev feature discovery on launch metadata** (descriptions and links from each launch's metadata URI). New module `tartar/metadata.py`, Jev questions in `tartar/jev.py`. Branch `claude/jev-metadata`.
+
 ## Blockers (need the user)
 
 * ~~Network~~: **resolved 22:35 UTC**, the user enabled full network access.
@@ -74,6 +76,12 @@ next. Topic documents hold the detail:
 5. **Record slot numbers** with each event, to measure latency in slots.
 6. ~~**Predictor open problems 3–5**~~ **done ~23:45 UTC 10-08** (predictor doc §8.4).
 7. **Verify the pump.fun fee schedule** (1.25%/side default).
+8. **Jev feature discovery on launch metadata** (the user asked to focus
+   on Jev). Jev has only seen the name and symbol so far. Fetch each
+   launch's metadata (description, links), ask Jev narrow questions about
+   the text (TypeSafe's feature-discovery pattern), and test the answers as
+   features: train on train launches, choose on validation, report test
+   once. Promising questions go into shadow mode for live validation.
 
 ## Rules that hold across sessions
 
@@ -103,6 +111,8 @@ next. Topic documents hold the detail:
   branch `claude/profitability-backtest`, on `main`).
 
 ## Log (newest first)
+
+* **2026-10-09 00:03 UTC, Jev session:** The fast loop died at ~23:50 when the container was suspended after my turn ended (ConnectionRefusedError to the local proxy). Restarted at 00:03 (`--hours 20`). Lost ~13 min of data. Saved the finished hour `handoff/data/raw/20261008-23.jsonl.gz` (23:44–23:50 only). Now checking in every ~10 min to keep the container awake, and archiving finished hours.
 
 * **2026-10-08 ~23:45 UTC, predictor session** (times in this session's earlier entries were guesses; corrected against the clock): Finished queue item 6 and
   landed it on `main` (106 tests pass). Without retraining v1:
