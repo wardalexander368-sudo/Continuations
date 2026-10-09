@@ -69,14 +69,26 @@ next. Topic documents hold the detail:
   recorder stopped after hour 18 (hour 19 is partial and only on local disk). **Item (b) done
   (19:10 UTC):** see the log entry. Nothing half-done.
 
-* **REAL MONEY — the PumpPortal wallet is owned by the "Real-money cost test, fresh key" thread session
-  (session_01C3taLfUKfeFUC2zXBZEhaR, branch `claude/project-thread-4xqd2n`, from 17:58 UTC
-  2026-10-09).** Started after the user re-added the key. **Probe 18:00 UTC: still 403 "Must supply
-  a valid API key", nothing traded or spent.** `PUMPPORTAL_API_KEY` is still not in the environment;
-  the key again shows up only as a proxy network secret for `pumpportal.fun`, and PumpPortal ignores
-  wherever the proxy puts it (it reads only the `?api-key=` query parameter). Needs the user: add it
-  as a plain environment variable `PUMPPORTAL_API_KEY=<key>` (Environment variables, not Network
-  secrets), then start a new session. Every real trade waits for the user's go in the thread.
+* **REAL MONEY — cost test DONE (19:46–19:49 UTC 2026-10-09). The wallet is held by the "Real-money
+  cost test, fresh key" thread session (session_01C3taLfUKfeFUC2zXBZEhaR); no further trades are
+  planned.** The key now arrives as the `PUMPPORTAL_API_KEY` env var and works. With the user's go:
+  2 round trips of 0.01 SOL on CATE/SOL (`pump-amm`, Jupiter routes via Meteora DLMM), 30 s hold,
+  priority 0.00002 SOL. Fills: `handoff/data/real-fills/fills-2026-10-09.jsonl` (`real_fills.py summary --out ...`).
+  - **Steady-state round trip: −3.07% (0.010139 SOL in, 0.009827 back).** Breakdown: PumpPortal
+    Lightning fee 1% per side (0.0001 SOL seen going to its fee account on the buy) ≈ 2.0%,
+    network fee 0.000011 SOL per tx ≈ 0.22% at this size, pool fees + impact ≈ 0.85%. Buy filled at
+    the Jupiter quote (−0.6 bps); sell came back 131 bps under the quote (≈ the 1% Lightning fee + pool fee).
+  - **One-time costs on the first buy:** a PumpSwap per-wallet account (0.001346 SOL, not refunded)
+    and the token account's rent (0.001514 SOL, still parked there: Lightning's API has no close,
+    so it is only reclaimable with the wallet's private key). Trip 1 including these: −14.4%.
+  - **Landing:** sent → confirmed 1.37–1.43 s, every leg landed first try, no slippage failures.
+  - **Against the model:** the paper cost model (−3.5% for fresh pump.fun tokens: 2 × 1.25% fee,
+    0.4% network, 0.6% impact) has **no Lightning fee**. Real trading through Lightning adds ~2% per
+    round trip, so a fresh-token round trip costs ~5.5%, and any rule must clear that. Network fees
+    are ~0.2% per round trip at 0.01 SOL (~0.02% at 0.1 SOL).
+  - Wallet after: 0.0512 SOL liquid + 0.0015 parked in the CATE token account. Total spent ≈ 0.0035 SOL.
+  - Script: `real_fills.py` now retries the public RPC on 429 (one hit mid-run left trip 2's buy
+    unlogged; it was recorded with `record` and closed with `sell`).
 * (was) **REAL MONEY — the PumpPortal wallet was owned by the "Real-money cost test" thread session
   (session_016pSxch8d3Jna6ZzEsLhFVC, branch `claude/project-thread-yy6153`, from 17:40 UTC
   2026-10-09).** Started after the host fix; this container's proxy injects the PumpPortal key for

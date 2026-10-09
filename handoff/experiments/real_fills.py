@@ -40,7 +40,9 @@ MAX_SIZE, MAX_TRIPS = 0.02, 5
 PROBE_MINT = "HXqxTwCzREUXNK4CbNDgNEUEh2jLzFKdC4tvTuojpump"  # any token the wallet does not hold
 
 ap = argparse.ArgumentParser()
-ap.add_argument("mode", choices=("probe", "roundtrip", "summary"))
+ap.add_argument("mode", choices=("probe", "roundtrip", "summary", "sell", "record"))
+ap.add_argument("--sig", help="record: signature of a leg that was sent but not logged")
+ap.add_argument("--leg", choices=("buy", "sell"), help="record: which leg --sig was")
 ap.add_argument("--mint")
 ap.add_argument("--size", type=float, default=0.01, help="SOL per buy")
 ap.add_argument("--trips", type=int, default=2)
@@ -59,7 +61,11 @@ def now() -> str:
 
 
 def rpc(method: str, params: list):
-    r = client.post(RPC, json={"jsonrpc": "2.0", "id": 1, "method": method, "params": params})
+    for wait in (1, 2, 4, 8, 16, 0):  # the public RPC rate-limits (429); a crash mid-trip leaves tokens held
+        r = client.post(RPC, json={"jsonrpc": "2.0", "id": 1, "method": method, "params": params})
+        if r.status_code != 429 or not wait:
+            break
+        time.sleep(wait)
     r.raise_for_status()
     body = r.json()
     if body.get("error"):
@@ -194,14 +200,14 @@ def summary() -> None:
     legs = [r for r in rows if r.get("effects") and not r["effects"].get("err")]
     for r in legs:
         e, q = r["effects"], r.get("quote") or {}
-        lat = (r["confirmed_at"] - r["sent_at"]) if r.get("confirmed_at") else None
+        lat = (r["confirmed_at"] - r["sent_at"]) if r.get("confirmed_at") and r.get("sent_at") else None
         if r["leg"] == "buy":
             spent = -e["sol_change"] - e["ata_rent_sol"]  # excluding refundable rent
             got = e["token_change"]
             q_tokens = q.get("out", 0) / 1e6 if q.get("out") else None
             shortfall = 1e4 * (1 - got / q_tokens) if q_tokens else None
             print(f"{r['t']} BUY  spent {spent:.6f} SOL (+ rent {e['ata_rent_sol']:.6f}), got {got:,.2f} tokens; "
-                  f"vs Jupiter quote for {r['amount']} SOL: {shortfall if shortfall is None else round(shortfall, 1)} bps fewer tokens; "
+                  f"vs Jupiter quote for {r.get("amount", "?")} SOL: {shortfall if shortfall is None else round(shortfall, 1)} bps fewer tokens; "
                   f"network fee {e['fee_sol']:.6f}; sent->confirmed {lat and round(lat, 2)} s")
         else:
             back = e["sol_change"]
@@ -217,9 +223,28 @@ def summary() -> None:
         print(f"round trip: {spent:.6f} -> {back:.6f} SOL: net {1e4 * (back / spent - 1):+.0f} bps (rent excluded, refundable by closing the token account)")
 
 
+def sell_held() -> None:
+    """Sell 100% of --mint held (finishes a round trip a crash left open)."""
+    if not args.real or not args.mint:
+        sys.exit("sell needs --real and --mint")
+    sell = leg("sell", "100%", False, None)
+    print("sold" if sell.get("effects") and not sell["effects"].get("err") else "sell did not confirm", flush=True)
+
+
+def record() -> None:
+    """Log a leg that confirmed on chain but was never logged (no quote or send times)."""
+    if not args.sig or not args.leg or not args.mint:
+        sys.exit("record needs --sig, --leg and --mint")
+    tx, seen = confirm(args.sig)
+    if tx is None:
+        sys.exit("not confirmed")
+    log({"t": now(), "leg": args.leg, "mint": args.mint, "pool": args.pool, "quote": None, "response": {"signature": args.sig},
+         "recorded_late": True, "effects": effects(tx, args.mint), "block_time": tx.get("blockTime")})  # fmt: skip
+
+
 def probe() -> None:
     body, t0, t1 = trade("sell", "100%", False, skip_preflight=False)
     print(json.dumps({"probe_response": body, "seconds": round(t1 - t0, 2)})[:1500])
 
 
-{"probe": probe, "roundtrip": roundtrip, "summary": summary}[args.mode]()
+{"probe": probe, "roundtrip": roundtrip, "summary": summary, "sell": sell_held, "record": record}[args.mode]()
