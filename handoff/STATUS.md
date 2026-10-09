@@ -32,6 +32,15 @@ next. Topic documents hold the detail:
 
 ## Active
 
+* **Agent-machinery thread** (project thread session, since 2026-10-09 21:30 UTC, branch
+  `claude/project-thread-12sv1q`). **Paper only, no real SOL, no keys.** Task (the user's 21:28 ask;
+  project goal "fully automated trading agent, profitability and self improvement"): a paper-mode
+  agent loop in `tartar/autotrade/`: strategy interface (dip, perps momentum, launch selector plug
+  in), execution through the Jupiter route with a paper/live switch locked to paper, risk limits +
+  kill switch, and a self-improvement loop that scores paper results against each strategy's
+  pre-registered rule and promotes/demotes/retires with a logged change. Runs on GitHub Actions,
+  no Claude needed. Does not change the existing forward tests or their Action jobs.
+
 * **Recorder thread** (project thread session, since 2026-10-09 20:20 UTC, branch
   `claude/project-thread-9op3pf`). Task (the user's 20:12 go, continuous profit work): a raw
   recorder that no Claude session has to keep alive. Plan: a GitHub Action (`recorder.yml`)
