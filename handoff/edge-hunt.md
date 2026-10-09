@@ -142,7 +142,20 @@ scored from Hyperliquid's history alone, so no data collection is needed. Script
 
 ### E. TARTAR's assets
 
-Not run. Its brief is in *Resume*.
+Covered by the fee-research thread's predictor + P(rug) strategy forward test (see STATUS.md);
+not duplicated here.
+
+## Ranking (2026-10-09, dip/jevtrader session)
+
+1. **D, 14-day cross-sectional momentum on Hyperliquid perps:** test +1.50%/week after costs and
+   funding, CI touching zero, 12 rules looked at. **Forward test registered** (52 weeks, free to run).
+2. **A1, delta-hedged JLP:** +7.9% APR over USDC, exploratory. **Forward test registered** (90 days,
+   data from the `paper-tests` Action).
+3. **A2, LST cash-and-carry:** real but decaying to ~0 in 2026; not worth a slot now.
+4. **B, crash reversal:** real on Binance only, needs a CEX account; on-chain median −7.6 bps.
+5. **A3, funding dispersion:** chosen from 5 pairs, sign flips; weakest.
+Closed: C (PumpSwap LP, memecoin shorts), B's lead-lag/seasonality/seconds-scale prediction.
+
 
 ## What looks worth doing when the hunt resumes
 
