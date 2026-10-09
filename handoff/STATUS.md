@@ -399,6 +399,17 @@ deep pools match the model, a thin one was 2.4x it). The `launch_selector` slot 
 
 ## Log (newest first)
 
+* **2026-10-09 23:15 UTC, edge hunt E thread: "re-score the closed families at Jupiter's ~1.1%"
+  answered without a new run.** 1.1% is CATE's round trip (a deep Meteora pool, 0.85% pool+impact).
+  Every closed family trades fresh curves or young PumpSwap pools, whose pool fee (1.25% / 1.20%
+  per side) is paid on every route, so Jupiter's floor there is ~2.7–3.1% (§3.19), not 1.1%. The
+  paper model never charged Lightning's fee; Jupiter only saves its network-fee overcharge
+  (0.0002 → 0.000011 SOL/tx, ~0.4 point at 0.1 SOL, ~0.8 with 0.02 SOL entries). §3.21–3.23 are
+  already at Jupiter costs (best: launch policy −2.9%, dip-after-run −0.3% [−7.4, +6.7]). Shifting
+  the others by +0.4–0.8: predictor primary −5.2 → ~−4.4%, PumpSwap "active" −3.4 → ~−2.6%
+  [CI top ~+2.7], long holds −12.5 → ~−11.7%, launch slot +1 −5.3 → ~−4.5%. **Nothing flips; the
+  wallet key unlocks ~2 points vs Lightning on real trades, not a paper-positive family.**
+
 * **2026-10-09 23:25 UTC, edge hunt E thread: E1b does not hold** (claim cleared). E1's
   revenue-surprise rule, pre-registered on 8 other buyback / revenue-share perps (HYPE, JUP, AAVE,
   DYDX, GMX, CAKE, SKY, BANANA) before reading their data: family −0.01%/day [−0.14, +0.13] over
