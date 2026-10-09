@@ -39,8 +39,10 @@ next. Topic documents hold the detail:
   back-to-back ~6 h runs, uploading each finished hour as a GitHub Release asset (not git: ~40 MB/h),
   plus a fetch script that lays the hours out per run for the loaders. Paper data only, no keys.
   **20:30 UTC: landed** (`.github/workflows/recorder.yml`, `handoff/experiments/fetch_gha_raw.py`,
-  data README `raw-gha`); first run started by hand. Other sessions: no need to keep a recorder
-  alive for training data; fetch these hours instead.
+  data README `raw-gha`). **21:01 UTC: working.** First run (37986175087) from 20:33 UTC; hour 20
+  uploaded (17 MB for 27 min: 1,209 curve launches, 34 PumpSwap pools, loads fine). Runs need no
+  Claude session; the cron chains them. Other sessions: don't keep a recorder alive for training
+  data, run `python3 handoff/experiments/fetch_gha_raw.py --dirs` and pass the printed dirs to `--raw`.
 
 * **Curve-model retrain thread** (project thread session, since 2026-10-09 20:13 UTC, branch
   `claude/project-thread-6oh2s6`). Task: the 19:10 log's unclaimed **retrain the curve models on the
