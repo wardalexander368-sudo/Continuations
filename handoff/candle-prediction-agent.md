@@ -715,7 +715,9 @@ global model's own odds are off on these hours: direction right 79.0% vs 77.4% s
 P(up | move) above 0.7 hit 96.6% vs 86.0% stated and 0.3–0.4 hit 28% vs 35%, while below 0.1 it
 is over-sharp (12% vs 7%); flat mass is compressed toward the middle (0.3–0.9 stated → 4–6 points
 more flats). That is for the next retrain on newer recordings (`raw-clever` 12–16, `raw-clever2`,
-`raw-v3`), not for a correction fitted on six hours.
+`raw-v3`), not for a correction fitted on six hours. Train it any time, but don't install over
+`trades-60s`, `trades-300s` or `rug-20s` before the predictor-strategy forward test is evaluated
+(≤ 2026-10-12): its `evaluate` asserts their SHA-256.
 
 ## 9. Scam filtering
 
