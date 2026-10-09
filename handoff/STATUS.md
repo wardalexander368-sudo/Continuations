@@ -35,7 +35,6 @@ next. Topic documents hold the detail:
 * **Jev session** (session_012ZRs9FUggpEkx65Rw7K7fU, live since 2026-10-08 23:44 UTC): owns the **live fast loop + slow loop** (queue item 1, steps 3–4). User chose `"scorer": "rules"` with `"shadow_jev": true` (paper). Fast loop runs `--hours 20` in this container (ends ~19:44 UTC 10-09). Tracked copies of the policy and reviews: `handoff/live/`. Branch `claude/jev-live`.
 
 
-* **Predictor session** (session_01UeZ4ho5y38qR1iNxnShtwF, started 23:55 UTC 10-08): item 7 done; item 5 code on `main`, latency measurement running (own recorder in its own container, `data/raw_slots`); next **9** (pump.fun V2 decoding, below) and **4** (PumpSwap decoder). Touches `tartar/feeds/pumpchain.py` (+ new module for PumpSwap). Branch `claude/solana-candle-predictor-s95qjr`.
 
 ## Blockers (need the user)
 
@@ -73,7 +72,22 @@ next. Topic documents hold the detail:
    source `pumpswap`): `tartar watch` follows a graduated pump.fun token trade by
    trade in its canonical pool (checked on 43 mainnet trades). Not yet recorded
    for training.
-5. ~~**Record slot numbers**~~ **code on `main` 00:10 UTC 10-09**: raw create/trade/migrate events carry `"slot"`, ticks have `Tick.slot`. The fast loop records slots after its next restart from `main`. Latency-in-slots measurement: predictor session, in progress.
+5. ~~**Record slot numbers**~~ **done 00:50 UTC 10-09.** Raw events carry
+   `"slot"`, and ticks carry `Tick.slot`. Measured with
+   `handoff/experiments/slot_latency.py` on a 40 min recording
+   (`handoff/data/raw-slots`, 1,347 launches):
+   - **24% of the first minute's buy SOL lands in the launch's own slot**,
+     and 31% in its first 5 slots (bundled sniping).
+   - Slots are ~270 ms.
+   - Notifications arrive a median **1.47 s** after the block (p90 5.1 s).
+   - A launch + 20 s decision acts ~95 slots in.
+   - `SOLANA_COMMITMENT=processed` (now supported) cut the median to
+     **1.15 s** and p90 to **2.0 s** in a 6 min sample, at the cost of rare
+     events from dropped blocks.
+
+   **Jev session:** worth trying in the fast loop (paper), since it is a
+   restart with that env var. Profitability: fills can now be modelled in
+   slots, not seconds.
 6. ~~**Predictor open problems 3–5**~~ **done ~23:45 UTC 10-08** (predictor doc §8.4).
 7. ~~**Verify the pump.fun fee schedule**~~ **done 00:00 UTC 10-09**: decoded from real TradeEvents (89 trades): **0.95% protocol + 0.30% creator = 1.25% per side** on V1 curves at every curve stage sampled; buyers pay fees on top of the SOL that enters the curve, sellers have them deducted (checked against wallet balance changes). A few trades carry 0 fees. The `tartar profit` default is right. V2 curves (item 9) showed 0.95% + 2.5% creator in samples.
 8. ~~**Jev feature discovery on launch metadata**~~ **done 00:20 UTC
@@ -128,6 +142,19 @@ next. Topic documents hold the detail:
   branch `claude/profitability-backtest`, on `main`).
 
 ## Log (newest first)
+
+* **2026-10-09 00:50 UTC, predictor session:** Queue items 7, 5, 4 and 9 are
+  done, all on `main` (117 tests at last full run):
+  - fees verified;
+  - slots recorded, plus the latency numbers above;
+  - PumpSwap feed for graduated tokens;
+  - pump.fun quote-paired curves decoded and kept out of SOL data.
+
+  Two research workflows (PumpSwap and pump.fun V2 layouts) verified
+  everything against mainnet transactions. Their scripts, IDLs and samples are
+  in this session's scratchpad only, so the key facts are in the predictor
+  doc's §5 table. Slot recordings are in `handoff/data/raw-slots*`. No claim
+  open; nothing half-done.
 
 * **2026-10-09 00:20 UTC, profitability session:** Queue item 8 is done
   (§3.8): `tartar/metadata.py` fetches launch metadata (Pinata gateway;
