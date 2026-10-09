@@ -99,17 +99,23 @@ before the 11a evaluation** (`handoff/preregistration/pumpswap-graduated/SPEC.md
   exactly these files (hours 06–11).
 - `20261009-12`: 12:00–12:59 UTC, 1,878 launches, 175,442 curve trades, 41 graduated SOL pools,
   217,503 PumpSwap swaps (after the 11a evaluation; for training and later studies).
+- `20261009-13`: 13:00–13:59 UTC, 2,065 launches, 205,918 curve trades, 39 graduated SOL pools,
+  288,918 PumpSwap swaps.
+- `20261009-14`: 14:00–14:59 UTC, 2,020 launches, 336,007 curve trades, 53 graduated SOL pools,
+  329,821 PumpSwap swaps. The public RPC dropped the connection 47 times this hour (gaps 1.2–3.7 s,
+  all under the loaders' 10 s cut): ~70 s of missed trades, about 2%.
 
 ## `raw-v3/` (predictor session, 2026-10-09 from 06:25 UTC)
 
 `tartar record --track-minutes 120 --pumpswap-hours 4` with `SOLANA_COMMITMENT=processed`
 (each launch followed for up to 2 h, each graduated SOL token's PumpSwap pool for 4 h).
 One recorder, one directory. `20261009-06` covers only 06:25–06:31 UTC: the container was
-suspended and the recorder died. Recording restarted at 12:55 UTC, so the gap is 06:31–12:55.
-Later hours are copied here as they finish. Use them alongside `raw-eager`/`raw-clever` for
-the predictor (queue 2) and the edge-hunt studies.
-- `20261009-13`: 13:00–13:59 UTC, 2,065 launches, 205,918 curve trades, 39 graduated SOL pools,
-  288,918 PumpSwap swaps.
-- `20261009-14`: 14:00–14:59 UTC, 2,020 launches, 336,007 curve trades, 53 graduated SOL pools,
-  329,821 PumpSwap swaps. The public RPC dropped the connection 47 times this hour (gaps 1.2–3.7 s,
-  all under the loaders' 10 s cut): ~70 s of missed trades, about 2%.
+suspended and the recorder died. The predictor session restarted it at 12:55 UTC, but that
+container was lost at ~13:25 before any hour was saved. The handoff session restarted it at
+13:31 UTC with the same flags. Later hours are copied here as they finish:
+
+Use them alongside `raw-eager`/`raw-clever` for the predictor (queue 2) and the edge-hunt
+studies.
+
+- `20261009-13`: 13:31–13:59 UTC, 1,064 launches, 87,485 curve trades, 16 graduated SOL pools,
+  30,463 PumpSwap swaps.

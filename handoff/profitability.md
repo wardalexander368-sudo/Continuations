@@ -21,7 +21,7 @@ Where each family stands (2026-10-09):
 | Graduation run-up on the curve | closed, break-even at best | §3.10 |
 | Longer holds (10–45 min) on screened launches | closed, loses | §3.14 |
 | Copy-trading wallets whose buys paid off | closed, loses | §3.15 |
-| Graduated tokens on PumpSwap (fees 1.20–1.25%/side, §3.13) | pre-registered, evaluated at ≥ 250 pools | `handoff/preregistration/pumpswap-graduated/` |
+| Graduated tokens in their first hour on PumpSwap (fees 1.20–1.25%/side, §3.13) | closed, loses (pre-registered, 264 pools) | §3.16 |
 | Established memecoins: dip buying | rolling forward test, scored 2026-10-30 | §3.11 |
 | SOL-USD with Jev (the user's jevtrader) | sealed test ends 2026-10-23; on-chain costs ≈ 0.5 bps/fill | §3.12, `handoff/jevtrader.md` |
 

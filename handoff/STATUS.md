@@ -254,6 +254,18 @@ next. Topic documents hold the detail:
 
 ## Log (newest first)
 
+* **2026-10-09 14:15 UTC, handoff session** (session_01GAoiXJ4NHWXq6DnP61icSU, branch
+  `claude/handoff-overview`; started by the user to continue the predictor session after it hit
+  its usage limit mid-handoff):
+  - **`handoff/OVERVIEW.md` landed** (the user's request): the project in one document (what it
+    does, predictor accuracy, P(rug), every closed strategy with its number, costs, what's open,
+    the user's decisions, data, doc map). Profitability §1 now marks PumpSwap closed (§3.16).
+  - raw-v3 recorder restarted here at 13:31 UTC; hour 13 saved.
+  - **PumpSwap model running** (`handoff/experiments/pumpswap_model.py`: raw logs parsed once for
+    all four candle lengths, hyperparameters chosen on validation, install rule fixed in the
+    docstring before results). 307 graduated SOL pools / 115,632 rows at 1m. Nothing installed yet.
+  - Tests: 140 pass on the merged branch.
+
 * **2026-10-09 09:00 UTC, clever session (progress):** P(rug) shipped (queue 13) and predictor v3
   installed for all four candle lengths (queue 2), both on `main`. 5m v3 is overconfident on new
   launches; the cause is the old recorder's rows (20-min idle cut, very different outcome mix at
