@@ -87,3 +87,59 @@ async def test_chain_recorder_writes_slots(tmp_path, monkeypatch):
     (token,) = load_trade_tokens(tmp_path, 60)
     slots = [tick.slot for group in token.ticks.values() for tick, _ in group]
     assert slots[0] == 1000 and 1010 in slots
+
+
+def test_curves_quoted_in_other_tokens_decode_with_their_quote():
+    (trade,) = events_from_logs(json.loads((DATA / "pump_trade_quoted.json").read_text())["logs"])
+    assert trade.quote_mint == "WXMRyRZhsa19ety5erZhHg4N3xj3EVN92u94422teJp" and trade.sol == 0 and trade.price == 0
+    assert trade.quote_amount == 232_421_770_913 and trade.vquote > 0 and trade.tokens == pytest.approx(5590780.730242)
+    (create,) = events_from_logs(json.loads((DATA / "pump_create_quoted.json").read_text())["logs"])
+    assert isinstance(create, ChainCreate) and create.quote_mint.endswith("pump")
+    (sol_trade,) = events_from_logs(json.loads((DATA / "pump_sell_via_jupiter.json").read_text())["logs"])
+    assert sol_trade.quote_mint == "" and sol_trade.price > 0
+
+
+async def test_quoted_launches_are_recorded_but_kept_out_of_sol_data(tmp_path, monkeypatch):
+    from tartar.data.recorder import ChainRecorder
+    from tartar.data.rawlog import raw_files, read_events
+    from tartar.feeds.base import Status
+
+    now = [T0]
+
+    def sol_trade(user, sol, vsol):
+        return ChainTrade("MintS", sol, sol * 3e7, True, user, int(T0), vsol, 32.19e9 / vsol, "dev", vsol - 30)
+
+    def quoted(user, amount, vq):
+        return ChainTrade("MintQ", 0.0, 1e6, True, user, int(T0), 0.0, 1e9 - vq, "dev2", None, "USDCmint", amount, vq, vq - 4_292_000_000)
+
+    async def fake_stream(urls=None):
+        yield Status("connected", kind="connected")
+        yield T0, "a", [ChainCreate("MintS", "S", "S", "dev", None), sol_trade("dev", 1.0, 31.0)], 1
+        yield T0, "b", [ChainCreate("MintQ", "Q", "Q", "dev2", None, quote_mint="USDCmint"), quoted("dev2", 50_000_000, 4_342_000_000)], 1
+        for i in range(60):
+            now[0] = T0 + 5 + 5 * i
+            yield now[0], f"s{i}", [sol_trade(f"w{i}", 0.1, 31.0 + 0.1 * (i + 1)), quoted(f"q{i}", 1_000_000, 4_343_000_000 + i)], 2 + i
+        await asyncio.sleep(3600)
+
+    monkeypatch.setattr(pumpchain, "stream_program_events", fake_stream)
+    await ChainRecorder(tmp_path, clock=lambda: now[0], track_minutes=60, idle_minutes=30).run(duration=0.5)
+    events = list(read_events(raw_files(tmp_path)))
+    q_create = next(e for e in events if e["e"] == "create" and e["mint"] == "MintQ")
+    q_trades = [e for e in events if e["e"] == "trade" and e["mint"] == "MintQ"]
+    assert q_create["quote"] == "USDCmint" and q_create.get("vsol") is None
+    assert len(q_trades) == 61 and q_trades[0]["qamt"] == 50_000_000 and q_trades[0].get("vsol") is None
+    assert [t.mint for t in load_trade_tokens(tmp_path, 60)] == ["MintS"]
+
+
+async def test_screener_skips_quoted_launches():
+    from tartar.screen import next_clean_launch
+
+    verdicts = []
+
+    async def stream():
+        yield T0, "q", [ChainCreate("MintQ", "Q", "Q", "dev", None, quote_mint="USDCmint")], 1
+
+    with pytest.raises(ConnectionError):  # the stream ends without a SOL launch passing
+        await next_clean_launch(stream(), screen_seconds=20, min_buyers=3, on_verdict=verdicts.append, clock=lambda: T0)
+    (verdict,) = verdicts
+    assert verdict.candidate.create.mint == "MintQ" and "not SOL" in verdict.reason and not verdict.passed

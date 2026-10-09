@@ -174,6 +174,8 @@ def load_trade_tokens(raw_dir: str | Path, timeframe: int, max_gap: float = 10.0
 
     tokens = []
     for mint, create in creates.items():
+        if create.get("quote"):
+            continue  # priced in another token, not SOL
         start = create["t"]
         if mint not in tracked or tracked[mint] - start > 2.0:
             continue  # trades were not recorded from the launch on

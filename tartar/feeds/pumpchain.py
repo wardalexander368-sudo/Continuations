@@ -43,6 +43,7 @@ def _disc(name: str) -> bytes:
 
 
 TRADE, CREATE, COMPLETE = _disc("TradeEvent"), _disc("CreateEvent"), _disc("CompleteEvent")
+SOL_QUOTE = "11111111111111111111111111111111"  # a curve's quote_mint when it trades against SOL
 
 
 def b58encode(raw: bytes) -> str:
@@ -83,10 +84,18 @@ class ChainTrade:
     vtok: float  # virtual token reserves after the trade
     creator: str = ""
     real_sol: float | None = None  # SOL actually in the curve (progress toward graduation)
+    # Curves quoted in another token (USDC, a tokenized stock, another pump coin...) report
+    # zero SOL fields; their amounts are in raw base units of `quote_mint` (decimals are not
+    # in the event). Empty for SOL curves.
+    quote_mint: str = ""
+    quote_amount: int = 0
+    vquote: int = 0
+    rquote: int = 0
 
     @property
     def price(self) -> float:
-        return self.vsol / self.vtok
+        """SOL per token (0 for a curve quoted in another token)."""
+        return self.vsol / self.vtok if self.vtok else 0.0
 
 
 @dataclass(frozen=True)
@@ -97,6 +106,7 @@ class ChainCreate:
     creator: str
     block_time: int | None
     uri: str = ""
+    quote_mint: str = ""  # the token this curve is priced in; empty for SOL
 
 
 @dataclass(frozen=True)
@@ -140,13 +150,23 @@ def decode_event(data: bytes) -> ChainTrade | ChainCreate | ChainComplete | None
             mint, sol, tokens = r.key(), r.u64(), r.u64()
             is_buy = r.take(1) != b"\0"
             user, ts, vsol, vtok = r.key(), r.i64(), r.u64(), r.u64()
-            creator, real_sol = "", None
-            try:
+            creator, real_sol, quote = "", None, None
+            try:  # fields were appended over time (pump.fun's public IDL): read while bytes remain
                 real_sol = r.u64() / LAMPORTS
                 r.u64(), r.key(), r.u64(), r.u64()  # real token reserves, fee recipient, fee bps, fee
                 creator = r.key()
+                r.u64(), r.u64(), r.take(1)  # creator fee bps, creator fee, track_volume
+                r.u64(), r.u64(), r.u64(), r.i64()  # volume accumulator
+                r.string(), r.take(1)  # ix_name, mayhem_mode
+                r.u64(), r.u64(), r.u64(), r.u64()  # cashback and buyback (bps, amount)
+                r.take(34 * struct.unpack("<I", r.take(4))[0])  # fee-sharing shareholders
+                quote = (r.key(), r.u64(), r.u64(), r.u64())  # quote mint, amount, virtual and real reserves
             except ValueError:
-                pass  # older, shorter event layout
+                pass  # an older, shorter layout: SOL-quoted
+            if quote is not None and quote[0] != SOL_QUOTE:
+                if vtok <= 0 or quote[2] <= 0:
+                    return None
+                return ChainTrade(mint, 0.0, tokens / TOKEN_UNITS, is_buy, user, ts, 0.0, vtok / TOKEN_UNITS, creator, None, *quote)
             if vsol <= 0 or vtok <= 0:
                 return None
             return ChainTrade(mint, sol / LAMPORTS, tokens / TOKEN_UNITS, is_buy, user, ts, vsol / LAMPORTS, vtok / TOKEN_UNITS, creator, real_sol)
@@ -154,12 +174,15 @@ def decode_event(data: bytes) -> ChainTrade | ChainCreate | ChainComplete | None
             r = _Reader(data)
             name, symbol, uri = r.string(), r.string(), r.string()
             mint, _curve, user = r.key(), r.key(), r.key()
-            creator, ts = user, None
+            creator, ts, quote_mint = user, None, ""
             try:
                 creator, ts = r.key(), r.i64()
+                r.u64(), r.u64(), r.u64(), r.u64(), r.key()  # starting reserves, supply, token program
+                r.take(2)  # mayhem mode, cashback enabled
+                quote_mint = r.key()
             except ValueError:
-                pass
-            return ChainCreate(mint, name, symbol, creator, ts, uri)
+                pass  # an older, shorter layout: SOL-quoted
+            return ChainCreate(mint, name, symbol, creator, ts, uri, "" if quote_mint == SOL_QUOTE else quote_mint)
         if head == COMPLETE:
             r = _Reader(data)
             r.key()  # user
@@ -222,7 +245,16 @@ def capture_rate(trades: Iterable[tuple[float, bool, float | None, float]]) -> f
 
 
 def trade_to_message(trade: ChainTrade) -> dict:
-    """The trade in PumpPortal's message shape, so the rest of the pipeline treats both alike."""
+    """The trade in PumpPortal's message shape, so the rest of the pipeline treats both alike.
+
+    A trade on a curve quoted in another token has no SOL amounts; it carries `quote`,
+    the raw quote amounts, and no SOL price, so SOL-based consumers skip it."""
+    if trade.quote_mint:
+        return {
+            "mint": trade.mint, "traderPublicKey": trade.user, "txType": "buy" if trade.is_buy else "sell",
+            "tokenAmount": trade.tokens, "vTokensInBondingCurve": trade.vtok, "creator": trade.creator, "pool": "pump",
+            "quote": trade.quote_mint, "quoteAmount": trade.quote_amount, "vQuote": trade.vquote, "rQuote": trade.rquote,
+        }  # fmt: skip
     return {
         "mint": trade.mint,
         "traderPublicKey": trade.user,
@@ -239,7 +271,9 @@ def trade_to_message(trade: ChainTrade) -> dict:
 
 def create_to_message(create: ChainCreate, first_trade: ChainTrade | None = None) -> dict:
     msg = {"mint": create.mint, "traderPublicKey": create.creator, "txType": "create", "name": create.name, "symbol": create.symbol, "uri": create.uri, "pool": "pump"}
-    if first_trade is not None and first_trade.mint == create.mint:
+    if create.quote_mint:
+        msg["quote"] = create.quote_mint
+    if first_trade is not None and first_trade.mint == create.mint and not first_trade.quote_mint:
         msg.update(
             solAmount=first_trade.sol,
             tokenAmount=first_trade.tokens,
