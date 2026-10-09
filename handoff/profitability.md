@@ -374,7 +374,8 @@ per trade [−9.10, −4.52] over 2,257 trades (halves −7.9% / −6.0%; win
 
 Liquid Solana pools days to months old, from GeckoTerminal 5-minute OHLCV
 (`handoff/experiments/established_collect.py`, `established_rules.py`).
-Costs: 0.5% swap fee per side (PumpSwap charges ~0.30%), price impact from
+Costs: 0.5% swap fee per side (believed then to be above PumpSwap's ~0.30%; **it isn't**:
+memecoin pools pay 0.30–1.25% per side by market cap, see §3.13), price impact from
 each pool's liquidity (size / (liquidity/2) per side; $200 trades), and
 $0.05 per transaction. Fixed grid: **momentum** (1 h or 15 min return
 above +5/10/20%), **dip** (below −5/10/20%), **breakout** (new 1/4/24 h
@@ -437,6 +438,44 @@ market makers. On-chain prices sit within ~1–3 bps of Coinbase's book. Quotes,
 cost is higher by whatever the quote moves during ~1–2 s of latency (the next measurement). For
 any strategy on SOL itself, the on-chain venue is **~180× cheaper** than retail CEX taker fees,
 which moves the profitability bar from "beat 1.8%" to "beat ~0.01–0.05%".
+
+### 3.13 PumpSwap fees: 1.20–1.25% per side on young tokens, tiered by market cap
+
+Measured 2026-10-09 (`handoff/experiments/pumpswap_fees.py`) two ways that agree: from the
+fee basis points PumpSwap writes into every BuyEvent/SellEvent (fetched over RPC), and from
+recorded swaps (`sol`, `paid` and post-trade reserves give LP and protocol + creator
+separately; 10,283 swaps ≥ 0.05 SOL in `handoff/data/raw-pumpswap`). Every trade pays
+**LP 0.20% + protocol 0.05% + a coin-creator fee that falls as market cap rises**, except
+right after graduation:
+
+| market cap (SOL) | LP + protocol + creator | per side |
+|---|---|---|
+| below ~420 (a fresh graduate sits at ~400) | 0.02 + 0.93 + 0.30 | **1.25%** |
+| ~420–1,200 | 0.20 + 0.05 + 0.95 | **1.20%** |
+| ~1,100–4,400 | 0.20 + 0.05 + 0.80–0.85 | 1.05–1.10% |
+| ~4,400–6,800 | 0.20 + 0.05 + 0.75 | 1.00% |
+| ~12,000 / ~18,000 | creator 0.70 / 0.65 | 0.95% / 0.90% |
+| ~28,000 / ~33,000 | creator 0.55 / 0.50 | 0.80% / 0.75% |
+| ~47,000 | creator 0.35 | 0.60% |
+| ~500,000 | creator 0.05 | 0.30% |
+
+(Tier edges overlap a little in the recorded data; the program's own market-cap measure
+differs slightly from price × 1e9.) A handful of wallets trade fee-free (protocol accounts;
+~28–48 swaps each in 20 minutes); ignore them.
+
+**Consequences:**
+* Trading a token right after graduation costs about what the bonding curve did:
+  **~2.5% round trip** plus impact. Graduation doesn't buy cheaper execution until a token
+  reaches thousands of SOL in market cap. The graduation-exit haircut (§3.10) and any
+  PumpSwap study must charge these fees, not 0.30%.
+* The dip pre-registration (§3.11) charged 0.5% per side, believing PumpSwap took ~0.30%.
+  Cohort 1's pools pay 0.30–1.20%, mean 0.85%. Its primary metric (excess over random
+  entries in the same pool) is barely affected, since both sides of the comparison pay the
+  same fee; its "mean net > 0" criterion is optimistic by ~0.7 points per round trip. An
+  addendum (written before any out-of-sample result existed) adds a secondary line at
+  measured fees; SPEC.json is unchanged (`handoff/preregistration/dip-rolling/ADDENDUM-2026-10-09-fees.md`).
+* §3.11's in-sample memecoin numbers used 0.5%/side as well; at real fees the memecoin
+  mean net falls by ~0.7 points per trade, and the excess is unchanged.
 
 ## 4. What this means for the plan
 
