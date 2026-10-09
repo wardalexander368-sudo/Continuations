@@ -216,12 +216,18 @@ E1b). Proposals, judged by this session under the three lenses (one judge, not t
 
 | # | Proposal | Payer | Econ | Test | Fit | Verdict |
 |---|---|---|---|---|---|---|
-| F1 | **Short newly listed HL perps** for 1-4 weeks | late hype buyers, crowded longs' funding | 3: fades of several % vs ~0.5% costs; squeezes | 4: ~180 listings since 2023 incl. delisted, free history, D-style forward test needs no collection | 4: one venue | **pre-registered** (`preregistration/listing-fade/SPEC.md`) |
+| F1 | **Short newly listed HL perps** for 1-4 weeks | late hype buyers, crowded longs' funding | 3: fades of several % vs ~0.5% costs; squeezes | 4: ~150 listings since 2023-09 incl. delisted, free history, D-style forward test needs no collection | 4: one venue | **closed:** not confirmed (below) |
 | F2 | Funding-spike event short (time series, per coin) | crowded longs | 2: overlaps D2's closed cross-section and momentum | 3 | 4 | hold; run only if F1 shows listing funding matters |
 | F3 | On-chain spot vs HL perp gap on memecoins listed on both (convergence) | impatient perp traders | 2: gaps above ~1% are brief; our latency 1.2-1.5 s | 1: no history, must record seconds-level data first | 3: two venues | drop for now |
 | F4 | Token-unlock shorts | unlock sellers | 3 | 1: unlock calendars are paid-only (DefiLlama emissions 402) | 4 | drop (no free data) |
 | F5 | HL pre-market "hyperps" converging at spot launch | pre-market buyers | 2: few events | 1: a handful a year | 3 | drop |
 | F6 | Decoder flow (pump.fun-born tokens) leading their HL perp | on-chain buyers | 2: few such perps, flow mostly off pump venues after graduation | 2 | 3 | drop |
+
+**F1 result (closed).** Chosen on train (k=3, H=7; every train rule lost, −12% to −48% mean,
+medians ~0), validation +5.7% [−9.4, +19.6] (51 listings), test +2.9% [−28.3, +24.9] (7 listings).
+The median listing fades (short +13%, 2/3 win in 2025-26) but squeezes own the mean (PANDORA
+−1,888%, JUP pre-market, PNUT −285%). `preregistration/listing-fade/RESULT-2026-10-09.md`.
+Round 2 has nothing registered; F2 (funding-spike shorts) stays on hold.
 
 ## Ranking (2026-10-09, dip/jevtrader session)
 

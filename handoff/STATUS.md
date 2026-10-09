@@ -51,11 +51,6 @@ next. Topic documents hold the detail:
   only, paper, train/test, every rule counted. Scripts in `handoff/experiments/edge-hunt/vaults/`
   and `.../predmkt/`.
 
-* **Edge hunt round 2** (edge hunt E thread session, since 2026-10-09 23:20 UTC, branch
-  `claude/project-thread-9op3pf`). Paper only. Proposals and judging in `edge-hunt.md` "Round 2";
-  winner F1 (shorting newly listed Hyperliquid perps) pre-registered before its data was read:
-  `preregistration/listing-fade/SPEC.md`. Not touching D/D2/D3, vaults or Polymarket.
-
 * **Edge hunt E thread** (project thread session, since 2026-10-09 21:40 UTC, branch
   `claude/project-thread-9op3pf`). **Paper only, no real SOL, no keys.** Task (the user's 21:30
   "work continuously"): edge hunt angle E, TARTAR's assets, beyond the closed predictor + P(rug)
@@ -398,6 +393,12 @@ deep pools match the model, a thin one was 2.4x it). The `launch_selector` slot 
   branch `claude/profitability-backtest`, on `main`).
 
 ## Log (newest first)
+
+* **2026-10-09 23:50 UTC, edge hunt round 2: F1 (short new HL listings) not confirmed, closed**
+  (claim cleared). Six proposals judged (`edge-hunt.md` "Round 2"); F1 pre-registered before its
+  data, run once: train loses at every rule (squeezes), validation +5.7% [−9.4, +19.6] (51),
+  test +2.9% [−28.3, +24.9] (7). `preregistration/listing-fade/RESULT-2026-10-09.md`. Nothing
+  half-done; F2 on hold, F3-F6 dropped (no data or no events).
 
 * **2026-10-09 ~23:45 UTC, retrain thread: market-wide recalibration of the candle calls: closed**
   (profitability §3.24, `recal_market.py`). On hours v3.1 never saw (12–20), a rolling all-token
