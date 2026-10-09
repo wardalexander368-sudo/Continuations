@@ -51,11 +51,10 @@ next. Topic documents hold the detail:
   only, paper, train/test, every rule counted. Scripts in `handoff/experiments/edge-hunt/vaults/`
   and `.../predmkt/`.
 
-* **Edge hunt E thread, E1b** (same session, since 2026-10-09 23:05 UTC, branch
-  `claude/project-thread-9op3pf`). Paper only. Fresh check of E1 on 8 other buyback /
-  revenue-share tokens with Hyperliquid perps (HYPE, JUP, AAVE, DYDX, GMX, CAKE, SKY, BANANA),
-  token list, rule and criteria pre-registered in `handoff/preregistration/revflow/SPEC.md`
-  before any of their data was read.
+* **Edge hunt round 2** (edge hunt E thread session, since 2026-10-09 23:20 UTC, branch
+  `claude/project-thread-9op3pf`). Paper only. Proposals and judging in `edge-hunt.md` "Round 2";
+  winner F1 (shorting newly listed Hyperliquid perps) pre-registered before its data was read:
+  `preregistration/listing-fade/SPEC.md`. Not touching D/D2/D3, vaults or Polymarket.
 
 * **Edge hunt E thread** (project thread session, since 2026-10-09 21:40 UTC, branch
   `claude/project-thread-9op3pf`). **Paper only, no real SOL, no keys.** Task (the user's 21:30
@@ -95,16 +94,16 @@ deep pools match the model, a thin one was 2.4x it). The `launch_selector` slot 
   data, run `python3 handoff/experiments/fetch_gha_raw.py --dirs` and pass the printed dirs to `--raw`.
 
 * **Curve-model retrain thread** (project thread session, branch `claude/project-thread-6oh2s6`):
-  **v3.2 trained, waiting to install.** Candidates for all four lengths beat v3.1 on unseen launches
-  (predictor doc 8.2.2e; gzipped in `handoff/experiments/predictor-v32/candidates/`). **Install after
-  the predictor-strategy test is evaluated (≤ 2026-10-12)**, not before: its `evaluate` asserts the
-  SHA-256 of `trades-60s` / `trades-300s`. This thread does the install when it is woken after that;
-  if it is gone, any session may (the doc gives the two commands).
-  **Since 23:05 UTC:** market-wide recalibration study (coordinator, under the user's "work
-  continuously"): the 1m/5m blends swing between over- and underconfident with market-wide drift
-  (8.2.2e). Try a calibration layer fitted on recent resolved candles across all tokens, judged by
-  the predictor-strategy signal's net return at Jupiter (curve fees) and Lightning costs, on hours
-  v3.1 never saw. Research only; touches no installed model file.
+  **v3.2 trained, waiting for the user's OK to install** (predictor doc 8.2.2e; gzipped in
+  `handoff/experiments/predictor-v32/candidates/`). The predictor-strategy test that pinned the
+  model hashes was scored at 20:20 UTC, so nothing else blocks it. Market-wide recalibration study
+  done (profitability §3.24, closed). Next here: PumpSwap 5m retry once the recorder thread has
+  more graduated pools.
+  **Since 23:15 UTC:** pump.fun who-is-trading signals (coordinator, under the user's "keep finding
+  things"): angles §3.15/§3.18/§3.22 didn't test, chiefly *who sells into* §3.23's deep dip after a
+  run (creator/bundle dump vs dispersed selling; whether past winners buy the dip). Edge-hunt
+  protocol: proposals, three-lens scoring, pre-registration before any hour ≥ 16:00 UTC 10-09 is
+  scored. Paper only. Not touching the low-cost-venue round (other thread).
 
 * **Dip/jevtrader session** (session_01Htqh7pc1Lh1PP6Dkm1rVvz, since 2026-10-09 17:33 UTC, `main`
   only): continues the profitability session. **Owns the dip forward test (queue 11b)**: the GitHub
@@ -404,6 +403,29 @@ deep pools match the model, a thin one was 2.4x it). The `launch_selector` slot 
   branch `claude/profitability-backtest`, on `main`).
 
 ## Log (newest first)
+
+* **2026-10-09 ~23:45 UTC, retrain thread: market-wide recalibration of the candle calls: closed**
+  (profitability §3.24, `recal_market.py`). On hours v3.1 never saw (12–20), a rolling all-token
+  calibration fixes 5m `p_clear`'s 2x overstatement (log loss 0.239 → 0.220; 1m was already
+  calibrated) but no recalibrated or regime-gated rule gets near break-even: best −5.6% at
+  Jupiter/curve fees, −7.5% at Lightning. Nothing installed or changed in `tartar/`.
+
+* **2026-10-09 23:15 UTC, edge hunt E thread: "re-score the closed families at Jupiter's ~1.1%"
+  answered without a new run.** 1.1% is CATE's round trip (a deep Meteora pool, 0.85% pool+impact).
+  Every closed family trades fresh curves or young PumpSwap pools, whose pool fee (1.25% / 1.20%
+  per side) is paid on every route, so Jupiter's floor there is ~2.7–3.1% (§3.19), not 1.1%. The
+  paper model never charged Lightning's fee; Jupiter only saves its network-fee overcharge
+  (0.0002 → 0.000011 SOL/tx, ~0.4 point at 0.1 SOL, ~0.8 with 0.02 SOL entries). §3.21–3.23 are
+  already at Jupiter costs (best: launch policy −2.9%, dip-after-run −0.3% [−7.4, +6.7]). Shifting
+  the others by +0.4–0.8: predictor primary −5.2 → ~−4.4%, PumpSwap "active" −3.4 → ~−2.6%
+  [CI top ~+2.7], long holds −12.5 → ~−11.7%, launch slot +1 −5.3 → ~−4.5%. **Nothing flips; the
+  wallet key unlocks ~2 points vs Lightning on real trades, not a paper-positive family.**
+
+* **2026-10-09 23:25 UTC, edge hunt E thread: E1b does not hold** (claim cleared). E1's
+  revenue-surprise rule, pre-registered on 8 other buyback / revenue-share perps (HYPE, JUP, AAVE,
+  DYDX, GMX, CAKE, SKY, BANANA) before reading their data: family −0.01%/day [−0.14, +0.13] over
+  952 days, no token passes (`preregistration/revflow/RESULT-2026-10-09.md`). No forward test;
+  E1's PUMP test continues with a lower prior. Nothing half-done.
 
 * **2026-10-09 22:50 UTC, trading-skills thread (perps lane): volatility-scaled momentum
   pre-registered; trend and reversal closed** (`edge-hunt.md` §D3). 24 rules in 7 families on D's
