@@ -32,6 +32,12 @@ next. Topic documents hold the detail:
 
 ## Active
 
+* **Curve-model retrain thread** (project thread session, since 2026-10-09 20:13 UTC, branch
+  `claude/project-thread-6oh2s6`). Task: the 19:10 log's unclaimed **retrain the curve models on the
+  newer recordings (v3.2)**, then edge-hunt judging (score A1–A3, B, C–E under the three lenses), then
+  the PumpSwap 5m retry when data allows. Trains into a scratch model dir; **won't install over
+  `trades-60s`, `trades-300s` or `rug-20s` before the predictor-strategy test is evaluated (≤ 2026-10-12).**
+
 * **Dip/jevtrader session** (session_01Htqh7pc1Lh1PP6Dkm1rVvz, since 2026-10-09 17:33 UTC, `main`
   only): continues the profitability session. **Owns the dip forward test (queue 11b)**: the GitHub
   Action `.github/workflows/paper-tests.yml` adds a cohort at 02:24 UTC daily
