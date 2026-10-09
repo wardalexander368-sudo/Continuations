@@ -110,3 +110,6 @@ Later hours are copied here as they finish. Use them alongside `raw-eager`/`raw-
 the predictor (queue 2) and the edge-hunt studies.
 - `20261009-13`: 13:00–13:59 UTC, 2,065 launches, 205,918 curve trades, 39 graduated SOL pools,
   288,918 PumpSwap swaps.
+- `20261009-14`: 14:00–14:59 UTC, 2,020 launches, 336,007 curve trades, 53 graduated SOL pools,
+  329,821 PumpSwap swaps. The public RPC dropped the connection 47 times this hour (gaps 1.2–3.7 s,
+  all under the loaders' 10 s cut): ~70 s of missed trades, about 2%.
