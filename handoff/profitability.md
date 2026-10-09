@@ -25,6 +25,7 @@ Where each family stands (2026-10-09):
 | Established memecoins: dip buying | rolling forward test, scored 2026-10-30 | §3.11 |
 | Predictor v3.1 candle calls + P(rug), held to the candle close (1m, 5m) | closed, loses (pre-registered, 108 trades) | §3.20 |
 | Smarter exits, regime gating and cheaper execution on launch buys | best: skip flags + TP +100%, Jupiter, 0.02 SOL: −2.9% [−4.1, −1.6]; still loses | §3.21 |
+| Picking movers from early flow, wallets, holders, curve shape, the creator, the name | movers predictable (AUC 0.88) but they collapse; small creator buys beat buy-all by ~2–4 points, still −2.2% on test | §3.22 |
 | SOL-USD with Jev (the user's jevtrader) | sealed test ends 2026-10-23; on-chain costs ≈ 0.5 bps/fill | §3.12, `handoff/jevtrader.md` |
 
 ## 2. How it is measured (`tartar/profit.py`, `tartar profit`)
@@ -857,6 +858,47 @@ don't hold on test (e.g. −4.1% vs −3.9% ungated) or never fire there.
   to pick the ~30% of launches that move *without* the risk filters removing them (§3.22).
 * For any launch rule: TP +100%, no stop-loss; size small; charge the real route's fee and the
   rent; Jupiter with our own key, never Lightning, for fresh tokens.
+
+### 3.22 Picking the launches that move: early-flow features (trading-skills thread)
+
+§3.21 left one question: can anything pick the ~33% of launches that ever trade above cost,
+without the risk filters removing them? Same launches and split as §3.21 (dev before 16:00 UTC
+10-09, test after), entry at +20 s or +60 s, the paper policy's default exit (TP +100%, 30 min,
+no stop) at Jupiter costs (1.25% per side, 0.02 SOL, 0.000011 SOL per transaction). Script:
+`handoff/experiments/mover_study.py` (features from the full trade paths, including each buyer's
+history across every recording, causal); outputs `handoff/data/exit-study/mover-groups.txt`,
+`dev-buy-rule.txt`.
+
+Feature groups, each alone and all together: **flow** (buys, sells, SOL in and out, buyers,
+sellers, time since the last trade), **buyers and wallets** (buy sizes, round sizes, share of
+first-2 s SOL, share of fresh wallets / repeat bots (≥ 20 earlier launches) / in-between),
+**holders and growth** (holders, buyers in each half of the window), **curve shape** (real SOL at
+¼, ½, ¾ and all of the window, peak, drawdown, time of peak), **dev** (the creator's buys and
+sells, earlier launches and rugs), **name**. LightGBM trained on the first 70% of dev, a
+top-fraction threshold chosen on the last 30% of dev, test once; two targets: the trade's net,
+and "mover" (any sale in 30 min above cost).
+
+**Movers are easy to predict and lose money.** Mover AUC is 0.84–0.90 on test from flow, curve
+shape or holder growth alone, the same on dev and test. But the launches most likely to move are
+the ones about to collapse: their top 5–10% lose −3% to −18% on test with medians of −50% to −66%.
+"Will it move" is "is it volatile", and on the curve the downside is the bigger side. Models
+trained on the trade's net pick quiet launches that lose about the cost floor. No group, at
+either entry time, has a positive validation pick that holds on test (best: all features, +20 s,
+top 2%: valid +3.4%, test +1.4% [−6.2, +9.6] on 74 trades; buy-every-launch is −4.4% on test).
+
+**The one consistent signal: the creator's own buy size.** Launches where the creator bought
+nothing lose the floor (−3.3%); the loss grows steadily with the creator's buy above 0.3 SOL
+(−6% at 0.3–0.7, −12% at 2–3.5, −21% above 6 SOL on dev: big creator buys are the bundles that
+dump, §3.18). A small creator buy (0.01–0.3 SOL) with no creator sale by +20 s beats buying every
+launch in **every one of the 16 hours** (+0.8 to +9.0 points). But it doesn't pay: the grid of 60
+variants (`dev_buy_rule.py`: buy-size band × entry +20/+60 s × live flags × minimum buyers)
+picks creator buy 0.01–0.15 SOL + live flags at +20 s, +1.7% [−1.3, +4.6] on 977 dev trades, and
+it makes **−2.2% [−6.7, +2.4]** on 468 test trades (+2.2 points over buying every launch).
+
+**Reading:** the early trades separate *volatile* launches from dead ones very well, and
+separate *good* from *bad* only a little (small creator buys, the live flags). Neither is enough to
+clear a ~2.7% round trip. Not pre-registered: nothing positive on held-out launches. A forward
+test of the creator-buy rule would be expected to lose ~2%.
 
 ## 4. What this means for the plan
 

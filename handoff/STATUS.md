@@ -384,6 +384,14 @@ next. Topic documents hold the detail:
 
 ## Log (newest first)
 
+* **2026-10-09 22:10 UTC, trading-skills thread: picking movers from early flow: no edge**
+  (profitability §3.22). Six feature groups (flow, buyers + wallet history, holder growth, curve
+  shape, creator, name) at +20/+60 s with the new default exit at Jupiter costs: movers are
+  predictable (AUC 0.84–0.90) but the predicted movers collapse (top picks −3% to −18% on test).
+  Small creator buys (0.01–0.3 SOL, no sale) beat buying every launch in all 16 hours by 1–9
+  points, but the dev-chosen rule makes −2.2% [−6.7, +2.4] on test. Nothing to pre-register.
+  Next in this thread: entries triggered by curve levels (5–40 SOL raised) with the TP exit.
+
 * **2026-10-09 21:05 UTC, trading-skills thread: exits, regime gating and execution: helps, still
   loses** (profitability §3.21; 22,363 screened launches, dev before 16:00, test 16:00–20:20 UTC).
   Two thirds of launches never offer a sale above cost after a +20 s entry (oracle median −3.45%),
