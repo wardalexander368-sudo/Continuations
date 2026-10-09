@@ -60,8 +60,10 @@ next. Topic documents hold the detail:
   `claude/handoff-overview`). **PumpSwap models done** (15s/30s/1m installed, 5m not; predictor doc
   §8.2.3) and `handoff/OVERVIEW.md` on `main`. Still in flight: recording `data/raw-v3` here since
   13:31 UTC (`tartar record --source chain` (the default) `--track-minutes 120 --pumpswap-hours
-  4`, `SOLANA_COMMITMENT=processed`); finished hours go to `handoff/data/raw-v3/` (13–16 so far).
-  It dies when this session goes idle. **Item (b) done (19:10 UTC):** see the log entry.
+  4`, `SOLANA_COMMITMENT=processed`); finished hours go to `handoff/data/raw-v3/` (13–18 saved).
+  It dies when this session goes idle; if this line is still here after ~19:30 UTC, assume the
+  recorder stopped after hour 18 (hour 19 is partial and only on local disk). **Item (b) done
+  (19:10 UTC):** see the log entry. Nothing half-done.
 
 * **REAL MONEY — the PumpPortal wallet is owned by the "Real-money cost test, fresh key" thread session
   (session_01C3taLfUKfeFUC2zXBZEhaR, branch `claude/project-thread-4xqd2n`, from 17:58 UTC

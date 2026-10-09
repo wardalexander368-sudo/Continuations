@@ -143,3 +143,5 @@ recorders overlap in time, and the loaders keep one copy of each token.
   against 36–48 per hour in 13–15; 16 had a burst of 99 at 16:40–16:49. The container was not
   CPU-starved (load ~2.5 of 4 cores, recorder ~9%), so this looks like the public RPC. Gaps under
   10 s are not cut by the loaders, so expect slightly lower capture in these hours.
+- `20261009-18`: 18:00–18:59 UTC, 2,024 launches, 146,951 curve trades, 48 graduated SOL pools,
+  267,393 PumpSwap swaps (125 short disconnects).
