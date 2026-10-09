@@ -108,3 +108,5 @@ One recorder, one directory. `20261009-06` covers only 06:25–06:31 UTC: the co
 suspended and the recorder died. Recording restarted at 12:55 UTC, so the gap is 06:31–12:55.
 Later hours are copied here as they finish. Use them alongside `raw-eager`/`raw-clever` for
 the predictor (queue 2) and the edge-hunt studies.
+- `20261009-13`: 13:00–13:59 UTC, 2,065 launches, 205,918 curve trades, 39 graduated SOL pools,
+  288,918 PumpSwap swaps.
