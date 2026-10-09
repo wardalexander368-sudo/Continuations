@@ -311,4 +311,4 @@ def test_quote_check_records_beside_fill(monkeypatch):
     o.meta["mint"] = "M"
     out = quotes.quote_check(o, 1100, http=H())
     assert out["jup_impact_pct"] == pytest.approx(0.4) and out["jup_route"] == ["Pump.fun Amm"]
-    assert quotes.quote_check(o, 1000 + 3600, http=H()) is None  # stale entry: no check
+    assert quotes.quote_check(o, 1000 + 7200, http=H()) is None  # stale entry: no check

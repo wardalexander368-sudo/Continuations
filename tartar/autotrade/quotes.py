@@ -9,7 +9,7 @@ USDC = "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v"
 JUP = "https://lite-api.jup.ag/swap/v1/quote"
 
 
-def quote_check(intent, now: float, http=None, max_age: float = 900.0) -> dict | None:
+def quote_check(intent, now: float, http=None, max_age: float = 3900.0) -> dict | None:
     """{"jup_impact_pct", "jup_route", "jup_out", "jup_at"} for a fresh open on a Solana mint, else None."""
     mint = intent.meta.get("mint")
     if intent.kind != "open" or not mint or now - intent.at > max_age:
