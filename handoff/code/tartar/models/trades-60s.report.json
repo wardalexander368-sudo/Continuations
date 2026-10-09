@@ -106,19 +106,19 @@
       ],
       [
         0.4,
-        1.0
+        0.9
       ],
       [
         0.6,
-        1.0
+        0.7000000000000001
       ],
       [
         0.8,
-        1.0
+        0.6000000000000001
       ],
       [
         0.95,
-        0.4
+        0.0
       ]
     ],
     "model_bytes": 9508920
@@ -167,9 +167,9 @@
       "band_coverage": 0.9376044568245125,
       "band_stated": 0.9352363620191304,
       "band_width_pct": 9.015219281329928,
-      "mae_pct": 3.3260495308856393,
+      "mae_pct": 3.3206143182326486,
       "naive_mae_pct": 3.366809168871395,
-      "edge": 0.012106310735579662,
+      "edge": 0.013720662004206075,
       "log_loss": 0.537371696063195,
       "info_gain_bits": 0.48295479950294573
     },
@@ -181,9 +181,9 @@
       "band_coverage": 0.944150417827298,
       "band_stated": 0.9432783753976903,
       "band_width_pct": 6.363116675779598,
-      "mae_pct": 2.1756794567403324,
+      "mae_pct": 2.1547071366205093,
       "naive_mae_pct": 2.1322822742094196,
-      "edge": -0.020352456640386984,
+      "edge": -0.010516835731518626,
       "log_loss": 0.46528486470544833,
       "info_gain_bits": 0.40601916334489535
     },
@@ -195,9 +195,9 @@
       "band_coverage": 0.9598885793871866,
       "band_stated": 0.9549566639241607,
       "band_width_pct": 3.7397864575450934,
-      "mae_pct": 1.263300848732678,
+      "mae_pct": 1.2495874455501206,
       "naive_mae_pct": 1.2445703602747693,
-      "edge": -0.015049762597410421,
+      "edge": -0.004031178497809984,
       "log_loss": 0.36336255193416434,
       "info_gain_bits": 0.3122977236328253
     },
@@ -209,9 +209,9 @@
       "band_coverage": 0.9745125348189415,
       "band_stated": 0.9707688549689514,
       "band_width_pct": 1.3141101195870477,
-      "mae_pct": 0.5028383181140099,
+      "mae_pct": 0.503301335749326,
       "naive_mae_pct": 0.5033013357493258,
-      "edge": 0.0009199610698955585,
+      "edge": -4.440892098500626e-16,
       "log_loss": 0.23147933740035428,
       "info_gain_bits": 0.2129063046620969
     }
@@ -221,23 +221,23 @@
     "online_only": {
       "all": {
         "n": 3816,
-        "hit_rate": 0.7974,
-        "avg_confidence": 0.784,
-        "band_coverage": 0.9222,
-        "band_stated": 0.8861,
-        "mae_pct": 5.1297,
+        "hit_rate": 0.7972,
+        "avg_confidence": 0.7882,
+        "band_coverage": 0.9216,
+        "band_stated": 0.8916,
+        "mae_pct": 5.1305,
         "naive_mae_pct": 5.1262,
-        "edge": -0.0007
+        "edge": -0.0008
       },
       "trading": {
         "n": 1089,
-        "hit_rate": 0.4637,
-        "avg_confidence": 0.4465,
-        "band_coverage": 0.8751,
-        "band_stated": 0.7923,
-        "mae_pct": 17.1846,
+        "hit_rate": 0.4628,
+        "avg_confidence": 0.441,
+        "band_coverage": 0.8779,
+        "band_stated": 0.7926,
+        "mae_pct": 17.1871,
         "naive_mae_pct": 17.172,
-        "edge": -0.0007
+        "edge": -0.0009
       }
     },
     "global_plus_online": {
@@ -245,19 +245,19 @@
         "n": 3816,
         "hit_rate": 0.8559,
         "avg_confidence": 0.8626,
-        "band_coverage": 0.9245,
+        "band_coverage": 0.9248,
         "band_stated": 0.9215,
-        "mae_pct": 4.9223,
+        "mae_pct": 4.9221,
         "naive_mae_pct": 5.1262,
         "edge": 0.0398
       },
       "trading": {
         "n": 1089,
         "hit_rate": 0.6694,
-        "avg_confidence": 0.6629,
-        "band_coverage": 0.8595,
-        "band_stated": 0.8356,
-        "mae_pct": 16.4567,
+        "avg_confidence": 0.6628,
+        "band_coverage": 0.8604,
+        "band_stated": 0.8355,
+        "mae_pct": 16.4558,
         "naive_mae_pct": 17.172,
         "edge": 0.0417
       }
