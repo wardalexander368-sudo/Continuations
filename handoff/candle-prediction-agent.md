@@ -709,6 +709,15 @@ Top features: `nonstandard_curve` 45%, `raised_sol` 17%, then
 `trades_per_wallet`, `sniper_share`, `holders`, `creator_launches` (4–5% each).
 Launches that pass the `--next-launch` screen are rare (2.9% of test launches)
 and rug often (30%, n = 23); P(rug) still ranks them (AUC 0.96, few rows).
+**Forward test and retrain (13:50 UTC).** On the 7,075 `raw-clever` launches (06:23–12:59 UTC,
+all after its training data) the shipped model kept AUC **0.924** (risk level 0.688), log loss
+0.207 vs 0.354 for a constant, but it under-predicted the middle (5–15% band: 20.7% observed;
+15–30%: 30.7%). Retrained with `raw-clever` included (12,342 launches; `tartar train --raw
+<all six dirs> --rug`), it beat the shipped model on the latest 1,852 launches (log loss 0.1787 vs
+0.1879) and was installed: AUC **0.935** (risk level 0.669), calibrated by decile (12% → 12%,
+36% → 35%, 58% → 54%). Top features: `nonstandard_curve` 57%, `raised_sol` 12%,
+`trades_per_wallet` 9%.
+
 **Reading:** high P(rug) also means more moons. It measures how likely a
 launch is to *move*, then collapse; it is a warning, not a trading signal (the
 fast-loop studies already close launch buying, profitability §3.9, §3.14).
