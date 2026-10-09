@@ -469,17 +469,28 @@ The model files now record `num_leaves` / `min_data_in_leaf` in their metadata.
 and hits 60.9% (v2: 73.4% vs 59.9%), and the live blend's trading candles state 68.0% vs
 63.3%. 15s and 30s lean the other way: ~2 points underconfident on trading candles.
 
-Diagnosis (`v3`, 2026-10-09): the old recordings and `raw-eager` follow dead tokens for
-different lengths of time. `handoff/data/raw` keeps a token a median 20 min (20-min idle cut,
-plus many reconnect cuts), `raw-eager` ~11 min (10-min idle cut). At 1m this hardly matters (76%
-vs 77% empty candles, and 83% of 1m validation rows are `raw-eager`; test hit 87.1% vs stated
-87.9%). At 5m a token needs ≥ 3 candles (≥ 15 min of window), so `raw-eager` tokens are
-under-represented: only 38% of 5m validation rows are from it, and the open's "no trade" share
-is 78% in training rows vs 36–38% in validation/test. The temperature is fitted mostly on
-old-style rows. On the old part of validation the model is calibrated (70.0% vs 71.2%), on the
-`raw-eager` part it is not (63.2% vs 69.9%). **Fix:** retrain once a few more hours of
-complete-capture recording exist (`raw-clever`, being recorded the same way as `raw-eager`), so
-that validation and test are both mostly new-style data; check 5m calibration first.
+Diagnosis (`v3`, 2026-10-09, corrected the same morning). The 5m model, scored per recording at
+the open (`raw-clever` is new data it never saw):
+
+| Recording | 5m tokens | "No trade" at the open | Hit vs stated | Edge |
+|---|---|---|---|---|
+| `raw` (old recorder, 10-08 14:06–10-09 03:39) | 3,325 | 78% | 87.4% vs 82.1% | +22.5% |
+| `raw-slots` (00:01–00:42) | 332 | 37% | 68.4% vs 70.6% | +15.4% |
+| `raw-pumpswap` (01:30–01:50) | 95 | 43% | 71.3% vs 72.6% | +23.6% |
+| `raw-eager` (04:06–06:00) | 931 | 36% | 61.5% vs 70.4% | +9.1% |
+| `raw-clever` (06:23–07:59, unseen) | 731 | 36% | 65.0% vs 69.8% | +15.1% |
+
+The old recorder's rows are ~75% of 5m training rows and have a very different outcome mix: it
+followed dead tokens for longer (median window 20 min vs ~11; 20-min idle cut plus many
+reconnect cuts), so a 5m candle at its open was "no trade" 78% of the time vs 36–43% in every
+later recording. Validation is ~95% later recordings, so the temperature was fitted on the right
+kind of rows; it is the training mix that differs. Within the later recordings calibration also
+drifts by period (−2 points at 00–02 UTC, −5 to −9 points at 04–08 UTC). At 1m the old and new
+recordings agree (76% vs 77% empty candles) and the model is calibrated on the new launches
+(87.1% vs 87.9%). Fitting early stopping and the temperature only on later-recording validation
+rows changed nothing (test log loss 1.1418 → 1.1410). **Fix:** retrain once `raw-clever` has a
+few hours (it records the same way as `raw-eager`), so most 5m training rows are new-style; try
+down-weighting or dropping the old `raw` rows at 5m, and check calibration first.
 
 ### 8.2.3 A model for graduated tokens on PumpSwap (code 2026-10-09; trained once data allows)
 
