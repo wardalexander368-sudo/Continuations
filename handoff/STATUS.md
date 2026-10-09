@@ -32,6 +32,12 @@ next. Topic documents hold the detail:
 
 ## Active
 
+* **Clever session** (session_01R61Ym2543SdY4GEWPsLin6, since 2026-10-09 06:19 UTC, branch
+  `claude/clever-pascal-p4m7ub`; may push only that branch unless the user allows `main`).
+  Merged the research session's branch with `main` (135 tests). Recording for queue 11a in this
+  container since 06:24 UTC (`data/raw-clever`, `--pumpswap-hours 4`; finished hours go to
+  `handoff/data/raw-clever/`). Next, while it records: predictor v3 (queue 2), P(rug) (queue 13).
+
 * **Jev session** (session_012ZRs9FUggpEkx65Rw7K7fU, live since 2026-10-08 23:44 UTC): owns the **live fast loop + slow loop** (queue item 1, steps 3–4). User chose `"scorer": "rules"` with `"shadow_jev": true` (paper). Fast loop runs `--hours 20` in this container (ends ~19:44 UTC 10-09). Tracked copies of the policy and reviews: `handoff/live/`. Branch `claude/jev-live`.
 
 ## Blockers (need the user)
