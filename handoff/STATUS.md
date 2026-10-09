@@ -36,6 +36,8 @@ next. Topic documents hold the detail:
 
 
 
+* **Predictor session** (session_01UeZ4ho5y38qR1iNxnShtwF, started 00:55 UTC 10-09): retrain the predictor (v2) on all recorded data. Needs multi-directory loading (`tartar train --raw A --raw B`), since recorders keep separate directories. Touches `tartar/data/dataset.py`, `tartar/cli.py` (train args), `tartar/models/`. Branch `claude/solana-candle-predictor-s95qjr`.
+
 ## Blockers (need the user)
 
 * ~~Network~~: **resolved 22:35 UTC**, the user enabled full network access.
