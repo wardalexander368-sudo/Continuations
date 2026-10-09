@@ -186,7 +186,8 @@ class Forecaster:
         if domain in TRADE_DOMAINS:
             # Recorded pump.fun launches: a flat candle follows a traded one 37-61% of the time and a
             # flat one 94-98% of the time, depending on the candle length (similar at every age).
-            after_trade, after_flat = trades_flat_priors(timeframe)
+            # Graduated PumpSwap pools trade more steadily: 13-15% and 75-90%.
+            after_trade, after_flat = trades_flat_priors(timeframe, domain)
             self.activity = ActivityEstimator(prior_flat=after_trade, prior_flat_after_flat=after_flat, prior_weight=4.0)
         else:  # aggregated candles of established pools are rarely flat
             self.activity = ActivityEstimator()

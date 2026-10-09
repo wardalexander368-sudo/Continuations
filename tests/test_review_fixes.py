@@ -263,6 +263,10 @@ def test_flat_priors_follow_the_candle_length():
     assert short[0] < minute[0] < five[0] and short[1] > minute[1] > five[1]
     assert trades_flat_priors(5) == short and trades_flat_priors(3600) == five  # held flat outside the measured range
     assert Forecaster(30, domain="trades").activity.flat_rate == pytest.approx(sum(trades_flat_priors(30)) / 2)
+    # Graduated PumpSwap pools have their own, much less flat odds.
+    pool = trades_flat_priors(60, "pumpswap")
+    assert pool[0] < minute[0] and pool[1] < minute[1]
+    assert Forecaster(60, domain="pumpswap").activity.flat_rate == pytest.approx(sum(pool) / 2)
 
 
 

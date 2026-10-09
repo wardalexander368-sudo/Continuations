@@ -581,7 +581,7 @@ in-sample rule already loses.
 
 ### 3.16 Trading graduated tokens on PumpSwap: no edge (queue 11a, pre-registered)
 
-Evaluated once on 2026-10-09 at 12:05 UTC, as `handoff/preregistration/pumpswap-graduated/SPEC.md`
+Evaluated once on 2026-10-09 at ~12:00 UTC, as `handoff/preregistration/pumpswap-graduated/SPEC.md`
 fixed it before any return was computed: `pumpswap_study.py handoff/data/raw-eager
 handoff/data/raw-clever --show-test` (plus the two sensitivity runs). Data: **264 graduated SOL
 pools** (69 from `raw-eager` 04:06–06:00, 195 from `raw-clever` 06:23–11:59; every pool had a

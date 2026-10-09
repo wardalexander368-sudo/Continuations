@@ -537,7 +537,20 @@ dropped the global model (trained on bonding curves) and ran the online model al
   (tested on a mainnet transaction), and a parity test checks that the rows equal the features
   the agent computes after its restart.
 - `pumpswap` counts as a trade domain wherever `trades` did (`TRADE_DOMAINS`): nowcast
-  fractions, the volatility prior and flat priors (both still the curve's, refined online).
+  fractions and the volatility prior (still the curve's, refined online). **Flat priors are
+  its own since 2026-10-09** (`_PUMPSWAP_FLAT_PRIORS`), measured on the training split of
+  170–191 graduated SOL pools (`raw-pumpswap`, `raw-eager`, `raw-clever`), candles after
+  graduation only:
+
+  | Candle | P(flat after traded), curve → pool | P(flat after flat), curve → pool |
+  |---|---|---|
+  | 15s | 0.372 → 0.148 | 0.980 → 0.896 |
+  | 30s | 0.422 → 0.144 | 0.974 → 0.875 |
+  | 60s | 0.487 → 0.132 | 0.965 → 0.855 |
+  | 300s | 0.610 → 0.147 | 0.943 → 0.753 |
+
+  They apply when the forecaster restarts at graduation (it does whenever a model was on before
+  or a PumpSwap model is found).
 
 ### 8.3 Blending
 

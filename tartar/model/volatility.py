@@ -66,12 +66,16 @@ class VolatilityEstimator:
 # P(flat | previous candle traded), P(flat | previous candle flat) by candle length, measured on
 # recorded pump.fun launches (training split, 5,790 launches, 2026-10-09).
 _TRADES_FLAT_PRIORS = ((15, 0.372, 0.980), (30, 0.422, 0.974), (60, 0.487, 0.965), (300, 0.610, 0.943))
+# The same on PumpSwap pools after graduation (training split of 170-191 graduated SOL pools,
+# raw-pumpswap + raw-eager + raw-clever, 2026-10-09): pools trade far more steadily than curves.
+_PUMPSWAP_FLAT_PRIORS = ((15, 0.148, 0.896), (30, 0.144, 0.875), (60, 0.132, 0.855), (300, 0.147, 0.753))
 
 
-def trades_flat_priors(timeframe: int) -> tuple[float, float]:
-    """Starting flat odds for a pump.fun launch watched trade by trade, interpolated in log time."""
+def trades_flat_priors(timeframe: int, domain: str = "trades") -> tuple[float, float]:
+    """Starting flat odds for a token watched trade by trade, interpolated in log time."""
+    table = _PUMPSWAP_FLAT_PRIORS if domain == "pumpswap" else _TRADES_FLAT_PRIORS
     x = math.log(max(timeframe, 1))
-    xs = [math.log(tf) for tf, _, _ in _TRADES_FLAT_PRIORS]
+    xs = [math.log(tf) for tf, _, _ in table]
 
     def interp(values: list[float]) -> float:
         if x <= xs[0]:
@@ -82,7 +86,7 @@ def trades_flat_priors(timeframe: int) -> tuple[float, float]:
         w = (x - xs[i - 1]) / (xs[i] - xs[i - 1])
         return values[i - 1] + w * (values[i] - values[i - 1])
 
-    return interp([a for _, a, _ in _TRADES_FLAT_PRIORS]), interp([b for _, _, b in _TRADES_FLAT_PRIORS])
+    return interp([a for _, a, _ in table]), interp([b for _, _, b in table])
 
 
 class ActivityEstimator:

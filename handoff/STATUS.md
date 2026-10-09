@@ -146,7 +146,7 @@ next. Topic documents hold the detail:
     **Research session, 10-09:** PumpSwap fees measured (§3.13): **1.25%/side right after
     graduation, 1.20% to ~1,150 SOL market cap**, falling to 0.30% only near 500k SOL; the
     project had assumed 0.30%. The study was **pre-registered**
-    (`handoff/preregistration/pumpswap-graduated/SPEC.md`) and **evaluated 12:05 UTC 10-09 on 264
+    (`handoff/preregistration/pumpswap-graduated/SPEC.md`) and **evaluated ~12:00 UTC 10-09 on 264
     pools: no edge** (§3.16; test means −19.6 / −22.5 / −38.1 / −3.4% for grad / mom / dip /
     active; `RESULT-2026-10-09.md`). Trading graduated tokens in their first hour is closed.
     The fast loop now sells positions open at graduation on the recorded PumpSwap pool;
