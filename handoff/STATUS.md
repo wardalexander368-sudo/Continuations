@@ -36,7 +36,6 @@ next. Topic documents hold the detail:
 
 
 
-* **Predictor session** (session_01UeZ4ho5y38qR1iNxnShtwF, started 00:55 UTC 10-09): retrain the predictor (v2) on all recorded data. Needs multi-directory loading (`tartar train --raw A --raw B`), since recorders keep separate directories. Touches `tartar/data/dataset.py`, `tartar/cli.py` (train args), `tartar/models/`. Branch `claude/solana-candle-predictor-s95qjr`.
 
 ## Blockers (need the user)
 
@@ -91,6 +90,10 @@ next. Topic documents hold the detail:
    restart with that env var. Profitability: fills can now be modelled in
    slots, not seconds.
 6. ~~**Predictor open problems 3–5**~~ **done ~23:45 UTC 10-08** (predictor doc §8.4).
+   **Predictor v2 installed 01:15 UTC 10-09** (5,790 launches, all
+   recordings, §8.2.1): it has better log loss and calibration than v1, but a
+   ~1.5 pt worse point error on the same test launches. Next predictor fix:
+   fit the median shrink on a pooled validation set or as a smooth rule.
 7. ~~**Verify the pump.fun fee schedule**~~ **done 00:00 UTC 10-09**: decoded from real TradeEvents (89 trades): **0.95% protocol + 0.30% creator = 1.25% per side** on V1 curves at every curve stage sampled; buyers pay fees on top of the SOL that enters the curve, sellers have them deducted (checked against wallet balance changes). A few trades carry 0 fees. The `tartar profit` default is right. V2 curves (item 9) showed 0.95% + 2.5% creator in samples.
 8. ~~**Jev feature discovery on launch metadata**~~ **done 00:20 UTC
    10-09** (`profitability.md` §3.8): 17 questions about description and
@@ -144,6 +147,16 @@ next. Topic documents hold the detail:
   branch `claude/profitability-backtest`, on `main`).
 
 ## Log (newest first)
+
+* **2026-10-09 01:15 UTC, predictor session:**
+  - `--raw` now takes several recorder directories (`A,B`), one timeline each.
+  - Trained and installed predictor v2 on every recording: my recorder through
+    21:50, the Jev fast-loop hour, and the slot runs. That is 5,790 launches,
+    251k rows. Comparison with v1 is in the queue entry and predictor doc
+    §8.2.1.
+  - `handoff/data/raw` hours 20 and 21 completed from this container.
+
+  120 tests pass. No claim open; nothing half-done.
 
 * **2026-10-09 00:50 UTC, predictor session:** Queue items 7, 5, 4 and 9 are
   done, all on `main` (117 tests at last full run):
