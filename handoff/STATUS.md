@@ -50,6 +50,11 @@ next. Topic documents hold the detail:
   plus P(rug) become a rule that is profitable after measured fees (1.25%/side on curves)? Pre-register,
   paper-test on unseen launches, report net with n and 90% CI. No real SOL; stays off in-block
   launch entry (the handoff thread's lead).
+  **18:55 UTC:** dev result (4 unseen hours): 1m loses at every threshold (best −3.6%), 5m noisy
+  (−6.4% earlier, +5.0% later, n=23). 5m rule pre-registered 18:36 UTC
+  (`handoff/preregistration/predictor-strategy/`); recorder `data/raw-pred` here since 17:33 UTC;
+  evaluate once at 100 primary trades or 2026-10-12. If this session dies, its unarchived
+  hours are lost; any recorder's hours after 18:36 UTC will do (`predictor_strategy.py evaluate DIR`).
 
 * **Handoff session** (session_01GAoiXJ4NHWXq6DnP61icSU, since 2026-10-09 13:28 UTC, branch
   `claude/handoff-overview`). **PumpSwap models done** (15s/30s/1m installed, 5m not; predictor doc
