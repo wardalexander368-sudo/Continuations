@@ -157,8 +157,12 @@ def decay_summary():
         b = 1e4 * (1 - buy[:, k] / buy[:, 0])
         s_ = 1e4 * (1 - sell[:, k] / sell[:, 0])
         both = np.concatenate([b, s_])
+        paired = (b + s_) / 2  # a price move helps one side and hurts the other: the pair's mean is drift-free
         print(f"  ~{delay:.0f} s (measured {np.median(at[:, k]):.2f} s): buy mean {b.mean():+.2f} median {np.median(b):+.2f} | "
-              f"sell mean {s_.mean():+.2f} median {np.median(s_):+.2f} | |change| p50 {np.median(np.abs(both)):.2f} p90 {np.quantile(np.abs(both), 0.9):.2f} max {np.abs(both).max():.2f}")
+              f"sell mean {s_.mean():+.2f} median {np.median(s_):+.2f} | |change| p50 {np.median(np.abs(both)):.2f} p90 {np.quantile(np.abs(both), 0.9):.2f} max {np.abs(both).max():.2f}"
+              f" | drift-free (buy+sell)/2 mean {paired.mean():+.3f} ± {1.645 * paired.std(ddof=1) / np.sqrt(len(paired)):.3f} (90% CI of the mean),"
+              f" 5-95% of samples {np.quantile(paired, 0.05):+.2f} .. {np.quantile(paired, 0.95):+.2f}")
+    print("Buy and sell means move opposite ways with the market; their average isolates quotes moving against the trader.")
     print("A trader with no timing edge pays the mean (≈0 if moves are symmetric) and carries the spread of |change|;")
     print("a fill is cancelled if the move passes the slippage limit (50 bps in these quotes).")
 
