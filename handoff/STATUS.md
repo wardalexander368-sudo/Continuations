@@ -38,6 +38,9 @@ next. Topic documents hold the detail:
   running `tartar record --track-minutes 120 --pumpswap-hours 4` (processed commitment) in
   back-to-back ~6 h runs, uploading each finished hour as a GitHub Release asset (not git: ~40 MB/h),
   plus a fetch script that lays the hours out per run for the loaders. Paper data only, no keys.
+  **20:30 UTC: landed** (`.github/workflows/recorder.yml`, `handoff/experiments/fetch_gha_raw.py`,
+  data README `raw-gha`); first run started by hand. Other sessions: no need to keep a recorder
+  alive for training data; fetch these hours instead.
 
 * **Map + docs refresh thread** (project thread session, since 2026-10-09 20:15 UTC, branch
   `claude/project-thread-kytb6q`). Docs only, no code: fix stale lines (OVERVIEW §5–6 edge hunt

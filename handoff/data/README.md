@@ -145,3 +145,19 @@ recorders overlap in time, and the loaders keep one copy of each token.
   10 s are not cut by the loaders, so expect slightly lower capture in these hours.
 - `20261009-18`: 18:00–18:59 UTC, 2,024 launches, 146,951 curve trades, 48 graduated SOL pools,
   267,393 PumpSwap swaps (125 short disconnects).
+
+## `raw-gha` (recorder GitHub Action, from 2026-10-09; not in git)
+
+`.github/workflows/recorder.yml` records without any Claude session: `tartar record
+--track-minutes 120 --pumpswap-hours 4`, `SOLANA_COMMITMENT=processed`, public RPC, in
+back-to-back ~5.75 h runs (cron every 2 h; one concurrency group, so the next run waits for the
+current one and starts as it ends). Each finished hour is uploaded as a GitHub Release asset, one
+release per UTC day (`raw-gha-YYYYMMDD`), asset `YYYYmmdd-HH.run<RUN>.jsonl.gz`, plus the run's
+console log (`recorder.run<RUN>.log.gz`: reconnects, counts). Hours are ~40 MB with PumpSwap, too
+much for git, so they stay out of the repository. Get them with
+
+    python3 handoff/experiments/fetch_gha_raw.py --since 20261010 --dirs
+
+which writes `data/raw-gha/run<RUN>/` (one directory per run = one recorder) and prints the
+directories comma-separated for `--raw`. A run's first and last hours are partial, and
+consecutive runs overlap in the same hour; the loaders keep one copy per mint.
