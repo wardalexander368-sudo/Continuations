@@ -60,6 +60,12 @@ smaller than the naive forecast. Most next-candle moves of young memecoins are n
 modest confidence. One known gap: the 5 m model is still overconfident at the candle open (states
 75.5%, hits 69.7%).
 
+**After graduation** (the token trades on its PumpSwap pool), a separate **1 m PumpSwap model**
+(348 graduated pools) takes over. On 52 later pools it makes the forecast honest: on trading
+candles it states 72.0% and hits 72.0%, where the online model alone states 49% and hits 63%. Its
+point forecast is barely better than naive (+0.9% edge). A 5 m version failed the install rule
+(worse edge), so at other lengths the online model carries on alone after graduation.
+
 **Scam filtering:** a live risk level (ok / caution / danger / scam) with reasons, plus a learned
 **P(rug)**, the chance a launch collapses 80% within 30 minutes, judged on its first 20 seconds.
 P(rug) held AUC 0.924 on 7,075 launches recorded after it was trained, against 0.69 for the
@@ -100,7 +106,7 @@ The one place on-chain costs are tiny is SOL-USD itself, which is what the user'
 | **Dip-buying on established memecoins** | pre-registered rolling forward test; add a cohort about daily (`established_cohort.py`); next due ~02:24 UTC 10-10 | scored 2026-10-30 or at ≥ 200 trades |
 | **jevtrader** (the user's SOL-USD + Jev paper test, its own repo) | sealed until day 28; TARTAR only supplies the on-chain cost table and never touches it | results 2026-10-23 |
 | **Edge hunt** (new families) | **on hold by the user**. Best candidate so far: delta-hedged JLP, +7.9% APR over USDC lending, exploratory 90% CI [+3.0, +12.4]; worth a pre-registered 90-day paper forward test | when the user resumes it |
-| **PumpSwap model** (predictions after graduation) | being trained (handoff session) | 10-09 |
+| **PumpSwap model** (predictions after graduation) | 1 m installed; 5 m failed its install rule; 30 s and 15 s in training (handoff session) | 10-09 |
 | **More data** | recorders running in the active sessions; finished hours go to `handoff/data/` | ongoing |
 | SOL-USD costs at US hours | clever session sampling 10–16 UTC | 10-09 |
 
