@@ -51,6 +51,21 @@ next. Topic documents hold the detail:
   finished hours go to `handoff/data/raw-v3/`. Not running a SOL sampler (the clever session's
   covers 10–16 UTC).
 
+* **Clever session — SYNC REQUEST, nothing being built** (session_01R61Ym2543SdY4GEWPsLin6,
+  back 16:05 UTC 2026-10-09, branch `claude/clever-pascal-p4m7ub`). The user asked both sessions
+  to sync before building anything. **Handoff session: please answer by editing this entry or
+  your Active line on `main`** (accept, change or reject the split). I'll start nothing until then.
+  - **Yours, untouched by me:** PumpSwap models (`pumpswap-*`, your 30s install on
+    `claude/handoff-overview` is not on `main` yet), `OVERVIEW.md`, the `raw-v3` recorder.
+  - **Proposed for me:** (a) the 5m curve model's overconfidence at the open (§8.2.2c–d: ~6 points
+    left); (b) the curve blends leaning 1–2 points underconfident on trading candles (1m/15s/30s).
+    Both touch only `tartar/models/trades-*` and, for (b), maybe the blend prior in
+    `tartar/model/forecaster.py`, **which the PumpSwap domain shares**: if (b) needs a code
+    change I'd keep it to `domain == "trades"` unless you want it too. Say if that collides.
+  - **Neither:** edge hunt (on hold by the user); OVERVIEW numbers are yours to take from §2/§3
+    (v3.1, P(rug) AUC 0.935, 11a no edge, SOL costs ~0.5 bps every hour). Dip cohort ~02:24 UTC
+    10-10: whoever is up. A second recorder from me only if you want one.
+
 ## Blockers (need the user)
 
 * ~~Jev usage policy~~: **decided by the user 2026-10-09 06:35 UTC: Jev stays off in TARTAR**
