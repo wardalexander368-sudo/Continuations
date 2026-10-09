@@ -32,6 +32,13 @@ next. Topic documents hold the detail:
 
 ## Active
 
+* **Predictor-strategy thread** (session continuing session_01YLnqLnTQzvD6HHUTvnNpVm, since 2026-10-09
+  17:33 UTC, branch `claude/project-thread-mwc92g`). The user asked for continuous work toward profit
+  (17:32 UTC), which lifts the edge-hunt hold for this lane. **Task:** can predictor v3.1's live edge
+  plus P(rug) become a rule that is profitable after measured fees (1.25%/side on curves)? Pre-register,
+  paper-test on unseen launches, report net with n and 90% CI. No real SOL; stays off in-block
+  launch entry (the handoff thread's lead).
+
 * **Handoff session** (session_01GAoiXJ4NHWXq6DnP61icSU, since 2026-10-09 13:28 UTC, branch
   `claude/handoff-overview`). **PumpSwap models done** (15s/30s/1m installed, 5m not; predictor doc
   §8.2.3) and `handoff/OVERVIEW.md` on `main`. Still in flight: recording `data/raw-v3` here since
