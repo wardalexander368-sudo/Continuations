@@ -271,3 +271,29 @@ def test_completed_curves_cancel_buys_and_haircut_late_exits(tmp_path):
     tokens = buy_tokens(91.0, K_CURVE / 91.0, c.size_sol, c.fee)  # filled at the 61 SOL state (30.0 + 1 s)
     expected = sell_sol(115.0, K_CURVE / 115.0, tokens, c.fee) * 0.8 - c.size_sol - 2 * c.network_sol
     assert exits["B"]["pnl_sol"] == pytest.approx(expected, rel=1e-9)
+
+
+def test_exits_after_graduation_fill_on_the_recorded_pumpswap_pool(tmp_path):
+    from tartar.feeds.pumpswap import fee_for_market_cap
+    from tartar.profit import buy_tokens, sell_sol
+
+    policy = open_policy(screen_seconds=5.0, hold_seconds=600.0, graduation_haircut=0.5, min_buyers=0)
+    loop = FastLoop(policy, Journal(tmp_path / "j"))
+    loop.start(0.0)
+    for event in (curve_event("create", 0.0, 1.0, mint="G"), curve_event("trade", 2.0, 10.0, mint="G"), curve_event("trade", 8.0, 20.0, mint="G"),
+                  curve_event("trade", 50.0, 85.0, mint="G")):  # fmt: skip
+        loop.on_event(event)
+    loop.on_event({"e": "graduate", "t": 50.1, "mint": "G", "pool": "P"})
+    swap = {"e": "swap", "mint": "G", "pool": "P", "side": "b", "trader": "w", "tok": 1.0, "sol": 1.0, "paid": 1.0}
+    loop.on_event(swap | {"t": 60.0, "tok_after": 200e6, "sol_after": 90.0})
+    loop.on_event(swap | {"t": 500.0, "tok_after": 150e6, "sol_after": 120.0})  # the state the exit (at ~606 s) sells into
+    loop.on_event(curve_event("trade", 900.0, 5.0, mint="OTHER"))
+    loop.finish(1000.0)
+    (exit_,) = [r for r in journal_events(tmp_path / "j", "exit") if r["mint"] == "G"]
+    assert exit_["reason"] == "pumpswap"
+    c = policy.costs()
+    tokens = buy_tokens(40.0, K_CURVE / 40.0, c.size_sol, c.fee)  # screened at 5 s, filled at 6 s: the state after the 2 s trade
+    fee = fee_for_market_cap(1e9 * 120.0 / 150e6)
+    assert fee == 0.012  # 800 SOL market cap
+    expected = sell_sol(120.0, 150e6, tokens, fee) - c.size_sol - 2 * c.network_sol  # no haircut: the pool's price is known
+    assert exit_["pnl_sol"] == pytest.approx(expected, rel=1e-9)
