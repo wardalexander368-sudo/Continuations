@@ -952,7 +952,7 @@ most of it: confirmation log loss 0.2385 → 0.2203 (a+b, W120), stated 0.074 vs
 |---|---|---|---|---|
 | every decision, P(rug) < 0.3 | −6.15% [−6.76, −5.47] | −8.05% | −4.75% [−5.02, −4.49] | −6.66% |
 | raw `p_clear` top 10%, P(rug) < 0.3 | −6.38% [−8.33, −4.65] | −8.26% | −5.49% | −7.37% |
-| best recalibrated variant | −5.60% [−9.27, −1.22] (a+b W60, top 2%) | −7.51% | −5.14% [−7.41, −2.63] (a W30, top 10%) | −7.19% |
+| best recalibrated variant | −5.60% [−9.27, −1.22] (a+b W60, top 2%, no P(rug) cap) | −7.51% | −5.14% [−7.41, −2.63] (a W30, top 10%, no cap) | −7.19% |
 | best regime gate (top 10%, hot hours) | −6.20% | −8.08% | −4.86% | −6.74% |
 
 No variant comes close to break-even, and the top-ranked candles do no better than every decision:
