@@ -33,11 +33,20 @@ next. Topic documents hold the detail:
 ## Active
 
 * **Clever session** (session_01R61Ym2543SdY4GEWPsLin6, since 2026-10-09 06:19 UTC, branch
-  `claude/clever-pascal-p4m7ub`; the user allows it to fast-forward `main`). Recording for 11a in
-  this container since 06:23 UTC (`data/raw-clever`, `--pumpswap-hours 4`; finished hours in
-  `handoff/data/raw-clever/`: 81 SOL pools by 09:00, 150 with `raw-eager`; 250 expected ~12:10).
-  SOL cost sampler running 06:44–10:00 UTC (`data/sol-dex/costs-20261009-day.jsonl`). Then: 11a
-  evaluation, predictor v3.1 (§8.2.2c plan), SOL sampler 13–16 UTC.
+  `claude/clever-pascal-p4m7ub`; the user allows it to fast-forward `main`). Done and on `main`:
+  P(rug), predictor v3 then **v3.1** (§8.2.2d), **11a evaluated (no edge, §3.16)**, and the
+  **`pumpswap` flat-candle priors** (`_PUMPSWAP_FLAT_PRIORS`, committed ~12:25 before the predictor
+  session's claim, landed 13:40: **predictor session, skip that part**; the PumpSwap model is yours).
+  In flight: recorder `data/raw-clever` (hours go to `handoff/data/raw-clever/`), SOL cost sampler
+  10:00–16:00 UTC (`data/sol-dex/costs-20261009-us.jsonl`, queue 12 US hours).
+
+* **Predictor session** (session_01UeZ4ho5y38qR1iNxnShtwF, since 2026-10-09 12:55 UTC, branch
+  `claude/solana-candle-predictor-s95qjr`): **edge hunt ON HOLD (user, ~13:25 UTC)**, with progress
+  saved in `handoff/edge-hunt.md`. Now: **the PumpSwap model** (`tartar train --raw raw-eager,raw-clever
+  --pumpswap`, compared with online-only; install only if it helps) and a `pumpswap` flat-candle
+  prior (the research session's after-11a list). Also `handoff/OVERVIEW.md` (project overview, the
+  user's request; a background workflow in this session, not yet landed). Recording `data/raw_v3`
+  here (`--pumpswap-hours 4 --track-minutes 120`); finished hours go to `handoff/data/raw-v3/`.
 
 ## Blockers (need the user)
 
@@ -183,6 +192,17 @@ next. Topic documents hold the detail:
     `--next-launch` screen still skips those three (`ScamReport.avoid`), so its picks are
     unchanged; it shows P(rug) on every verdict and beside the watched token's level.
 
+14. **Edge hunt: new strategy families: ON HOLD by the user (2026-10-09 ~13:25 UTC).**
+    Resume only when the user asks. Exploratory findings and how to resume are in
+    `handoff/edge-hunt.md`:
+    - the best candidate is a **delta-hedged JLP** paper forward test (+7.9% APR over USDC lending,
+      90% CI [+3.0, +12.4], exploratory);
+    - SOL-USD microstructure at our latency (lead-lag, seconds-scale prediction, seasonality) is
+      mostly closed;
+    - crash reversal is real on Binance but not executable on-chain;
+    - three angles (memecoin liquidity/short side, established cross-section, TARTAR's own
+      assets) and the judging are not done.
+
 ## Rules that hold across sessions
 
 * **Background processes die when a session goes idle.** On 2026-10-08 the
@@ -195,6 +215,10 @@ next. Topic documents hold the detail:
   gaps; restart, don't wait, after any `ConnectionRefusedError` to
   127.0.0.1.
 
+* **Weekly usage limit (user, 2026-10-09 13:15 UTC):** at ~95% of the weekly token limit,
+  dump everything to the repo with a complete summary, update this board with every task not
+  finished, then keep working until the limit. Sessions can't see the meter, so checkpoint
+  continuously: push after every unit, and keep your *Active* line saying what is in flight.
 * Judge every model and strategy by `tartar profit` on the **latest**
   launches. Pick thresholds on validation only, and quote 90% intervals by
   token.

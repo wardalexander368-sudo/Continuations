@@ -99,3 +99,12 @@ before the 11a evaluation** (`handoff/preregistration/pumpswap-graduated/SPEC.md
   exactly these files (hours 06–11).
 - `20261009-12`: 12:00–12:59 UTC, 1,878 launches, 175,442 curve trades, 41 graduated SOL pools,
   217,503 PumpSwap swaps (after the 11a evaluation; for training and later studies).
+
+## `raw-v3/` (predictor session, 2026-10-09 from 06:25 UTC)
+
+`tartar record --track-minutes 120 --pumpswap-hours 4` with `SOLANA_COMMITMENT=processed`
+(each launch followed for up to 2 h, each graduated SOL token's PumpSwap pool for 4 h).
+One recorder, one directory. `20261009-06` covers only 06:25–06:31 UTC: the container was
+suspended and the recorder died. Recording restarted at 12:55 UTC, so the gap is 06:31–12:55.
+Later hours are copied here as they finish. Use them alongside `raw-eager`/`raw-clever` for
+the predictor (queue 2) and the edge-hunt studies.
