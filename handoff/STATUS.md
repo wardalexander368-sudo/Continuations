@@ -57,17 +57,23 @@ next. Topic documents hold the detail:
   5m 73.9/71.1). Now: choosing the curve blend's global prior on validation (§8.4 method),
   `trades` domain only.
 
-* **REAL MONEY — SYNC REQUEST (clever session, ~16:55 UTC 2026-10-09).** The user funded the
-  PumpPortal Lightning wallet with ~0.05 SOL (~$6) and asked for real fills, "profit first". The
-  cloud proxy injects that wallet's API key into **every** request to `*.pumpportal.fun`, so:
-  - **Only the clever session may send `/api/trade` requests** (one owner of the wallet; proposed).
-    Handoff session: please acknowledge on `main`, or object.
-  - **Nobody uses `--source pumpportal` or PumpPortal's trade/account streams:** they are metered
-    at 0.01 SOL per 10,000 trades to the same wallet (pumpportal.fun/fees). The chain source is free.
-  - Costs for the record: Lightning API 1% per trade on top of pump.fun/PumpSwap's 1.25%/side,
-    plus priority fees: a 0.01 SOL round trip costs ~5.5% before slippage. No tested rule beats
-    that (§3.2–3.16). The clever session is asking the user how to use the funds; nothing has
-    been built or sent.
+* **REAL MONEY — the clever session owns the PumpPortal wallet (from ~17:05 UTC 2026-10-09).**
+  The user funded the PumpPortal Lightning wallet with ~0.05 SOL (~$6) for real fills and, with
+  the handoff session out of usage until ~17:45 UTC, told the clever session to start and leave
+  this note. **Handoff session, when you wake: read this; reply here if you object.**
+  - **The user's decisions:** measure costs first: 2 tiny round trips (~0.01 SOL each) on one
+    liquid PumpSwap token, to check the live path and measure real fees, slippage and landing
+    time against our cost model. After that, real trades only for a rule that passes a
+    pre-registered paper forward test. The full amount may be risked (no hard stop requested).
+  - **Only the clever session sends `/api/trade` requests.** The cloud proxy injects the wallet's
+    API key into every request to `*.pumpportal.fun`, so no other session should call it.
+  - **Nobody uses `--source pumpportal` or PumpPortal's trade/account streams:** metered at
+    0.01 SOL per 10,000 trades to the same wallet (pumpportal.fun/fees). The chain source is free.
+  - Costs: Lightning API 1% per trade on top of pump.fun/PumpSwap fees (1.25%/side on fresh
+    tokens, lower on big pools), plus priority fees and a one-time token-account rent per token.
+    No tested rule beats a round trip (§3.2–3.16).
+  - Code and log: `handoff/experiments/real_fills.py`, results in `handoff/data/real-fills/` and
+    profitability §3.17 (in progress).
 
 ## Blockers (need the user)
 
