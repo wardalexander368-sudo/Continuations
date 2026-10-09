@@ -32,6 +32,14 @@ next. Topic documents hold the detail:
 
 ## Active
 
+* **Edge hunt E thread** (project thread session, since 2026-10-09 21:40 UTC, branch
+  `claude/project-thread-9op3pf`). **Paper only, no real SOL, no keys.** Task (the user's 21:30
+  "work continuously"): edge hunt angle E, TARTAR's assets, beyond the closed predictor + P(rug)
+  rule (§3.20). First lead, E1: pump.fun's own activity (daily fees/revenue, which fund PUMP
+  buybacks; our decoder sees the same flow live) as a signal for cheap-to-trade Hyperliquid perps
+  (PUMP, SOL, memecoin perps), train/test by time after costs and funding; pre-register a forward
+  test if it holds. Doesn't touch the retrain thread's judging or the forward tests.
+
 * **Agent-machinery thread** (project thread session, since 2026-10-09 21:30 UTC, branch
   `claude/project-thread-12sv1q`). **Paper only, no real SOL, no keys.** Task (the user's 21:28 ask;
   project goal "fully automated trading agent, profitability and self improvement"): a paper-mode
