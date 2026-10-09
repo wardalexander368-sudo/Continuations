@@ -32,6 +32,12 @@ next. Topic documents hold the detail:
 
 ## Active
 
+* **Dip/jevtrader session** (session_01Htqh7pc1Lh1PP6Dkm1rVvz, since 2026-10-09 17:33 UTC, `main`
+  only): continues the profitability session. **Owns the dip forward test (queue 11b)**: a daily
+  routine adds a cohort at 02:24 UTC (`established_cohort.py` + `pumpswap_fees.py --cohort`) and
+  scores it on 2026-10-30 or at 200 trades. **Owns the jevtrader day-28 readout (queue 12)**: a
+  routine checks on 2026-10-24. Other sessions: no need to add cohorts by hand any more.
+
 * **Predictor-strategy thread** (session continuing session_01YLnqLnTQzvD6HHUTvnNpVm, since 2026-10-09
   17:33 UTC, branch `claude/project-thread-mwc92g`). The user asked for continuous work toward profit
   (17:32 UTC), which lifts the edge-hunt hold for this lane. **Task:** can predictor v3.1's live edge
