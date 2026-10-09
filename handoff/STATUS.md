@@ -43,21 +43,12 @@ next. Topic documents hold the detail:
   15s note: the 16:00 run was OOM-killed building 15s (the event cache for all lengths, ~14 GB);
   rerunning 15s alone since 16:10 on the current data (458 pools, incl. `raw-clever` 14–15).
 
-* **Clever session** (session_01R61Ym2543SdY4GEWPsLin6, since 16:05 UTC 2026-10-09, branch
-  `claude/clever-pascal-p4m7ub`). **Synced with the handoff session (its answer 16:06 on `main`):**
-  (a) the 5m curve model's overconfidence at the open and (b) the curve blends' 1–2 point
-  underconfidence on trading candles (1m/15s/30s) are mine; blend changes stay `domain ==
-  "trades"` (PumpSwap blends are calibrated; `pumpswap-*` models are the handoff session's).
-  Recording `data/raw-clever2` here since ~16:10 UTC (second recorder, as the handoff session
-  asked; same flags as `raw-clever`); finished hours go to `handoff/data/raw-clever2/`.
-  **Forward check (16:30, unseen `raw-clever` hours 12–15, live replay on 1,000 tokens per
-  length):** (a) is gone: the 5m raw model at the open hits 74.8% vs 73.4% stated (the earlier
-  gap was the 10–12 UTC test window), so nothing to build for (a). (b) holds at every length:
-  trading candles hit 1.7–2.8 points above stated (15s 62.7/61.0, 30s 65.8/63.8, 1m 69.1/67.4,
-  5m 73.9/71.1). Now: choosing the curve blend's global prior on validation (§8.4 method),
-  `trades` domain only.
-
-* **REAL MONEY — the clever session owns the PumpPortal wallet (from ~17:05 UTC 2026-10-09).**
+* **REAL MONEY — the PumpPortal wallet is owned by the clever session's successor (from ~17:20
+  UTC 2026-10-09).** The user added the API key as an environment secret; only new sessions see
+  it, so the clever session ended and the user starts a new session to continue. **That new
+  session is the only one that sends `/api/trade` requests** (first step: `real_fills.py probe`,
+  which must no longer answer 403). Earlier history of this entry:
+* (was) **REAL MONEY — the clever session owns the PumpPortal wallet (from ~17:05 UTC 2026-10-09).**
   The user funded the PumpPortal Lightning wallet with ~0.05 SOL (~$6) for real fills and, with
   the handoff session out of usage until ~17:45 UTC, told the clever session to start and leave
   this note. **Handoff session, when you wake: read this; reply here if you object.**
@@ -278,6 +269,19 @@ next. Topic documents hold the detail:
   branch `claude/profitability-backtest`, on `main`).
 
 ## Log (newest first)
+
+* **2026-10-09 ~17:20 UTC, clever session, ending for a restart** (the user put the PumpPortal
+  key in the environment; this session can't see it): nothing traded or spent; the cost
+  measurement is ready (`handoff/experiments/real_fills.py`, see the REAL MONEY entry). Synced
+  with the handoff session at 16:06 (split accepted). **Half-done, unclaimed:** curve blend
+  calibration, item (b): every curve blend under-states its trading-candle hit rate by 1.7–2.8
+  points on unseen hours 12–15 (15s 62.7/61.0, 30s 65.8/63.8, 1m 69.1/67.4, 5m 73.9/71.1). On
+  v3.1 validation the cause is neither the blend prior (0.95 → 0.995 closes only ~0.7 of 2.2
+  points at 1m) nor the direction calibrator (off: +0.5). The raw 1m model on trading rows is
+  under on validation (71.4/70.0) but over on test (68.5/70.6), so it is not one temperature
+  either. Next: look at the flat-vs-move call (p_flat on trading candles); any change stays
+  `domain == "trades"`. Item (a) needs nothing: the 5m raw model is calibrated on hours 12–15
+  (74.8/73.4). `raw-clever2` hour 16 saved; recorder stopped with the container.
 
 * **2026-10-09 16:20 UTC, handoff session:** the predictor session's *Active* entry is removed
   (it stopped ~13:25 UTC at its usage limit; its container and the unsaved overview draft are gone).

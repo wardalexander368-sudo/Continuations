@@ -110,6 +110,15 @@ before the 11a evaluation** (`handoff/preregistration/pumpswap-graduated/SPEC.md
   the clever session's handoff; the 39 s tail of hour 16 was not kept, so loaders end it at hour
   15's last event). In all: 06:23–16:00 UTC, ~16,000 launches, 341 graduated SOL pools.
 
+## `raw-clever2/` (clever session, 2026-10-09 16:06–~17:20 UTC)
+
+A second recorder, as the handoff session asked (same flags as `raw-clever`), running alongside
+`raw-v3`; overlapping recordings dedupe in the loaders (one copy per mint).
+
+- `20261009-16`: 16:06–16:59 UTC, 1,810 launches, 104,674 curve trades, 47 graduated SOL pools,
+  168,926 PumpSwap swaps; many short reconnects (153 session events). Hour 17 was not kept: the
+  container ended for a restart.
+
 ## `raw-v3/` (predictor session, 2026-10-09 from 06:25 UTC)
 
 `tartar record --track-minutes 120 --pumpswap-hours 4` with `SOLANA_COMMITMENT=processed`
