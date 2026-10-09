@@ -368,11 +368,23 @@ after v1's training data):
 
 Installed by the keep-better rule (test log loss). v2 is the better
 probabilistic forecaster and is better calibrated; v1's point forecast was
-~1.5 points closer on these launches. The likely reason is the validation-fitted
-median shrink: v1's validation chose 0.8 at the open, v2's chose 1.0 (no
-shrink) up to f = 0.8. **Open item:** fit the shrink on a larger, pooled
-validation set or as a smooth rule in f. v2's test set is later and harder
-than v1's: v2's own live edge is +4.0%, against +7.5% for v1 on v1's test set.
+~1.5 points closer on these launches. **This is not the median shrink**
+(checked 2026-10-09): giving v2 v1's 0.8 shrink at the open lowers its test
+edge (3.9% → 3.7%). The two models simply differ on these launches. v2's test
+set is later and harder than v1's: v2's own live edge is +4.0%, against +7.5%
+for v1 on v1's test set.
+
+**Median shrink study (2026-10-09, scripts in the predictor session's
+scratchpad):**
+- Fitted on half the validation tokens and scored on the other half, no
+  method beat "no shrink": per-fraction grid, one global factor, linear in f
+  and bootstrap-bagged all lost 0.04–0.7%, on both v1's and v2's data.
+- On test, shrinking toward the current price late in the candle helps in
+  both datasets: f = 0.6 from about −2% to ≈0, f = 0.8 from −0.5…−1.5% to ≈0.
+  Validation found this for v1's data but not for v2's.
+- The effect is real but small, and too noisy for validation alone to fit.
+- To do: fit s(f) on out-of-fold medians over the training split (K-fold by
+  token), which has ~6× the rows.
 
 ### 8.3 Blending
 
