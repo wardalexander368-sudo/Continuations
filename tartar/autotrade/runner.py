@@ -8,7 +8,7 @@ import traceback
 from pathlib import Path
 
 from . import lifecycle
-from .broker import LiveNotAllowed, PaperBroker, make_broker
+from .broker import LiveBroker, LiveNotAllowed, PaperBroker, make_broker
 from .core import Context, Intent
 from .ledger import Ledger
 from .risk import Risk
@@ -53,12 +53,20 @@ def build_strategies(config: dict) -> dict:
     return out
 
 
-def _broker(config: dict, status: str, ledger: Ledger, name: str, now: float):
+def _broker(config: dict, status: str, ledger: Ledger, name: str, now: float, root: Path | None = None):
     try:
-        return make_broker(config, status)
+        return make_broker(config, status, ledger=ledger, root=root, now=now)
     except LiveNotAllowed as exc:
         ledger.journal({"event": "live_refused", "strategy": name, "at": now, "reason": str(exc)})
         return PaperBroker()
+
+
+def _exit_broker(config: dict, ledger: Ledger, root: Path, now: float):
+    """A broker that can sell existing live twins (no new entries), or None if no live route works now."""
+    try:
+        return LiveBroker(config, ledger=ledger, root=root, entries=False, now=now)
+    except LiveNotAllowed:
+        return None
 
 
 def run_once(root: Path = ROOT, now: float | None = None, strategies: dict | None = None, http=None) -> dict:
@@ -93,10 +101,12 @@ def run_once(root: Path = ROOT, now: float | None = None, strategies: dict | Non
             risk.record_error(name, now, err)
             continue
         risk.record_ok(name)
-        broker = _broker(config, rec["status"], ledger, name, now)
+        broker = _broker(config, rec["status"], ledger, name, now, root)
+        exits = lambda: _exit_broker(config, ledger, root, now)  # noqa: E731
         for intent in sorted(intents, key=lambda i: (i.at, i.kind != "close")):
             summary_key = _apply(intent, rec, ledger, risk, broker, now,
-                                 quote=bool(config.get("execution", {}).get("quote_check")) and not intent.meta.get("shadow"))
+                                 quote=bool(config.get("execution", {}).get("quote_check")) and not intent.meta.get("shadow"),
+                                 exit_broker=exits)
             summary[summary_key] = summary.get(summary_key, 0) + 1
         ctx.positions = [p for p in ledger.positions if p.strategy == name]
         try:
@@ -114,7 +124,8 @@ def run_once(root: Path = ROOT, now: float | None = None, strategies: dict | Non
             if pos.mark_price is not None:
                 intent = Intent("close", pos.strategy, pos.mark_at or now, pos.mark_price, reason=f"flatten: {why}",
                                 position_id=pos.id)
-                _apply(intent, ledger.strategy(pos.strategy), ledger, risk, PaperBroker(), now)
+                _apply(intent, ledger.strategy(pos.strategy), ledger, risk, PaperBroker(), now,
+                       exit_broker=lambda: _exit_broker(config, ledger, root, now))
     risk.check_daily(now, ledger.positions)
     summary["changes"] = lifecycle.review(ledger, strategies, now, config.get("lifecycle", {}))
     summary["halted"] = risk.kill_reason()
@@ -129,13 +140,21 @@ def run_once(root: Path = ROOT, now: float | None = None, strategies: dict | Non
     return summary
 
 
-def _apply(intent: Intent, rec: dict, ledger: Ledger, risk: Risk, broker, now: float, quote: bool = False) -> str:
+def _apply(intent: Intent, rec: dict, ledger: Ledger, risk: Risk, broker, now: float, quote: bool = False,
+           exit_broker=None) -> str:
     if intent.kind == "close":
         key = intent.meta.get("key")
         pos = next((p for p in ledger.positions if (intent.position_id and p.id == intent.position_id)
                     or (not intent.position_id and key and p.strategy == intent.strategy and p.meta.get("key") == key)), None)
         if pos is None:
             return "stale_close"
+        if pos.meta.get("live") and not isinstance(broker, LiveBroker):  # a live twin exits live whatever the status now
+            broker = (exit_broker() if exit_broker else None) or broker
+            if not isinstance(broker, LiveBroker):
+                ledger.state.setdefault("live", {}).setdefault("orphans", []).append(
+                    {"position": pos.id, "strategy": pos.strategy, **pos.meta["live"], "error": "no live route at exit", "at": now})
+                ledger.journal({"event": "live_orphan", "strategy": pos.strategy, "position": pos.id, "at": now,
+                                "reason": "paper exit ran but no live route works now; tokens still held (state live.orphans)"})
         trade, row = broker.close(pos, intent)
         ledger.positions.remove(pos)
         ledger.add_trade(trade)
@@ -157,10 +176,40 @@ def _apply(intent: Intent, rec: dict, ledger: Ledger, risk: Risk, broker, now: f
         check = quote_check(intent, now)
         if check:
             intent.meta.update(check)
-    pos, row = broker.open(intent)
+    pos, row = broker.open(intent, ledger.positions) if isinstance(broker, LiveBroker) else broker.open(intent)
     ledger.positions.append(pos)
     ledger.journal({**row, "logged_at": now})
     return "opened"
+
+
+def config_mode(root: Path) -> str:
+    return load_config(root).get("mode", "paper")
+
+
+def live_report(ledger: Ledger, mode: str) -> list[str]:
+    """Live twins against their paper twins (fills.jsonl)."""
+    path = ledger.root / "fills.jsonl"
+    rows = [json.loads(x) for x in path.read_text().splitlines() if x.strip()] if path.exists() else []
+    st = ledger.state.get("live", {})
+    if mode == "paper" and not rows:
+        return []
+    out = ["", f"## Live twins (mode `{mode}`)", ""]
+    halts = [f"all live entries: {st['halted']}"] if st.get("halted") else []
+    halts += [f"{n}: {r['halted']}" for n, r in st.get("strategies", {}).items() if r.get("halted")]
+    out.append("**Live halted:** " + "; ".join(halts) if halts else "Live entries: allowed for promoted strategies.")
+    sells = [r for r in rows if r.get("event") == "sell"]
+    if sells:
+        d = sorted(r["compare"]["live_minus_paper"] for r in sells)
+        out += ["", "| Closed | Mean live net (SOL) | Mean paper net | Median live − paper | Net SOL | Dry |", "|---|---|---|---|---|---|",
+                f"| {len(sells)} | {100 * sum(r['compare']['live_net_return_sol'] for r in sells) / len(sells):+.2f}% | "
+                f"{100 * sum(r['compare']['paper_net_return'] for r in sells) / len(sells):+.2f}% | {100 * d[len(d) // 2]:+.2f} points | "
+                f"{sum(r['compare']['net_sol'] for r in sells):+.5f} | {sum(1 for r in sells if r['compare'].get('dry'))} |"]
+    open_twins = [p for p in ledger.positions if p.meta.get("live")]
+    skips = [r for r in rows if r.get("event") == "skip"]
+    out += ["", f"Open twins {len(open_twins)} ({sum(p.meta['live']['sol_in'] for p in open_twins):.4f} SOL); "
+                f"skipped entries {len(skips)}" + (f" (latest: {skips[-1]['reason']})" if skips else "") +
+            f"; orphans {len(st.get('orphans', []))}.", ""]
+    return out
 
 
 def fmt_t(t: float | None) -> str:
@@ -169,7 +218,7 @@ def fmt_t(t: float | None) -> str:
 
 def write_report(root: Path, ledger: Ledger, strategies: dict, now: float, risk: Risk) -> None:
     lines = ["# Paper trading agent: report", "",
-             f"Updated {fmt_t(now)}. Mode: **paper** (no real money). Generated by `python -m tartar.autotrade run`; "
+             f"Updated {fmt_t(now)}. Mode: **{config_mode(root)}**{' (no real money)' if config_mode(root) != 'live' else ''}. Generated by `python -m tartar.autotrade run`; "
              "rules in `tartar/autotrade/`, settings in `autotrade/config.json`.", ""]
     why = risk.kill_reason()
     lines.append(f"**Halted:** {why}" if why else "**Running.** Kill switch: create `autotrade/HALT` (its text is the reason).")
@@ -203,6 +252,7 @@ def write_report(root: Path, ledger: Ledger, strategies: dict, now: float, risk:
                   f"{a[len(a) // 2]:.2f}% per side; {worse} entries more than twice the model."
                   + (f" Registered strategies' closed trades at the measured impact: mean net {100 * sum(qn) / len(qn):+.2f}% "
                      f"over {len(qn)} trades." if qn else "")]
+    lines += live_report(ledger, config_mode(root))
     unreal = sum(p.unrealized() for p in ledger.positions if not p.meta.get("shadow"))
     lines += ["", f"Realized PnL {total:+.2f} USD (registered strategies; variants listed above); open positions {len(ledger.positions)}, unrealized {unreal:+.2f} USD "
               f"(entry costs included); today {risk.day_pnl(now, ledger.positions):+.2f} USD "

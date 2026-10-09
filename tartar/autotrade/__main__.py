@@ -1,4 +1,8 @@
-"""python -m tartar.autotrade run | status | halt REASON | resume [STRATEGY] [--root autotrade]"""
+"""python -m tartar.autotrade run | status | halt REASON | resume [STRATEGY] | halt-live REASON | resume-live [STRATEGY]
+       | preflight | dry-swap MINT [--sol 0.01]   [--root autotrade]
+
+halt-live stops new live twins (paper and exits keep running); preflight checks the live path without
+trading; dry-swap builds a real Jupiter buy and sell for MINT and has the RPC simulate them (no key, nothing sent)."""
 
 from __future__ import annotations
 
@@ -13,7 +17,8 @@ from .runner import ROOT, run_once
 
 def main(argv=None) -> int:
     ap = argparse.ArgumentParser(prog="python -m tartar.autotrade")
-    ap.add_argument("cmd", choices=("run", "status", "halt", "resume"))
+    ap.add_argument("cmd", choices=("run", "status", "halt", "resume", "halt-live", "resume-live", "preflight", "dry-swap"))
+    ap.add_argument("--sol", type=float, default=0.01)
     ap.add_argument("arg", nargs="?", default="")
     ap.add_argument("--root", default=str(ROOT))
     a = ap.parse_args(argv)
@@ -27,7 +32,33 @@ def main(argv=None) -> int:
         return 0
     ledger = Ledger(root)
     now = time.time()
-    if a.cmd == "halt":
+    if a.cmd == "preflight":
+        from .broker import preflight
+        from .runner import load_config
+
+        print(json.dumps(preflight(load_config(root), ledger, root), indent=1, default=str))
+        return 0
+    if a.cmd == "dry-swap":
+        from .execution import JupiterExecutor
+
+        ex = JupiterExecutor(simulate=True)
+        buy = ex.buy(a.arg, a.sol)
+        sell = ex.sell(a.arg, buy.token_raw) if buy.ok else None
+        print(json.dumps({"buy": buy.to_dict(), "sell": sell and sell.to_dict(),
+                          "round_trip_pct": sell and 100 * (sell.sol / buy.sol - 1)}, indent=1, default=str))
+        return 0 if buy.ok and sell and sell.ok else 1
+    if a.cmd == "halt-live":
+        (root / "HALT_LIVE").write_text(a.arg or "live halted by hand")
+        ledger.change({"t": now, "kind": "halt", "scope": "live", "reason": a.arg or "live halted by hand"})
+    elif a.cmd == "resume-live":
+        live = ledger.state.setdefault("live", {})
+        if a.arg:
+            live.setdefault("strategies", {}).setdefault(a.arg, {}).update({"halted": None, "divergence_run": 0})
+        else:
+            (root / "HALT_LIVE").unlink(missing_ok=True)
+            live["halted"] = None
+        ledger.change({"t": now, "kind": "resume", "scope": f"live:{a.arg or 'all'}", "reason": "resumed by hand"})
+    elif a.cmd == "halt":
         (root / "HALT").write_text(a.arg or "halted by hand")
         ledger.change({"t": now, "kind": "halt", "scope": "agent", "reason": a.arg or "halted by hand"})
     else:  # resume
