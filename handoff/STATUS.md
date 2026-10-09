@@ -40,13 +40,6 @@ next. Topic documents hold the detail:
   only, paper, train/test, every rule counted. Scripts in `handoff/experiments/edge-hunt/vaults/`
   and `.../predmkt/`.
 
-* **Agent health + pumpflow in the agent** (edge hunt E thread session, since 2026-10-09 23:30 UTC,
-  branch `claude/project-thread-9op3pf`). No keys, no orders. (1) `pumpflow` as an agent strategy
-  (reads the pumpflow-paper snapshots; dry perp twins on PUMP). (2) `health.yml` hourly + Health section
-  at the top of `autotrade/REPORT.md`: failed/skipped Action runs, recorder hour gaps, stale paper-test
-  inputs, twin drift and orphans; the job fails while anything is red. Touches `tartar/autotrade/`
-  (new `health.py`, `strategies/pumpflow.py`, report header) and `autotrade/config.json` (one strategy).
-
 * **Edge hunt E thread** (project thread session, since 2026-10-09 21:40 UTC, branch
   `claude/project-thread-9op3pf`). **Paper only, no real SOL, no keys.** Task (the user's 21:30
   "work continuously"): edge hunt angle E, TARTAR's assets, beyond the closed predictor + P(rug)
@@ -393,6 +386,14 @@ deep pools match the model, a thin one was 2.4x it). The `launch_selector` slot 
   branch `claude/profitability-backtest`, on `main`).
 
 ## Log (newest first)
+
+* **2026-10-10 00:00 UTC, agent health check + pumpflow strategy: landed** (claim cleared). `health.yml`
+  (hourly :45) runs `python -m tartar.autotrade health`: failed/skipped Actions, recorder hour gaps,
+  stale JLP / dip / pumpflow / HL-ctx inputs, live halts, orphans, twin drift; writes
+  `autotrade/health.json`, shown at the top of REPORT.md, and fails the run while red. `pumpflow` is
+  now an agent strategy (reads the snapshots, dry perp twins on PUMP from the first window snapshot).
+  Hedged JLP is not mirrored (a portfolio with a JLP spot leg, not a signal rule; `autotrade.md`).
+  First check: perps-ctx.yml has never run on schedule (yellow); everything else green.
 
 * **2026-10-09 23:55 UTC, perps route for live twins: dry, landed** (claim cleared). `tartar/autotrade/perps.py`
   + `broker.py` hooks: intents with `meta.venue == "hyperliquid"` (xs_momentum's legs) get perp twins

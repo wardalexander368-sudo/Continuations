@@ -44,6 +44,13 @@
       "prereg": "handoff/preregistration/xs-momentum/SPEC.md",
       "leg_usd": 1000
     },
+    "pumpflow": {
+      "kind": "pumpflow",
+      "enabled": true,
+      "prereg": "handoff/preregistration/pumpflow/SPEC.md",
+      "size_usd": 200,
+      "snapshots": "handoff/data/pumpflow-paper/snapshots.jsonl"
+    },
     "launch_selector": {
       "kind": "external",
       "enabled": false,

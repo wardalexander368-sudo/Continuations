@@ -1,5 +1,5 @@
 """python -m tartar.autotrade run | status | halt REASON | resume [STRATEGY] | halt-live REASON | resume-live [STRATEGY]
-       | preflight | dry-swap MINT [--sol 0.01] | dry-perp COIN [--usd 12] [--side -1]   [--root autotrade]
+       | preflight | health | dry-swap MINT [--sol 0.01] | dry-perp COIN [--usd 12] [--side -1]   [--root autotrade]
 
 halt-live stops new live twins (paper and exits keep running); preflight checks the live path without
 trading; dry-swap builds a real Jupiter buy and sell for MINT and has the RPC simulate them (no key, nothing sent);
@@ -18,7 +18,7 @@ from .runner import ROOT, run_once
 
 def main(argv=None) -> int:
     ap = argparse.ArgumentParser(prog="python -m tartar.autotrade")
-    ap.add_argument("cmd", choices=("run", "status", "halt", "resume", "halt-live", "resume-live", "preflight", "dry-swap", "dry-perp"))
+    ap.add_argument("cmd", choices=("run", "status", "halt", "resume", "halt-live", "resume-live", "preflight", "dry-swap", "dry-perp", "health"))
     ap.add_argument("--sol", type=float, default=0.01)
     ap.add_argument("--usd", type=float, default=12.0)
     ap.add_argument("--side", type=int, default=1, choices=(1, -1))
@@ -30,6 +30,12 @@ def main(argv=None) -> int:
         s = run_once(root)
         print(json.dumps({k: v for k, v in s.items()}, default=str))
         return 0
+    if a.cmd == "health":
+        from .health import run as health
+
+        h = health(root, Path("."))
+        print(json.dumps(h, indent=1))
+        return 1 if h["status"] == "red" else 0
     if a.cmd == "status":
         print((root / "REPORT.md").read_text() if (root / "REPORT.md").exists() else "no report yet")
         return 0

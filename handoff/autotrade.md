@@ -35,12 +35,33 @@ the repository owner.
 |---|---|---|
 | `dip` | `handoff/preregistration/dip-rolling/SPEC.json`, every cohort pool, 5-minute bars from GeckoTerminal; registered costs, plus a secondary figure at measured pool fees | at 200 trades or 21 days: excess over random entries CI > 0 and mean > 0 |
 | `xs_momentum` | `handoff/preregistration/xs-momentum/SPEC.md`, Hyperliquid perps, booked each Wednesday for Tuesday's close; turnover costs + funding | at 52 weeks: mean weekly > 0 and block-bootstrap CI > 0 |
+| `pumpflow` | `handoff/preregistration/pumpflow/SPEC.md`: reads the pumpflow-paper Action's daily snapshots, long/short PUMP perp at each snapshot's mid, 0.10%/side on turnover + funding; dry perp twins | after 2027-04-08: ≥ 120 trades, block-bootstrap CI > 0, timing part > 0 |
 | `dip~drop=…~hold_bars=…` (8) | shadow variants of the dip rule (drop 3/5/8% × hold 2/4/8 h, minus the registered one) | same, with the CI widened for a family of 9 (Bonferroni); outside the risk caps |
 | `launch_selector` | disabled slot (`kind: external`) | config `eval` |
 
 Each strategy trades forward from its first run, with no back-filled trades. The official
 forward-test scorers (`established_prereg_eval.py`, `xs_momentum_forward.py`) stay the authority for
 the registered tests. The agent's verdicts score only its own paper book.
+
+The hedged-JLP forward test is not an agent strategy: it is a portfolio (JLP held on Solana plus three
+Hyperliquid shorts sized from the pool's delta, rebalanced on drift, with margin top-ups), not a signal
+rule, and a twin of it would need a JLP spot leg as well as the perp legs. Its own recorder and scorer
+(`jlp_paper.py`) stay the record.
+
+## Health (`health.yml`, hourly)
+
+`python -m tartar.autotrade health` (`health.py`) checks the repo's unattended jobs and writes
+`autotrade/health.json`; the agent puts it at the top of REPORT.md (🔴 / 🟡 / 🟢, only the non-green items
+listed). The Action **fails while anything is red**, so GitHub emails the repository owner.
+
+| Check | Red when |
+|---|---|
+| Each Action (autotrade, recorder, paper-tests, pumpflow-paper, perps-ctx) | its latest finished run failed, or no run started within its cadence (skipped or stuck); never run = yellow |
+| Recorder hours | any UTC hour from 2026-10-09 21:00 to two hours ago has no asset in its day's `raw-gha-*` release |
+| Paper-test inputs | newest JLP snapshot > 9 h, dip cohort > 28 h, pumpflow snapshot > 54 h, HL OI/funding snapshot > 9 h old |
+| Agent | any live orphan or live halt; twins whose last 10 closes have a median twin − paper below −3 points are yellow |
+
+A health file more than 3 h old shows as at least yellow in REPORT.md (the health job itself may be stuck).
 
 ## Execution check (real route vs the cost model)
 

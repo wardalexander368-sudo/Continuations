@@ -1,0 +1,57 @@
+# Health of the unattended jobs (tartar/autotrade/health.py): failed or skipped Action runs, recorder hour
+# gaps, stale paper-test inputs, live-twin halts, orphans and drift. Writes autotrade/health.json (shown at
+# the top of autotrade/REPORT.md) and FAILS while anything is red, so GitHub notifies the owner.
+name: health
+
+on:
+  schedule:
+    - cron: "45 * * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  actions: read
+
+concurrency:
+  group: health
+  cancel-in-progress: false
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    env:
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+          sparse-checkout: |
+            tartar
+            autotrade
+            handoff/data/jlp-paper
+            handoff/data/pumpflow-paper
+            handoff/data/edge-hunt/hl-ctx
+            handoff/preregistration/dip-rolling
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install "httpx>=0.25" "numpy>=1.24"
+      - name: Check
+        run: |
+          set +e
+          python3 -m tartar.autotrade health > health-out.json
+          code=$?
+          set -e
+          python3 -c "import json;h=json.load(open('health-out.json'));print(h['status'].upper());[print(i['level'],i['check'],i['detail']) for i in h['items'] if i['level']!='green']"
+          git config user.name "tartar-health"
+          git config user.email "actions@users.noreply.github.com"
+          git add autotrade/health.json
+          if ! git diff --cached --quiet; then
+            git commit -m "Health: $(python3 -c "import json;h=json.load(open('health-out.json'));print(h['status'], sum(i['level']=='red' for i in h['items']), 'red')")"
+            for i in 1 2 3 4; do
+              git pull --rebase origin main && git push origin HEAD:main && break
+              sleep $((2 ** i))
+            done
+          fi
+          exit $code
