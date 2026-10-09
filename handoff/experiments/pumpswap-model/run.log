@@ -1,0 +1,36 @@
+
+=== 1m: 348 pools, 136320 rows (train 107250, valid 20604, test 8466); built in 183s
+  leaves  15  min_leaf  100: valid 0.7592  rounds  202  (91s)
+  leaves  15  min_leaf  400: valid 0.7604  rounds  165  (79s)
+  leaves  15  min_leaf 1500: valid 0.7621  rounds  167  (90s)
+  leaves  31  min_leaf  100: valid 0.7611  rounds  106  (81s)
+  leaves  31  min_leaf  400: valid 0.7601  rounds  105  (88s)
+  leaves  31  min_leaf 1500: valid 0.7608  rounds  108  (91s)
+  leaves  63  min_leaf  100: valid 0.7645  rounds   86  (116s)
+  leaves  63  min_leaf  400: valid 0.7640  rounds   77  (99s)
+  leaves  63  min_leaf 1500: valid 0.7606  rounds  101  (100s)
+  chosen on validation: leaves 15, min_leaf 100
+  replaying the live forecaster on 52 test tokens…
+         online_only · all     n   2000  hit 77.1%  stated 68.5%  band 93.1%  edge -0.7%
+         online_only · trading n    993  hit 62.8%  stated 49.2%  band 93.0%  edge -0.7%
+  global_plus_online · all     n   2000  hit 81.6%  stated 79.7%  band 89.5%  edge +0.8%
+  global_plus_online · trading n    993  hit 72.0%  stated 72.0%  band 83.9%  edge +0.9%
+  test log loss 0.7508; verdict {'install': True, 'checks': {'edge_all': True, 'edge_trading': True, 'calibration': True, 'info_at_open': True}}
+
+=== 5m: 323 pools, 33960 rows (train 26508, valid 5028, test 2424); built in 86s
+  leaves  15  min_leaf  100: valid 0.9943  rounds   91  (24s)
+  leaves  15  min_leaf  400: valid 0.9935  rounds   98  (27s)
+  leaves  15  min_leaf 1500: valid 0.9938  rounds  119  (23s)
+  leaves  31  min_leaf  100: valid 1.0035  rounds   71  (34s)
+  leaves  31  min_leaf  400: valid 0.9986  rounds   77  (27s)
+  leaves  31  min_leaf 1500: valid 0.9952  rounds  106  (22s)
+  leaves  63  min_leaf  100: valid 1.0087  rounds   64  (36s)
+  leaves  63  min_leaf  400: valid 0.9952  rounds   69  (28s)
+  leaves  63  min_leaf 1500: valid 0.9952  rounds  106  (22s)
+  chosen on validation: leaves 15, min_leaf 400
+  replaying the live forecaster on 48 test tokens…
+         online_only · all     n    404  hit 61.1%  stated 56.1%  band 87.9%  edge -0.4%
+         online_only · trading n    266  hit 49.6%  stated 45.4%  band 87.2%  edge -0.5%
+  global_plus_online · all     n    404  hit 69.1%  stated 66.7%  band 83.4%  edge -0.9%
+  global_plus_online · trading n    266  hit 62.4%  stated 63.3%  band 79.3%  edge -0.9%
+  test log loss 1.1171; verdict {'install': False, 'checks': {'edge_all': False, 'edge_trading': False, 'calibration': True, 'info_at_open': True}}
