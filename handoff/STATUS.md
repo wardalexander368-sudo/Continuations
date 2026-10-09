@@ -39,6 +39,12 @@ next. Topic documents hold the detail:
   buybacks; our decoder sees the same flow live) as a signal for cheap-to-trade Hyperliquid perps
   (PUMP, SOL, memecoin perps), train/test by time after costs and funding; pre-register a forward
   test if it holds. Doesn't touch the retrain thread's judging or the forward tests.
+  **22:15 UTC: E1 pre-registered** (`handoff/preregistration/pumpflow/SPEC.md`, edge-hunt.md §E1):
+  long/short the Hyperliquid PUMP perp on sign(log(pump.fun+PumpSwap revenue_d / its 7-day mean)),
+  entering when DefiLlama first publishes day d; backtest +0.76%/day train, +0.95% test after
+  0.10%/side + funding, both ~1.7 SE. 180-day paper test from 2026-10-10; the hourly Action
+  `pumpflow-paper.yml` records snapshots, no session needed; score `pumpflow_paper.py evaluate
+  --final` after 2027-04-08 (report-only look 2027-01-08). This thread owns the scoring.
 
 * **Agent-machinery thread** (project thread session, since 2026-10-09 21:30 UTC, branch
   `claude/project-thread-12sv1q`). **Paper only, no real SOL, no keys.** Task (the user's 21:28 ask;
