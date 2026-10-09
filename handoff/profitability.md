@@ -27,6 +27,7 @@ Where each family stands (2026-10-09):
 | Smarter exits, regime gating and cheaper execution on launch buys | best: skip flags + TP +100%, Jupiter, 0.02 SOL: −2.9% [−4.1, −1.6]; still loses | §3.21 |
 | Picking movers from early flow, wallets, holders, curve shape, the creator, the name | movers predictable (AUC 0.88) but they collapse; small creator buys beat buy-all by ~2–4 points, still −2.2% on test | §3.22 |
 | Curve-triggered entries: level crossings, dips after a run | crossings lose (−7.0% test); 70% dip after a 40-SOL run is break-even (−0.3% [−7.4, +6.7]) | §3.23 |
+| Market-wide recalibration / regime gating of the predictor's candle calls | calibration fixed at 5m (log loss 0.239 → 0.220), trading unchanged: best −5.6% at Jupiter costs, −7.5% Lightning | §3.24 |
 | SOL-USD with Jev (the user's jevtrader) | sealed test ends 2026-10-23; on-chain costs ≈ 0.5 bps/fill | §3.12, `handoff/jevtrader.md` |
 
 ## 2. How it is measured (`tartar/profit.py`, `tartar profit`)
@@ -919,6 +920,47 @@ Scripts `handoff/experiments/level_entry.py`, `curve_dip_entry.py`; outputs
   448. It holds out of sample but at zero, with a wide interval and median −15% to −20%: the
   closest any launch rule here has come, at the cheapest route's costs (−2 points more through
   Lightning). Not pre-registered: nothing positive on dev or test.
+
+### 3.24 Market-wide recalibration of the predictor's candle calls: fixes calibration, not profit
+
+**Question** (retrain thread, 2026-10-09 ~23:10 UTC): on unseen hours the curve forecasts swing
+between over- and underconfident with market-wide drift (predictor doc 8.4.1, 8.2.2e). Does a
+calibration layer fitted on recently resolved decisions *across all tokens*, or a gate that trades
+only when the market is "hot", turn §3.20's candle rule profitable after real costs?
+
+**Method** (`handoff/experiments/recal_market.py`). §3.20's decision rows (every candle open of a
+launch ≥ 20 s old with P(rug); installed v3.1 models) on hours v3.1 never saw: `raw-clever` 12–15,
+`raw-clever2` 16, `raw-v3` 12–18, `raw-pred` 17–20 (14,058 launches; 25,257 decisions at 5m,
+181,496 at 1m). Outcome y = the candle's close clears +3.5% from the price at the open; net return of
+a buy at the open sold at the close at two cost levels: curve fees 1.25%/side (Jupiter or our own
+instructions, §3.19) and Lightning (+1%/side, 1.4 s). Earlier 60% of launches select (12:05–18:45),
+later 40% confirm (16:55–20:18). Every variant is causal: at decision time t it uses only rows that
+had resolved before t.
+* *Recalibration:* logit p' = a + b·logit p_clear, fitted every minute on rows resolved in the last
+  30/60/120 min, ridge prior toward (0, 1) worth 200 rows; intercept only or with slope.
+* *Regime gate:* trade only when the market's realized clear rate over the last 60 min is above the
+  selection hours' median / upper quartile.
+
+**Calibration.** At 5m, `p_clear` states twice the realized rate (0.123 vs 0.059; by hour the
+realized rate drifts 0.035 → 0.072 while the forecast stays ~0.12-0.13). The rolling layer removes
+most of it: confirmation log loss 0.2385 → 0.2203 (a+b, W120), stated 0.074 vs 0.065 observed. At 1m
+`p_clear` is already calibrated (0.043 vs 0.042) and the layer changes nothing (0.1104 → 0.1103).
+
+**Trading (confirmation hours, P(rug) cap, one position per token, 90% CI by token):**
+
+| Rule | 5m, Jupiter | 5m, Lightning | 1m, Jupiter | 1m, Lightning |
+|---|---|---|---|---|
+| every decision, P(rug) < 0.3 | −6.15% [−6.76, −5.47] | −8.05% | −4.75% [−5.02, −4.49] | −6.66% |
+| raw `p_clear` top 10%, P(rug) < 0.3 | −6.38% [−8.33, −4.65] | −8.26% | −5.49% | −7.37% |
+| best recalibrated variant | −5.60% [−9.27, −1.22] (a+b W60, top 2%) | −7.51% | −5.14% [−7.41, −2.63] (a W30, top 10%) | −7.19% |
+| best regime gate (top 10%, hot hours) | −6.20% | −8.08% | −4.86% | −6.74% |
+
+No variant comes close to break-even, and the top-ranked candles do no better than every decision:
+on the confirmation hours higher `p_clear` is, if anything, slightly worse. An intercept-only
+correction cannot change which candles rank highest within a moment, and the hours' drift isn't
+large enough for timing alone to pay a 2.5% round trip. **Closed:** recalibration is worth having
+for honest odds (if anything, a 5m `p_clear` shown to a user should be rolling-calibrated), but it
+is not a trading edge. Untouched: no installed model file or forecaster code changed.
 
 ## 4. What this means for the plan
 
