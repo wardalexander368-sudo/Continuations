@@ -409,6 +409,7 @@ class PumpChainFeed(LiveFeed):
         creator: str | None = None,
         initial: Iterable[Tick] = (),
         stream: AsyncIterator | None = None,
+        follow: Callable[[str, str | None], LiveFeed] | None = None,
     ):
         self.mint = mint
         self.urls = urls
@@ -416,24 +417,46 @@ class PumpChainFeed(LiveFeed):
         self.creator = creator
         self._initial = list(initial)
         self._stream = stream  # an already-open program stream to continue (e.g. after spotting a launch)
+        # After graduation, the feed for the token's PumpSwap pool (mint, creator) -> feed; None ends the feed.
+        self._follow = follow if follow is not None else self._pumpswap
+
+    def _pumpswap(self, mint: str, creator: str | None) -> LiveFeed:
+        from .pumpswap import PumpSwapFeed
+
+        return PumpSwapFeed(mint, urls=self.urls, clock=self.clock, creator=creator)
 
     async def events(self) -> AsyncIterator[Event]:
+        from contextlib import aclosing
+
         from .pumpportal import tick_from_message
 
         for tick in self._initial:
             yield tick
-        async for item in self._stream or stream_program_events(self.urls):
-            if isinstance(item, Status):
-                yield item
-                continue
-            _, _, events, _ = stream_item(item)
-            for event in events:
-                if isinstance(event, ChainTrade) and event.mint == self.mint:
-                    if not self.creator and event.creator:
-                        self.creator = event.creator
-                    tick = tick_from_message(trade_to_message(event), self.clock.now(), self.creator)
-                    if tick is not None:
-                        yield tick
-                elif isinstance(event, ChainComplete) and event.mint == self.mint:
-                    yield Status("token graduated: bonding-curve trading is over (it now trades on PumpSwap)", "warn", kind="graduated")
-                    return
+        graduated: ChainComplete | None = None
+        async with aclosing(self._stream or stream_program_events(self.urls)) as stream:
+            async for item in stream:
+                if isinstance(item, Status):
+                    yield item
+                    continue
+                _, _, events, _ = stream_item(item)
+                for event in events:
+                    if isinstance(event, ChainTrade) and event.mint == self.mint:
+                        if not self.creator and event.creator:
+                            self.creator = event.creator
+                        tick = tick_from_message(trade_to_message(event), self.clock.now(), self.creator)
+                        if tick is not None:
+                            yield tick
+                    elif isinstance(event, ChainComplete) and event.mint == self.mint:
+                        graduated = event
+                        break
+                if graduated is not None:
+                    break  # closes the program stream before the pool's opens (one connection at a time)
+        if graduated is None:
+            return
+        follow = self._follow(self.mint, self.creator) if not graduated.quote_mint and self._follow else None
+        if follow is None:
+            yield Status("token graduated: bonding-curve trading is over (it now trades on PumpSwap)", "warn", kind="graduated")
+            return
+        yield Status(f"token graduated: following its PumpSwap pool {getattr(follow, 'pool', '')}", "warn", kind="graduated")
+        async for event in follow.events():
+            yield event

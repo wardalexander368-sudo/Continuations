@@ -216,6 +216,10 @@ class CandleAgent:
 
     def _feed_health(self, status: Status) -> None:
         now = self.clock.now()
+        if status.kind == "graduated" and self._model is not None:
+            # The global model knows bonding curves only; on PumpSwap the online model carries on.
+            self._model = None
+            self._resync("graduated: global model off (it covers bonding curves only); online model continues on PumpSwap")
         if status.kind == "disconnected" and self.outage_from is None:
             self.outage_from = now
         elif status.kind == "connected" and self.outage_from is not None:
@@ -231,7 +235,7 @@ class CandleAgent:
             return False
         return self.observed_from is None or candle.start >= self.observed_from
 
-    def _resync(self) -> None:
+    def _resync(self, message: str = "feed back: resynced after an outage (candles it missed were not scored)") -> None:
         """After an outage, restart the forecaster the way a mid-life join starts: candle
         history without trade detail, wallet tracking from scratch (as in training)."""
         info = self.market.info
@@ -245,7 +249,7 @@ class CandleAgent:
         )
         for c in self.book.closed:
             self.forecaster.observe(Candle(c.start, c.open, c.high, c.low, c.close, volume=c.volume, trades=None))
-        self._status("feed back: resynced after an outage (candles it missed were not scored)")
+        self._status(message)
 
     def _close_live(self, closed: list[Candle]) -> None:
         for candle in closed:

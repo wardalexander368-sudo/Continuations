@@ -117,7 +117,7 @@ async def test_graduation_ends_the_chain_feed():
         yield T0 + 1, "s2", [ChainComplete(PUMP_MINT)]
         yield T0 + 2, "s3", [ChainTrade(PUMP_MINT, 0.1, 3e6, True, "x", int(T0), 41.0, 7.8e8, "dev", 11.0)]
 
-    events = [e async for e in PumpChainFeed(PUMP_MINT, stream=stream()).events()]
+    events = [e async for e in PumpChainFeed(PUMP_MINT, stream=stream(), follow=lambda mint, creator: None).events()]
     assert isinstance(events[0], Tick) and events[-1].kind == "graduated" and len(events) == 2
 
 
@@ -263,3 +263,52 @@ def test_flat_priors_follow_the_candle_length():
     assert short[0] < minute[0] < five[0] and short[1] > minute[1] > five[1]
     assert trades_flat_priors(5) == short and trades_flat_priors(3600) == five  # held flat outside the measured range
     assert Forecaster(30, domain="trades").activity.flat_rate == pytest.approx(sum(trades_flat_priors(30)) / 2)
+
+
+
+async def test_graduated_token_continues_on_its_pumpswap_pool():
+    import json
+    from pathlib import Path
+
+    from tartar.feeds.pumpswap import PumpSwapFeed, swap_events_from_logs
+
+    data = Path(__file__).parent / "data"
+    buy_tx = json.loads((data / "pumpswap_buy.json").read_text())
+    mint = buy_tx["mint"]
+
+    async def curve():
+        yield T0, "s1", [ChainTrade(mint, 0.1, 3e6, True, "w", int(T0), 80.0, 4e8, "dev", 50.0)]
+        yield T0 + 1, "s2", [ChainComplete(mint)]
+        yield T0 + 2, "s3", [ChainTrade(mint, 0.1, 3e6, True, "x", int(T0), 81.0, 3.9e8, "dev", 51.0)]  # never read
+
+    async def pool():
+        yield T0 + 3, "p1", swap_events_from_logs(buy_tx["logs"]), 9
+
+    feed = PumpChainFeed(mint, stream=curve(), follow=lambda m, creator: PumpSwapFeed(m, creator=creator, stream=pool()))
+    events = [e async for e in feed.events()]
+    assert [type(e).__name__ for e in events] == ["Tick", "Status", "Tick"]
+    assert events[1].kind == "graduated" and "PumpSwap pool FEmnAsVE" in events[1].message
+    assert events[2].price == pytest.approx(137.474161536 / 128879639.516385)
+    quoted = PumpChainFeed(mint, stream=_once(ChainComplete(mint, "USDCmint")), follow=lambda m, c: pytest.fail("quote-paired pools are not followed"))
+    assert [e.kind for e in [e async for e in quoted.events()]] == ["graduated"]
+
+
+async def _once(event):
+    yield T0, "s", [event]
+
+
+async def test_agent_drops_the_curve_model_after_graduation(sim_tokens_small, tmp_path):
+    from tartar.agent import CandleAgent
+    from tartar.clock import SimClock
+    from tartar.train import train_global
+
+    _, ds = sim_tokens_small
+    model = train_global(ds, rounds=5, early_stopping=3, num_leaves=7, min_data_in_leaf=10, log=lambda m: None)
+    clock = SimClock(start=T0, speed=600)
+    script = [(T0 + 5 + 10 * i, Tick(T0 + 5 + 10 * i, 1.0 + 0.001 * i, volume=1, buys=1, trader=f"w{i}")) for i in range(18)]
+    script += [(T0 + 185, Status("token graduated: following its PumpSwap pool P", "warn", kind="graduated"))]
+    script += [(T0 + 190 + 10 * i, Tick(T0 + 190 + 10 * i, 1.2 + 0.001 * i, volume=1, buys=1, trader=f"v{i}")) for i in range(20)]
+    info = MarketInfo("M", "M", "", "SOL", "solana-rpc")
+    agent = CandleAgent(Market(info, ScriptFeed(clock, script), None, clock), 60, model=model, update_interval=0.02, scam_checks=False)
+    await asyncio.wait_for(agent.run(max_candles=6), timeout=20)
+    assert agent.forecaster.model is None and agent.live_candles >= 5
