@@ -17,7 +17,7 @@ Where each family stands (2026-10-09):
 | Family | Status | Where |
 |---|---|---|
 | Buying pump.fun launches: baselines, model signals, screens, flags, learned scorers, Jev | closed, loses | §3.2–3.8 |
-| Faster entry (slots, private RPC) | closed: only the creator's own bundle profits | §3.9 |
+| Faster entry (slots, private RPC, same-slot sniping) | closed: the creation-slot edge is the creator's own bundle; the best outsider slice is ~+2% only if we out-race 492 bots | §3.9, §3.18 |
 | Graduation run-up on the curve | closed, break-even at best | §3.10 |
 | Longer holds (10–45 min) on screened launches | closed, loses | §3.14 |
 | Copy-trading wallets whose buys paid off | closed, loses | §3.15 |
@@ -619,6 +619,66 @@ are −24.9 / −27.5 / −36.7 / −4.9%. No family passes in any run.
 
 Together with §3.2–3.15 this closes trading pump.fun tokens at launch, on the curve, at
 graduation, and in their first hour on PumpSwap, with simple rules on public data.
+
+### 3.18 Same-slot launch entry: the creation-slot edge belongs to the creator's bundle
+
+§3.9 found one profitable launch buy: right after the create, inside its slot. This asks
+whether an outsider can get it, on every slot-annotated recording (17,098 SOL launches with a
+creator buy: `raw-slots`, `raw-slots-processed`, `raw-eager`, `raw-clever`, `raw-clever2`,
+`raw-v3`, each mint counted once). Scripts: `handoff/experiments/same_slot_entry.py` (slot
+order rebuilt by reserve chaining, 100% of launches; paper entry by position; realized results
+of real same-slot buyers), `same_slot_blocks.py` (200 creation blocks from the public RPC: index
+in block, fee payer, priority fee, Jito tip), `same_slot_who.py` (wallet classes, block
+positions, entry scenarios). Outputs in `handoff/data/same-slot/` (`entry-report.txt`,
+`who-report.txt`, `launches.jsonl.gz`, `blocks.jsonl`).
+
+**Who buys in the creation slot.** 35% of launches have an outside (non-creator) buy there.
+Two kinds of wallet:
+* **One-off wallets** (seen in 1–4 launches; round, repeated sizes like 1.0 / 0.988 / 1.2 SOL):
+  in the blocks, **83% of their buys sit in an unbroken run right after the create** (median
+  2 transactions later). That is the creator's bundle. They take the first place after the
+  create in 80% of their launches and realize **+51.8%** per position before tips (median +7%).
+* **Repeat snipers** (492 wallets, each in ≥ 5 launches of ≥ 5 different creators): bots
+  reacting to creates. Only 26% of their buys touch the bundle run; median **132 transactions
+  later in the same block**, so they react within the slot (shred-level feeds). They pay little
+  to land (priority median 0.0003 SOL, p90 0.004; a Jito tip on 15% of transactions): the race
+  is won by infrastructure, not by bidding. Realized **+3.7%** per position before tips
+  (median −2.5%, 39% win; 289 of 492 wallets positive).
+
+**Where the §3.9 edge comes from.** Entering first after the create (hold 10 s, 0.1 SOL)
+pays only when others buy after you in the same slot: **−3.4%** on launches nobody else buys
+in that slot (11,132), **+83%** when one-off (bundle) wallets follow, +14% when only bots
+follow. The profit is the creator's own bundle buying after you, and the bundle is atomic and
+placed right after the create, so an outsider cannot stand in front of it.
+
+**What an outsider can reach** (paper, curve fee 1.25%/side, network fees, sold at the end of
+the slot `hold` later; 90% CI by launch):
+
+| Entry | 0.1 SOL, priority 0.0003 | 0.1 SOL, priority 0.007 | 1 SOL, priority 0.0003 |
+|---|---|---|---|
+| A first after the create (inside the creator's bundle: unreachable) | +12.0% [+10.7, +13.4] | +5.3% | +5.7% |
+| B first among the bots, after the bundle (beat all 492 every time) | **+2.0%** [+1.3, +2.7] | −4.7% | −3.1% |
+| C a random place among the slot's bots (one more competitor) | **−1.2%** [−1.8, −0.6] | −8.0% | −6.1% |
+| D after every creation-slot trade | −3.3% | −10.0% | −7.9% |
+
+(Hold 10 s shown; 30 s and 60 s are the same or worse; `who-report.txt`.)
+
+**Reading:**
+* The only positive reachable cell, B, needs our buy to land ahead of every existing bot
+  on every contested launch, at 0.1 SOL and a small priority fee. It turns negative with a
+  p90-sized priority fee or at 1 SOL. As one more bot of median speed (C), it loses.
+* Our current feed sees a create a median 1.15–1.47 s after its block (~5 slots, §3.9 / queue
+  item 5), so today we land around D or later. Reaching B at all means raw shreds
+  (e.g. Helius Shred Delivery, $1,000 per month per IP, or a Jito ShredStream proxy if still
+  offered), a co-located server and staked or Jito landing paths; then winning the race
+  against the 492 bots already there, which this data cannot show we would.
+* Repeat snipers as a group made +12.4% SOL-weighted before tips (12,744 SOL in) but the median
+  bot position loses: the winnings sit in a few fast, well-tuned wallets.
+* **Closes the same-slot entry question:** the creation-slot edge is the creator's bundle;
+  an outsider's best reachable slice is thin, needs a race we have no evidence of winning, and
+  costs ~$1k/month before the first trade. Not worth building. (Being the creator, i.e.
+  launching tokens and bundling our own buys, is how the one-off wallets earn; it profits from
+  later buyers and is out of scope.)
 
 ## 4. What this means for the plan
 
