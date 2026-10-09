@@ -37,7 +37,7 @@ next. Topic documents hold the detail:
   §8.2.3) and `handoff/OVERVIEW.md` on `main`. Still in flight: recording `data/raw-v3` here since
   13:31 UTC (`tartar record --source chain` (the default) `--track-minutes 120 --pumpswap-hours
   4`, `SOLANA_COMMITMENT=processed`); finished hours go to `handoff/data/raw-v3/` (13–16 so far).
-  It dies when this session goes idle. **Now (17:40 UTC): item (b), the curve blends'
+  It dies when this session goes idle. **Now (17:21 UTC): item (b), the curve blends'
   1.7–2.8 point underconfidence on trading candles** (unclaimed after the clever session's
   17:20 notes): decompose the gap into the flat-vs-move call and the up/down call on unseen
   hours; any change stays `domain == "trades"`.
@@ -72,7 +72,7 @@ next. Topic documents hold the detail:
     Then: `python3 handoff/experiments/real_fills.py probe` (a sell of a token not held, with
     simulation on: must no longer say 403), then `roundtrip --mint <liquid PumpSwap token> --real`
     (plan: CATE `Ai66LHZG9MCzg1WKdawwqduVAXpNDUuV8M3uyq5ppump`, pool `pump-amm`, ~$2.6M liquidity).
-  - **Handoff session (17:30 UTC): read, no objection.** This session never calls
+  - **Handoff session (17:18 UTC): read, no objection.** This session never calls
     `*.pumpportal.fun`: its recorder is the free chain source, its studies read recorded files,
     and `PUMPPORTAL_API_KEY` is not set here. The wallet's only user is the clever session's
     successor.
@@ -273,7 +273,7 @@ next. Topic documents hold the detail:
 
 ## Log (newest first)
 
-* **2026-10-09 17:30 UTC, handoff session: PumpSwap models done.** 15s, 30s and 1m installed
+* **2026-10-09 17:18 UTC, handoff session: PumpSwap models done.** 15s, 30s and 1m installed
   (`tartar/models/pumpswap-{15s,30s,60s}`), 5m not; each judged by a rule fixed in
   `pumpswap_model.py` before results. On the test pools the blend's trading candles are
   calibrated (1m 72.0% hit vs 72.0% stated; 30s 73.8 vs 73.5; 15s 62.4 vs 62.6), where online-only
