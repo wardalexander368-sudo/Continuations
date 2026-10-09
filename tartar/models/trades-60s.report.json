@@ -1,291 +1,82 @@
 {
-  "model": {
-    "domain": "trades",
-    "timeframe": 60,
-    "features": [
-      "r1",
-      "r2",
-      "r3",
-      "r1_raw",
-      "mom5",
-      "mom15",
-      "log_sigma",
-      "vol_ratio",
-      "clv",
-      "body",
-      "range",
-      "upper_wick",
-      "lower_wick",
-      "ema_dev",
-      "ema_trend",
-      "drawdown",
-      "rise",
-      "log_volume",
-      "volume_z",
-      "log_trades",
-      "trade_trend",
-      "flat_streak",
-      "idle",
-      "count_imb",
-      "flow_imb",
-      "flow5",
-      "whale_share",
-      "log_traders",
-      "new_trader_share",
-      "cum_traders",
-      "trader_growth",
-      "creator_known",
-      "creator_sell",
-      "creator_sold",
-      "creator_left",
-      "age",
-      "n_candles",
-      "curve_progress",
-      "log_price",
-      "f",
-      "x0",
-      "p_trades",
-      "p_activity",
-      "p_flow_imb",
-      "p_range",
-      "p_new_traders",
-      "p_creator_sell",
-      "p_idle",
-      "top10_share",
-      "log_holders",
-      "creator_share",
-      "sniper_share",
-      "wash_share",
-      "trades_per_wallet",
-      "nonstandard_curve"
-    ],
-    "edges": [
-      -4.0,
-      -3.0,
-      -2.5,
-      -2.0,
-      -1.6,
-      -1.3,
-      -1.0,
-      -0.75,
-      -0.5,
-      -0.3,
-      -0.15,
-      0.0,
-      0.15,
-      0.3,
-      0.5,
-      0.75,
-      1.0,
-      1.3,
-      1.6,
-      2.0,
-      2.5,
-      3.0,
-      4.0
-    ],
-    "temperature": 1.0290630073915452,
-    "tail_low": 3.0800359291833868,
-    "tail_high": 1.9691552179029208,
-    "nowcast": true,
-    "best_iteration": 156,
-    "num_leaves": 31,
-    "min_data_in_leaf": 2000,
-    "train_rows": 490356,
-    "valid_rows": 120666,
-    "tokens": 14796,
-    "simulated": false,
-    "trained_at": "2026-10-09T12:20:37Z",
-    "train_seconds": 228.7,
-    "median_shrink": [
-      [
-        0.0,
-        1.0
-      ],
-      [
-        0.2,
-        1.0
-      ],
-      [
-        0.4,
-        0.9
-      ],
-      [
-        0.6,
-        0.8
-      ],
-      [
-        0.8,
-        0.7000000000000001
-      ],
-      [
-        0.95,
-        0.0
-      ]
-    ],
-    "model_bytes": 13917446
-  },
-  "test_rows": 120768,
-  "data_capture": {
-    "tokens_measured": 13671,
-    "median": 1.0,
-    "mean": 0.9376105181389038,
-    "note": "share of recorded trades whose predecessor was also recorded (1.0 = complete stream)"
-  },
-  "test_by_fraction": [
-    {
-      "f": 0.0,
-      "rows": 20128,
-      "hit_rate": 0.8693911412494589,
-      "avg_confidence": 0.8827519941438109,
-      "band_coverage": 0.9486365603808974,
-      "band_stated": 0.9307701320013767,
-      "band_width_pct": 12.941735394857371,
-      "mae_pct": 4.3070863642763735,
-      "naive_mae_pct": 4.801717900770526,
-      "edge": 0.10301136941318023,
-      "log_loss": 0.6047685649588453,
-      "info_gain_bits": 0.5140993460050142
-    },
-    {
-      "f": 0.2,
-      "rows": 20128,
-      "hit_rate": 0.9023228971288414,
-      "avg_confidence": 0.9128728702160442,
-      "band_coverage": 0.9489972586928294,
-      "band_stated": 0.9370488175604627,
-      "band_width_pct": 10.432301111370322,
-      "mae_pct": 3.322330995279718,
-      "naive_mae_pct": 3.616329806999883,
-      "edge": 0.08129756615425154,
-      "log_loss": 0.5575905079052927,
-      "info_gain_bits": 0.45067860890067113
-    },
-    {
-      "f": 0.4,
-      "rows": 20128,
-      "hit_rate": 0.9313230414081662,
-      "avg_confidence": 0.936159423302859,
-      "band_coverage": 0.9542273842158419,
-      "band_stated": 0.9438060529879597,
-      "band_width_pct": 7.979748039947402,
-      "mae_pct": 2.5494809186225567,
-      "naive_mae_pct": 2.730915213432468,
-      "edge": 0.0664371760490754,
-      "log_loss": 0.4972902617228086,
-      "info_gain_bits": 0.3883875697246029
-    },
-    {
-      "f": 0.6,
-      "rows": 20128,
-      "hit_rate": 0.957473669023229,
-      "avg_confidence": 0.9573660642594787,
-      "band_coverage": 0.9591328812581157,
-      "band_stated": 0.9527666441110162,
-      "band_width_pct": 5.514309841229623,
-      "mae_pct": 1.8757623077681516,
-      "naive_mae_pct": 1.9413674510404169,
-      "edge": 0.033793264246346766,
-      "log_loss": 0.4153216780555384,
-      "info_gain_bits": 0.32838120284837397
-    },
-    {
-      "f": 0.8,
-      "rows": 20128,
-      "hit_rate": 0.9778531236473813,
-      "avg_confidence": 0.9766975489242772,
-      "band_coverage": 0.9680060597316404,
-      "band_stated": 0.9640030443480807,
-      "band_width_pct": 3.2674098463726895,
-      "mae_pct": 1.1140633951784145,
-      "naive_mae_pct": 1.12873811506268,
-      "edge": 0.013000996146436128,
-      "log_loss": 0.31369453605276537,
-      "info_gain_bits": 0.2606111672529476
-    },
-    {
-      "f": 0.95,
-      "rows": 20128,
-      "hit_rate": 0.9940484778531237,
-      "avg_confidence": 0.9927521308567084,
-      "band_coverage": 0.9815683162602798,
-      "band_stated": 0.97941297640389,
-      "band_width_pct": 1.234893644289225,
-      "mae_pct": 0.4226476498240082,
-      "naive_mae_pct": 0.42264764982400777,
-      "edge": -1.1102230246251565e-15,
-      "log_loss": 0.1805395827626417,
-      "info_gain_bits": 0.16376169169785706
-    }
+ "note": "v3.2, trained by handoff/experiments/predictor_v32.py (predictor doc 8.2.2e); test = latest 15% of launches, unseen by v3.1 and v3.2",
+ "chosen_old_recorder_weight": 1,
+ "tokens": 28022,
+ "rows": 1461228,
+ "installed v3.1": {
+  "valid_ll": 0.422,
+  "test_ll": 0.4712,
+  "open hit/stated": [
+   0.861,
+   0.856
   ],
-  "live_at_open": {
-    "tokens": 300,
-    "online_only": {
-      "all": {
-        "n": 4544,
-        "hit_rate": 0.7705,
-        "avg_confidence": 0.7647,
-        "band_coverage": 0.9234,
-        "band_stated": 0.8774,
-        "mae_pct": 6.0273,
-        "naive_mae_pct": 6.0139,
-        "edge": -0.0022
-      },
-      "trading": {
-        "n": 1461,
-        "hit_rate": 0.4463,
-        "avg_confidence": 0.4411,
-        "band_coverage": 0.8679,
-        "band_stated": 0.7809,
-        "mae_pct": 18.229,
-        "naive_mae_pct": 18.1874,
-        "edge": -0.0023
-      }
-    },
-    "global_plus_online": {
-      "all": {
-        "n": 4544,
-        "hit_rate": 0.8343,
-        "avg_confidence": 0.8397,
-        "band_coverage": 0.9313,
-        "band_stated": 0.914,
-        "mae_pct": 5.5351,
-        "naive_mae_pct": 6.0139,
-        "edge": 0.0796
-      },
-      "trading": {
-        "n": 1461,
-        "hit_rate": 0.6461,
-        "avg_confidence": 0.6426,
-        "band_coverage": 0.8638,
-        "band_stated": 0.8316,
-        "mae_pct": 16.6962,
-        "naive_mae_pct": 18.1874,
-        "edge": 0.082
-      }
-    }
-  },
-  "feature_importance": {
-    "p_idle": 0.3626,
-    "curve_progress": 0.114,
-    "range": 0.0479,
-    "f": 0.0452,
-    "idle": 0.0302,
-    "log_price": 0.0276,
-    "log_volume": 0.0204,
-    "rise": 0.0203,
-    "p_range": 0.0174,
-    "log_trades": 0.0134,
-    "log_holders": 0.013,
-    "flow5": 0.0124,
-    "trades_per_wallet": 0.0123,
-    "volume_z": 0.0117,
-    "sniper_share": 0.0116,
-    "log_sigma": 0.0115,
-    "p_flow_imb": 0.0115,
-    "trade_trend": 0.0108,
-    "vol_ratio": 0.0106,
-    "creator_share": 0.0106
-  },
-  "test_log_loss": 0.428200855242982
+  "edge_open": 0.0404,
+  "live all/trading": [
+   0.0311,
+   0.0331
+  ],
+  "trading hit/stated": [
+   0.6459,
+   0.654
+  ],
+  "temperature": 1.029,
+  "iters": 156
+ },
+ "old rows x1": {
+  "valid_ll": 0.4147,
+  "test_ll": 0.4641,
+  "open hit/stated": [
+   0.862,
+   0.86
+  ],
+  "edge_open": 0.0405,
+  "live all/trading": [
+   0.0374,
+   0.0398
+  ],
+  "trading hit/stated": [
+   0.6442,
+   0.6649
+  ],
+  "temperature": 0.985,
+  "iters": 212
+ },
+ "old rows x0.25": {
+  "valid_ll": 0.4162,
+  "test_ll": 0.4663,
+  "open hit/stated": [
+   0.861,
+   0.858
+  ],
+  "edge_open": 0.0399,
+  "live all/trading": [
+   0.0482,
+   0.0513
+  ],
+  "trading hit/stated": [
+   0.6407,
+   0.665
+  ],
+  "temperature": 0.977,
+  "iters": 209
+ },
+ "old rows x0": {
+  "valid_ll": 0.4185,
+  "test_ll": 0.4696,
+  "open hit/stated": [
+   0.86,
+   0.856
+  ],
+  "edge_open": 0.034,
+  "live all/trading": [
+   0.0506,
+   0.054
+  ],
+  "trading hit/stated": [
+   0.6503,
+   0.6653
+  ],
+  "temperature": 0.96,
+  "iters": 138
+ }
 }
