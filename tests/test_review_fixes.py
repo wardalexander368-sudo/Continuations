@@ -11,6 +11,7 @@ from tartar.data.dataset import _hash_unit, build_dataset, load_trade_tokens
 from tartar.data.rawlog import RawWriter
 from tartar.feeds.base import LiveFeed, Status
 from tartar.feeds.pumpchain import ChainComplete, ChainTrade, PumpChainFeed, capture_rate
+from tartar.feeds.pumpswap import canonical_pool
 from tartar.market import Market, MarketInfo, open_market
 from tartar.model import Forecaster
 from tartar.model.global_model import GlobalModel, find_model
@@ -128,10 +129,13 @@ async def test_graduated_pump_token_is_not_put_on_the_curve_feed(make_apis):
     }
     gecko, dex, _ = make_apis(routes)
     market = await open_market(PUMP_MINT, 300, gecko=gecko, dex=dex)
-    assert market.info.source == "geckoterminal"
+    assert market.info.source == "pumpswap" and market.info.pool == canonical_pool(PUMP_MINT)
     gecko, dex, _ = make_apis({f"/tokens/v1/solana/{PUMP_MINT}": [dex_pair("SWAPPAIR", PUMP_MINT, dex="pumpswap")]})
     market = await open_market(PUMP_MINT, 60, gecko=gecko, dex=dex)
-    assert market.info.source == "dexscreener"
+    assert market.info.source == "pumpswap" and market.info.quote == "SOL"
+    gecko, dex, _ = make_apis({f"/tokens/v1/solana/{PUMP_MINT}": [dex_pair("RAYPAIR", PUMP_MINT, dex="raydium")]})
+    market = await open_market(PUMP_MINT, 60, gecko=gecko, dex=dex)
+    assert market.info.source == "dexscreener"  # migrated before PumpSwap existed: no canonical pool
 
 
 def test_replay_feeds_wallets_like_training(sim_tokens_small):

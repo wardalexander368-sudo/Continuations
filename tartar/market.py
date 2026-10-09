@@ -18,10 +18,11 @@ from .feeds.geckoterminal import GeckoPool, GeckoTerminal, GeckoTerminalFeed
 from .feeds.http import ApiError
 from .feeds.pumpchain import PumpChainFeed
 from .feeds.pumpportal import PumpPortalFeed
+from .feeds.pumpswap import PumpSwapFeed, canonical_pool
 
 WSOL = "So11111111111111111111111111111111111111112"
 _ADDRESS_RE = re.compile(r"^[1-9A-HJ-NP-Za-km-z]{32,44}$")
-SOURCES = ("auto", "chain", "pumpportal", "dexscreener", "gecko")
+SOURCES = ("auto", "chain", "pumpportal", "pumpswap", "dexscreener", "gecko")
 TRADE_SOURCES = ("solana-rpc", "pumpportal", "simulated")  # feeds that report every trade with wallets
 
 
@@ -146,9 +147,12 @@ async def _resolve(
     pump = mint.endswith("pump")
     curve_dexes = ("pumpfun", "pump-fun", "")
     graduated = (pair is not None and pair.dex not in curve_dexes) or (pool is not None and pool.dex not in curve_dexes)
+    on_pumpswap = any(x is not None and x.dex == "pumpswap" for x in (pair, pool))
     if source == "auto":
         if pump and not graduated:
             source = "pumpportal" if os.environ.get("PUMPPORTAL_API_KEY") else "chain"
+        elif pump and on_pumpswap:
+            source = "pumpswap"  # every trade in its canonical pool, read from the chain
         elif pair is not None:
             source = "dexscreener"
         elif pool is not None:
@@ -163,12 +167,16 @@ async def _resolve(
 
     symbol = (pair.base_symbol if pair else "") or (pool.base_symbol if pool and pool.base_token == mint else "")
     name = (pair.base_name if pair else "") or (pool.base_name if pool and pool.base_token == mint else "")
-    quote = "SOL" if source in ("chain", "pumpportal") else "USD"
+    quote = "SOL" if source in ("chain", "pumpportal", "pumpswap") else "USD"
 
     if source == "chain":
         feed: LiveFeed = PumpChainFeed(mint, clock=clock)
         if not pump:
             notes.append("mint does not end in 'pump'; the pump.fun program may not trade it")
+    elif source == "pumpswap":
+        if not pump:
+            raise MarketNotFound(f"{mint} is not a pump.fun mint, so it has no canonical PumpSwap pool")
+        feed = PumpSwapFeed(mint, clock=clock)
     elif source == "pumpportal":
         feed = PumpPortalFeed(mint, clock=clock)
         if not os.environ.get("PUMPPORTAL_API_KEY"):
@@ -217,8 +225,11 @@ async def _resolve(
         name=name,
         quote=quote,
         source=feed.name,
-        pool=(pair.address if source == "dexscreener" and pair else pool.address if pool else None),
-        dex=(pair.dex if pair else pool.dex if pool else ("pumpfun" if pump else None)),
+        pool=(
+            feed.pool if isinstance(feed, PumpSwapFeed)
+            else pair.address if source == "dexscreener" and pair else pool.address if pool else None
+        ),
+        dex="pumpswap" if isinstance(feed, PumpSwapFeed) else (pair.dex if pair else pool.dex if pool else ("pumpfun" if pump else None)),
         notes=notes,
         launched_at=min(launched) if launched else None,
     )
