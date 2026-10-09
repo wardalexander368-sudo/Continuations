@@ -134,20 +134,21 @@ FAMILIES = {
     "LONG": [{"fam": "LONG", "band": b, "k": k} for b in ((.01, .05), (.05, .15), (.15, .3), (.3, .5)) for k in (1, 7, 30)],
     "DRIFT": [{"fam": "DRIFT", "d": d, "k": k} for d in (0.05, 0.10, 0.20) for k in (1, 7, 30)],
 }
-n_rules = 0
-for fam, rules in FAMILIES.items():
-    res = []
-    for r in rules:
-        tr = trades(r)
-        n_rules += 1
-        a, b = stats(split(tr, "train")), stats(split(tr, "val"))
-        res.append((r, tr, a, b))
+if __name__ == "__main__":
+    n_rules = 0
+    for fam, rules in FAMILIES.items():
+        res = []
+        for r in rules:
+            tr = trades(r)
+            n_rules += 1
+            a, b = stats(split(tr, "train")), stats(split(tr, "val"))
+            res.append((r, tr, a, b))
+            label = {k: v for k, v in r.items() if k != "fam"}
+            print(f"  {fam:5s} {str(label):38s} train {fmt(a)}  val {fmt(b)}", flush=True)
+        r, tr, a, b = max((x for x in res if x[2][2] >= 100), key=lambda x: x[2][0])
         label = {k: v for k, v in r.items() if k != "fam"}
-        print(f"  {fam:5s} {str(label):38s} train {fmt(a)}  val {fmt(b)}", flush=True)
-    r, tr, a, b = max((x for x in res if x[2][2] >= 100), key=lambda x: x[2][0])
-    label = {k: v for k, v in r.items() if k != "fam"}
-    if a[0] > 0 and b[0] > 0:
-        print(f"  -> {fam} chosen {label}: TEST {fmt(stats(split(tr, 'test')))}", flush=True)
-    else:
-        print(f"  -> {fam} chosen {label}: validation disagrees or train <= 0; test not read", flush=True)
-print(f"rules tried: {n_rules}")
+        if a[0] > 0 and b[0] > 0:
+            print(f"  -> {fam} chosen {label}: TEST {fmt(stats(split(tr, 'test')))}", flush=True)
+        else:
+            print(f"  -> {fam} chosen {label}: validation disagrees or train <= 0; test not read", flush=True)
+    print(f"rules tried: {n_rules}")
