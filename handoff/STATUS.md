@@ -32,12 +32,6 @@ next. Topic documents hold the detail:
 
 ## Active
 
-* **Trading-skills thread** (project thread session, since 2026-10-09 20:32 UTC, branch
-  `claude/project-thread-x7fh45`). Task (the user's 20:30 ask: "hunt down improvements to our agent's
-  trading skills"): audit how the agent picks tokens, enters, sizes, exits, executes and learns
-  from its reviews; rank weaknesses by profit after real costs; test the top ones offline on
-  recorded data. Paper only, no wallet, stays off the dip/JLP/perps tests and the retrain.
-
 * **Recorder thread** (project thread session, since 2026-10-09 20:20 UTC, branch
   `claude/project-thread-9op3pf`). Task (the user's 20:12 go, continuous profit work): a raw
   recorder that no Claude session has to keep alive. Plan: a GitHub Action (`recorder.yml`)
@@ -352,6 +346,17 @@ next. Topic documents hold the detail:
   branch `claude/profitability-backtest`, on `main`).
 
 ## Log (newest first)
+
+* **2026-10-09 21:05 UTC, trading-skills thread: exits, regime gating and execution: helps, still
+  loses** (profitability §3.21; 22,363 screened launches, dev before 16:00, test 16:00–20:20 UTC).
+  Two thirds of launches never offer a sale above cost after a +20 s entry (oracle median −3.45%),
+  and the risk filters remove the ones that move (flags + P(rug) < 0.1: oracle +1.5%). On the live
+  skip-flag policy, TP +100% / 30 min hold / no stop beats the fixed 180 s hold by 4 points on
+  test (−2.6% vs −6.8%); stops always hurt. Jupiter + 0.02 SOL + the measured 0.000011 SOL network
+  fee add ~1 point: −1.57% [−3.09, +0.05] on test. Regime gates: no signal. Lightning also strands
+  0.0015 SOL rent per new token (fresh launches ~7% per round trip at 0.1 SOL). Not worth a
+  forward test. Scripts `exit_study.py`, `regime_gate.py`, `exit_tp_grid.py`. Nothing half-done;
+  claim cleared.
 
 * **2026-10-09 20:25 UTC, predictor-strategy thread: predictor v3.1 + P(rug) candle trading: no
   edge** (profitability §3.20, pre-registered). Primary 5m rule −5.15% [−11.85, +2.52] on 108 fresh
