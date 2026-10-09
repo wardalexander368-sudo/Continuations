@@ -52,6 +52,20 @@ marked `quote`). Hourly files are added as each hour finishes; one recorder, one
 
 - `20261009-04`: 04:06–04:59 UTC, 1,272 launches, 95,177 curve trades, 35 graduations,
   91,817 PumpSwap swaps.
+- `20261009-05`: 05:00–05:59 UTC, 1,360 launches, 110,936 curve trades, 35 graduations,
+  118,839 PumpSwap swaps.
+- `20261009-06`: 06:00:00–06:00:17 UTC (the recorder was stopped at the handoff; no
+  `stopped` event, so loaders end the recording at its last event).
+
+In all, 69 graduated SOL pools. Capture: a median 100% / mean 97% of each launch's curve
+trades (the training loader's estimate); for one PumpSwap pool checked against the chain
+(`pumpswap_capture.py`), 138 of 143 swaps (96.5%).
+
+## `sol-dex/` (research session, 2026-10-09)
+
+`costs-20261009.jsonl`: 216 samples of `handoff/experiments/sol_dex_costs.py sample` (Jupiter
+$1,000 round-trip quotes, re-quoted after 1/2/5 s, with Coinbase's book), 04:09–06:00 UTC.
+`python3 handoff/experiments/sol_dex_costs.py summary --out handoff/data/sol-dex/costs-20261009.jsonl`.
 
 This is the **evaluation data of the pre-registered PumpSwap study**
 (`handoff/preregistration/pumpswap-graduated/SPEC.md`): don't compute returns on its PumpSwap

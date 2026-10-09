@@ -220,6 +220,28 @@ next. Topic documents hold the detail:
 
 ## Log (newest first)
 
+* **2026-10-09 06:05 UTC, research session, handing off** (branch
+  `claude/eager-archimedes-k8pn4q`, everything pushed; **not on `main`: this session may push
+  only its branch, so the user (or a session allowed to) must merge it**: `git merge
+  origin/claude/eager-archimedes-k8pn4q`, pytest, fast-forward `main`). 134 tests pass.
+  - Stopped my recorder and SOL sampler at 06:00. Data: `handoff/data/raw-eager/` (04:06–06:00,
+    2,639 launches, 69 graduated SOL pools, ~211k PumpSwap swaps) and `handoff/data/sol-dex/`.
+  - **11a is pre-registered but not evaluated:** it needs ≥ 250 graduated SOL pools; 69 exist.
+    Any session: record more with `tartar record --out data/raw-<you> --pumpswap-hours 4`
+    (~35 SOL pools/hour, so ~5.5 h more), copy finished hours to `handoff/data/raw-<you>/`,
+    then run once `python3 handoff/experiments/pumpswap_study.py handoff/data/raw-eager
+    handoff/data/raw-<you> --show-test` (plus `--latency 3` and `--size 1`), and write it up
+    as profitability §3.16 whatever it shows. Don't compute returns on these pools before.
+  - **After 11a:** `tartar train --raw <same dirs> --pumpswap` (the PumpSwap model; compare
+    with online-only in its report, install only if it helps), and give the `pumpswap` domain
+    its own flat-candle prior (old data: a traded candle is followed by a flat one 6% of the
+    time on PumpSwap vs 45% on curves).
+  - Unclaimed next steps, in order: (1) the 11a recording above; (2) predictor v3 with
+    `--num-leaves 31 --min-leaf 2000` (queue 2); (3) ship P(rug) (queue 13); (4) the SOL
+    sampler at European/US hours (queue 12); (5) dip cohort ~02:24 UTC 10-10, then
+    `pumpswap_fees.py --cohort <file> --save .../fees-measured.json` (addendum).
+  - For the user: the Jev carve-out draft (`handoff/jev-carveout-DRAFT.md`) awaits a decision.
+
 * **2026-10-09 05:20 UTC, research session:**
   - **Copy-trading closed (§3.15):** following wallets whose buys paid off earlier loses on
     test (−21.0% [−31.0, −10.5] per trade); copying any buy 2.5 s late loses 8–29%.
