@@ -32,6 +32,14 @@ next. Topic documents hold the detail:
 
 ## Active
 
+* **Trading-skills thread → new markets** (project thread session, since 2026-10-09 22:45 UTC,
+  branch `claude/project-thread-x7fh45`). Task (coordinator, under the user's "work nonstop"):
+  (1) Hyperliquid vaults / top traders: does following past winners beat cash after fees, with
+  out-of-sample selection; (2) prediction markets (Polymarket): favourite-longshot and
+  late-resolution drift on resolved-market history, net of fees and spread. Free public history
+  only, paper, train/test, every rule counted. Scripts in `handoff/experiments/edge-hunt/vaults/`
+  and `.../predmkt/`.
+
 * **Edge hunt E thread** (project thread session, since 2026-10-09 21:40 UTC, branch
   `claude/project-thread-9op3pf`). **Paper only, no real SOL, no keys.** Task (the user's 21:30
   "work continuously"): edge hunt angle E, TARTAR's assets, beyond the closed predictor + P(rug)
