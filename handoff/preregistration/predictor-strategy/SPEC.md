@@ -49,3 +49,11 @@ Thresholds were set as quantiles on the earlier 60% of launches; results on the 
 * The primary rule was picked because it is the only family positive on the later half. It lost
   on the earlier half, and pooled over both it is about −4%. **The prior expectation is a loss**;
   this forward test exists so that a positive later-half result is not taken on faith.
+
+## Addendum, 2026-10-09 18:50 UTC (before any fresh launch was scored)
+The registered script loaded tokens with `load_trade_tokens`' default `min_candles=3`, which drops
+every token with fewer than three closed candles (15 minutes at 5m): selection on the outcome, the
+pitfall its docstring warns about. Fixed to `min_candles=0` before any evaluation; `SPEC.json` is
+unchanged. On the development data the fix leaves the picture as it was (later-40% numbers):
+1m p_up top 2%, P(rug)<0.1: −3.6% [−5.9, −1.6] (329); 5m p_clear > ~0.38, P(rug)<0.1:
+earlier −6.4% [−9.5, −3.4] (89), later +5.0% [−2.7, +13.0] (23).

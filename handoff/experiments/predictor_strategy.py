@@ -73,7 +73,7 @@ def signals(model, ds) -> dict[str, np.ndarray]:
 
 
 def load(dirs: list[str], tf: int):
-    tokens = load_trade_tokens(dirs, tf)
+    tokens = load_trade_tokens(dirs, tf, min_candles=0)
     ds = build_dataset(tokens, tf, "trades", fractions=(0.0,), mask_creator=0.0, mask_launch=0.0, late_join=0.0, dead_keep=1.0)
     curves = curves_for(tokens)
     rug = find_rug_model()
