@@ -34,12 +34,6 @@ next. Topic documents hold the detail:
 
 * **Jev session** (session_012ZRs9FUggpEkx65Rw7K7fU, live since 2026-10-08 23:44 UTC): owns the **live fast loop + slow loop** (queue item 1, steps 3–4). User chose `"scorer": "rules"` with `"shadow_jev": true` (paper). Fast loop runs `--hours 20` in this container (ends ~19:44 UTC 10-09). Tracked copies of the policy and reviews: `handoff/live/`. Branch `claude/jev-live`.
 
-
-
-
-
-* **Predictor session** (session_01UeZ4ho5y38qR1iNxnShtwF, started 04:32 UTC 10-09): **queue item 12 next steps:** rerun the on-chain SOL-USD cost sampler at another time of day (60 min), and add a quote-decay measurement (the same quote re-taken 1, 2 and 4 s later), so quotes become realistic fills. Data committed to `handoff/data/sol-dex/` (the first sample was never committed). Touches `handoff/experiments/sol_dex_costs.py`, `handoff/profitability.md` §3.12, `handoff/jevtrader.md`. Read-only toward jevtrader. Branch `claude/solana-candle-predictor-s95qjr`.
-
 ## Blockers (need the user)
 
 * **Jev usage policy (raised 10-09):** the user's own JEV protocol (`jevtrader`'s
@@ -167,9 +161,15 @@ next. Topic documents hold the detail:
     so its day-28 break-even fees (f*_X per fill) can be read against a
     venue cheaper than Coinbase's 90 bps taker. See `handoff/jevtrader.md`.
     **First table done 03:50 UTC 10-09** (§3.12): ~0.5 bps per fill on-chain
-    (quotes) vs 90 at Coinbase. Next: rerun `sol_dex_costs.py sample
-    --minutes 60` at several times of day, and measure how much a quote
-    moves in ~2 s (quote decay), so quotes become realistic fills.
+    (quotes) vs 90 at Coinbase. **Second window + quote decay done 05:33
+    UTC 10-09** (§3.12, data `handoff/data/sol-dex/`): 04:33–05:33 UTC,
+    $1k 0.46 bps per fill (p90 0.70), $10k 0.15 bps (p90 0.33); the same
+    quote re-taken 1/2/4 s later moves 0.12/0.26/0.52 bps median (p90
+    0.58/1.27/2.08) but the drift-free mean is 0.00 ± 0.03, so latency adds
+    noise, not cost: plan on ~0.5 bps per fill, ~1.3 at p90. Next: rerun
+    `sol_dex_costs.py sample --minutes 60` and `decay --minutes 60` in US
+    and EU daytime (both windows so far were 03–06 UTC); real fills stay
+    unmeasured (no real-money code without the user).
 
 ## Rules that hold across sessions
 
@@ -195,10 +195,24 @@ next. Topic documents hold the detail:
 * Predictor v1, scam filtering, online-model fixes (predictor session).
 * Predictor open problems 3–5 (queue item 6): band reporting, late-candle
   median shrink, blend prior 0.95 (predictor session, on `main`, doc §8.4).
+* Out-of-fold median shrink in `train_global`; all four installed models
+  refit (predictor session, on `main`, 10-09).
 * `tartar profit` and the profitability findings (profitability session,
   branch `claude/profitability-backtest`, on `main`).
 
 ## Log (newest first)
+
+* **2026-10-09 05:36 UTC, predictor session (handing off; no claim open, nothing half-done):**
+  (1) The point forecast's median shrink is now fitted on out-of-fold training medians
+  (3 token-wise folds) plus validation (`train.oof_medians`, `train_global(shrink_folds=3)`).
+  It beats validation-only on both datasets (v1 750.39 vs 750.53, v2 1218.82 vs 1221.66).
+  All four installed models were refit without retraining. (2) Queue item 12: a second
+  60-min SOL-USD cost window plus $10k size and quote decay (`sol_dex_costs.py decay` /
+  `decay-summary`). Results are in §3.12, `jevtrader.md` and item 12 above. On-chain costs
+  are ~0.5 bps per fill, and latency adds noise, not cost. **Next session:** the same three
+  as the 03:49 entry, with item 12 narrowed to the daytime windows. Also suggest the Jev
+  session restart the fast loop (once the user rules on the Jev policy) with
+  `--pumpswap-hours 4` and `SOLANA_COMMITMENT=processed` (follows graduations; events ~0.3 s earlier).
 
 * **2026-10-09 05:04 UTC, Jev session:** Pushing works again. Landed the unpushed commits and raw hours 02–03 (`handoff/data/raw/20261009-0{2,3}.jsonl.gz`; 03 covers 03:17–03:39). The fast loop has been down since 03:39 (container suspension). **Not restarted**: the new *Jev usage policy* blocker says the user's own protocol may forbid TARTAR's always-on Jev shadow calls. Waiting for the user to decide. The 05:50 cycle will review the data without restarting the loop.
 
