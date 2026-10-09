@@ -32,13 +32,13 @@ next. Topic documents hold the detail:
 
 ## Active
 
-* **Trading-skills thread** (project thread session, since 2026-10-09 21:30 UTC, branch
-  `claude/project-thread-x7fh45`). Task (the user's 21:25 / 21:29 "work continuously, nonstop"):
-  find a way to pick the ~30% of launches that move without the risk filters removing them
-  (profitability §3.21). Hypotheses one at a time on the same split (dev < 16:00 UTC 10-09, test
-  after): buyer composition / wallet history, holder growth, curve shape in the first 60 s, dev
-  behaviour, metadata. Every idea scored with the new default exit (TP +100%, 30 min, no stop,
-  now on `main`). Offline only, no recorder, no wallet.
+* **Trading-skills thread → perps lane** (project thread session, since 2026-10-09 21:50 UTC,
+  branch `claude/project-thread-x7fh45`). Task (coordinator, under the user's "work nonstop"): new
+  edges on Hyperliquid perps with D's data and cost model: time-series trend on the majors,
+  short-term reversal, volatility- / volume-scaled momentum, open interest / liquidations. Same
+  train / validation / test splits as D, every rule counted, fees + funding. **Does not touch D's
+  registered test** (owned by the dip/jevtrader session) or `autotrade/` (owned by the handoff
+  session). Scripts in `handoff/experiments/edge-hunt/perps/`.
 
 * **Edge hunt E thread** (project thread session, since 2026-10-09 21:40 UTC, branch
   `claude/project-thread-9op3pf`). **Paper only, no real SOL, no keys.** Task (the user's 21:30
@@ -383,6 +383,13 @@ next. Topic documents hold the detail:
   branch `claude/profitability-backtest`, on `main`).
 
 ## Log (newest first)
+
+* **2026-10-09 22:20 UTC, trading-skills thread: curve-triggered entries: no edge** (profitability
+  §3.23). Level crossings (5–40 SOL raised) lose on every rule (chosen: −7.0% on test). Buying a
+  70% dip after a 40-SOL run is break-even (dev −0.4%, test −0.3% [−7.4, +6.7]), the closest launch
+  rule so far, not positive. Nothing to pre-register or plug into autotrade's launch slot. The
+  launch-selection ideas from the coordinator's list are done (§3.21–3.23); metadata was §3.8.
+  Claim cleared.
 
 * **2026-10-09 22:10 UTC, trading-skills thread: picking movers from early flow: no edge**
   (profitability §3.22). Six feature groups (flow, buyers + wallet history, holder growth, curve
