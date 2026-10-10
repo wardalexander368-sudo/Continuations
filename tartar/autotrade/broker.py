@@ -23,7 +23,8 @@ import time
 from pathlib import Path
 
 from .core import CostModel, Intent, Position, Trade
-from .execution import make_executor, select_route
+from .execution import DryExecutor, make_executor, select_route
+from .safety import Pending, buy_order_id
 from .perps import PERP_DEFAULTS, is_perp, make_perp_executor, perp_keys, select_perp_route
 from .usd_spot import is_usd_spot, make_usd_spot_executor
 
@@ -106,6 +107,14 @@ class LiveBroker(PaperBroker):
         self.mode = "dry_live" if route == "dry" else "live"
         self.executor = executor or make_executor(route, self.cfg, env)
         self.ledger, self.root, self.env, self.entries = ledger, Path(root) if root else None, env, entries
+        self.pending = Pending(self.root)
+        if isinstance(self.executor, DryExecutor) and self.root:
+            seed: dict[str, int] = {}
+            for p in (ledger.positions if ledger else []):
+                t = p.meta.get("live") or {}
+                if t.get("route") == "dry" and "sol_in" in t and "mint" in t:
+                    seed[t["mint"]] = seed.get(t["mint"], 0) + int(t["token_raw"])
+            self.executor.attach(self.root / "dry_wallet.json", seed)
         self.now = time.time() if now is None else now
         self._sol_usd: float | None = None
         self.pcfg = {**PERP_DEFAULTS, **self.cfg.get("perps", {})}
@@ -153,6 +162,12 @@ class LiveBroker(PaperBroker):
         st = self.live_state()
         return st["halted"] or self.ledger.state.get("halted") or self.strat_state(strategy)["halted"]
 
+    def _sol_usd_or_none(self) -> float | None:
+        try:
+            return self.sol_usd()
+        except Exception:  # noqa: BLE001
+            return None
+
     # entry
     def entry_block(self, intent: Intent, positions: list[Position]) -> tuple[str | None, float]:
         """(why not, SOL size)."""
@@ -192,6 +207,18 @@ class LiveBroker(PaperBroker):
             return self._open_usd(intent, positions or [])
         pos, row = super().open(intent)
         pos.mode = row["mode"] = "paper"  # until a twin is bought
+        oid = buy_order_id(intent)
+        claim = self.live_state().get("unclaimed", {}).pop(oid, None)
+        if claim:  # a run that died bought this entry's tokens already: adopt them, don't buy again
+            pos.meta["live"] = {"mint": claim["mint"], "route": self.route, "sol_in": claim["sol_in"], "token_raw": claim["token_raw"],
+                                "sol_usd_in": claim.get("sol_usd_in") or self._sol_usd_or_none(), "paper_price_in": intent.price,
+                                "bought_at": claim["at"],
+                                "rent_sol": claim.get("rent_sol", 0.0), "signature": claim.get("signature"),
+                                "dry": self.route == "dry", "adopted": oid}
+            pos.mode = row["mode"] = self.mode
+            row["live"] = {"adopted": oid, "token_raw": claim["token_raw"]}
+            self.log({"event": "buy_adopted", "strategy": intent.strategy, "position": pos.id, "order_id": oid, "claim": claim})
+            return pos, row
         why, size = self.entry_block(intent, positions or [])
         if why:
             row["live"] = {"skipped": why}
@@ -204,8 +231,10 @@ class LiveBroker(PaperBroker):
         except Exception as exc:  # noqa: BLE001 - no reference price: don't trade blind
             self.log({"event": "skip", "strategy": intent.strategy, "position": pos.id, "reason": f"SOL/USD unavailable: {exc}"[:200]})
             return pos, row
+        self.pending.add(oid, {"leg": "buy", "strategy": intent.strategy, "position": pos.id, "mint": mint, "sol": size,
+                               "at": self.now, "route": self.route})
         f = self.executor.buy(mint, size)
-        rec = {"event": "buy", "strategy": intent.strategy, "position": pos.id, "asset": intent.asset, "fill": f.to_dict(),
+        rec = {"event": "buy", "strategy": intent.strategy, "position": pos.id, "order_id": oid, "asset": intent.asset, "fill": f.to_dict(),
                "paper_price_usd": intent.price, "paper_at": intent.at, "sol_usd": sol_usd,
                "paper_side_cost_pct": 100 * intent.cost.side_cost(intent.notional_usd) / intent.notional_usd}
         if f.ok:
@@ -226,6 +255,7 @@ class LiveBroker(PaperBroker):
                                                      "error": f.error, "at": self.now})
                 self.halt(intent.strategy, f"live buy outcome unknown ({f.signature}); check it, then resume-live")
         self.log(rec)
+        self.pending.done(oid)
         return pos, row
 
     # exit
@@ -249,8 +279,17 @@ class LiveBroker(PaperBroker):
                                  "reason": f"twin bought on {twin['route']}, current route {self.route}; tokens still held"})
             row["live"] = {"failed": "route changed"}
             return trade, row
+        if twin.get("sold_unrecorded"):  # reconcile found the tokens gone after a run died mid-sell
+            row["live"] = {"sold_unrecorded": twin["sold_unrecorded"]}
+            trade.meta["live"] = {"sold_unrecorded": True, "sol_in": twin["sol_in"], "route": twin["route"]}
+            self.log({"event": "sell_unrecorded", "strategy": pos.strategy, "position": pos.id, "twin": twin})
+            return trade, row
+        sid = f"sell|{pos.id}"
+        self.pending.add(sid, {"leg": "sell", "strategy": pos.strategy, "position": pos.id, "mint": twin["mint"],
+                               "token_raw": twin["token_raw"], "at": self.now, "route": self.route})
         f = self.executor.sell(twin["mint"], twin["token_raw"])
         if not f.ok:
+            self.pending.done(sid)
             self.live_state()["orphans"].append({"position": pos.id, "strategy": pos.strategy, **twin, "error": f.error, "at": self.now,
                                                  **({"sell_signature": f.signature, "unknown": True} if f.unknown else {})})
             self.ledger.journal({"event": "live_error", "strategy": pos.strategy, "position": pos.id, "leg": "sell",
@@ -274,6 +313,7 @@ class LiveBroker(PaperBroker):
         trade.meta["live"] = cmp
         row["live"] = cmp
         self.log({"event": "sell", "strategy": pos.strategy, "position": pos.id, "fill": f.to_dict(), "compare": cmp})
+        self.pending.done(sid)
         st = self.live_state()
         day = time.strftime("%Y-%m-%d", time.gmtime(self.now))
         st["daily_sol"][day] = st["daily_sol"].get(day, 0.0) + net_sol

@@ -250,11 +250,57 @@ class DryExecutor:
     def __init__(self, quotes: Quotes | None = None, balance_sol: float = 0.05, priority_sol: float = 0.00002):
         self.quotes = quotes or Quotes()
         self._balance = balance_sol
+        self._tokens: dict[str, int] = {}
         self.fee_sol = self.BASE_FEE_SOL + priority_sol
         self.wallet = STAND_IN
+        self.path = None
+
+    def attach(self, path, seed: dict[str, int] | None = None) -> None:
+        """Keep the simulated wallet in ``path`` (written through on every fill, like a chain), so a run that
+        dies mid-order leaves it the way a real wallet would be. A new file starts at ``balance_sol`` holding
+        ``seed`` (the twins already in the book)."""
+        import json
+        from pathlib import Path
+
+        self.path = Path(path)
+        if not self.path.exists():
+            self._tokens = {m: int(r) for m, r in (seed or {}).items() if r}
+            self._save()
+        self._load()
+
+    def _load(self) -> None:
+        import json
+
+        if self.path and self.path.exists():
+            w = json.loads(self.path.read_text())
+            self._balance, self._tokens = float(w["sol"]), {m: int(r) for m, r in w["tokens"].items()}
+
+    def _save(self) -> None:
+        import json
+
+        if self.path:
+            tmp = self.path.with_suffix(".tmp")
+            tmp.write_text(json.dumps({"sol": round(self._balance, 9), "tokens": self._tokens,
+                                       "note": "simulated wallet of the dry route (no real funds)"}, indent=1, sort_keys=True))
+            tmp.replace(self.path)
+
+    def _move(self, sol: float, mint: str, raw: int) -> None:
+        self._load()
+        self._balance += sol
+        left = self._tokens.get(mint, 0) + raw
+        if left > 0:
+            self._tokens[mint] = left
+        else:
+            self._tokens.pop(mint, None)
+        self._save()
 
     def balance_sol(self) -> float:
+        self._load()
         return self._balance
+
+    def holdings(self, mints) -> dict[str, int]:
+        self._load()
+        return {m: self._tokens.get(m, 0) for m in mints}
 
     def sol_usd(self) -> float:
         return self.quotes.sol_usd()
@@ -265,7 +311,7 @@ class DryExecutor:
             q = self.quotes.quote(SOL, mint, int(sol * 1e9))
         except Exception as exc:  # noqa: BLE001
             return Fill(self.name, "buy", mint, False, dry=True, error=f"{type(exc).__name__}: {exc}"[:300])
-        self._balance -= sol + self.fee_sol
+        self._move(-(sol + self.fee_sol), mint, int(q["outAmount"]))
         return Fill(self.name, "buy", mint, True, sol=sol + self.fee_sol, token_raw=int(q["outAmount"]), quote_out=int(q["outAmount"]),
                     fee_sol=self.fee_sol, sent_at=t0, confirmed_at=t0, dry=True)
 
@@ -276,7 +322,7 @@ class DryExecutor:
         except Exception as exc:  # noqa: BLE001
             return Fill(self.name, "sell", mint, False, dry=True, error=f"{type(exc).__name__}: {exc}"[:300])
         sol = int(q["outAmount"]) / 1e9 - self.fee_sol
-        self._balance += sol
+        self._move(sol, mint, -token_raw)
         return Fill(self.name, "sell", mint, True, sol=sol, token_raw=token_raw, quote_out=int(q["outAmount"]),
                     fee_sol=self.fee_sol, sent_at=t0, confirmed_at=t0, dry=True)
 
@@ -339,6 +385,9 @@ class JupiterExecutor:
 
     def balance_sol(self) -> float:
         return self.chain.balance_sol(self.wallet)
+
+    def holdings(self, mints) -> dict[str, int]:
+        return {m: self.chain.held(self.wallet, m)[0] for m in mints}
 
     def sol_usd(self) -> float:
         return self.quotes.sol_usd()
@@ -425,6 +474,9 @@ class LightningExecutor:
 
     def balance_sol(self) -> float:
         return self.chain.balance_sol(self.wallet)
+
+    def holdings(self, mints) -> dict[str, int]:
+        return {m: self.chain.held(self.wallet, m)[0] for m in mints}
 
     def sol_usd(self) -> float:
         return self.quotes.sol_usd()

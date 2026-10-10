@@ -214,6 +214,28 @@ Built 2026-10-10: `strategies/jlp_hedged.py`, `usd_spot.py`, basket sizing in `b
   leg-failure rule (if one leg of an entry or rebalance fails, unwind the others or halt) since a live
   basket with a missing hedge is directional. Mode `live` today skips both routes, so the basket stays on paper.
 
+### Restarts and overlaps (`safety.py`)
+
+* **One trader.** The workflow's concurrency group never cancels the running job, so the next one waits.
+  A per-checkout lock stops two processes on one machine. In mode `live` a lease in `state.json`
+  (holder = the GitHub run id, renewed every run, released when the loop ends, free after 10 min)
+  makes any other holder skip its run.
+* **Pending before sending.** Each live buy and sell is written to `autotrade/pending.json` before
+  it is sent and removed once its fill is logged. A failed run still commits `autotrade/`.
+* **No double buys.** A buy's order id is `strategy|key|signal time`. If a run dies after buying,
+  the next run claims those tokens under that id, and when the strategy re-emits the entry the twin
+  adopts them instead of buying again (unclaimed after 1 h: orphan + halt). If a run dies after a
+  sell landed, the twin is closed as `sold_unrecorded` instead of being sold twice.
+* **Reconcile before trading.** Every live or dry_live run first compares the wallet's holdings of
+  every mint the fill log or a pending order names with the book (open twins, orphans, claims).
+  Tokens nothing explains become an orphan and halt live entries. Missing tokens do the same, unless a
+  pending sell explains them. A SOL drop since the last run that the book can't explain counts
+  against the live daily loss cap and halts live entries. If the wallet can't be read, live entries
+  halt and paper continues.
+* The dry route's wallet is simulated in `autotrade/dry_wallet.json`, so this runs end to end in
+  `dry_live`. Tests in `tests/test_restart_safety.py` kill a run before and after a buy and a sell
+  lands. Perp and USD-spot twins are dry-only and not covered yet.
+
 ### Kill switches
 
 * `autotrade/HALT`: everything stops opening (paper and live); exits still run.

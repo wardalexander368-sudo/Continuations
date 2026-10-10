@@ -1,5 +1,5 @@
 """python -m tartar.autotrade run | status | halt REASON | resume [STRATEGY] | halt-live REASON | resume-live [STRATEGY]
-       | preflight | health | dry-swap MINT [--sol 0.01] [--route lightning] | dry-perp COIN [--usd 12] [--side -1]   [--root autotrade]
+       | preflight | health | release-lease | dry-swap MINT [--sol 0.01] [--route lightning] | dry-perp COIN [--usd 12] [--side -1]   [--root autotrade]
 
 halt-live stops new live twins (paper and exits keep running); preflight checks the live path without
 trading; dry-swap builds a real Jupiter (or Lightning, via trade-local) buy and sell for MINT and has the RPC simulate them (no key, nothing sent);
@@ -18,7 +18,7 @@ from .runner import ROOT, run_once
 
 def main(argv=None) -> int:
     ap = argparse.ArgumentParser(prog="python -m tartar.autotrade")
-    ap.add_argument("cmd", choices=("run", "status", "halt", "resume", "halt-live", "resume-live", "preflight", "dry-swap", "dry-perp", "health"))
+    ap.add_argument("cmd", choices=("run", "status", "halt", "resume", "halt-live", "resume-live", "preflight", "dry-swap", "dry-perp", "health", "release-lease"))
     ap.add_argument("--sol", type=float, default=0.01)
     ap.add_argument("--route", default="jupiter", choices=("jupiter", "lightning"))
     ap.add_argument("--usd", type=float, default=12.0)
@@ -28,8 +28,22 @@ def main(argv=None) -> int:
     a = ap.parse_args(argv)
     root = Path(a.root)
     if a.cmd == "run":
-        s = run_once(root)
+        from .safety import Busy, run_lock
+
+        try:
+            with run_lock(root):
+                s = run_once(root)
+        except Busy as exc:
+            s = {"at": time.time(), "opened": 0, "closed": 0, "rejected": 0, "errors": {}, "changes": [], "halted": None,
+                 "new_halts": [], "skipped": str(exc)}
         print(json.dumps({k: v for k, v in s.items()}, default=str))
+        return 0
+    if a.cmd == "release-lease":
+        from .safety import holder_id, release_lease
+
+        led = Ledger(root)
+        if release_lease(led.state, holder_id()):
+            led.save()
         return 0
     if a.cmd == "health":
         from .health import run as health
