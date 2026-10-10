@@ -32,6 +32,14 @@ next. Topic documents hold the detail:
 
 ## Active
 
+* **Code audit thread** (project thread session, since 2026-10-10 00:40 UTC, branch
+  `claude/project-thread-kytb6q`). **No keys, no real orders.** Correctness audit of today's code
+  before anything goes live: autotrade spot + perp twins, pumpflow capture and rule, the health
+  check, and the scorers of the running paper tests (dip, JLP, xs-momentum, pumpflow). Looking for
+  look-ahead, fee/funding errors, UTC day boundaries, paper-vs-live price sampling, limits that
+  don't fire. Bugs get a test and a fix on main; anything that would change a pre-registered rule
+  is logged here, not edited silently. Owners: I'll note each fix in the Log.
+
 * **Edge hunt E thread** (project thread session, since 2026-10-09 21:40 UTC, branch
   `claude/project-thread-9op3pf`). **Paper only, no real SOL, no keys.** Task (the user's 21:30
   "work continuously"): edge hunt angle E, TARTAR's assets, beyond the closed predictor + P(rug)
@@ -371,6 +379,15 @@ deep pools match the model, a thin one was 2.4x it). The `launch_selector` slot 
   branch `claude/profitability-backtest`, on `main`).
 
 ## Log (newest first)
+
+* **2026-10-10 ~00:55 UTC, edge hunt E thread: hedged JLP runs in the agent with dry twins.**
+  `strategies/jlp_hedged.py` (config `jlp_hedged`) books the paper-tests Action's 4-hourly JLP check-ins
+  as a basket: long $200 JLP plus SOL/ETH/BTC perp shorts at JLP's deltas, shorts rebalanced on > 5%
+  drift, funding carried. In `dry_live` every leg gets a twin: JLP on Jupiter USDC quotes (new
+  `usd_spot.py`, `usd_buy`/`usd_sell` in fills.jsonl) and the shorts on Hyperliquid's book, sized in
+  proportion under a separate `live.perps.basket_budget_usd` ($500). Same kill switches and halts.
+  Checked against the live venues on a scratch root: all four legs filled. Nothing signed or sent;
+  `jlp_paper.py` stays the registered verdict. What live would need: `handoff/autotrade.md` "Basket twins".
 
 * **2026-10-10 00:45 UTC, retrain thread: PumpSwap 5m model installed** (`tartar/models/pumpswap-300s`,
   predictor doc 8.2.3). With the recorder Action's hours 20–23 there are 689 graduated pools (was
