@@ -153,3 +153,47 @@ def test_live_mode_without_hyperliquid_keys_has_no_perp_route(tmp_path, info, mo
     assert "HYPERLIQUID_AGENT_KEY" in row["live"]["skipped"]
     pf = preflight(cfg, Ledger(root), root, env={})
     assert pf["perps"]["route"] is None and pf["perps"]["keys"] == {"HYPERLIQUID_AGENT_KEY": False, "HYPERLIQUID_ACCOUNT": False}
+
+
+def book_leg(coin, side, usd=50.0, week="2026-10-12"):
+    return Intent("open", "s", NOW - 60, 2.0, "test", asset=coin, side=side, notional_usd=usd, cost=CostModel(fee=0.002),
+                  meta={"venue": "hyperliquid", "key": coin, "week": week, "leg_usd": 100.0, "label": coin})
+
+
+def test_book_week_twins_are_sized_from_paper_and_dollar_neutral(tmp_path, info):
+    root = setup(tmp_path)
+    run(root, [[book_leg("A", 1), book_leg("B", 1), book_leg("C", -1), book_leg("D", -1)]])
+    tw = [p.meta["live"] for p in Ledger(root).positions]
+    assert len(tw) == 4
+    long_usd = sum(t["notional_in"] for t in tw if t["side"] > 0)
+    short_usd = sum(t["notional_in"] for t in tw if t["side"] < 0)
+    assert long_usd == pytest.approx(50.0, rel=0.05) and short_usd == pytest.approx(50.0, rel=0.05)  # 0.5 x $50 per leg
+
+
+def test_book_week_below_the_venue_minimum_stays_on_paper_whole(tmp_path, info):
+    root = setup(tmp_path)
+    run(root, [[book_leg("A", 1, usd=50), book_leg("B", 1, usd=15), book_leg("C", -1, usd=65)]])  # B: $7.50 twin
+    assert not any(p.meta.get("live") for p in Ledger(root).positions)
+    (skip,) = [r for r in fills(root) if r["event"] == "book_skip"]
+    assert "all or nothing" in skip["reason"] and "B twin" in skip["reason"]
+
+
+def test_unbalanced_or_over_budget_book_stays_on_paper(tmp_path, info):
+    root = setup(tmp_path)
+    run(root, [[book_leg("A", 1), book_leg("B", 1), book_leg("C", -1)]])  # $50 long vs $25 short
+    assert not any(p.meta.get("live") for p in Ledger(root).positions)
+    (tmp_path / "b").mkdir()
+    root2 = setup(tmp_path / "b", perps={"book_budget_usd": 60})
+    run(root2, [[book_leg("A", 1, usd=80), book_leg("C", -1, usd=80)]])
+    assert "budget" in [r for r in fills(root2) if r["event"] == "book_skip"][0]["reason"]
+
+
+def test_failed_book_leg_unwinds_the_weeks_other_twins(tmp_path, info):
+    real = info.book
+    info.book = lambda coin: (_ for _ in ()).throw(RuntimeError("no book")) if coin == "C" else real(coin)
+    root = setup(tmp_path)
+    run(root, [[book_leg("A", 1), book_leg("B", -1), book_leg("C", -1), book_leg("D", 1)]])
+    assert not any(p.meta.get("live") for p in Ledger(root).positions)  # A and B unwound, D never sent
+    ev = [r["event"] for r in fills(root)]
+    assert ev.count("book_unwind") == 2 and ev.count("perp_open") == 3
+    assert not Ledger(root).state["live"]["orphans"]

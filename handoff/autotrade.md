@@ -189,12 +189,27 @@ account stop and small live legs are for. At 35% the account stop would have fir
   not the excess-over-random test. On the live ledger: 116 trades (74 replay), mean net −6.3%
   [−10.3, −2.4], so the dip rule reaches its 200-trade verdict sooner.
 
+### Daily loss cap: per strategy (from 2026-10-10 late, audit 1b)
+
+`risk.daily_loss_cap_usd` ($1,000) now applies to each strategy on its own: realized + unrealized P&L of the
+UTC day below the cap stops that strategy's new entries for the rest of the day (exits run), logged as a
+`halt` change (the Action fails, so the owner is emailed), and it clears itself at the next UTC day (a
+`resume` change). The dip rule's bad day no longer stops the perps rebalance. `HALT` stays the agent-wide
+switch; an old agent-wide daily halt is cleared on the first run.
+
+### Wick bounce: execution-realistic score (audit 1c)
+
+Every wick trade is also scored as an hourly agent would trade it: entry and exit 20 min after the hour
+(cron :05 plus the observed 13-14 min start delay), priced from HL 5-minute candles, same costs
+(`state.exec`, shown in the verdict). A "pass" needs this score's mean above 0 as well.
+
 ### Hourly schedule (2026-10-10 ~21:20 UTC, AJ's choice on the Actions-terms check)
 
 The agent now runs once an hour (cron `5 * * * *`). Paper books don't depend on the cadence (every
 strategy books each bar or candle completed since its cursor, at that bar's time and price), with one
 deliberate change: the dip rule's paper entry now models what a twin run by this schedule would get
-(`execution.entry: schedule`, `run_minute: 5`, `run_lag_s: 120`): the first run at :07 that can see the
+(`execution.entry: schedule`, `run_minute: 5`, `run_lag_s: 900`; was 120 until the audit measured the real
+starts at :18-:19): the first run at :20 that can see the
 signal bar (bars appear ~60 s after closing), priced inside the 5-minute bar holding that moment, so
 0-60 min after the signal (about 30 on average). The entry is booked one run later, once that bar is
 complete. Cost of the change, measured on the 90 replay trades (bars from GeckoTerminal): mean gross
@@ -333,6 +348,20 @@ a mint already held. Perp strategies have their own route (next section). Demote
 trade: exits follow the registered rule, so the per-trade limit acts after the close.
 
 ### Perp twins (Hyperliquid)
+
+**Weekly books (from 2026-10-10 late, audit 1a).** Twins of the weekly long-short books (`xs_momentum`,
+`vol_momentum`: legs with `week` and `leg_usd`) are sized from their paper leg: twin = paper notional (after
+the book vol scale) x `perps.book_fraction` (0.5: paper $1,000 per side gives $500-per-side twins, $2,000 gross
+for both books, the $2,000 account on the board), under their own `perps.book_budget_usd` ($2,500). A week
+opens whole or not at all (`broker.plan_book`): every new twin must clear Hyperliquid's $10 minimum, longs and
+shorts must be within 25% of each other, and the budget must hold; otherwise every leg stays on paper and
+`fills.jsonl` logs a `book_skip` with the reason. If a leg's order fails, the week's other twins are closed
+(`book_unwind`) so no one-sided book is left. Kept legs roll their twin unchanged (resizing a drifted kept
+twin is still open). At a 0.5x vol scale, legs of ~$8 would fall under the $10 minimum and the week stays on
+paper; a larger `book_fraction` or fewer legs fixes it at go-live. Book legs are left out of the twins' $6
+daily loss cap: they realize a week at once and have their own weekly and drawdown stops (`perp_risk.py`).
+The drawdown stop now measures against the deployed (vol-scaled) leg size. `autotrade.yml` now passes
+`HYPERLIQUID_AGENT_KEY` and `HYPERLIQUID_ACCOUNT` (empty until set, which keeps perps on paper).
 
 Built 2026-10-09 by the edge hunt E thread: `tartar/autotrade/perps.py`, hooks in `broker.py`, tests in
 `tests/test_autotrade_perps.py`. A strategy's intent with `meta["venue"] == "hyperliquid"` (xs_momentum's

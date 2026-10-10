@@ -1,12 +1,13 @@
 """Risk limits and the kill switch.
 
-* Kill switch: the file ``autotrade/HALT`` (any content is the reason) or a global halt set by the
-  daily loss cap stops every new entry. Exits still run so positions close on schedule; with
+* Kill switch: the file ``autotrade/HALT`` (any content is the reason) stops every new entry. Exits still run so positions close on schedule; with
   ``flatten_on_halt`` the agent closes everything at the latest marks instead.
 * Caps: max notional per position, max open positions per strategy and in total, max gross exposure.
 * Shadow variants (research copies of a rule) count only against their own per-strategy cap.
-* Daily loss cap: realized + unrealized PnL of the UTC day below ``-daily_loss_cap_usd`` halts the
-  agent until ``resume``.
+* Daily loss cap, per strategy: a strategy whose realized + unrealized PnL of the UTC day is below
+  ``-daily_loss_cap_usd`` takes no new entries for the rest of that UTC day (its exits still run); the
+  stop clears by itself at the next UTC day, logged as a change. One strategy's bad day (the memecoin dip
+  rule, say) no longer stops the others (audit 2026-10-10, 1b).
 * Errors: a strategy whose step raises ``max_consecutive_errors`` times in a row is halted
   (status "halted") until ``resume``.
 """
@@ -32,6 +33,7 @@ DEFAULTS = {
 class Risk:
     def __init__(self, config: dict, root: Path, ledger):
         self.limits = {**DEFAULTS, **config.get("risk", {})}
+        self.now: float | None = None  # the run's clock (set by the runner)
         self.root = Path(root)
         self.ledger = ledger
 
@@ -46,18 +48,44 @@ class Risk:
         realized = self.ledger.state["daily"].get(day, 0.0)
         return realized + sum(p.unrealized() for p in positions if not p.meta.get("shadow"))
 
-    def check_daily(self, now: float, positions: list[Position]) -> str | None:
-        pnl = self.day_pnl(now, positions)
-        if pnl < -self.limits["daily_loss_cap_usd"] and not self.ledger.state.get("halted"):
-            reason = f"daily loss cap: {pnl:.2f} USD < -{self.limits['daily_loss_cap_usd']:.2f}"
-            self.ledger.state["halted"] = reason
-            self.ledger.change({"t": now, "kind": "halt", "scope": "agent", "reason": reason})
-            return reason
+    def strategy_day_pnl(self, name: str, now: float, positions: list[Position]) -> float:
+        day = time.strftime("%Y-%m-%d", time.gmtime(now))
+        realized = self.ledger.state.get("daily_by_strategy", {}).get(day, {}).get(name, 0.0)
+        return realized + sum(p.unrealized() for p in positions if p.strategy == name and not p.meta.get("shadow"))
+
+    def daily_block(self, name: str, now: float) -> str | None:
+        st = self.ledger.state.get("strategies", {}).get(name, {}).get("daily_stop")
+        if st and st["day"] == time.strftime("%Y-%m-%d", time.gmtime(now)):
+            return st["reason"]
         return None
+
+    def check_daily(self, now: float, positions: list[Position]) -> list[str]:
+        """Per-strategy daily stops: set today's, clear earlier days'. Returns the reasons set now."""
+        day = time.strftime("%Y-%m-%d", time.gmtime(now))
+        out = []
+        names = set(self.ledger.state.get("strategies", {})) | {p.strategy for p in positions}
+        for name in sorted(names):
+            rec = self.ledger.strategy(name)
+            st = rec.get("daily_stop")
+            if st and st["day"] != day:
+                del rec["daily_stop"]
+                self.ledger.change({"t": now, "kind": "resume", "scope": name, "reason": f"daily loss stop of {st['day']} cleared (new UTC day)"})
+            if "daily_stop" in rec:
+                continue
+            pnl = self.strategy_day_pnl(name, now, positions)
+            if pnl < -self.limits["daily_loss_cap_usd"]:
+                reason = f"daily loss cap: {name} {pnl:.2f} USD < -{self.limits['daily_loss_cap_usd']:.2f} today; entries resume next UTC day"
+                rec["daily_stop"] = {"day": day, "reason": reason}
+                self.ledger.change({"t": now, "kind": "halt", "scope": name, "reason": reason})
+                out.append(reason)
+        if (self.ledger.state.get("halted") or "").startswith("daily loss cap"):  # the old agent-wide stop: superseded
+            self.ledger.state["halted"] = None
+            self.ledger.change({"t": now, "kind": "resume", "scope": "agent", "reason": "agent-wide daily loss stop replaced by per-strategy stops"})
+        return out
 
     def allow_open(self, intent: Intent, positions: list[Position]) -> str | None:
         """None if allowed, else why not."""
-        why = self.kill_reason()
+        why = self.kill_reason() or self.daily_block(intent.strategy, time.time() if self.now is None else self.now)
         if why:
             return why
         lim = self.limits

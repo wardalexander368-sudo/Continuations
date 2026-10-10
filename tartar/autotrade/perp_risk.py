@@ -111,7 +111,11 @@ def account_drawdown(ledger, config: dict, root, now: float, cfg: dict) -> str |
     """Write HALT when the registered perps book's drawdown passes the limit; returns the reason if it fired now."""
     lim = {**DEFAULTS, **cfg}
     names = book_names(config)
-    capital = sum(float(config["strategies"][n].get("leg_usd", 100.0)) for n in names)
+    def deployed(n):  # the open book's leg_usd (vol-scaled), else the configured one
+        legs = [float(p.meta["leg_usd"]) for p in ledger.positions if p.strategy == n and "leg_usd" in p.meta]
+        return max(legs) if legs else float(config["strategies"][n].get("leg_usd", 100.0))
+
+    capital = sum(deployed(n) for n in names)
     if not names or capital <= 0:
         return None
     equity = sum(t.pnl_usd for n in names for t in ledger.trades(n)) + \

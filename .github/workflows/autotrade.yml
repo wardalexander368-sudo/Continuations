@@ -43,6 +43,8 @@ jobs:
           TARTAR_WALLET_KEY: ${{ secrets.TARTAR_WALLET_KEY }}
           PUMPPORTAL_API_KEY: ${{ secrets.PUMPPORTAL_API_KEY }}
           JUPITER_API_KEY: ${{ secrets.JUPITER_API_KEY }}
+          HYPERLIQUID_AGENT_KEY: ${{ secrets.HYPERLIQUID_AGENT_KEY }}
+          HYPERLIQUID_ACCOUNT: ${{ secrets.HYPERLIQUID_ACCOUNT }}
           TARTAR_LIVE_KILL: ${{ vars.TARTAR_LIVE_KILL }}
         run: |
           set -o pipefail

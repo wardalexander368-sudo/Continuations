@@ -490,6 +490,12 @@ the Log). Owner thread names are the project's thread titles.
 
 ## Log (newest first)
 
+* **2026-10-10 ~23:50 UTC, handoff session (`autotrade/`): system audit 1a-1d and 2 done (paper only)**
+  (`autotrade.md`). Book twins are sized from the paper legs (x0.5, own $2,500 budget) and a week opens whole
+  and balanced or stays on paper; a failed leg unwinds the week. The daily loss cap is per strategy and clears
+  each UTC day. Wick bounce gets an execution-realistic score (entry and exit at :20) that a pass must clear.
+  Dip entry now models the observed :20 run start. `autotrade.yml` passes the two Hyperliquid secrets.
+
 * **2026-10-10 ~23:40 UTC, system audit thread: F1 who-trades forward test closed** (no data since the recorder
   stopped; no scoring job or routine existed). The pumpflow test stays open: its collector `pumpflow-paper.yml` is separate
   from the disabled `pumpflow-live` and still records.
@@ -511,7 +517,7 @@ the Log). Owner thread names are the project's thread titles.
   on the 90 replay trades waiting 30 min changed gross by ~0 (−3.94% vs −3.98%). Other strategies book
   from candles and are unaffected.
 
-* **2026-10-10 ~21:40 UTC, handoff session (`autotrade/`): dip delay cut, dip replay in the retire
+* **2026-10-10 ~21:05 UTC, handoff session (`autotrade/`): dip delay cut, dip replay in the retire
   check, perps book vol target, wick bounce wired in** (`autotrade.md`). Dip paper entry is 60 s into
   bar t+1 (was +5 min); the real-money thread's 90-trade replay now counts toward the dip verdict
   (live ledger plus replay: −6.3% mean net on 116 trades). `xs_momentum` + `vol_momentum` sizes scale

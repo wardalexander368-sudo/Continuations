@@ -48,6 +48,10 @@ class Ledger:
         if not trade.meta.get("shadow"):
             day = time.strftime("%Y-%m-%d", time.gmtime(trade.exit_at))
             self.state["daily"][day] = self.state["daily"].get(day, 0.0) + trade.pnl_usd
+            by = self.state.setdefault("daily_by_strategy", {}).setdefault(day, {})
+            by[trade.strategy] = by.get(trade.strategy, 0.0) + trade.pnl_usd
+            for old in [d for d in self.state["daily_by_strategy"] if d < day][:-7]:  # keep a week
+                del self.state["daily_by_strategy"][old]
 
     # logs
     def journal(self, row: dict) -> None:

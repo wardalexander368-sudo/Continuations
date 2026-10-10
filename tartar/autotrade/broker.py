@@ -417,6 +417,11 @@ class LiveBroker(PaperBroker):
         """(why not, USD notional)."""
         if intent.meta.get("shadow"):
             return "shadow variant", 0.0
+        if intent.meta.get("twin_block"):
+            return intent.meta["twin_block"], 0.0
+        failed = getattr(self, "_book_failed", {}).get(intent.strategy)
+        if failed and self.is_book(intent.meta) and failed[0] == intent.meta.get("week"):
+            return f"week {failed[0]} stays on paper: an earlier leg failed ({failed[1]})", 0.0
         if self.perp_route is None:
             return "no perp route: mode live needs the approval plus HYPERLIQUID_AGENT_KEY and HYPERLIQUID_ACCOUNT (perps.py)", 0.0
         basket = intent.meta.get("basket")
@@ -437,9 +442,79 @@ class LiveBroker(PaperBroker):
             return f"signal {age:.0f} s old > {self.pcfg['max_signal_age_s']:.0f} s", 0.0
         return self.usd_size(intent, positions, self.pcfg["min_leg_usd"])
 
+    # weekly perps books: all-or-nothing, balanced, sized from the paper legs
+    @staticmethod
+    def is_book(meta: dict) -> bool:
+        return is_perp(meta) and "week" in meta and "leg_usd" in meta and not meta.get("basket")
+
+    def plan_book(self, strategy: str, intents: list[Intent], positions: list[Position]) -> str | None:
+        """Before a strategy's intents run: size this run's book twins (paper notional x book_fraction x the
+        strategy's size_factor) and check the week opens whole: every new twin >= the venue minimum, longs and
+        shorts within book_balance_tol, inside book_budget_usd. Kept legs roll their twin. If the week can't
+        open whole, every leg's ``meta.twin_block`` says why and none gets a twin. Returns the reason or None."""
+        opens = [i for i in intents if i.kind == "open" and self.is_book(i.meta) and not i.meta.get("shadow")]
+        if not opens or self.perp_route is None:
+            return None
+        kept_ids = {i.position_id for i in intents if i.kind == "close" and i.meta.get("kept")}
+        mine = {(p.meta.get("coin", p.asset), p.side): p for p in positions
+                if p.strategy == strategy and p.id in kept_ids and p.meta.get("live")}
+        week = opens[0].meta["week"]
+        factor = self.ledger.strategy(strategy).get("size_factor", 1.0) if self.ledger else 1.0
+        sides = {1: 0.0, -1: 0.0}
+        why = None
+        for i in opens:
+            held = mine.get((i.meta.get("coin", i.asset), i.side))
+            if held:
+                usd = float(held.meta["live"]["notional_in"])
+            else:
+                usd = round(i.notional_usd * factor * self.pcfg["book_fraction"], 2)
+                if usd < self.pcfg["min_leg_usd"] and not why:
+                    why = f"{i.asset} twin ${usd:.2f} < Hyperliquid's ${self.pcfg['min_leg_usd']:.0f} minimum"
+            i.meta["twin_usd"] = usd
+            sides[i.side] += usd
+        others = sum(float(p.meta["live"]["notional_in"]) for p in positions
+                     if p.strategy != strategy and p.meta.get("live") and self.is_book(p.meta) and p.meta["week"] >= week)
+        total = sides[1] + sides[-1]
+        big = max(sides.values())
+        if not why and abs(sides[1] - sides[-1]) > self.pcfg["book_balance_tol"] * big:
+            why = f"unbalanced: longs ${sides[1]:.2f} vs shorts ${sides[-1]:.2f}"
+        if not why and total + others > self.pcfg["book_budget_usd"]:
+            why = f"book ${total:.2f} + other books ${others:.2f} > budget ${self.pcfg['book_budget_usd']:.0f}"
+        if why:
+            why = f"week {week} stays on paper (all or nothing): {why}"
+            for i in opens:
+                i.meta["twin_block"] = why
+            self.log({"event": "book_skip", "venue": "hyperliquid", "strategy": strategy, "week": week, "reason": why, "at": self.now})
+        return why
+
+    def finish_book(self, strategy: str, positions: list[Position]) -> None:
+        """After a strategy's intents ran: if a leg of this week's book failed, close the week's other twins
+        (the paper legs stay), so no half book is left on the venue."""
+        failed = getattr(self, "_book_failed", {}).pop(strategy, None)
+        if not failed:
+            return
+        week, why = failed
+        for p in positions:
+            t = p.meta.get("live")
+            if p.strategy != strategy or not t or not self.is_book(p.meta) or p.meta.get("week") != week:
+                continue
+            oid = cloid(f"book_unwind|{p.id}")
+            f, _ = self.perp_order("close", oid, t["coin"], t["side"], p.strategy, p.id, sz=t["sz"])
+            self.pending.done(oid)
+            self.log({"event": "book_unwind", "strategy": strategy, "position": p.id, "week": week, "reason": why, "fill": f.to_dict()})
+            if f.ok and f.sz >= t["sz"] * (1 - 1e-9):
+                del p.meta["live"]
+                p.mode = "paper"
+            else:
+                err = f.error or f"closed {f.sz:g} of {t['sz']:g}"
+                self.live_state()["orphans"].append({"position": p.id, "strategy": strategy, **t, "at": self.now,
+                                                     "error": f"book unwind: {err}"})
+
     def usd_size(self, intent: Intent, positions: list[Position], min_usd: float) -> tuple[str | None, float]:
         """USD twin size. Basket legs (``meta.basket``) take ``meta.twin_usd`` so the legs stay in proportion, under
         ``basket_budget_usd``; other perp twins take ``max_leg_usd`` under ``budget_usd``."""
+        if self.is_book(intent.meta) and "twin_usd" in intent.meta:  # sized and budgeted by plan_book
+            return None, float(intent.meta["twin_usd"])
         basket = intent.meta.get("basket")
         usd_twins = [p.meta["live"] for p in positions if p.meta.get("live") and (is_perp(p.meta["live"]) or is_usd_spot(p.meta["live"]))]
         usd_twins += self.live_state().get("perp_handover", [])
@@ -487,6 +562,10 @@ class LiveBroker(PaperBroker):
             row["live"] = {"venue": "hyperliquid", "sz": f.sz, "px_in": f.px, "notional_in": f.notional_usd}
         else:
             row["live"] = {"failed": f.error}
+            if self.is_book(intent.meta):
+                if not hasattr(self, "_book_failed"):
+                    self._book_failed = {}
+                self._book_failed.setdefault(intent.strategy, (intent.meta["week"], f"{coin}: {f.error}"[:200]))
             self.ledger.journal({"event": "live_error", "strategy": intent.strategy, "position": pos.id, "leg": "perp_open",
                                  "error": f.error, "at": self.now})
         self.log(rec)
@@ -588,8 +667,9 @@ class LiveBroker(PaperBroker):
         st = self.live_state()
         day = time.strftime("%Y-%m-%d", time.gmtime(self.now))
         st.setdefault("daily_usd_perps", {})
-        st["daily_usd_perps"][day] = st["daily_usd_perps"].get(day, 0.0) + net
-        if st["daily_usd_perps"][day] < -self.pcfg["daily_loss_cap_usd"] and not st["halted"]:
+        if not self.is_book(pos.meta):  # weekly books realize a week at once; their stops are perp_risk's weekly and drawdown limits
+            st["daily_usd_perps"][day] = st["daily_usd_perps"].get(day, 0.0) + net
+        if st["daily_usd_perps"].get(day, 0.0) < -self.pcfg["daily_loss_cap_usd"] and not st["halted"]:
             self.halt("live", f"perp twins' daily loss ${st['daily_usd_perps'][day]:.2f} < -${self.pcfg['daily_loss_cap_usd']:.2f}")
         srec = self.strat_state(pos.strategy)
         if not kept and ret < -self.pcfg["max_trade_loss_pct"] and not srec["halted"]:

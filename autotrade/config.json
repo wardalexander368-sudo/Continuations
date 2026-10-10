@@ -40,10 +40,10 @@
       "execution": {
         "entry": "schedule",
         "run_minute": 5,
-        "run_lag_s": 120,
+        "run_lag_s": 900,
         "route_fee_per_side": 0.01,
-        "version": "2026-10-10-hourly",
-        "note": "paper fills as a real twin would get them now that the agent runs hourly (cron :05, AJ 2026-10-10): entry at the first run after the signal bar closes (:07, allowing ~2 min to start and scan), priced inside the 5-minute bar holding that moment, plus PumpPortal Lightning's 1%/side. Exit and the rule are unchanged. On the 90 replay trades, entering 30 min after the signal changed gross by ~0 (-3.94% vs -3.98%)."
+        "version": "2026-10-10-hourly-observed",
+        "note": "paper fills as a real twin would get them now that the agent runs hourly (cron :05, AJ 2026-10-10): entry at the first run after the signal bar closes (:20: the hourly runs start 13-14 min after the :05 cron, then ~1 min to scan; measured on the 22:05 and 23:05 runs), priced inside the 5-minute bar holding that moment, plus PumpPortal Lightning's 1%/side. Exit and the rule are unchanged. On the 90 replay trades, entering 30 min after the signal changed gross by ~0 (-3.94% vs -3.98%)."
       },
       "replay": "handoff/data/dip-cost/replay-oos-2026-10-10.json"
     },
@@ -117,7 +117,8 @@
       "enabled": true,
       "size_usd": 200,
       "prereg": "handoff/preregistration/wick-bounce/SPEC.md",
-      "note": "pre-registered by the trading-skills thread (edge-hunt J): 6-sigma hourly wicks on 20 HL perps, 4 h hold, 8.5 bps/side, entries 2026-10-12..2027-10-11; paper only. Signal matches wick_forward.py exactly (28/28 trades on 2026-03..09)."
+      "note": "pre-registered by the trading-skills thread (edge-hunt J): 6-sigma hourly wicks on 20 HL perps, 4 h hold, 8.5 bps/side, entries 2026-10-12..2027-10-11; paper only. Signal matches wick_forward.py exactly (28/28 trades on 2026-03..09).",
+      "exec_lag_s": 1200
     }
   },
   "variants": [

@@ -83,13 +83,18 @@ def test_risk_caps_and_kill_switch(tmp_path):
     assert "test halt" in (root2 / "REPORT.md").read_text()
 
 
-def test_daily_loss_cap_halts_agent(tmp_path):
+def test_daily_loss_cap_stops_only_that_strategy_until_the_next_utc_day(tmp_path):
     root = setup(tmp_path, {"risk": {"daily_loss_cap_usd": 10}})
-    s = run_once(root, now=3000, strategies={"fake": Fake(script=[[opener(), closer(price=0.5)]])})
-    assert s["halted"] and "daily loss cap" in s["halted"]
-    s = run_once(root, now=3100, strategies={"fake": Fake(script=[[opener(key="c")]])})
-    assert s["rejected"] == 1
-    assert any(c["kind"] == "halt" for c in Ledger(root).changes())
+    s = run_once(root, now=3000, strategies={"fake": Fake(script=[[opener(), closer(price=0.5)]]), "other": Fake(script=[])})
+    assert not s["halted"] and s["new_halts"] and "fake" in s["new_halts"][0]["reason"]
+    o = opener(key="o")
+    o.strategy = "other"
+    other = Fake("other", script=[[o]])
+    s = run_once(root, now=3100, strategies={"fake": Fake(script=[[opener(key="c")]]), "other": other})
+    assert s["rejected"] == 1 and s["opened"] == 1  # fake stopped for the day, other trades on
+    s = run_once(root, now=86400 + 3000, strategies={"fake": Fake(script=[[opener(key="d")]])})
+    assert s["opened"] == 1  # a new UTC day clears it
+    assert any(c["kind"] == "resume" and c["scope"] == "fake" for c in Ledger(root).changes())
 
 
 def test_errors_halt_strategy_after_limit(tmp_path):

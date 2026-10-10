@@ -10,6 +10,13 @@ The agent reads Hyperliquid's hourly candles once per closed hour and books ever
 look, so a missed run only delays the booking (entries and exits carry the candle times). Scoring follows
 the registration: mean return per trade > 0 with the 90% bootstrap CI over entry days above 0, after
 the window ends; no earlier verdict.
+
+Execution-realistic score (audit 2026-10-10, 1c): an hourly agent can't trade at the wick hour's close.
+Every trade is also scored as a twin would get it: entry at the first scheduled run after the wick hour
+(``exec_lag_s`` after the hour: cron :05 plus GitHub's observed 13-14 min start delay and a minute to act,
+so :20), exit at the first run after the hold, both priced inside Hyperliquid's 5-minute candles, same
+costs. A "pass" also needs that score's mean above 0, so the agent can't promote a rule it can't execute.
+The registered statistic (wick_forward.py) stays the authority for the pre-registered test itself.
 """
 
 from __future__ import annotations
@@ -26,6 +33,7 @@ HL = "https://api.hyperliquid.xyz/info"
 COINS = ["ADA", "APT", "ARB", "AVAX", "BCH", "BNB", "BTC", "DOGE", "DOT", "ETH", "INJ", "LINK", "LTC",
          "NEAR", "OP", "SEI", "SOL", "SUI", "TIA", "XRP"]
 Z, HOLD, WIN, COST = 6.0, 4, 168, 0.00085
+EXEC_LAG_S = 20 * 60
 START, END = "2026-10-12", "2027-10-11"
 
 
@@ -42,6 +50,7 @@ class WickBounce:
         self.coins = cfg.get("coins") or COINS
         self.start, self.end = cfg.get("start", START), cfg.get("end", END)
         self.post = cfg.get("_post") or self._post  # tests inject a fake API
+        self.exec_lag = float(cfg.get("exec_lag_s", EXEC_LAG_S))
 
     def _post(self, ctx: Context, body: dict):
         import httpx
@@ -67,7 +76,40 @@ class WickBounce:
             time.sleep(0.2)
         return O, Hi, Lo, C
 
+    def price_at(self, ctx: Context, coin: str, t0: float, t1: float) -> tuple[float | None, float | None]:
+        """Prices at t0 and t1 from 5-minute candles, interpolated between each bar's open and close."""
+        rows = self.post(ctx, {"type": "candleSnapshot", "req": {"coin": coin, "interval": "5m", "startTime": int(t0 - 300) * 1000,
+                                                                "endTime": int(t1 + 300) * 1000}}) or []
+        bars = {int(x["t"]) // 1000: (float(x["o"]), float(x["c"])) for x in rows}
+
+        def at(t):
+            b = int(t // 300 * 300)
+            if b not in bars:
+                return None
+            o, c = bars[b]
+            return o + (c - o) * (t - b) / 300
+
+        return at(t0), at(t1)
+
+    def score_executions(self, ctx: Context) -> None:
+        """Execution-realistic returns of trades whose exit moment has passed (state ``exec``)."""
+        pend = ctx.state.setdefault("exec_pending", {})
+        done = ctx.state.setdefault("exec", {})
+        for key, e in list(pend.items()):
+            if e["exit_t"] + 300 > ctx.now:
+                continue
+            p_in, p_out = self.price_at(ctx, e["coin"], e["entry_t"], e["exit_t"])
+            if p_in and p_out:
+                done[key] = {"day": e["day"], "net": e["side"] * (p_out / p_in - 1) - 2 * COST,
+                             "entry_t": e["entry_t"], "exit_t": e["exit_t"]}
+            elif ctx.now - e["exit_t"] > 3 * 86400:  # candles never came: give up, logged as missing
+                done[key] = {"day": e["day"], "net": None}
+            else:
+                continue
+            del pend[key]
+
     def step(self, ctx: Context) -> list[Intent]:
+        self.score_executions(ctx)
         now_h = int(ctx.now) // 3600  # hours < now_h are closed
         done = int(ctx.state.setdefault("done_hour", now_h - 1))  # last hour already checked for entries
         due = [p for p in ctx.positions if p.meta.get("exit_hour", 0) < now_h]
@@ -106,6 +148,9 @@ class WickBounce:
                                       meta={"key": key, "entry_hour": h, "exit_hour": h + HOLD, "label": coin,
                                             "venue": "hyperliquid", "entry_day": day(h)}))
                 busy = h + HOLD
+                ctx.state.setdefault("exec_pending", {})[key] = {
+                    "coin": coin, "side": s, "day": day(h),
+                    "entry_t": (h + 1) * 3600 + self.exec_lag, "exit_t": (h + HOLD + 1) * 3600 + self.exec_lag}
                 if i + HOLD < len(C):  # the exit candle is already closed (a late run): book it now
                     intents.append(self.close_intent(coin, h + HOLD, float(C[i + HOLD]), key=key))
         ctx.state["done_hour"] = now_h - 1
@@ -155,6 +200,14 @@ class WickBounce:
         m = float(np.mean([t.net_return for t in trades]))
         stats = {"n": n, "days": len(keys), "mean_net": m, "lo": float(lo), "hi": float(hi)}
         summary = f"{n} trades on {len(keys)} days: mean {m * 1e4:+.1f} bp/trade [{lo * 1e4:+.1f}, {hi * 1e4:+.1f}]"
+        ex = [e["net"] for e in (state or {}).get("exec", {}).values() if e.get("net") is not None]
+        if ex:
+            stats.update(exec_n=len(ex), exec_mean_net=float(np.mean(ex)))
+            summary += (f"; as an hourly agent would trade it (entry and exit {self.exec_lag / 60:.0f} min after the hour): "
+                        f"{np.mean(ex) * 1e4:+.1f} bp/trade over {len(ex)}")
         if datetime.fromtimestamp(now, timezone.utc).date() <= date.fromisoformat(self.end):
             return Verdict("pending", n, stats, f"{summary}; scored after {self.end} (registered)")
-        return Verdict("pass" if m > 0 and lo > 0 else "fail", n, stats, summary)
+        ok = m > 0 and lo > 0
+        if ok and not (ex and np.mean(ex) > 0):
+            return Verdict("fail", n, stats, f"{summary}; the registered statistic passes but the agent can't execute it at a profit")
+        return Verdict("pass" if ok else "fail", n, stats, summary)

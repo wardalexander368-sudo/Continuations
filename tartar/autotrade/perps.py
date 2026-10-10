@@ -39,6 +39,11 @@ PERP_DEFAULTS = {
     "max_leg_usd": 12.0,          # notional of one twin (Hyperliquid's minimum order is $10)
     "min_leg_usd": 10.0,
     "budget_usd": 60.0,           # notional in open perp twins, all strategies together (basket legs excluded)
+    # weekly long-short books (xs_momentum kind: meta "week" and "leg_usd"): each twin is its paper leg x
+    # book_fraction, under its own budget, and a week's twins open all together and balanced, or not at all
+    "book_fraction": 0.5,         # twin notional / paper notional (paper leg_usd 1,000/side -> $500/side twins)
+    "book_budget_usd": 2500.0,    # notional in open book twins, all book strategies together
+    "book_balance_tol": 0.25,     # |longs - shorts| <= this x the larger side, or the week stays on paper
     "basket_budget_usd": 500.0,   # notional in open basket twins (hedged JLP: JLP leg + shorts), each leg sized by meta.twin_usd
     "daily_loss_cap_usd": 6.0,    # realized perp-twin loss in a UTC day; beyond it all live entries stop
     "max_trade_loss_pct": 0.25,   # one twin losing more halts that strategy's live entries

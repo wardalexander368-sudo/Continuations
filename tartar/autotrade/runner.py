@@ -84,6 +84,7 @@ def run_once(root: Path = ROOT, now: float | None = None, strategies: dict | Non
             ledger.journal({"event": "run_skipped", "at": now, "reason": f"live lease held by {blocker}"})
             return {**summary, "skipped": f"live lease held by {blocker}", "changes": [], "halted": None, "new_halts": []}
     risk = Risk(config, root, ledger)
+    risk.now = now
     if strategies is None:
         from .search import active_candidates
 
@@ -147,14 +148,21 @@ def run_once(root: Path = ROOT, now: float | None = None, strategies: dict | Non
         risk.record_ok(name)
         broker = _broker(config, rec["status"], ledger, name, now, root)
         exits = lambda: _exit_broker(config, ledger, root, now)  # noqa: E731
-        for intent in sorted(intents, key=lambda i: (i.at, i.kind != "close")):
+        for intent in intents:  # book volatility target (perp_risk.book_scale), before twins are sized from the legs
             if intent.kind == "open" and name in book and "leg_usd" in intent.meta and scale != 1.0:
-                intent.notional_usd *= scale  # book volatility target (perp_risk.book_scale)
+                intent.notional_usd *= scale
                 intent.meta.update(leg_usd=float(intent.meta["leg_usd"]) * scale, book_scale=scale, book_scale_why=scale_why)
+        plan = getattr(broker, "plan_book", None)
+        if callable(plan) and rec["status"] != "retired":
+            plan(name, intents, ledger.positions)
+        for intent in sorted(intents, key=lambda i: (i.at, i.kind != "close")):
             summary_key = _apply(intent, rec, ledger, risk, broker, now,
                                  quote=bool(config.get("execution", {}).get("quote_check")) and not intent.meta.get("shadow"),
                                  exit_broker=exits)
             summary[summary_key] = summary.get(summary_key, 0) + 1
+        finish = getattr(broker, "finish_book", None)
+        if callable(finish):
+            finish(name, ledger.positions)
         ctx.positions = [p for p in ledger.positions if p.strategy == name]
         try:
             marks = strat.marks(ctx) if ctx.positions else {}
