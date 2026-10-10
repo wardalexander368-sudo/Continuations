@@ -32,13 +32,6 @@ next. Topic documents hold the detail:
 
 ## Active
 
-* **Perp restart-safety thread** (project thread session, since 2026-10-10 01:50 UTC, branch
-  `claude/project-thread-kytb6q`). **No keys, no mainnet orders.** Extend `safety.py` to perp and
-  basket twins: one trader at a time; Hyperliquid orders recorded as pending with deterministic client
-  order IDs before sending, so a retry finds the earlier order instead of placing a second; a startup
-  check of Hyperliquid's real positions and open orders against the book that stops perps live
-  trading on any mismatch. Tests kill runs mid-order.
-
 * **Copy-trading Hyperliquid accounts (edge hunt E thread)** (since 2026-10-10 01:45 UTC, branch
   `claude/project-thread-9op3pf`). **Paper only, no keys.** Do accounts with a strong record keep
   paying when copied after fees, funding and a realistic delay? Public data only (leaderboard list,
@@ -397,6 +390,19 @@ deep pools match the model, a thin one was 2.4x it). The `launch_selector` slot 
   branch `claude/profitability-backtest`, on `main`).
 
 ## Log (newest first)
+
+* **2026-10-10 ~02:20 UTC, perp restart-safety thread: Hyperliquid legs survive killed jobs.**
+  Every perp order (basket shorts included) now carries a client order id fixed by what it is for.
+  Before sending, the broker looks the id up on Hyperliquid and adopts an earlier fill rather than
+  trading twice; if the lookup fails, it doesn't send. Each run compares the account's positions and
+  open orders with the book (twins, kept legs, perp orphans, fills a dead run left). Any difference
+  or an unreadable account stops perp entries (`live.perps_halted`, cleared with `resume-live perps`);
+  reduce-only closes still run. The dry perp route now simulates the account in
+  `autotrade/dry_perp_account.json`, seeded from the existing jlp_hedged shorts; a dry run on a copy of
+  main's state reconciled clean. The Solana senders also call `gate.require_live` right before each
+  send. The job now installs `eth-account` and `msgpack`, which live Hyperliquid signing needs. 10 tests
+  in `tests/test_perp_restart_safety.py`; 255 pass. **Gap:** the basket's JLP leg (USD spot) is
+  dry-only and not covered. No keys, no mainnet orders.
 
 * **2026-10-10 ~02:25 UTC, restart-safety thread: live trading survives killed jobs and overlaps.**
   `tartar/autotrade/safety.py` adds four layers. (1) One trader: the workflow's concurrency group
