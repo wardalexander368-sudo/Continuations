@@ -32,6 +32,14 @@ next. Topic documents hold the detail:
 
 ## Active
 
+* **Copy-trading Hyperliquid accounts (edge hunt E thread)** (since 2026-10-10 01:45 UTC, branch
+  `claude/project-thread-9op3pf`). **Paper only, no keys.** Do accounts with a strong record keep
+  paying when copied after fees, funding and a realistic delay? Public data only (leaderboard list,
+  per-address fills). Accounts chosen on an early period only; selection and copy rules
+  pre-registered in `handoff/preregistration/hl-copy/` before the later period is scored. If it
+  holds: a paper strategy with dry perp twins. Touches `handoff/experiments/edge-hunt/hl_copy/`,
+  `handoff/data/edge-hunt/hl-copy/`, and only if it holds `tartar/autotrade/strategies/`.
+
 * **Restart-safety thread** (project thread session, since 2026-10-10 01:35 UTC, branch
   `claude/project-thread-kytb6q`). **No keys, no real orders.** Make live trading safe across job
   restarts and overlaps: one trader at a time (concurrency group + lock/lease), orders recorded as
