@@ -32,6 +32,12 @@ next. Topic documents hold the detail:
 
 ## Active
 
+* **Hedged-JLP twin in the agent** (edge hunt E thread session, since 2026-10-10 00:35 UTC, branch
+  `claude/project-thread-9op3pf`). Dry only, no keys. Mirrors the hedged-JLP paper test inside the
+  agent as a basket: JLP leg (dry Jupiter USDC quotes) + SOL/ETH/BTC shorts (dry perp twins), read from
+  the paper-tests Action's snapshots. Doesn't change the dip/jevtrader session's registered test or its
+  Action. Touches `tartar/autotrade/` (new strategy + USD spot twin) and `autotrade/config.json`.
+
 * **Edge hunt E thread** (project thread session, since 2026-10-09 21:40 UTC, branch
   `claude/project-thread-9op3pf`). **Paper only, no real SOL, no keys.** Task (the user's 21:30
   "work continuously"): edge hunt angle E, TARTAR's assets, beyond the closed predictor + P(rug)
