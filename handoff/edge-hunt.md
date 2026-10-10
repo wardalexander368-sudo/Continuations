@@ -195,6 +195,24 @@ commission) earned in every split (+1.33%/month [+0.18, +2.70] in test; 2025 +19
 falling as it grows), so holding it against a 5% cash hurdle is **pre-registered** for 180 days:
 `preregistration/hlp-hold/SPEC.md`, scorer `experiments/edge-hunt/vaults/hlp_forward.py`.
 
+### H. Polymarket biases (2026-10-10, trading-skills thread): closed, nothing passes
+
+12,379 resolved Polymarket markets with volume ≥ $200k (random sample of the ~72k listed since
+2023; `experiments/edge-hunt/predmkt/fetch_polymarket.py`, `pm_biases.py`; output
+`data/edge-hunt/predmkt/pm-biases.txt`). Enter k = 1/7/30 days before the scheduled end at the
+last daily price, hold to resolution, 1 cent a share for spread (2 where fees apply), bootstrap by
+event. 33 rules: favourite bands (FAV), underdog bands (LONG), 7-day drift (DRIFT); splits by end
+date, train 2023-01..2025-06, validation 2025-07..12, test 2026-01..09.
+* **No favourite-longshot edge after the spread.** Every favourite band but one loses in train or
+  validation; the chosen one (0.95–0.99, 30 days) loses in test, −2.46% [−4.51, −0.67]. Longshots
+  under 5 cents lose almost everything.
+* **LONG's chosen rule (0.15–0.30, 30 days): test +5.0% [−17.4, +28.5]**, no evidence. The 1-day
+  underdog rules looked strong in validation, but re-priced at hourly prices
+  (`pm_verify.py`, `data/edge-hunt/predmkt/pm-verify-long-partial.txt`, on the first 3,700 markets)
+  most of the gain was stale daily prices: train +13.9% → +1.6%, validation +48% → +18%, both CIs
+  spanning zero.
+* **DRIFT:** train and validation disagree; test not read.
+
 ### E. TARTAR's assets
 
 Covered by the fee-research thread's predictor + P(rug) strategy forward test (see STATUS.md);
@@ -257,6 +275,7 @@ Round 2 has nothing registered; F2 (funding-spike shorts) stays on hold.
 * (added) **E1, pump.fun revenue surprise -> PUMP perp:** both halves positive after costs, each
   ~1.7 SE, beyond-trend part positive. **Forward test registered** (180 days, hourly Action).
   E1b: the same rule on 8 other buyback tokens is flat (family −0.01%/day), so lower the prior.
+* (added) **H, Polymarket biases:** 33 rules, nothing passes (closed).
 * (added) **G, HLP holding:** +11–28% a year in recent halves vs a 5% hurdle, thin and decaying.
   **Forward test registered** (180 days, free). Following past-winner vaults: closed.
 6. **D2, funding carry across perps:** loses; its reverse is weaker momentum (closed).

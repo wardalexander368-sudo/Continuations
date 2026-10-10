@@ -32,14 +32,6 @@ next. Topic documents hold the detail:
 
 ## Active
 
-* **Trading-skills thread → new markets** (project thread session, since 2026-10-09 22:45 UTC,
-  branch `claude/project-thread-x7fh45`). Task (coordinator, under the user's "work nonstop"):
-  (1) Hyperliquid vaults / top traders: does following past winners beat cash after fees, with
-  out-of-sample selection; (2) prediction markets (Polymarket): favourite-longshot and
-  late-resolution drift on resolved-market history, net of fees and spread. Free public history
-  only, paper, train/test, every rule counted. Scripts in `handoff/experiments/edge-hunt/vaults/`
-  and `.../predmkt/`.
-
 * **Edge hunt E thread** (project thread session, since 2026-10-09 21:40 UTC, branch
   `claude/project-thread-9op3pf`). **Paper only, no real SOL, no keys.** Task (the user's 21:30
   "work continuously"): edge hunt angle E, TARTAR's assets, beyond the closed predictor + P(rug)
@@ -379,6 +371,12 @@ deep pools match the model, a thin one was 2.4x it). The `launch_selector` slot 
   branch `claude/profitability-backtest`, on `main`).
 
 ## Log (newest first)
+
+* **2026-10-10 ~00:30 UTC, trading-skills thread (new markets): Polymarket closed, nothing passes;
+  lane finished** (`edge-hunt.md` §H). 12,379 resolved markets, 33 favourite / underdog / drift rules
+  at 1-cent spread: no rule holds on held-out data (favourites 0.95–0.99 lose in test −2.5%; the
+  underdog rule is +5.0% [−17, +28]; the 1-day underdog "edge" was mostly stale daily prices).
+  With vaults (§G), this lane leaves one registered test: HLP holding. Claim cleared.
 
 * **2026-10-10 ~00:05 UTC, retrain thread: edge hunt F (pump.fun who-is-trading) closed** (profitability
   §3.25, `edge-hunt.md` F). Five proposals scored; F2 (smart wallets buying the dip) and F3 (bundle
