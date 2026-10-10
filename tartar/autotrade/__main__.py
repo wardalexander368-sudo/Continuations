@@ -1,8 +1,8 @@
 """python -m tartar.autotrade run | status | halt REASON | resume [STRATEGY] | halt-live REASON | resume-live [STRATEGY]
-       | preflight | health | dry-swap MINT [--sol 0.01] | dry-perp COIN [--usd 12] [--side -1]   [--root autotrade]
+       | preflight | health | dry-swap MINT [--sol 0.01] [--route lightning] | dry-perp COIN [--usd 12] [--side -1]   [--root autotrade]
 
 halt-live stops new live twins (paper and exits keep running); preflight checks the live path without
-trading; dry-swap builds a real Jupiter buy and sell for MINT and has the RPC simulate them (no key, nothing sent);
+trading; dry-swap builds a real Jupiter (or Lightning, via trade-local) buy and sell for MINT and has the RPC simulate them (no key, nothing sent);
 dry-perp prices opening and closing a Hyperliquid perp twin on the live order book (no key, nothing sent)."""
 
 from __future__ import annotations
@@ -20,6 +20,7 @@ def main(argv=None) -> int:
     ap = argparse.ArgumentParser(prog="python -m tartar.autotrade")
     ap.add_argument("cmd", choices=("run", "status", "halt", "resume", "halt-live", "resume-live", "preflight", "dry-swap", "dry-perp", "health"))
     ap.add_argument("--sol", type=float, default=0.01)
+    ap.add_argument("--route", default="jupiter", choices=("jupiter", "lightning"))
     ap.add_argument("--usd", type=float, default=12.0)
     ap.add_argument("--side", type=int, default=1, choices=(1, -1))
     ap.add_argument("arg", nargs="?", default="")
@@ -48,9 +49,9 @@ def main(argv=None) -> int:
         print(json.dumps(preflight(load_config(root), ledger, root), indent=1, default=str))
         return 0
     if a.cmd == "dry-swap":
-        from .execution import JupiterExecutor
+        from .execution import JupiterExecutor, LightningExecutor
 
-        ex = JupiterExecutor(simulate=True)
+        ex = LightningExecutor(simulate=True) if a.route == "lightning" else JupiterExecutor(simulate=True)
         buy = ex.buy(a.arg, a.sol)
         sell = ex.sell(a.arg, buy.token_raw) if buy.ok else None
         print(json.dumps({"buy": buy.to_dict(), "sell": sell and sell.to_dict(),
