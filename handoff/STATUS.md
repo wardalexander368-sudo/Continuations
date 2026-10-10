@@ -32,6 +32,14 @@ next. Topic documents hold the detail:
 
 ## Active
 
+* **Hyperliquid open-interest study (second TARTAR session)** (since 2026-10-10 03:45 UTC, branch
+  `claude/project-thread-kytb6q`). **Paper only, no keys.** Cross-sectional and majors OI rules on
+  Hyperliquid perps. Hyperliquid keeps no OI history, so history = OKX daily OI (public, from 2024-01)
+  plus our `perps-ctx` snapshots. Study design pre-registered in `handoff/preregistration/oi-study/`
+  before any validation/test number is read; judged after 20 bps/side + funding, 1-day lag. If it
+  clears: a dry paper strategy. Touches `handoff/experiments/edge-hunt/oi/`, and only if it clears
+  `tartar/autotrade/`.
+
 * **Spot-perp funding carry on Hyperliquid (edge hunt E thread)** (since 2026-10-10 03:40 UTC, branch
   `claude/project-thread-9op3pf`). **Paper only, no keys.** Hold spot (Hyperliquid spot pairs) and short
   the perp to collect funding, with thresholds and coins pre-registered on one period
