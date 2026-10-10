@@ -9,8 +9,8 @@ signal, each compared with the paper agent's fill for the same signal).
 
 Rule (SPEC.json, as the paper agent trades it in tartar/autotrade/strategies/dip.py): on 5-minute
 bars, a pool's close fell more than 5% over the last 12 bars -> buy at the next bar's open, sell at
-the close of bar t+48 (4 hours). This script checks every registered pool just after each bar
-closes; a signal on the bar that just completed is bought at once (inside bar t+1, as close to its
+the close of bar t+48 (4 hours). This script checks every registered pool 2 s after each bar
+closes (re-polling pools whose bar isn't out yet); a signal on the bar that just completed is bought at once (inside bar t+1, as close to its
 open as the API allows) and sold once bar t+48 has closed. Older signals are never chased.
 
 Trades go through real_fills.py (`buy` / `sell`, fills in data/real-fills/dip-fills.jsonl).
@@ -160,40 +160,50 @@ def watch() -> None:
         if started >= args.trips and all(tr["status"] == "closed" for tr in live):
             log("all trips closed")
             return
-        # entries: scan just after each bar closes (GeckoTerminal needs ~a minute to publish it)
+        # entries: scan right after each bar ends. GeckoTerminal's first close after bar end was final
+        # 95% of the time (fast_dip.py, 2026-10-10); the old +75 s wake and a single pass cost minutes.
+        # Pools whose bar i isn't out yet are polled again until +4 min.
         if started < args.trips:
             busy = {tr["pool"] for tr in st["trips"] if tr["status"] == "open"}
             agent = agent_pools()
-            for p in pools():
-                if p["pool"] in busy or sum(tr["status"] != "failed" for tr in st["trips"]) >= args.trips:
-                    continue
-                try:
-                    t, o, c = grid(bars(p["pool"]), time.time())
-                except Exception as exc:  # noqa: BLE001
-                    log(f"{p['name']}: data error {str(exc)[:120]}")
-                    continue
-                if len(t) <= L:
-                    continue
-                i = len(t) - 1
-                fresh = time.time() < t[i] + 2 * BAR  # still inside bar i+1
-                ret = c[i] / c[i - L] - 1
-                if ret < -DROP and fresh and not agent_enters_at(t, c, agent.get(p["pool"], {}), i):
-                    log(f"{p['name']}: signal, but the paper agent is still in this pool (skipped: no paper twin)")
-                elif ret < -DROP and fresh:
-                    log(f"SIGNAL {p['name']}: close fell {-100 * ret:.1f}% over {L} bars (bar {t[i]})")
-                    tr = {"key": f"{p['pool']}:{t[i]}", "pool": p["pool"], "mint": p["mint"], "label": p["name"],
-                          "signal_t": t[i], "entry_bar": t[i] + BAR, "exit_t": t[i] + H * BAR, "drop": ret, "status": "buying"}
-                    st["trips"].append(tr)
-                    save(st)
-                    leg = trade("buy", p["mint"])
-                    tr["buy"] = leg
-                    ok = bool(leg and leg.get("effects") and not leg["effects"].get("err") and leg["effects"]["token_change"] > 0)
-                    tr["status"] = "open" if ok else "failed"
-                    save(st)
-                    busy.add(p["pool"])
-        # sleep to ~75 s after the next bar boundary
-        nxt = (int(time.time()) // BAR + 1) * BAR + 75
-        time.sleep(max(5.0, min(nxt - time.time(), end - time.time())))
+            bar_i = (int(time.time()) // BAR - 1) * BAR
+            pending = [p for p in pools() if p["pool"] not in busy]
+            while pending and time.time() < bar_i + BAR + 240:
+                retry = []
+                for p in pending:
+                    if sum(tr["status"] != "failed" for tr in st["trips"]) >= args.trips:
+                        retry = []
+                        break
+                    try:
+                        t, o, c = grid(bars(p["pool"]), time.time())
+                    except Exception as exc:  # noqa: BLE001
+                        log(f"{p['name']}: data error {str(exc)[:120]}")
+                        continue
+                    if len(t) <= L:
+                        continue
+                    if t[-1] < bar_i:
+                        retry.append(p)  # bar i not published yet
+                        continue
+                    i = len(t) - 1
+                    ret = c[i] / c[i - L] - 1
+                    if ret < -DROP and not agent_enters_at(t, c, agent.get(p["pool"], {}), i):
+                        log(f"{p['name']}: signal, but the paper agent is still in this pool (skipped: no paper twin)")
+                    elif ret < -DROP:
+                        log(f"SIGNAL {p['name']}: close fell {-100 * ret:.1f}% over {L} bars (bar {t[i]})")
+                        tr = {"key": f"{p['pool']}:{t[i]}", "pool": p["pool"], "mint": p["mint"], "label": p["name"],
+                              "signal_t": t[i], "entry_bar": t[i] + BAR, "exit_t": t[i] + H * BAR, "drop": ret, "status": "buying"}
+                        st["trips"].append(tr)
+                        save(st)
+                        leg = trade("buy", p["mint"])
+                        tr["buy"] = leg
+                        ok = bool(leg and leg.get("effects") and not leg["effects"].get("err") and leg["effects"]["token_change"] > 0)
+                        tr["status"] = "open" if ok else "failed"
+                        save(st)
+                        busy.add(p["pool"])
+                pending = retry
+        # wake 2 s after the next bar ends
+        nxt = (int(time.time()) // BAR + 1) * BAR + 2
+        time.sleep(max(1.0, min(nxt - time.time(), end - time.time())))
     log("watch window over; run again to resume")
 
 
