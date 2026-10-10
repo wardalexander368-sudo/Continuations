@@ -40,13 +40,6 @@ next. Topic documents hold the detail:
   into `tartar/autotrade/gate.py` for the Solana spot sender to share. Touches `perps.py`, `broker.py`,
   a new `hl_exchange.py`, a CI workflow.
 
-* **Real-order sender thread** (project thread session, since 2026-10-10 01:25 UTC, branch
-  `claude/project-thread-kytb6q`). **No keys, no real transactions, mode stays dry_live.** Harden
-  the Solana spot senders in `tartar/autotrade/execution.py` (Jupiter, Lightning) behind the existing
-  live gate: pre-sign checks, definitive confirmation (blockhash expiry), unknown outcomes recorded
-  and halted, Lightning sells sized to the twin, simulation of both routes. Tests: unit, RPC
-  simulation with signature checks off, dry-run end to end.
-
 * **Edge hunt E thread** (project thread session, since 2026-10-09 21:40 UTC, branch
   `claude/project-thread-9op3pf`). **Paper only, no real SOL, no keys.** Task (the user's 21:30
   "work continuously"): edge hunt angle E, TARTAR's assets, beyond the closed predictor + P(rug)
@@ -389,6 +382,20 @@ deep pools match the model, a thin one was 2.4x it). The `launch_selector` slot 
   branch `claude/profitability-backtest`, on `main`).
 
 ## Log (newest first)
+
+* **2026-10-10 ~02:00 UTC, real-order sender thread: Solana spot senders hardened, still gated.**
+  The Jupiter and Lightning senders already existed (`execution.py`); this made them safe to switch
+  on. Before signing, a transaction must be paid by our wallet and need only our signature. Every send
+  now ends confirmed, failed (on-chain error, or Jupiter's blockhash expired unlanded) or unknown; an
+  unknown buy goes to `live.orphans` with its signature and halts that strategy's live entries instead
+  of being read as "nothing bought". Lightning sells only the twin's tokens (it used to sell 100% of the
+  mint, which would have dumped another twin's holding too). Both routes simulate with no key
+  (`dry-swap MINT [--route lightning]`): Jupiter on BONK simulated both legs (round trip −0.07%);
+  Lightning on a PumpSwap token simulated the buy, and the sell built correctly. 14 tests in
+  `tests/test_execution_send.py`; 215 pass. Dry-run end to end ran clean, but no strategy is promoted
+  yet, so no twin traded. **Not done, by design:** no key added, mode stays `dry_live`, nothing sent.
+  To go live the user adds `TARTAR_WALLET_KEY` + `TARTAR_LIVE_APPROVED`, sets `live_approved_on` and
+  `mode: live` (handoff/autotrade.md "Going live").
 
 * **2026-10-10 ~01:45 UTC, retrain thread: edge hunt round I (pump.fun on new data) closed** (`edge-hunt.md` I).
   I1 revival entries: unobservable at a useful rate (the recorder drops tokens after 10 idle min;
