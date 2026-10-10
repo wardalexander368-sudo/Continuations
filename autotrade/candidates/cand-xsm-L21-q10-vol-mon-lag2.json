@@ -1,0 +1,50 @@
+{
+ "backtest": {
+  "alpha": 0.0010638297872340426,
+  "checks": {
+   "holdout": true,
+   "not_a_copy": true,
+   "penalized_train": true,
+   "walk_forward": true
+  },
+  "corr_registered": {
+   "vol_momentum": 0.45757952153218406,
+   "xs_momentum": 0.41852199907201315
+  },
+  "first": "2023-12-18",
+  "holdout_mean": 0.028993213473831627,
+  "holdout_weeks": 26,
+  "last": "2026-09-28",
+  "survives": true,
+  "thirds": [
+   0.014239212970792687,
+   0.05046523474887854,
+   0.019813570889870492
+  ],
+  "train_lo_penalized": 0.0023791985339142664,
+  "train_mean": 0.028172672869847242,
+  "train_weeks": 120,
+  "weeks": 146
+ },
+ "end": "2027-04-12",
+ "family": "perps-momentum",
+ "family_size": 1,
+ "kind": "xs_momentum",
+ "leg_usd": 500,
+ "name": "cand-xsm-L21-q10-vol-mon-lag2",
+ "note": "draft pre-registration written by the agent's candidate search; the commit adding this file is the registration",
+ "params": {
+  "lag_days": 2,
+  "lookback": 21,
+  "quant": 10,
+  "scaled": true,
+  "signal_weekday": 0
+ },
+ "registered_at": "2026-10-10T03:09:25Z",
+ "score_weeks": 26,
+ "search_run": "2026-10-10",
+ "start": "2026-10-19",
+ "starts_at": "2026-10-17",
+ "status": "queued",
+ "success": "after 26 paper weeks: mean weekly long-short return net of 20 bps/side turnover and funding > 0 AND the moving-block bootstrap CI (4-week blocks) lower bound > 0 at level 0.05/1 (Bonferroni over every candidate queued so far)"
+}
