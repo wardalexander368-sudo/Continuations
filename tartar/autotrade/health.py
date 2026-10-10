@@ -20,7 +20,7 @@ import time
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
-REPO = "StaticPush7217/TARTAR"
+REPO = os.environ.get("GITHUB_REPOSITORY") or "wardalexander368-sudo/Continuations"  # moved from StaticPush7217/TARTAR 2026-10-10
 API = f"https://api.github.com/repos/{REPO}"
 
 # workflow file -> (longest normal gap between runs in s, what it does)
@@ -33,6 +33,7 @@ WORKFLOWS = {
     "pumpflow-live.yml": (26 * 3600, "pump.fun curve volume from the recorder, daily"),
 }
 RECORDER_START = datetime(2026, 10, 9, 21, tzinfo=timezone.utc)  # first full hour of the recorder Action
+RECORDER_MOVED = datetime(2026, 10, 10, 20, tzinfo=timezone.utc)  # first hour recorded in Continuations; earlier releases stayed in TARTAR
 
 # forward-test input -> (path, max age in s, how to read its newest time)
 INPUTS = {
@@ -88,7 +89,7 @@ def check_workflows(http, now: float) -> list[dict]:
 
 def check_recorder(http, now: float) -> list[dict]:
     end = datetime.fromtimestamp(now, timezone.utc).replace(minute=0, second=0, microsecond=0) - timedelta(hours=2)
-    start = max(RECORDER_START, end - timedelta(hours=48))
+    start = max(RECORDER_START, RECORDER_MOVED, end - timedelta(hours=48))
     want, h = [], start
     while h <= end:
         want.append(h.strftime("%Y%m%d-%H"))

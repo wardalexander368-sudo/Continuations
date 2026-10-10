@@ -80,7 +80,7 @@ def test_failed_skipped_gaps_and_stale_are_red(tmp_path):
     runs["autotrade.yml"] = [run_row("failure")]
     runs["paper-tests.yml"] = [run_row(started="2026-10-10T20:00:00Z")]
     runs["recorder.yml"] = [run_row(status="in_progress", conclusion=None, started="2026-10-11T06:00:00Z")]
-    hours = [h for h in all_hours() if not h.startswith("20261010-0")]
+    hours = [h for h in all_hours() if not h.startswith("20261011-0")]
     h = health.run(tmp_path, tmp_path, now=NOW, http=FakeGH(runs, hours))
     red = {i["check"] for i in h["items"] if i["level"] == "red"}
     assert {"Action autotrade.yml", "Action paper-tests.yml", "Recorder hours", "Input: JLP snapshots",
