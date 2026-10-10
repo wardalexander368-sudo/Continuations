@@ -180,6 +180,14 @@ class DipStrategy:
         fee = self.measured.get(pool, {}).get("fee_per_side", cost.fee)
         return {"fee": fee, "impact": cost.impact, "fixed_usd": cost.fixed_usd}
 
+    def spec_net(self, t: Trade) -> float:
+        """A closed trade's net return as the registration and its official scorer compute it
+        (established_prereg_eval.py ``net``: fee and impact multiply both sides). The paper broker books
+        costs additively; scoring uses this so the agent's verdict and the baseline match the scorer."""
+        impact = t.meta.get("impact_assumed", 0.0)
+        return ((t.exit_price / t.entry_price) * (1 - self.costs["fee_per_side"]) ** 2 * (1 - impact) ** 2
+                - 1 - 2 * self.costs["network_usd_per_tx"] / self.size)
+
     def baseline(self, t, o, c, first_bar, exit_t, cost: CostModel) -> float:
         """Mean net of entering this pool at every bar since the agent first saw it, same hold."""
         H = self.rule["hold_bars"]
@@ -188,9 +196,8 @@ class DipStrategy:
         i = np.arange(lo, hi - H - 1)
         if not len(i):
             return float("nan")
-        gross = c[i + H] / o[i + 1]
-        side = cost.fee + cost.impact
-        return float(np.mean(gross * (1 - side) ** 2 - 1 - 2 * cost.fixed_usd / self.size))
+        gross = c[i + H] / o[i + 1]  # same formula as spec_net and the official scorer
+        return float(np.mean(gross * (1 - cost.fee) ** 2 * (1 - cost.impact) ** 2 - 1 - 2 * cost.fixed_usd / self.size))
 
     def marks(self, ctx: Context) -> dict[str, tuple[float, float]]:
         out = {}
@@ -206,9 +213,9 @@ class DipStrategy:
             return Verdict("pending", 0, {}, "no closed trades yet")
         first = min(t.entry_at for t in trades)
         days = (now - first) / 86400
-        net = [t.net_return for t in trades]
+        net = [self.spec_net(t) for t in trades]
         pools = [t.meta.get("pool", t.asset) for t in trades]
-        valid = [(t.net_return - t.meta["baseline"], t.meta.get("pool", t.asset)) for t in trades
+        valid = [(self.spec_net(t) - t.meta["baseline"], t.meta.get("pool", t.asset)) for t in trades
                  if t.meta.get("baseline") == t.meta.get("baseline") and t.meta.get("baseline") is not None]
         a = 0.05 / self.family_size  # Bonferroni across a variant family (1 for the registered rule)
         m, lo_m, hi_m = bootstrap_ci(net, pools, q=(a, 1 - a))

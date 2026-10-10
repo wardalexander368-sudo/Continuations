@@ -42,7 +42,7 @@ jobs:
           PUMPPORTAL_API_KEY: ${{ secrets.PUMPPORTAL_API_KEY }}
           JUPITER_API_KEY: ${{ secrets.JUPITER_API_KEY }}
           TARTAR_LIVE_KILL: ${{ vars.TARTAR_LIVE_KILL }}
-          LOOP_SECONDS: "20700"
+          LOOP_SECONDS: "19800"
         run: |
           set -o pipefail
           git config user.name "tartar-autotrade"

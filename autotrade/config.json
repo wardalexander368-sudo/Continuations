@@ -11,15 +11,15 @@
     "max_trade_loss_pct": 0.25,
     "max_divergence_pct": 0.03,
     "divergence_streak": 3,
-    "max_signal_age_s": 900,
+    "max_signal_age_s": 1800,
     "priority_sol": 2e-05,
     "lightning_wallet": null,
     "note": "live twins (tartar/autotrade/broker.py): mode dry_live mirrors promoted strategies on Jupiter quotes, nothing sent; mode live needs live_approved_on = TARTAR_LIVE_APPROVED and a route key. See handoff/autotrade.md 'Going live'."
   },
   "risk": {
     "max_position_usd": 250,
-    "max_open_per_strategy": 40,
-    "max_open_total": 120,
+    "max_open_per_strategy": 200,
+    "max_open_total": 400,
     "max_gross_usd": 20000,
     "daily_loss_cap_usd": 1000,
     "max_consecutive_errors": 3,

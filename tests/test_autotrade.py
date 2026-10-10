@@ -190,12 +190,13 @@ def test_dip_evaluate_pending_then_scored():
     strat = DipStrategy.__new__(DipStrategy)
     strat.rule = {"hold_bars": 48}
     strat.family_size = 1
+    strat.costs, strat.size = {"fee_per_side": 0.005, "network_usd_per_tx": 0.05}, 200.0
     rng = np.random.default_rng(0)
     tr = []
     for i in range(210):
         r = 0.02 + 0.01 * rng.standard_normal()
-        tr.append(Trade(str(i), "dip", f"P{i % 7}", 1, 200, 1, i * 60, 1, i * 60 + 1, 0, 200 * r, r,
-                        meta={"pool": f"P{i % 7}", "baseline": -0.01}))
+        tr.append(Trade(str(i), "dip", f"P{i % 7}", 1, 200, 1, i * 60, 1 + r, i * 60 + 1, 0, 200 * r, r,
+                        meta={"pool": f"P{i % 7}", "baseline": -0.01, "impact_assumed": 0.002}))
     v = strat.evaluate(tr[:50], 50 * 60, {})
     assert v.decision == "pending"
     v = strat.evaluate(tr, 210 * 60, {})

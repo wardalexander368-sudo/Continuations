@@ -86,9 +86,9 @@ class XSMomentum:
         return days, ix, C, V
 
     def funding(self, ctx: Context, coin: str, t0: float, t1: float) -> float:
-        out, s = {}, int(t0 * 1000)
-        while s < int(t1 * 1000):
-            part = self.post(ctx, {"type": "fundingHistory", "coin": coin, "startTime": s, "endTime": int(t1 * 1000)})
+        out, s, end = {}, int(t0 * 1000), int(t1 * 1000) + 3600_000  # the exit hour's payment is stamped a few ms after it
+        while s < end:
+            part = self.post(ctx, {"type": "fundingHistory", "coin": coin, "startTime": s, "endTime": end})
             if not part:
                 break
             for x in part:
@@ -97,7 +97,7 @@ class XSMomentum:
             if len(part) < 500:
                 break
         h0, h1 = int(t0 * 1000) // 3600_000, int(t1 * 1000) // 3600_000
-        return sum(out.get(h, 0.0) for h in range(h0, h1))
+        return sum(out.get(h, 0.0) for h in range(h0 + 1, h1 + 1))  # a payment stamped at hour h is for the hour before
 
     def step(self, ctx: Context) -> list[Intent]:
         d = self.due_tuesday(ctx.now, ctx.state.get("last_tuesday"))

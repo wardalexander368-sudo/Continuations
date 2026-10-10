@@ -62,6 +62,15 @@ def funding(c, coin, d0, d1):
     return out
 
 
+def hold_hours(m):
+    """Funding hours of a leg signalled on Monday m: held from Tuesday's close (Wednesday 00:00 UTC) to the
+    next Tuesday's close; a payment stamped at hour h is for the hour before it, so the hours are (entry, exit].
+    (Until 2026-10-10 this read [Tuesday 00:00, next Tuesday 00:00), one day early; fixed before the first
+    signal Monday, see STATUS.)"""
+    h0, h1 = ms(m + timedelta(days=2)) // 3600_000, ms(m + timedelta(days=9)) // 3600_000
+    return range(h0 + 1, h1 + 1)
+
+
 def weeks(days, ix, coins, C, V, c):
     """Signal at Monday's close, enter at Tuesday's close, exit at the next Tuesday's close."""
     mondays = [d for d in days if d.weekday() == 0 and START <= d <= END and d + timedelta(days=8) <= days[-1]]
@@ -86,9 +95,8 @@ def weeks(days, ix, coins, C, V, c):
                 path = C[e: x + 1, j]; last = path[~np.isnan(path)][-1]       # delisted: last close
                 coin = coins[j]
                 if coin not in F:
-                    F[coin] = funding(c, coin, START, END + timedelta(days=9))
-                h0, h1 = ms(m + timedelta(days=1)) // 3600_000, ms(m + timedelta(days=8)) // 3600_000
-                fund = sum(F[coin].get(h, 0.0) for h in range(h0, h1))
+                    F[coin] = funding(c, coin, START, END + timedelta(days=10))
+                fund = sum(F[coin].get(h, 0.0) for h in hold_hours(m))
                 r.append(sign * (last / C[e, j] - 1) - sign * fund)          # longs pay positive funding
             return np.mean(r)
         w = {**{coins[j]: 1 / q for j in longs}, **{coins[j]: -1 / q for j in shorts}}

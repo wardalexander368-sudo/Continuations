@@ -6,7 +6,7 @@ Checks, each green / yellow / red:
 * **Recorder hours:** every UTC hour since the recorder started, up to two hours ago, has an asset in its
   day's release (`raw-gha-YYYYMMDD`); missing hours are red.
 * **Paper-test inputs:** the newest row or file of each forward test's data is recent enough.
-* **Agent:** open orphans and live halts are red; twins whose last closes drift from paper are yellow.
+* **Agent:** no agent run in 20 minutes, open orphans and live halts are red; twins whose last closes drift from paper are yellow.
 
 Writes ``autotrade/health.json``; the agent's REPORT.md shows it at the top. Exit code 1 while anything is
 red, so the Actions run fails and GitHub notifies the repository owner.
@@ -41,6 +41,7 @@ INPUTS = {
     "HL OI/funding snapshots": ("handoff/data/edge-hunt/hl-ctx", 9 * 3600, "jsonl_t_dir"),
 }
 DRIFT_POINTS, DRIFT_N = 0.03, 10
+AGENT_MAX_GAP = 20 * 60  # the agent runs every 5 minutes inside a long Action job, which "in progress" can't vouch for
 
 
 def _get(http, url, **params):
@@ -139,9 +140,13 @@ def check_inputs(repo: Path, now: float) -> list[dict]:
     return out
 
 
-def check_agent(root: Path) -> list[dict]:
+def check_agent(root: Path, now: float | None = None) -> list[dict]:
     out = []
     state = json.loads((root / "state.json").read_text()) if (root / "state.json").exists() else {}
+    last = (state.get("last_run") or {}).get("at")
+    if now is not None and last is not None and now - last > AGENT_MAX_GAP:
+        out.append({"check": "Agent: last run", "level": "red",
+                    "detail": f"the agent last ran {(now - last) / 60:.0f} min ago (expected every 5 min; its Action job may be stuck)"})
     live = state.get("live", {})
     if live.get("orphans"):
         out.append({"check": "Agent: orphans", "level": "red",
@@ -181,7 +186,7 @@ def run(root: Path, repo: Path, now: float | None = None, http=None) -> dict:
     if token:
         headers["Authorization"] = f"Bearer {token}"
     http = http or httpx.Client(timeout=30, headers=headers, follow_redirects=True)
-    items = check_workflows(http, now) + check_recorder(http, now) + check_inputs(repo, now) + check_agent(root)
+    items = check_workflows(http, now) + check_recorder(http, now) + check_inputs(repo, now) + check_agent(root, now)
     levels = [i["level"] for i in items]
     status = "red" if "red" in levels else "yellow" if "yellow" in levels else "green"
     out = {"checked_at": now, "status": status, "items": items}

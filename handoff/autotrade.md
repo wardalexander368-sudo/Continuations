@@ -182,6 +182,8 @@ on Hyperliquid at a USD notional, with the same paper-book-unchanged design, kil
 * `autotrade/HALT_LIVE` (`python -m tartar.autotrade halt-live "reason"`): live entries stop, paper
   continues, live exits still sell. `resume-live` (or `resume-live STRATEGY`) clears live halts.
 * The Actions variable `TARTAR_LIVE_KILL` (any value): same as `HALT_LIVE`, without a commit.
+  The loop job reads it (and the secrets) only when it starts, so it can take up to ~6 hours to
+  bite; a committed `HALT_LIVE` is picked up by the next 5-minute iteration (each one pulls main).
 * Removing the `TARTAR_LIVE_APPROVED` secret: no live broker at all. Open twins then become
   **orphans** at their exit (`state.json` `live.orphans`, journal `live_orphan`): their tokens are
   still in the wallet and must be sold by hand. Prefer `HALT_LIVE`, which still sells.
