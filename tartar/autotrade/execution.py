@@ -345,9 +345,16 @@ def simulated(chain: Chain, route: str, leg: str, mint: str, raw: bytes, amount,
 
 
 def send_signed(chain: Chain, keypair, route: str, leg: str, mint: str, raw: bytes, wallet: str, out: int | None,
-                last_valid: int | None, timeout: float = 90.0) -> Fill:
-    """Sign ``raw`` (already through ``check_tx``) with our key, send it, and read the fill from the chain."""
+                last_valid: int | None, timeout: float = 90.0, guard=None) -> Fill:
+    """Sign ``raw`` (already through ``check_tx``) with our key, send it, and read the fill from the chain.
+    ``guard`` (the shared live gate, ``gate.require_live``) runs first; if it raises, nothing is signed."""
     from solders.transaction import VersionedTransaction
+
+    try:
+        if guard:
+            guard()
+    except Exception as exc:  # noqa: BLE001
+        return Fill(route, leg, mint, False, quote_out=out, error=f"live gate: {exc}"[:300])
 
     signed = VersionedTransaction(VersionedTransaction.from_bytes(raw).message, [keypair])
     t0 = time.time()
@@ -373,6 +380,7 @@ class JupiterExecutor:
         self.chain = chain or Chain()
         self.priority_sol = priority_sol
         self.simulate = simulate
+        self.guard = None  # set by the broker to the shared live gate, checked right before each send
         self.keypair = None
         if not simulate:
             from solders.keypair import Keypair
@@ -403,7 +411,7 @@ class JupiterExecutor:
         out = int(q["outAmount"])
         if self.simulate:
             return simulated(self.chain, self.name, leg, mint, raw, amount, out)
-        return send_signed(self.chain, self.keypair, self.name, leg, mint, raw, self.wallet, out, last_valid)
+        return send_signed(self.chain, self.keypair, self.name, leg, mint, raw, self.wallet, out, last_valid, guard=self.guard)
 
     def buy(self, mint: str, sol: float) -> Fill:
         return self._swap("buy", mint, int(sol * 1e9))
@@ -457,6 +465,7 @@ class LightningExecutor:
         import httpx
 
         self.simulate = simulate
+        self.guard = None  # set by the broker to the shared live gate, checked right before each send
         if simulate:
             wallet, api_key = wallet or STAND_IN, None
         else:
@@ -493,6 +502,11 @@ class LightningExecutor:
             except Exception as exc:  # noqa: BLE001
                 return Fill(self.name, leg, mint, False, dry=True, quote_out=quote_out, error=f"{type(exc).__name__}: {exc}"[:300])
             return simulated(self.chain, self.name, leg, mint, r.content, raw_amount, quote_out)
+        try:
+            if self.guard:
+                self.guard()
+        except Exception as exc:  # noqa: BLE001
+            return Fill(self.name, leg, mint, False, quote_out=quote_out, error=f"live gate: {exc}"[:300])
         t0 = time.time()
         try:
             r = self.http.post(LIGHTNING, params={"api-key": self.api_key}, data=payload)

@@ -24,7 +24,7 @@ from pathlib import Path
 
 from .core import CostModel, Intent, Position, Trade
 from .execution import DryExecutor, make_executor, select_route
-from .gate import LiveNotAllowed, approval_reason, kill_reason  # LiveNotAllowed is re-exported for the runner
+from .gate import LiveNotAllowed, approval_reason, kill_reason, require_live  # LiveNotAllowed is re-exported for the runner
 from .safety import Pending, buy_order_id
 from .perps import PERP_DEFAULTS, is_perp, make_perp_executor, perp_keys, select_perp_route
 from .usd_spot import is_usd_spot, make_usd_spot_executor
@@ -110,6 +110,9 @@ class LiveBroker(PaperBroker):
         self.executor = executor or (make_executor(route, self.cfg, env) if route else None)
         self.ledger, self.root, self.env, self.entries = ledger, Path(root) if root else None, env, entries
         self.pending = Pending(self.root)
+        if route in ("jupiter", "lightning") and hasattr(self.executor, "guard"):  # re-checked right before every send
+            keys = ("TARTAR_WALLET_KEY",) if route == "jupiter" else ("PUMPPORTAL_API_KEY",)
+            self.executor.guard = lambda: require_live(config, env, keys=keys, root=self.root)
         if isinstance(self.executor, DryExecutor) and self.root:
             seed: dict[str, int] = {}
             for p in (ledger.positions if ledger else []):

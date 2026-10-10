@@ -283,3 +283,37 @@ def test_unknown_buy_is_kept_as_an_orphan_and_halts_the_strategy(tmp_path, monke
     assert "unknown" in live["strategies"]["s"]["halted"]
     assert ex.buys == ["M1"]  # the second entry was not tried blind
     assert all(p.mode == "paper" for p in Ledger(root).positions)
+
+
+def test_the_shared_live_gate_is_checked_right_before_signing():
+    from tartar.autotrade.gate import LiveNotAllowed
+
+    me = Keypair()
+    chain = FakeChain(statuses=[CONFIRMED], tx=chain_tx(str(me.pubkey()), -0.01, 10))
+    ex = jupiter(me, chain)
+
+    def closed():
+        raise LiveNotAllowed("HALT_LIVE present")
+
+    ex.guard = closed
+    f = ex.buy(MINT, 0.01)
+    assert not f.ok and not f.unknown and "HALT_LIVE" in f.error and not chain.sent()
+    http = FakeHTTP({"signature": "SIG"})
+    lx = lightning(http, FakeChain())
+    lx.guard = closed
+    assert "live gate" in lx.buy(MINT, 0.01).error and not http.posts
+
+
+def test_live_broker_wires_the_gate_into_a_signing_executor(tmp_path, monkeypatch):
+    from tartar.autotrade.broker import LiveBroker
+
+    me = Keypair()
+    ex = jupiter(me, FakeChain())
+    monkeypatch.setattr(broker_mod, "make_executor", lambda route, cfg, env=None: ex)
+    env = {"TARTAR_WALLET_KEY": "k", "TARTAR_LIVE_APPROVED": "2026-10-10"}
+    cfg = {"mode": "live", "live_approved_on": "2026-10-10", "live": {}}
+    LiveBroker(cfg, ledger=Ledger(tmp_path), root=tmp_path, env=env)
+    ex.guard()  # open now
+    (tmp_path / "HALT_LIVE").write_text("stop")
+    with pytest.raises(Exception, match="HALT_LIVE|kill"):
+        ex.guard()
