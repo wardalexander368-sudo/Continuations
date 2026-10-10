@@ -85,10 +85,10 @@ def test_health_flags_an_agent_that_stopped_running_inside_a_live_job(tmp_path):
     from tartar.autotrade import health
 
     now = 1_800_000_000.0
-    (tmp_path / "state.json").write_text(json.dumps({"last_run": {"at": now - 45 * 60}}))
+    (tmp_path / "state.json").write_text(json.dumps({"last_run": {"at": now - 3 * 3600}}))  # hourly runs
     items = {i["check"]: i["level"] for i in health.check_agent(tmp_path, now)}
     assert items.get("Agent: last run") == "red"
-    (tmp_path / "state.json").write_text(json.dumps({"last_run": {"at": now - 6 * 60}}))
+    (tmp_path / "state.json").write_text(json.dumps({"last_run": {"at": now - 65 * 60}}))
     assert "Agent: last run" not in {i["check"] for i in health.check_agent(tmp_path, now)}
 
 

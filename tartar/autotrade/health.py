@@ -25,12 +25,10 @@ API = f"https://api.github.com/repos/{REPO}"
 
 # workflow file -> (longest normal gap between runs in s, what it does)
 WORKFLOWS = {
-    "autotrade.yml": (30 * 60, "the agent, every 5 min"),
-    "recorder.yml": (7 * 3600, "raw recorder, back-to-back ~6 h runs"),
+    "autotrade.yml": (2 * 3600, "the agent, hourly"),
     "paper-tests.yml": (5 * 3600, "JLP check-ins every 4 h, dip cohort daily"),
     "pumpflow-paper.yml": (2 * 3600, "pumpflow snapshots, hourly"),
     "perps-ctx.yml": (5 * 3600, "Hyperliquid OI/funding snapshots, every 4 h"),
-    "pumpflow-live.yml": (26 * 3600, "pump.fun curve volume from the recorder, daily"),
 }
 RECORDER_START = datetime(2026, 10, 9, 21, tzinfo=timezone.utc)  # first full hour of the recorder Action
 RECORDER_MOVED = datetime(2026, 10, 10, 20, tzinfo=timezone.utc)  # first hour recorded in Continuations; earlier releases stayed in TARTAR
@@ -43,7 +41,10 @@ INPUTS = {
     "HL OI/funding snapshots": ("handoff/data/edge-hunt/hl-ctx", 9 * 3600, "jsonl_t_dir"),
 }
 DRIFT_POINTS, DRIFT_N = 0.03, 10
-AGENT_MAX_GAP = 20 * 60  # the agent runs every 5 minutes inside a long Action job, which "in progress" can't vouch for
+AGENT_MAX_GAP = 2 * 3600  # the agent runs once an hour
+# The recorder and pumpflow-live Actions were turned off 2026-10-10 21:05 UTC (AJ, GitHub's Actions terms:
+# handoff/reviews/tos-check-2026-10-10.md), so their workflows and the recorder's hours are no longer checked.
+CHECK_RECORDER = False
 
 
 def _get(http, url, **params):
@@ -148,7 +149,7 @@ def check_agent(root: Path, now: float | None = None) -> list[dict]:
     last = (state.get("last_run") or {}).get("at")
     if now is not None and last is not None and now - last > AGENT_MAX_GAP:
         out.append({"check": "Agent: last run", "level": "red",
-                    "detail": f"the agent last ran {(now - last) / 60:.0f} min ago (expected every 5 min; its Action job may be stuck)"})
+                    "detail": f"the agent last ran {(now - last) / 60:.0f} min ago (expected hourly; its Action job may be stuck)"})
     live = state.get("live", {})
     if live.get("orphans"):
         out.append({"check": "Agent: orphans", "level": "red",
@@ -188,7 +189,7 @@ def run(root: Path, repo: Path, now: float | None = None, http=None) -> dict:
     if token:
         headers["Authorization"] = f"Bearer {token}"
     http = http or httpx.Client(timeout=30, headers=headers, follow_redirects=True)
-    items = check_workflows(http, now) + check_recorder(http, now) + check_inputs(repo, now) + check_agent(root, now)
+    items = check_workflows(http, now) + (check_recorder(http, now) if CHECK_RECORDER else []) + check_inputs(repo, now) + check_agent(root, now)
     levels = [i["level"] for i in items]
     status = "red" if "red" in levels else "yellow" if "yellow" in levels else "green"
     out = {"checked_at": now, "status": status, "items": items}

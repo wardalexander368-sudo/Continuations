@@ -11,6 +11,9 @@
 > pattern GitHub's Actions terms bar ("serverless application", "burden disproportionate") and a plausible
 > cause of the StaticPush7217 suspension. Recommended to AJ: disable `recorder`, move `autotrade` to a plain
 > hourly cron. Don't add new always-on or high-volume Actions.
+> **21:05 UTC, AJ chose both:** `recorder` and `pumpflow-live` are disabled in GitHub (Actions > workflow >
+> Enable to undo) and the running recorder job was cancelled; `autotrade` is one run per hourly job; health no
+> longer checks the recorder. The F1 forward test has no new pump.fun data from 21:05 UTC.
 
 Two Claude sessions on different accounts take turns on this repo. When one
 hits its usage limit, the other continues. Their turns can overlap a little,

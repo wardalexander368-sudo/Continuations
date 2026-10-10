@@ -4,9 +4,8 @@
 # retire), and commits autotrade/ (state, journal, trades, changes, REPORT.md) to main.
 # Kill switch: commit a file autotrade/HALT (its text is the reason); delete it to resume.
 # A run that halts the agent or a strategy fails after committing, so GitHub notifies the owner.
-# Cadence: the user chose a run every 5 minutes (2026-10-09 23:18 UTC) and a self-looping job (10-10 00:24 UTC):
-# GitHub's */5 schedule fired once in 30 min when tried. Each job runs the agent every 5 minutes for ~5.75 h,
-# and the cron starts the next job every 2 h (it waits in the concurrency group behind the running loop).
+# Cadence: one run an hour, one run per job (AJ, 2026-10-10 21:04 UTC). The earlier always-on 5-minute loop in
+# chained ~6 h jobs matched what GitHub's Actions terms bar (handoff/reviews/tos-check-2026-10-10.md).
 # One trader at a time: the concurrency group never cancels the running job; in mode live a lease in
 # state.json also blocks any other holder (tartar/autotrade/safety.py). Each run reconciles the wallet
 # with the book before trading, and a failed run still commits autotrade/ (pending orders, fills).
@@ -14,7 +13,7 @@ name: autotrade
 
 on:
   schedule:
-    - cron: "15 */2 * * *"  # starts the next ~5.75 h loop; the loop itself runs the agent every 5 minutes
+    - cron: "5 * * * *"  # hourly
   workflow_dispatch: {}
 
 permissions:
@@ -27,7 +26,7 @@ concurrency:
 jobs:
   run:
     runs-on: ubuntu-latest
-    timeout-minutes: 360
+    timeout-minutes: 30
     steps:
       - uses: actions/checkout@v4
         with:
@@ -36,7 +35,7 @@ jobs:
         with:
           python-version: "3.12"
       - run: pip install "httpx>=0.25" "numpy>=1.24" "solders>=0.21" "eth-account>=0.10" "msgpack>=1.0"
-      - name: Run the agent every 5 minutes for ~5.75 h
+      - name: Run the agent once
         # Live twins only when config mode is "live" AND TARTAR_LIVE_APPROVED equals config live_approved_on AND a
         # route key is set (handoff/autotrade.md, "Going live"). Unset secrets arrive empty, which keeps it off.
         env:
@@ -45,39 +44,27 @@ jobs:
           PUMPPORTAL_API_KEY: ${{ secrets.PUMPPORTAL_API_KEY }}
           JUPITER_API_KEY: ${{ secrets.JUPITER_API_KEY }}
           TARTAR_LIVE_KILL: ${{ vars.TARTAR_LIVE_KILL }}
-          LOOP_SECONDS: "19800"
         run: |
           set -o pipefail
           git config user.name "tartar-autotrade"
           git config user.email "actions@users.noreply.github.com"
-          end=$(( $(date +%s) + LOOP_SECONDS ))
-          while [ "$(date +%s)" -lt "$end" ]; do
-            git pull -q --rebase origin main || true   # pick up HALT, config and code changes before each run
-            rc=0
-            python3 -m tartar.autotrade run > run.json || rc=$?
-            cat run.json
-            # commit even after a failed run: pending orders, fills and the simulated wallet must survive it
-            git add -f autotrade
-            if ! git diff --cached --quiet; then
-              msg=$(python3 -c "import json;s=json.load(open('run.json'));print(s['skipped'] if s.get('skipped') else f\"opened {s.get('opened',0)}, closed {s.get('closed',0)}, rejected {s.get('rejected',0)}, errors {len(s['errors'])}, changes {len(s['changes'])}\" + (f\", HALTED: {s['halted']}\" if s['halted'] else ''))" 2>/dev/null || echo "run failed (exit $rc)")
-              git commit -q -m "Autotrade ($(python3 -c "import json;print(json.load(open('autotrade/config.json')).get('mode','paper'))")): $msg"
-              pushed=0
-              for i in 1 2 3 4; do
-                if git pull -q --rebase origin main && git push -q origin HEAD:main; then pushed=1; break; fi
-                sleep $((2 ** i))
-              done
-              [ "$pushed" = 1 ] || { echo "push failed"; exit 1; }
-            fi
-            [ "$rc" = 0 ] || { echo "agent run failed"; exit 1; }
-            # a new halt fails the job so GitHub emails the repository owner
-            python3 -c "import json,sys;s=json.load(open('run.json'));h=s.get('new_halts');print('NEW HALT:',h) if h else None;sys.exit(1 if h else 0)" || exit 1
-            sleep $(( 300 - $(date +%s) % 300 + 15 ))   # next run at :x0:15 / :x5:15
-          done
-          # hand the live lease over so the queued job can trade at once (safety.py)
-          git pull -q --rebase origin main || true
-          python3 -m tartar.autotrade release-lease
+          rc=0
+          python3 -m tartar.autotrade run > run.json || rc=$?
+          cat run.json
+          # release the live lease at the end of every run, so the next hour's job can trade at once (safety.py)
+          python3 -m tartar.autotrade release-lease || true
+          # commit even after a failed run: pending orders, fills and the simulated wallet must survive it
           git add -f autotrade
           if ! git diff --cached --quiet; then
-            git commit -q -m "Autotrade: release live lease"
-            for i in 1 2 3 4; do git pull -q --rebase origin main && git push -q origin HEAD:main && break; sleep $((2 ** i)); done
+            msg=$(python3 -c "import json;s=json.load(open('run.json'));print(s['skipped'] if s.get('skipped') else f\"opened {s.get('opened',0)}, closed {s.get('closed',0)}, rejected {s.get('rejected',0)}, errors {len(s['errors'])}, changes {len(s['changes'])}\" + (f\", HALTED: {s['halted']}\" if s['halted'] else ''))" 2>/dev/null || echo "run failed (exit $rc)")
+            git commit -q -m "Autotrade ($(python3 -c "import json;print(json.load(open('autotrade/config.json')).get('mode','paper'))")): $msg"
+            pushed=0
+            for i in 1 2 3 4; do
+              if git pull -q --rebase origin main && git push -q origin HEAD:main; then pushed=1; break; fi
+              sleep $((2 ** i))
+            done
+            [ "$pushed" = 1 ] || { echo "push failed"; exit 1; }
           fi
+          [ "$rc" = 0 ] || { echo "agent run failed"; exit 1; }
+          # a new halt fails the job so GitHub emails the repository owner
+          python3 -c "import json,sys;s=json.load(open('run.json'));h=s.get('new_halts');print('NEW HALT:',h) if h else None;sys.exit(1 if h else 0)"

@@ -205,11 +205,10 @@ def test_run_lock_is_exclusive(tmp_path):
 def test_workflow_never_runs_two_traders_and_commits_failed_runs():
     wf = (Path(__file__).resolve().parents[1] / ".github/workflows/autotrade.yml").read_text()
     assert "group: autotrade-main" in wf and "cancel-in-progress: false" in wf
-    loop = wf.split("while [")[1]
-    assert loop.index("git add -f autotrade") < loop.index('[ "$rc" = 0 ] ||')  # commit before failing
-    assert "release-lease" in wf
-    secs = int(wf.split('LOOP_SECONDS: "')[1].split('"')[0])
-    assert secs + 600 < int(wf.split("timeout-minutes: ")[1].split()[0]) * 60
+    run = wf.split("python3 -m tartar.autotrade run")[1]
+    assert run.index("git add -f autotrade") < run.index('[ "$rc" = 0 ] ||')  # commit before failing
+    assert run.index("release-lease") < run.index("git add -f autotrade")  # the released lease is committed
+    assert "while [" not in wf  # one run per job (GitHub's Actions terms: no always-on loop)
 
 
 def test_a_reconcile_that_cannot_read_the_wallet_stops_live_entries_not_paper(tmp_path, dry, monkeypatch):
