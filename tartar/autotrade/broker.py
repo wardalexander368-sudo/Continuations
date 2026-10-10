@@ -220,6 +220,11 @@ class LiveBroker(PaperBroker):
             row["live"] = {"failed": f.error}
             self.ledger.journal({"event": "live_error", "strategy": intent.strategy, "position": pos.id, "leg": "buy",
                                  "error": f.error, "at": self.now})
+            if f.unknown:  # it may have filled: keep the signature for a hand check and stop entering blind
+                self.live_state()["orphans"].append({"position": pos.id, "strategy": intent.strategy, "mint": mint, "route": self.route,
+                                                     "leg": "buy", "sol_in": size, "signature": f.signature, "unknown": True,
+                                                     "error": f.error, "at": self.now})
+                self.halt(intent.strategy, f"live buy outcome unknown ({f.signature}); check it, then resume-live")
         self.log(rec)
         return pos, row
 
@@ -246,7 +251,8 @@ class LiveBroker(PaperBroker):
             return trade, row
         f = self.executor.sell(twin["mint"], twin["token_raw"])
         if not f.ok:
-            self.live_state()["orphans"].append({"position": pos.id, "strategy": pos.strategy, **twin, "error": f.error, "at": self.now})
+            self.live_state()["orphans"].append({"position": pos.id, "strategy": pos.strategy, **twin, "error": f.error, "at": self.now,
+                                                 **({"sell_signature": f.signature, "unknown": True} if f.unknown else {})})
             self.ledger.journal({"event": "live_error", "strategy": pos.strategy, "position": pos.id, "leg": "sell",
                                  "error": f.error, "at": self.now})
             self.log({"event": "sell_failed", "strategy": pos.strategy, "position": pos.id, "fill": f.to_dict()})

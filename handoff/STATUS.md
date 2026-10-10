@@ -32,6 +32,13 @@ next. Topic documents hold the detail:
 
 ## Active
 
+* **Restart-safety thread** (project thread session, since 2026-10-10 01:35 UTC, branch
+  `claude/project-thread-kytb6q`). **No keys, no real orders.** Make live trading safe across job
+  restarts and overlaps: one trader at a time (concurrency group + lock/lease), orders recorded as
+  pending before they're sent so a retry can't double-buy, state (positions, pending orders, daily
+  loss counter) surviving a job that dies mid-trade, and a wallet-vs-fill-log reconcile at startup
+  before any trade. Tests kill a dry run mid-order.
+
 * **Hyperliquid order sender** (edge hunt E thread session, since 2026-10-10 01:25 UTC, branch
   `claude/project-thread-9op3pf`). Live sender for perp twins and the hedged-JLP basket's shorts,
   behind the live gate (mode `live` + `live_approved_on` = `TARTAR_LIVE_APPROVED` +
@@ -39,13 +46,6 @@ next. Topic documents hold the detail:
   throwaway key generated in CI. No mainnet keys, no mode change, no mainnet orders. The gate moves
   into `tartar/autotrade/gate.py` for the Solana spot sender to share. Touches `perps.py`, `broker.py`,
   a new `hl_exchange.py`, a CI workflow.
-
-* **Real-order sender thread** (project thread session, since 2026-10-10 01:25 UTC, branch
-  `claude/project-thread-kytb6q`). **No keys, no real transactions, mode stays dry_live.** Harden
-  the Solana spot senders in `tartar/autotrade/execution.py` (Jupiter, Lightning) behind the existing
-  live gate: pre-sign checks, definitive confirmation (blockhash expiry), unknown outcomes recorded
-  and halted, Lightning sells sized to the twin, simulation of both routes. Tests: unit, RPC
-  simulation with signature checks off, dry-run end to end.
 
 * **Edge hunt E thread** (project thread session, since 2026-10-09 21:40 UTC, branch
   `claude/project-thread-9op3pf`). **Paper only, no real SOL, no keys.** Task (the user's 21:30
@@ -90,10 +90,6 @@ deep pools match the model, a thin one was 2.4x it). The `launch_selector` slot 
   power on launches created 10-10 01:00 .. 10-19 01:00 UTC from the recorder Action's hours; no
   session needed to collect; this thread scores it once after 10-19 02:00 UTC
   (`who_trades_forward.py`; `--count-only` is a progress check). Paper only.
-  **Since 01:25 UTC:** edge hunt round I (pump.fun / PumpSwap, data since round F): I1 revival
-  entries (a token quiet for minutes, 30-110 min after launch, that gets a burst of new buyers),
-  I2 PumpSwap pools after their first hour with the new PumpSwap models. Dev / pre-register / test
-  as in F. Paper only. Not touching the order senders.
 
 * **Dip/jevtrader session** (session_01Htqh7pc1Lh1PP6Dkm1rVvz, since 2026-10-09 17:33 UTC, `main`
   only): continues the profitability session. **Owns the dip forward test (queue 11b)**: the GitHub
@@ -393,6 +389,25 @@ deep pools match the model, a thin one was 2.4x it). The `launch_selector` slot 
   branch `claude/profitability-backtest`, on `main`).
 
 ## Log (newest first)
+
+* **2026-10-10 ~02:00 UTC, real-order sender thread: Solana spot senders hardened, still gated.**
+  The Jupiter and Lightning senders already existed (`execution.py`); this made them safe to switch
+  on. Before signing, a transaction must be paid by our wallet and need only our signature. Every send
+  now ends confirmed, failed (on-chain error, or Jupiter's blockhash expired unlanded) or unknown; an
+  unknown buy goes to `live.orphans` with its signature and halts that strategy's live entries instead
+  of being read as "nothing bought". Lightning sells only the twin's tokens (it used to sell 100% of the
+  mint, which would have dumped another twin's holding too). Both routes simulate with no key
+  (`dry-swap MINT [--route lightning]`): Jupiter on BONK simulated both legs (round trip −0.07%);
+  Lightning on a PumpSwap token simulated the buy, and the sell built correctly. 14 tests in
+  `tests/test_execution_send.py`; 215 pass. Dry-run end to end ran clean, but no strategy is promoted
+  yet, so no twin traded. **Not done, by design:** no key added, mode stays `dry_live`, nothing sent.
+  To go live the user adds `TARTAR_WALLET_KEY` + `TARTAR_LIVE_APPROVED`, sets `live_approved_on` and
+  `mode: live` (handoff/autotrade.md "Going live").
+
+* **2026-10-10 ~01:45 UTC, retrain thread: edge hunt round I (pump.fun on new data) closed** (`edge-hunt.md` I).
+  I1 revival entries: unobservable at a useful rate (the recorder drops tokens after 10 idle min;
+  72 signals in 15k dev launches). I2 PumpSwap pools 1-3 h after graduation (547 unseen pools): best
+  +2.8% on 26 → −2.8% on check. Nothing pre-registered; F1's forward test (to 10-19) is the open line.
 
 * **2026-10-10 ~01:15 UTC, edge hunt E thread: pumpflow (E1) does not survive DefiLlama's delay;
   agent copy disabled, registered test left running as expected-fail.** Audit finding answered.

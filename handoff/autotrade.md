@@ -126,6 +126,18 @@ thread's (profitability §3.19), not re-measured. A dry run of the real Jupiter 
 sent: `python -m tartar.autotrade dry-swap MINT --sol 0.01` (on CATE 2026-10-09 23:20 UTC the buy built
 and simulated cleanly; the quoted round trip was −0.40% before network fees).
 
+**Sending (both routes, `execution.py`).** Only a `live` broker with the approval matching builds a
+signing executor. Before signing, `check_tx` refuses any transaction whose fee payer isn't our wallet
+or that needs a second signer. A sent order ends confirmed (fill read from the chain), failed (error
+on chain, or Jupiter's blockhash expired without it landing: nothing moved), or **unknown** (no answer
+in time, or no reply from Lightning). The broker treats unknown as possibly filled: the leg goes to
+`live.orphans` with its signature and the strategy's live entries halt until someone checks the
+signature and runs `resume-live`. Lightning sells are sized to the twin ("100%" only when the twin is
+all the wallet holds). `dry-swap MINT --route lightning` simulates the Lightning order via PumpPortal's
+trade-local endpoint for a stand-in wallet. Checked 2026-10-10 01:50 UTC: Jupiter on BONK built and
+simulated both legs; Lightning on a PumpSwap token built and simulated the buy, and the sell built
+and failed only on the stand-in's missing token account (expected). Tests: `tests/test_execution_send.py`.
+
 ### Limits (config `live`, defaults in `LIVE_DEFAULTS`), on top of the paper caps
 
 | Setting | Default | Effect |
@@ -234,7 +246,7 @@ A failed live sell also records an orphan and halts that strategy's live entries
 
 1. **Cadence: resolved 2026-10-10.** The user chose a run every 5 minutes as a self-looping job
    (GitHub's `*/5` cron fired once in 30 minutes), so dip entries
-   reach the broker within ~10 minutes of their bar, inside `max_signal_age_s` (900 s).
+   reach the broker within ~10-20 minutes of their bar, inside `max_signal_age_s` (1800 s since the 2026-10-10 audit).
 2. **Perps.** Dry perp twins exist (*Perp twins* above); real ones need the user's Hyperliquid API
    wallet (`HYPERLIQUID_AGENT_KEY`, `HYPERLIQUID_ACCOUNT`) and a live executor that isn't written yet.
 3. **Lightning** reads fills from chain for its custodial wallet, so `live.lightning_wallet` must be set
