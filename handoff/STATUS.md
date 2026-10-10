@@ -130,6 +130,32 @@ deep pools match the model, a thin one was 2.4x it). The `launch_selector` slot 
   recorder stopped after hour 18 (hour 19 is partial and only on local disk). **Item (b) done
   (19:10 UTC):** see the log entry. Nothing half-done.
 
+* **2026-10-10 20:20 UTC, "Real-money cost test, fresh key" thread: smallest account for the recommended
+  perps book (go-live input for AJ; paper only). Answer: $1,000 is the floor where every order clears
+  Hyperliquid's $10 minimum, with no margin for rounding; $2,000 is the practical minimum.**
+  `handoff/experiments/perps_min_account.py`, output `handoff/data/perps-book/min-account-2026-10-10.txt`.
+  Book: 1/4 each to xs_momentum, vol_momentum, the search winner and HLP, scaled to 2%/week vol
+  (x0.5–1.5; the scale sat near its 0.5 floor most weeks, median 0.57). Costs 6 bps per side
+  (measured book walk incl. 4.5 bps taker fee) plus funding; the winner's return cut by 0.33 pts/wk
+  for selection. Backtest: **+1.09%/week** (last 26 weeks +1.61), **+0.65% without the best 5 weeks**,
+  5th-percentile week −4.1%, worst week −18.2%, max drawdown 21.9%. Coins per side over the last 52
+  weeks: xs and vol momentum median 7 (6–12), the winner median 3 (3–6).
+  | account | smallest position (at scale 0.5 / median) | opens+closes under $10, last 52 wks | weekly $ (backtest) | weekly $ (without best 5 wks) | 1-in-20 bad week | worst week |
+  |---|---|---|---|---|---|---|
+  | $200 | $2 / $4 | 95% | +$2.18 | +$1.30 | −$8 | −$36 |
+  | $500 | $5 / $10 | 51% | +$5.46 | +$3.26 | −$20 | −$91 |
+  | $1,000 | $10 / $20 | 0% (smallest $10.4) | +$10.92 | +$6.51 | −$41 | −$182 |
+  | $2,000 | $21 / $41 | 0% | +$21.84 | +$13.02 | −$81 | −$364 |
+  | $5,000 | $52 / $102 | 0% | +$54.60 | +$32.55 | −$203 | −$910 |
+  - Below $1,000 the book can't be built as designed; dropping sleeves to fit would concentrate it
+    further (the winner already holds ~3 coins a side).
+  - At $1,000 the smallest legs sit right at $10: size rounding (szDecimals) or a position that shrank
+    can fall under the minimum; closes should go as reduce-only orders (check whether Hyperliquid
+    exempts those from the $10 minimum before relying on it).
+  - Margin: gross exposure is 1.5 x scale x account (0.75–2.2x) on the 75% not in HLP: well inside
+    Hyperliquid's limits. HLP: 25% deposited in the vault (4-day lockup on withdrawals).
+  - These are backtest dollars; the audit's caveats apply (xs_momentum's concentration, the winner's
+    selection). Real money still needs AJ's go and a wallet key.
 * **2026-10-10 20:00 UTC, "Real-money cost test, fresh key" thread: how to build the live perps book
   (paper backtest). Recommendation for the autotrade owner: equal weights per strategy, then scale
   the whole book to ~2%/week realised vol (trailing 13 weeks, scale 0.5–1.5x); no per-coin caps.**
