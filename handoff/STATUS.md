@@ -124,13 +124,28 @@ deep pools match the model, a thin one was 2.4x it). The `launch_selector` slot 
   recorder stopped after hour 18 (hour 19 is partial and only on local disk). **Item (b) done
   (19:10 UTC):** see the log entry. Nothing half-done.
 
-* **REAL MONEY — dip-rule real fills IN PROGRESS (from 02:30 UTC 2026-10-10). The wallet is held by
-  the "Real-money cost test, fresh key" thread session (session_01C3taLfUKfeFUC2zXBZEhaR).** AJ's go
-  (02:18 UTC): "a couple real fills if an opportunity looks good". Limits: at most 2 round trips of
-  0.01 SOL, only when the registered dip rule signals AND the paper agent would take the same entry
-  (so each real fill has a paper twin). `handoff/experiments/dip_real_fills.py watch --real` buys
-  within the signal's next bar and sells after bar t+48 (4 h); `report` compares with the agent's
-  paper trade. Nobody else sends PumpPortal trades.
+* **REAL MONEY — dip-rule real fills DONE (02:23–06:31 UTC 2026-10-10). The wallet is held by the
+  "Real-money cost test, fresh key" thread session (session_01C3taLfUKfeFUC2zXBZEhaR); no further
+  trades planned.** AJ's go (02:18 UTC): "a couple real fills if an opportunity looks good". 2 round
+  trips of 0.01 SOL, each on a registered dip signal the paper agent also took
+  (`handoff/experiments/dip_real_fills.py`; fills, state and report in `handoff/data/real-fills/*2026-10-10*`).
+  | | CRAWL (−8.6% dip) | swordcat (−11.5% dip) |
+  |---|---|---|
+  | rule's gross in SOL (bar t+1 open → bar t+48 close) | −9.51% | +4.80% |
+  | real net in SOL (rent excluded) | **−14.53%** | **−1.26%** |
+  | real minus rule gross | −5.0 pts | −6.1 pts |
+  | entry price vs bar t+1 open (pool side) | +2.20% | +1.09% |
+  | exit SOL vs bar t+48 close (after Lightning 1%) | −1.12% | −1.90% |
+  | paper agent's twin (USD) | gross −9.45%, net −11.31% at measured fees | closes on its next run |
+  - **Real fills trail the rule's gross by 5–6 points per round trip; the paper agent's costs
+    (0.5–0.75%/side + impact) cover about 2 of them.** The rest: Lightning's 1%/side (~2 pts) and
+    entry timing (bought 228–296 s into bar t+1, because GeckoTerminal publishes a bar ~1 min late
+    and the scan walks the pools; the price had already rebounded 1–2%). The dip rule's paper edge
+    must clear ~5–6% per trade to survive real execution through Lightning at this latency.
+  - SharkTank (−15.9% dip) was rejected twice by PumpSwap's slippage check at 5% (ExceededSlippage
+    in simulation; nothing spent). Fast-moving dips may not fill at 5% slippage.
+  - Wallet after: 0.0466 SOL liquid; 0.0045 SOL parked as token-account rent (CATE, CRAWL, swordcat),
+    reclaimable only with the wallet's private key. This run cost 0.0016 SOL in trading losses.
 * (was) **REAL MONEY — cost test DONE (19:46–19:49 UTC 2026-10-09). The wallet is held by the "Real-money
   cost test, fresh key" thread session (session_01C3taLfUKfeFUC2zXBZEhaR); no further trades are
   planned.** The key now arrives as the `PUMPPORTAL_API_KEY` env var and works. With the user's go:
