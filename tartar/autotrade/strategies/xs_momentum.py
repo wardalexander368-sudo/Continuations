@@ -22,6 +22,7 @@ day), ``score_weeks`` and ``family_size`` (CI widened by Bonferroni). The candid
 
 from __future__ import annotations
 
+import math
 import time
 import warnings
 from datetime import date, datetime, timedelta, timezone
@@ -73,6 +74,16 @@ class XSMomentum:
         self.end = date.fromisoformat(cfg["end"]) if cfg.get("end") else END
         self.score_weeks = int(cfg.get("score_weeks", 52))
         self.family_size = int(cfg.get("family_size", 1))
+        self.costs = cfg.get("costs") or {}  # {"model": "hl_sqrt", ...}: size- and liquidity-dependent; else flat COST
+
+    def side_cost(self, notional: float, adv: float) -> float:
+        """Cost per side as a fraction of notional. Registered: a flat 20 bps. ``hl_sqrt`` (measured on Hyperliquid,
+        2026-10-10, handoff/hl-costs.md): taker fee + impact_k * sqrt(notional / 30-day median daily USD volume);
+        k = 2.2% gives ~4 bps for $5k on a $10M/day coin and ~49 bps for $100k on a $2M/day coin."""
+        if self.costs.get("model") != "hl_sqrt":
+            return COST
+        adv = adv if adv == adv and adv > 0 else MIN_VOL
+        return float(self.costs.get("taker", 0.00045)) + float(self.costs.get("impact_k", 0.022)) * math.sqrt(notional / adv)
 
     def _post(self, ctx: Context, body: dict):
         import httpx
@@ -157,6 +168,9 @@ class XSMomentum:
                 new_w = {**{coins[j]: 1.0 for j in order[-q:]}, **{coins[j]: -1.0 for j in order[:q]}}
                 ctx.state["last_q"] = q
         week = m.isoformat()
+        with warnings.catch_warnings():
+            warnings.simplefilter("ignore", RuntimeWarning)
+            adv_now = np.nanmedian(V[ix[d] - 29: ix[d] + 1], axis=0)  # liquidity at the trade day, for size-dependent costs
         for pos in ctx.positions:
             path = C[:, col[pos.asset]]
             valid = np.where(~np.isnan(path[: ix[d] + 1]))[0]
@@ -165,7 +179,8 @@ class XSMomentum:
             fund = self.funding(ctx, pos.asset, pos.entry_at, close_ts(d))
             carry = -pos.side * fund * pos.notional_usd  # longs pay positive funding, shorts receive it
             intents.append(Intent("close", self.name, close_ts(d), px, "weekly rebalance" + (" (kept)" if keep else ""),
-                                  position_id=pos.id, cost=CostModel(fee=0.0 if keep else COST),
+                                  position_id=pos.id,
+                                  cost=CostModel(fee=0.0 if keep else self.side_cost(pos.notional_usd, float(adv_now[col[pos.asset]]))),
                                   meta={"carry_usd": carry, "funding": fund, "kept": keep}))
         # 2) open this week's legs at Tuesday's close
         q = ctx.state.get("last_q") or 1
@@ -175,7 +190,7 @@ class XSMomentum:
                                   f"{self.lookback}-day {'vol-scaled ' if self.scaled else ''}return rank, "
                                   f"{'top' if side > 0 else 'bottom'} 1/{self.quant} (signal {week})",
                                   asset=coin, side=int(side), notional_usd=self.leg_usd / q,
-                                  cost=CostModel(fee=0.0 if kept else COST),
+                                  cost=CostModel(fee=0.0 if kept else self.side_cost(self.leg_usd / q, float(adv_now[col[coin]]))),
                                   meta={"week": week, "leg_usd": self.leg_usd, "label": coin, "venue": "hyperliquid",
                                         "shadow": bool(self.cfg.get("shadow"))}))
         ctx.state["last_tuesday"] = d.isoformat()

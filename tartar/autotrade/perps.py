@@ -136,6 +136,11 @@ class HyperliquidInfo:
             self.sleep(wait)
         r.raise_for_status()
 
+    def asset_index(self, coin: str) -> int:
+        if getattr(self, "_assets", None) is None:
+            self._assets = {u["name"]: i for i, u in enumerate(self.post({"type": "meta"})["universe"])}
+        return self._assets[coin]
+
     def sz_decimals(self, coin: str) -> int:
         if self._decimals is None:
             self._decimals = {u["name"]: int(u["szDecimals"]) for u in self.post({"type": "meta"})["universe"]}
@@ -162,9 +167,10 @@ class DryPerpExecutor:
 
     name = "dry"
 
-    def __init__(self, info: HyperliquidInfo | None = None, taker_fee: float = PERP_DEFAULTS["taker_fee"], clock=time.time):
+    def __init__(self, info: HyperliquidInfo | None = None, taker_fee: float = PERP_DEFAULTS["taker_fee"], clock=time.time,
+                 slippage: float = PERP_DEFAULTS["slippage"]):
         self.info = info or HyperliquidInfo()
-        self.taker_fee, self.clock = taker_fee, clock
+        self.taker_fee, self.clock, self.slippage = taker_fee, clock, slippage
         self.path = None
 
     # the simulated account (written through on every fill, like the venue would be)
@@ -192,6 +198,8 @@ class DryPerpExecutor:
             tmp.replace(self.path)
 
     def _book(self, f: PerpFill, cloid_: str | None) -> PerpFill:
+        if cloid_ and isinstance(f.extra, dict) and "order" in f.extra:
+            f.extra["order"]["c"] = cloid_  # the client order id goes last, as the live sender writes it
         if f.ok and self.path:
             acct = self._load()
             pos = round(acct["positions"].get(f.coin, 0.0) + f.side * f.sz, 10)
@@ -229,9 +237,26 @@ class DryPerpExecutor:
                                 error=f"${notional:.2f} after rounding is under Hyperliquid's ${MIN_ORDER_USD:.0f} minimum")
             return PerpFill("dry", leg, coin, side, True, px=px, sz=got, notional_usd=notional, fee_usd=notional * self.taker_fee,
                             mid=mid, at=self.clock(), dry=True,
-                            extra={"slippage_bps": 1e4 * side * (px / mid - 1), "spread_bps": 1e4 * (float(asks[0]["px"]) / float(bids[0]["px"]) - 1)})
+                            extra={"slippage_bps": 1e4 * side * (px / mid - 1), "spread_bps": 1e4 * (float(asks[0]["px"]) / float(bids[0]["px"]) - 1),
+                                   **self.order_preview(leg, coin, side, got, mid, asks if side > 0 else bids)})
         except Exception as exc:  # noqa: BLE001 - a failed quote is a failed leg, logged by the broker
             return PerpFill("dry", leg, coin, side, False, at=self.clock(), dry=True, error=f"{type(exc).__name__}: {exc}"[:200])
+
+    def order_preview(self, leg: str, coin: str, side: int, sz: float, mid: float, levels: list[dict]) -> dict:
+        """The exact order the live sender (hl_exchange.LivePerpExecutor) would sign for this leg, unsigned and
+        unsent: IOC limit ``slippage`` through the mid, reduce-only on closes, and whether the visible book
+        fills it inside that limit (a live IOC would fill only that part)."""
+        try:
+            from .hl_exchange import float_to_wire, round_px
+
+            d = self.info.sz_decimals(coin)
+            limit = round_px(mid * (1 + side * self.slippage), d)
+            inside = sum(float(lv["sz"]) for lv in levels if (float(lv["px"]) <= limit if side > 0 else float(lv["px"]) >= limit))
+            order = {"a": self.info.asset_index(coin), "b": side > 0, "p": float_to_wire(limit), "s": float_to_wire(round(sz, d)),
+                     "r": leg == "close", "t": {"limit": {"tif": "Ioc"}}}
+            return {"order": order, "limit_px": limit, "ioc_fill_frac": min(1.0, inside / sz) if sz else 0.0}
+        except Exception as exc:  # noqa: BLE001 - the preview never blocks the dry fill
+            return {"order_error": f"{type(exc).__name__}: {exc}"[:200]}
 
     def open(self, coin: str, side: int, usd: float, cloid: str | None = None) -> PerpFill:
         return self._book(self._take("open", coin, side, usd=usd), cloid)
@@ -251,7 +276,8 @@ class DryPerpExecutor:
 
 def make_perp_executor(route: str, cfg: dict, env=None, config: dict | None = None, root=None):
     if route == "dry":
-        return DryPerpExecutor(taker_fee=cfg.get("taker_fee", PERP_DEFAULTS["taker_fee"]))
+        return DryPerpExecutor(taker_fee=cfg.get("taker_fee", PERP_DEFAULTS["taker_fee"]),
+                               slippage=cfg.get("slippage", PERP_DEFAULTS["slippage"]))
     if route == "live":
         from .hl_exchange import make_live_perp_executor
 

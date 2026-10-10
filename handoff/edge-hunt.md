@@ -74,6 +74,16 @@ Unavailable: Binance (HTTP 451) and Bybit (403) are geo-blocked here, and Drift'
      - the primary statistic is annualized excess over Kamino USDC with a 90% moving-block bootstrap CI (10-day blocks);
      - success means a mean above 0, a CI lower bound above 0 and no simulated liquidation;
      - a 120–180-day window would be more decisive.
+**A1 liquidation stress test (2026-10-10, edge hunt E thread).** 5.3 years of hourly SOL/ETH/BTC (Coinbase,
+2021-07..2026-10) replayed through the hedge's margin rules with today's short weights (SOL 69%, ETH 12%, BTC 19%):
+`experiments/edge-hunt/jlp_stress.py`, output `data/edge-hunt/jlp-stress.txt`. **The registered rules (3x, 4-hourly
+check-ins, top up below 1/5) never liquidated, but only by path luck:** their thinnest moment left 6.4 points over
+maintenance (the FTX-week rebound, +29.7% in 5 h on 2022-11-10, came after the shorts had banked margin). From a
+margin sitting at the top-up trigger, a +17.4% basket rise between check-ins liquidates, and 9 separate 5-hour
+episodes since 2021 were larger. **For live use: 2x margin, restored to target at every check-in.** That needs a
++46.8% rise within one gap (none since 2021, worst +29.7%), its thinnest moment was 22 points over maintenance, and it
+costs roughly 0.6 points of the +7.9% APR excess (more capital idle as margin). The running paper test is unchanged.
+
 2. **LST cash-and-carry** (prior 0.25): hold JitoSOL (staked SOL) and short the same amount of SOL perpetual.
    - The edge is **decaying**. Excess over USDC: +40% APR in 2023 Q4, +16% in 2024, +4.7% in 2025, +0.3% in 2026 to date.
    - Time-split test (2025-07 to 2026-10, always-on was chosen on train): +2.34% APR [−0.05, +4.81].
@@ -178,6 +188,26 @@ Trend on the majors and short-term reversal: no edge. Open interest and liquidat
 public API keeps no history (only the current snapshot), and Binance's OI history covers 30 days,
 so nothing to test yet; the `perps-ctx` GitHub Action snapshots every perp's OI, funding, mark and
 volume every 4 hours from 2026-10-09 (`data/edge-hunt/hl-ctx/`), enough for an OI study in a few months.
+
+### D4. Open interest on Hyperliquid perps (2026-10-10, second TARTAR session): closed, nothing passes
+
+Hyperliquid keeps no OI history, so OKX's public daily OI (from 2024-01, 148 of our perps covered;
+`experiments/edge-hunt/oi/fetch_okx_oi.py`) stood in for each coin's positioning. The design was
+pre-registered before any number was computed (`preregistration/oi-study/SPEC.md`). It covers
+16 rules in 5 families:
+* OI change, both signs.
+* Momentum confirmed by OI.
+* Price-OI divergence.
+* OI stretch versus its 30-day mean.
+* OI spikes and flushes on BTC/ETH/SOL.
+
+The settings are D/VMOM's harness, a 1-day lag after the OI row and 20 bps/side, with funding
+charged on validation and test. **No family has both train and validation above zero, so test was
+never read.** The best train rule, price-OI divergence L=7, scored +0.86%/week on train and
+−1.69% on validation. Momentum confirmed by OI went the other way: train −1.30%, validation +1.16%.
+Output: `data/edge-hunt/oi/oi-rules-20bps-lag1-funding.txt`; harness: `experiments/edge-hunt/oi/oi_rules.py`.
+OI adds nothing tradable over the momentum tests already running. The `perps-ctx` snapshots keep
+going for anyone who wants intraday OI later.
 
 ### G. Following Hyperliquid vaults (2026-10-09, trading-skills thread): closed; HLP pre-registered
 
@@ -300,6 +330,21 @@ exists:** once 21 complete recorder days (all 24 hours) are in, compare the curv
 (log of day / mean of the 7 before) with DefiLlama's pump.fun-only surprise on the 14 days that have a
 base. Usable only if signs agree on at least 12 of 14 and the correlation is at least 0.8; then a new
 forward test (entry ~00:30 UTC d+1) gets its own pre-registration. Otherwise E1 is closed.
+
+**E2. Copying Hyperliquid accounts with a strong record: does not hold (2026-10-10).**
+Pre-registered before any performance was read (`preregistration/hl-copy/SPEC.md`): pick 20 accounts on their
+weekly Sharpe from May 1 to Aug 20 (from 1,500 random accounts with $5M-$2B lifetime volume; size, activity and
+followability filters), then copy their perp positions Aug 20-Oct 9 at the same leverage, 2-17 minutes late,
+0.10%/side plus funding. Result: +0.06%/day [−0.08, +0.19], **below** copying 20 random eligible accounts
+(median +0.11%, 90th percentile +0.34%). Same at 0.20%/side or one more candle of delay. A good record doesn't
+carry over; no forward test (`preregistration/hl-copy/RESULT-2026-10-10.md`).
+
+**E3. Spot-perp funding carry on Hyperliquid: does not hold (2026-10-10).**
+Pre-registered (`preregistration/spot-carry/SPEC.md`): hold Hyperliquid spot (8 pairs with ≥ $1M volume: PURR, HYPE,
+UBTC, UETH, USOL, UPUMP, UENA, UZEC), short the same units of the perp at 2x, 12 on/off funding rules chosen on
+Mar 16-Jul 1, scored Jul 1-Oct 8 against Kamino USDC with measured costs. In A every rule lost to USDC (always-on
+−1.9% APR). The chosen rule made +0.8% APR [−2.2, +3.4] in B, with 2 PURR liquidations (60% intraday spikes). The
+funding floor pays about what USDC lending does. Result: `preregistration/spot-carry/RESULT-2026-10-10.md`.
 
 **E1b. The same rule on 8 other buyback / revenue-share tokens: does not hold (2026-10-09).**
 Pre-registered before any of their data was read (`preregistration/revflow/SPEC.md`): HYPE, JUP,

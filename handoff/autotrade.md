@@ -21,7 +21,7 @@ promotes it** (status `promoted` in `autotrade/REPORT.md`). None is promoted as 
 | `launch_selector` | Solana token buys/sells in SOL | Same as `dip` (disabled until its thread registers a rule). |
 | `xs_momentum`, `vol_momentum`, `pumpflow` | Hyperliquid perps (USD) | Secrets `HYPERLIQUID_AGENT_KEY` (an API/agent wallet the account approved: it can trade, not withdraw) and `HYPERLIQUID_ACCOUNT` (the account address), USDC deposited in that account: `live.perps.budget_usd` **$60** of notional at current limits, plus margin headroom. |
 | `jlp_hedged` (basket) | JLP bought with USDC on Jupiter + SOL/ETH/BTC shorts on Hyperliquid | **Both** sets above. Also **USDC in the Solana wallet** for the JLP leg (`twin_basket_usd` **$200**) and a little SOL for fees: roughly **$330** of capital in all at the $200 size (JLP $200, shorts' margin at 3x, a buffer). The basket trades only when both venues work; a failed or short hedge unwinds it. |
-| `hlp_hold` | none: the HLP vault deposit has no live sender | Stays paper. |
+| `hlp_hold` | USDC deposited in Hyperliquid's HLP vault (`vaultTransfer`), held across the paper intervals, withdrawn at the end | The Hyperliquid secrets above (same account, `HYPERLIQUID_AGENT_KEY` + `HYPERLIQUID_ACCOUNT`) and **$200 of USDC in that account's perp balance** (not spot) on top of the perps' margin. No main key: the API wallet signs vault deposits and withdrawals (see *Vault twins*). Deposits lock for 4 days. |
 
 **Always available:** `autotrade/HALT_LIVE` (commit it, or run `python -m tartar.autotrade halt-live "reason"`)
 stops live entries within 5 minutes and exits still run. The `TARTAR_LIVE_KILL` variable applies only
@@ -66,6 +66,7 @@ the repository owner.
 | `xs_momentum` | `handoff/preregistration/xs-momentum/SPEC.md`, Hyperliquid perps, booked each Wednesday for Tuesday's close; turnover costs + funding | at 52 weeks: mean weekly > 0 and block-bootstrap CI > 0 |
 | `pumpflow` | `handoff/preregistration/pumpflow/SPEC.md`: reads the pumpflow-paper Action's daily snapshots, long/short PUMP perp at each snapshot's mid, 0.10%/side on turnover + funding; dry perp twins | after 2027-04-08: ≥ 120 trades, block-bootstrap CI > 0, timing part > 0. **Disabled 2026-10-10:** DefiLlama's 25+ h publish delay leaves no backtest edge (edge-hunt.md E1 "publish delay") |
 | `jlp_hedged` | `handoff/experiments/jlp_paper.py` (hedged JLP): reads the paper-tests Action's 4-hourly check-ins; long $200 JLP plus SOL/ETH/BTC perp shorts at JLP's deltas, shorts rebalanced when any is off by > 5% of the JLP leg (taker fee on the changed size) + funding; dry twins of all four legs | pending; `jlp_paper.py evaluate --final` after 2027-01-08 is the verdict |
+| | **Dip execution at real-trading costs (from 2026-10-10 07:00 UTC, config `execution`):** entry at bar t+1's close instead of its open (real buys landed 4-5 min into bar t+1, after a 1-2% rebound), plus Lightning's 1%/side; two real round trips trailed the rule's gross by 5-6 points (`handoff/data/real-fills/dip-report-2026-10-10.txt`). The rule is unchanged; trades keep `registered_entry_price`, and the verdict shows both figures. Applies to the variants too; logged as `cost_update` in `changes.jsonl` | |
 | `vol_momentum` | `handoff/preregistration/vol-momentum/SPEC.md`: the `xs_momentum` class with `scaled: true` (14-day return / std of the last 14 daily returns), same days, costs and funding | at 52 weeks, as registered; `vmom_forward.py --final` stays the authority |
 | `hlp_hold` | `handoff/preregistration/hlp-hold/SPEC.md`: $200 in HLP on paper, one closed trade per allTime history point (~14 days), no cost; `kind: vault_hold` | after 2027-04-10: annualised return minus 5% > 0 with block-bootstrap CI > 0 (matches `hlp_forward.py` exactly on 2025-07..2026-09) |
 | `cand-xsm-…` | members of the perps-momentum family found by the agent's own search (below), from `autotrade/candidates/` | their file's `success` rule, at 26 weeks; shadow (outside the risk caps, no twins) |
@@ -106,6 +107,84 @@ Wednesdays 03:30 UTC, `python -m tartar.autotrade search` (`tartar/autotrade/sea
 `autotrade/search/REPORT.md` shows the latest run (top rules, why each failed); every tested rule and
 its numbers are appended to `autotrade/search/tested.jsonl`. Promoted candidates are still shadow (no
 twins); making one eligible for live twins is a deliberate config change.
+
+## Perps risk controls (`perp_risk.py`, config `perp_risk`, from 2026-10-10)
+
+Applied to the paper book every run; live twins exit with their paper legs, so they are the live defaults:
+
+* **Weekly loss limit, 12%:** a perps strategy whose current-week P&L (closed legs of the week plus open
+  legs at marks) is below -12% of its side notional is flattened at its marks (20 bps per side, funding
+  carried) and stays flat until its next rebalance; logged as a `pause` change.
+* **Account drawdown stop, 35%:** when the registered perps strategies' combined P&L is more than 35% of
+  their combined side notional below its peak, the agent writes `HALT` and logs a halt (the Action fails,
+  so the owner is emailed). Delete `HALT` to resume.
+* **Sizing:** legs stay equal weight; inverse-volatility sizing cost return on every rule.
+
+The paper books of `xs_momentum` and `vol_momentum` now carry these controls; their official scorers
+(`xs_momentum_forward.py`, `vmom_forward.py`) score the registered rule without them and stay the authority.
+
+Scored on 146 weeks (late 2023 .. 2026-09, net of 20 bps/side and funding, $1 per side; stops act at
+daily closes, so a gap within a day can still overshoot), `handoff/experiments/perps_risk_controls.py`:
+
+## candidate L21 q10 vol lag2
+
+| Controls | Mean/wk | Worst week | Worst 4 wk | Max drawdown | Sharpe (ann.) |
+|---|---|---|---|---|---|
+| equal, no stop | +2.83% | -36.4% | -31.8% | 42% | 1.84 |
+| inv-vol cap 25% | +2.60% | -27.4% | -26.6% | 38% | 1.88 |
+| inv-vol cap 40% | +2.62% | -34.7% | -31.4% | 38% | 1.79 |
+| equal, weekly stop 8% | +2.40% | -24.5% | -38.6% | 39% | 1.60 |
+| inv-vol cap 40%, weekly stop 8% | +2.39% | -19.7% | -35.0% | 31% | 1.66 |
+| equal, weekly stop 12% | +2.92% | -24.5% | -29.1% | 31% | 1.98 |
+| inv-vol cap 40%, weekly stop 12% | +2.55% | -19.7% | -35.0% | 31% | 1.77 |
+| equal, weekly stop 20% | +2.78% | -28.0% | -38.7% | 47% | 1.81 |
+| inv-vol cap 40%, weekly stop 20% | +2.65% | -27.3% | -38.3% | 43% | 1.82 |
+
+## vol_momentum
+
+| Controls | Mean/wk | Worst week | Worst 4 wk | Max drawdown | Sharpe (ann.) |
+|---|---|---|---|---|---|
+| equal, no stop | +1.42% | -24.1% | -36.1% | 64% | 1.30 |
+| inv-vol cap 25% | +1.14% | -21.7% | -35.2% | 62% | 1.12 |
+| inv-vol cap 40% | +1.10% | -21.5% | -34.7% | 62% | 1.09 |
+| equal, weekly stop 8% | +1.39% | -21.8% | -29.3% | 62% | 1.29 |
+| inv-vol cap 40%, weekly stop 8% | +1.23% | -15.4% | -30.3% | 56% | 1.27 |
+| equal, weekly stop 12% | +1.31% | -21.8% | -32.6% | 63% | 1.18 |
+| inv-vol cap 40%, weekly stop 12% | +1.06% | -21.1% | -34.9% | 65% | 1.04 |
+| equal, weekly stop 20% | +1.35% | -24.5% | -36.1% | 64% | 1.20 |
+| inv-vol cap 40%, weekly stop 20% | +1.05% | -29.4% | -34.7% | 62% | 1.00 |
+
+## xs_momentum
+
+| Controls | Mean/wk | Worst week | Worst 4 wk | Max drawdown | Sharpe (ann.) |
+|---|---|---|---|---|---|
+| equal, no stop | +1.03% | -30.8% | -39.9% | 58% | 0.79 |
+| inv-vol cap 25% | +0.78% | -29.4% | -42.6% | 53% | 0.63 |
+| inv-vol cap 40% | +0.65% | -25.3% | -42.8% | 54% | 0.55 |
+| equal, weekly stop 8% | +0.73% | -17.3% | -34.2% | 54% | 0.57 |
+| inv-vol cap 40%, weekly stop 8% | +0.26% | -19.1% | -35.7% | 59% | 0.22 |
+| equal, weekly stop 12% | +1.10% | -18.0% | -32.1% | 58% | 0.88 |
+| inv-vol cap 40%, weekly stop 12% | +0.57% | -19.1% | -37.8% | 53% | 0.49 |
+| equal, weekly stop 20% | +1.08% | -25.2% | -40.0% | 58% | 0.84 |
+| inv-vol cap 40%, weekly stop 20% | +0.62% | -29.6% | -42.9% | 54% | 0.52 |
+
+The chosen default (equal weight, weekly stop 12%) keeps the mean weekly return and cuts the worst week by a
+quarter to a third; it does not remove large drawdowns over several weeks (31-63% at 1x), which is what the
+account stop and small live legs are for. At 35% the account stop would have fired in the histories of `vol_momentum` and `xs_momentum` (drawdowns 58-63%), not the candidate's (31% with the weekly stop).
+
+## Perps costs and the order dry run (from 2026-10-10)
+
+* **Costs:** `xs_momentum` and `vol_momentum` paper fills charge Hyperliquid's measured costs instead of a
+  flat 20 bps (config `costs.model: hl_sqrt`): taker 4.5 bps + 2.2% x sqrt(order / the coin's 30-day median
+  daily USD volume), about 4 bps over the fee for $5k on a $10M/day coin and 49 bps for $100k on a
+  $2M/day coin (Jev cost session's `handoff/hl-costs.md`). At the paper legs' size (~$125) that is ~5 bps a
+  side. Kept legs still pay nothing. The search and its candidates keep the registered flat 20 bps.
+* **Exact orders, unsent:** in mode `dry_live` every perp twin's fill (`fills.jsonl`, `extra`) carries the
+  exact order the live sender would sign: asset index, side, IOC limit 1% through the mid (rounded as the
+  venue requires), size rounded to the coin's step, reduce-only on closes, client order id, and the share
+  of it the visible book would fill inside the limit (`ioc_fill_frac`). Twins already pass the live limits
+  and kill switches, and exit with paper legs (so the weekly loss limit applies). Going live is then AJ's
+  go, a funded account with an approved agent key, and mode `live` ("Going live" below).
 
 ## Health (`health.yml`, hourly)
 
@@ -279,11 +358,54 @@ Built 2026-10-10: `strategies/jlp_hedged.py`, `usd_spot.py`, basket sizing in `b
   `TARTAR_LIVE_KILL` all apply to every leg.
 * Checked 2026-10-10 against the live venues on a scratch root: all four dry legs filled (JLP $200 quote,
   SOL $87.48, BTC $23.93, ETH $15.18 after Hyperliquid's size rounding).
+* **Hedge margin for live:** 2x, restored to target at every check-in, not the paper test's 3x with a 1/5 trigger (stress test, edge-hunt.md §A: 3x would have been liquidatable in 9 spikes since 2021).
 * **Going live would need, from the user:** `TARTAR_WALLET_KEY` with USDC in that Solana wallet for the
   JLP leg (and a little SOL for fees); a Hyperliquid account with USDC margin plus `HYPERLIQUID_AGENT_KEY`
   and `HYPERLIQUID_ACCOUNT` for the shorts (see Perp twins); roughly $330 of capital at the $200 twin
   size (JLP $200 plus about $43 of margin at 3x, more for a buffer). **On our side: built 2026-10-10**
   (the live USDC swap sender and the leg-failure rule; see *Restarts and overlaps*, "The hedged JLP basket").
+
+### Vault twins: HLP (a deposit in Hyperliquid's HLP vault)
+
+Built 2026-10-10 (strategy review recommendation 2): `tartar/autotrade/vault.py`, a vault branch in `broker.py`,
+tests in `tests/test_autotrade_vault.py`. `hlp_hold`'s intents carry `meta.venue = "hyperliquid_vault"` and
+`meta.vault`. The paper book is unchanged. The twin deposits at the paper entry, is **carried across the
+paper interval closes** (they carry `meta.kept`; `vault_roll_out` / `vault_roll_in`, marked, nothing moves,
+like a kept perp leg) and is withdrawn at the window-end close (`vault_withdraw`). Each interval is compared
+with its paper interval in `fills.jsonl` and in REPORT.md's *Vault twin intervals* table.
+
+* **Pricing:** equity × (1 + ΔPnL / account value) between marks, from the newest point of HLP's `allTime`
+  history (cumulative PnL, so marks chain across fetches). HLP has no commission and transfers have no
+  fee, so twin − paper is timing only. A real follower's equity is read back from `followerState`.
+* **Dry (mode `dry_live`, now; `dry_all`, so before promotion too):** each deposit is checked against the
+  vault's live state (open, `allowDeposits`, the $10 minimum), books the 4-day HLP lockup, and each
+  withdrawal checks the lockup and the vault's `maxDistributable`. Nothing is signed or sent. Checked
+  2026-10-10 04:05 UTC against the live vault: a $200 deposit passes (HLP open, accepting deposits, APR
+  shown 3.9%), a withdrawal before the lockup is refused, after it passes.
+* **Live:** a `vaultTransfer` L1 action (micro-USDC, as the official SDK) signed with the agent key through
+  `hl_exchange.HyperliquidExchange`, behind the same gate as the perps (mode `live`, approval, both
+  Hyperliquid secrets). Deposits stop on any kill switch; withdrawals don't. **Never used on mainnet.**
+  Signature checked 2026-10-10 on testnet with a throwaway key: the exchange answered "User or API Wallet
+  <our address> does not exist", i.e. it recovered exactly our signer. **API wallet, settled 2026-10-10
+  from the official SDK (0.24.0) and docs:** `vaultTransfer` is an L1 action, signed exactly like an order
+  (`sign_l1_action`), and the exchange attributes an approved agent's L1 actions to its account. The
+  actions an agent cannot sign are the user-signed ones that move funds out of the account or between
+  its balances (`usdSend`, `withdraw3`, `spotSend`, `usdClassTransfer`, `sendAsset`, `approveAgent`).
+  A vault withdrawal returns USDC to the same account's perp balance, so it is not one of them. So the
+  agent key is enough and the user's main key is never needed. Not proven with funds: a funded testnet
+  account needs a mainnet deposit first. If the first real deposit were refused, it is a failed leg and
+  nothing moves. **The USDC must be in the perp balance:** the agent can't move spot USDC there
+  (`usdClassTransfer` is user-signed). A live deposit reads `clearinghouseState.withdrawable` first and
+  is refused before sending when it is short. The deposit also comes out of the same margin the perp
+  twins use, so fund both.
+* **Limits (config `live.vault`, defaults `vault.VAULT_DEFAULTS`):** $200 per twin and in all vault twins,
+  $10 minimum, signal up to 3 days old; an interval losing over 10% halts the strategy's live entries, as do
+  3 intervals in a row more than 1 point worse than paper. `HALT`, `HALT_LIVE`, `TARTAR_LIVE_KILL` stop deposits.
+* **Restarts:** each transfer is written to `autotrade/vault_pending.json` before it is sent. A deposit a
+  dead run left there is adopted if the account's vault equity shows it landed, never repeated blind; a
+  withdrawal likewise. A failed or locked withdrawal becomes an orphan and halts the strategy.
+* **Known gap:** while `HALT` blocks the paper reopen, the deposit stays in the vault (`live.vault_handover`)
+  and rolls into the next paper interval; nothing withdraws it before the window ends except a hand step.
 
 ### Restarts and overlaps (`safety.py`)
 

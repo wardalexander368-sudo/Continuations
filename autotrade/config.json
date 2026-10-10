@@ -36,13 +36,25 @@
       "kind": "dip",
       "enabled": true,
       "prereg": "handoff/preregistration/dip-rolling",
-      "size_usd": 200
+      "size_usd": 200,
+      "execution": {
+        "entry": "next_bar_close",
+        "route_fee_per_side": 0.01,
+        "version": "2026-10-10-real-fills",
+        "note": "paper fills at real-trading costs: two real 0.01 SOL round trips trailed the rule's gross by 5-6 points (handoff/data/real-fills/dip-report-2026-10-10.txt): entry at bar t+1's close for the 4-5 min signal latency, plus PumpPortal Lightning's 1%/side. The rule itself is unchanged."
+      }
     },
     "xs_momentum": {
       "kind": "xs_momentum",
       "enabled": true,
       "prereg": "handoff/preregistration/xs-momentum/SPEC.md",
-      "leg_usd": 1000
+      "leg_usd": 1000,
+      "costs": {
+        "model": "hl_sqrt",
+        "taker": 0.00045,
+        "impact_k": 0.022,
+        "note": "measured Hyperliquid costs (handoff/hl-costs.md, Jev cost session 2026-10-10): taker 4.5 bps + 2.2% x sqrt(order / 30-day median daily USD volume); the registered 20 bps stays in the official scorers"
+      }
     },
     "pumpflow": {
       "kind": "pumpflow",
@@ -80,7 +92,13 @@
       "enabled": true,
       "prereg": "handoff/preregistration/vol-momentum/SPEC.md",
       "scaled": true,
-      "leg_usd": 1000
+      "leg_usd": 1000,
+      "costs": {
+        "model": "hl_sqrt",
+        "taker": 0.00045,
+        "impact_k": 0.022,
+        "note": "measured Hyperliquid costs (handoff/hl-costs.md, Jev cost session 2026-10-10): taker 4.5 bps + 2.2% x sqrt(order / 30-day median daily USD volume); the registered 20 bps stays in the official scorers"
+      }
     },
     "hlp_hold": {
       "kind": "vault_hold",
@@ -117,5 +135,11 @@
   "execution": {
     "quote_check": true,
     "note": "record a Jupiter quote beside each fresh paper entry (tartar/autotrade/quotes.py); fills are unchanged"
+  },
+  "perp_risk": {
+    "weekly_stop_frac": 0.12,
+    "account_drawdown_stop_frac": 0.35,
+    "exit_cost": 0.002,
+    "note": "tartar/autotrade/perp_risk.py: a perps strategy whose week P&L falls below -12% of its side notional is flattened at marks until its next rebalance; a registered perps book drawdown past 35% of its side notional writes HALT. Scored in handoff/experiments/perps_risk_controls.py (handoff/autotrade.md). Live twins exit with their paper legs, so this is the live default too."
   }
 }
