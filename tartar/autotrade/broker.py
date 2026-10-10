@@ -24,12 +24,11 @@ from pathlib import Path
 
 from .core import CostModel, Intent, Position, Trade
 from .execution import make_executor, select_route
+from .gate import LiveNotAllowed, approval_reason, kill_reason  # LiveNotAllowed is re-exported for the runner
 from .perps import PERP_DEFAULTS, is_perp, make_perp_executor, perp_keys, select_perp_route
 from .usd_spot import is_usd_spot, make_usd_spot_executor
 
 
-class LiveNotAllowed(RuntimeError):
-    pass
 
 
 class PaperBroker:
@@ -94,22 +93,24 @@ class LiveBroker(PaperBroker):
         if mode == "dry_live":
             self.cfg["route"] = "dry"
         elif mode == "live":
-            approved = config.get("live_approved_on")
-            if not approved or env.get("TARTAR_LIVE_APPROVED") != approved:
-                raise LiveNotAllowed("live trading is not approved (config live_approved_on and TARTAR_LIVE_APPROVED must match)")
+            why = approval_reason(config, env)
+            if why:
+                raise LiveNotAllowed(why)
         else:
             raise LiveNotAllowed(f"mode {mode!r} has no live twins")
         route = select_route(self.cfg, env)
-        if route is None:
-            raise LiveNotAllowed("no route key: set TARTAR_WALLET_KEY (Jupiter) or PUMPPORTAL_API_KEY (Lightning)")
+        self.perp_route = select_perp_route(mode, env, config)
+        if route is None and self.perp_route is None:
+            raise LiveNotAllowed("no route key: set TARTAR_WALLET_KEY (Jupiter) or PUMPPORTAL_API_KEY (Lightning), "
+                                 "or HYPERLIQUID_AGENT_KEY and HYPERLIQUID_ACCOUNT (perps)")
+        self.config = config
         self.route = route
-        self.mode = "dry_live" if route == "dry" else "live"
-        self.executor = executor or make_executor(route, self.cfg, env)
+        self.mode = "dry_live" if mode == "dry_live" else "live"
+        self.executor = executor or (make_executor(route, self.cfg, env) if route else None)
         self.ledger, self.root, self.env, self.entries = ledger, Path(root) if root else None, env, entries
         self.now = time.time() if now is None else now
         self._sol_usd: float | None = None
         self.pcfg = {**PERP_DEFAULTS, **self.cfg.get("perps", {})}
-        self.perp_route = select_perp_route(mode, env)
         self._perp_exec = perp_executor
         self._usd_exec = usd_executor
 
@@ -144,12 +145,9 @@ class LiveBroker(PaperBroker):
         self.ledger.change({"t": self.now, "kind": "halt", "scope": f"live:{scope}", "reason": reason})
 
     def kill_reason(self, strategy: str) -> str | None:
-        if self.root and (self.root / "HALT").exists():
-            return "kill switch: HALT"
-        if self.root and (self.root / "HALT_LIVE").exists():
-            return "live kill switch: " + ((self.root / "HALT_LIVE").read_text().strip() or "HALT_LIVE file present")
-        if self.env.get("TARTAR_LIVE_KILL"):
-            return "live kill switch: TARTAR_LIVE_KILL is set"
+        why = kill_reason(self.root, self.env)
+        if why:
+            return why
         st = self.live_state()
         return st["halted"] or self.ledger.state.get("halted") or self.strat_state(strategy)["halted"]
 
@@ -166,6 +164,8 @@ class LiveBroker(PaperBroker):
         mint = intent.meta.get("mint")
         if not mint:
             return "asset has no Solana mint (no live route)", 0.0
+        if self.executor is None:
+            return "no Solana route key (TARTAR_WALLET_KEY or PUMPPORTAL_API_KEY)", 0.0
         if intent.side != 1:
             return "short side has no spot route", 0.0
         age = self.now - intent.at
@@ -286,7 +286,7 @@ class LiveBroker(PaperBroker):
     # perps (Hyperliquid; perps.py)
     def perp_exec(self):
         if self._perp_exec is None:
-            self._perp_exec = make_perp_executor(self.perp_route, self.pcfg, self.env)
+            self._perp_exec = make_perp_executor(self.perp_route, self.pcfg, self.env, self.config, self.root)
         return self._perp_exec
 
     def perp_entry_block(self, intent: Intent, positions: list[Position]) -> tuple[str | None, float]:
@@ -294,7 +294,10 @@ class LiveBroker(PaperBroker):
         if intent.meta.get("shadow"):
             return "shadow variant", 0.0
         if self.perp_route is None:
-            return "no perp route: live Hyperliquid orders are not built (perps.py)", 0.0
+            return "no perp route: mode live needs the approval plus HYPERLIQUID_AGENT_KEY and HYPERLIQUID_ACCOUNT (perps.py)", 0.0
+        if intent.meta.get("basket") and self.perp_route == "live":
+            # a basket's other legs (the hedged JLP's JLP leg) have no live sender: a hedge alone is a bet
+            return "basket leg: the basket's USD spot leg has no live route (usd_spot.py), so its hedges stay on paper", 0.0
         if not (self.entries or (self.perp_route == "dry" and self.pcfg["dry_all"])):
             return "strategy not promoted", 0.0
         why = self.kill_reason(intent.strategy)
@@ -529,9 +532,9 @@ def preflight(config: dict, ledger, root, env=None) -> dict:
            "orphans": len(ledger.state.get("live", {}).get("orphans", [])),
            "promoted": sorted(n for n, r in ledger.state.get("strategies", {}).items() if r.get("status") == "promoted"),
            "limits": cfg, "problems": [],
-           "perps": {"route": select_perp_route(mode, env), "keys": perp_keys(env),
+           "perps": {"route": select_perp_route(mode, env, config), "keys": perp_keys(env),
                      "limits": {**PERP_DEFAULTS, **cfg.get("perps", {})},
-                     "note": "dry only: live Hyperliquid orders are not built (tartar/autotrade/perps.py)"}}
+                     "note": "live: IOC orders via hl_exchange.py, only past the gate (gate.py)"}}
     p = out["problems"]
     if mode == "paper":
         p.append("mode is paper: no live twins")

@@ -10,10 +10,10 @@ Routes:
 * ``dry`` (mode ``dry_live``): the "fill" is the order walked through Hyperliquid's live L2 book at that
   moment (taker), with the taker fee; funding over the hold comes from Hyperliquid's funding history.
   Nothing is signed or sent; no account or key.
-* ``live``: **not built.** Real orders need an API ("agent") wallet approved by the trading account, its
-  private key as the environment secret ``HYPERLIQUID_AGENT_KEY``, the account's address as
-  ``HYPERLIQUID_ACCOUNT`` (USDC deposited there), and an EIP-712 order signer. Until that exists,
-  ``select_perp_route`` returns None in mode ``live`` and perp strategies stay on paper.
+* ``live`` (mode ``live``, past the gate in ``gate.py``): IOC taker orders signed with an API ("agent")
+  wallet the trading account approved, key in ``HYPERLIQUID_AGENT_KEY``, the account's address in
+  ``HYPERLIQUID_ACCOUNT`` (USDC deposited there); see ``hl_exchange.py``. Without the approval or
+  either key ``select_perp_route`` returns None and perp strategies stay on paper.
 
 Kept legs: a weekly rebalance that keeps a leg closes and reopens it on paper at no cost. The twin does
 the same without trading: it is marked at the book's mid, handed over, and picked up by the reopen.
@@ -42,6 +42,8 @@ PERP_DEFAULTS = {
     "max_signal_age_s": 172800,   # perp rules are daily/weekly: a reference price up to 2 days old is mirrored
     "taker_fee": 0.00045,         # Hyperliquid base tier taker
     "dry_all": True,              # in dry_live, mirror every (non-shadow) perp strategy, promoted or not
+    "network": "mainnet",         # live orders: "mainnet", or "testnet" (CI test only)
+    "slippage": 0.01,             # live IOC limit this far through the mid
 }
 
 
@@ -49,9 +51,19 @@ def is_perp(meta: dict) -> bool:
     return meta.get("venue") == "hyperliquid"
 
 
-def select_perp_route(mode: str, env=None) -> str | None:
-    """"dry" in mode dry_live; None otherwise (live perp orders are not built, see the module doc)."""
-    return "dry" if mode == "dry_live" else None
+PERP_KEYS = ("HYPERLIQUID_AGENT_KEY", "HYPERLIQUID_ACCOUNT")
+
+
+def select_perp_route(mode: str, env=None, config: dict | None = None) -> str | None:
+    """"dry" in mode dry_live; "live" in mode live when the gate's approval and both keys are present; else None."""
+    if mode == "dry_live":
+        return "dry"
+    if mode == "live" and config is not None:
+        from .gate import approval_reason, missing_keys
+
+        if approval_reason(config, env) is None and not missing_keys(PERP_KEYS, env):
+            return "live"
+    return None
 
 
 @dataclass
@@ -94,16 +106,17 @@ def walk(levels: list[dict], sz: float | None = None, usd: float | None = None) 
 class HyperliquidInfo:
     """Hyperliquid's public info API (no key)."""
 
-    def __init__(self, http=None, sleep=time.sleep):
+    def __init__(self, http=None, sleep=time.sleep, url: str = HL_INFO):
         import httpx
 
         self.http = http or httpx.Client(timeout=30)
+        self.url = url
         self.sleep = sleep
         self._decimals: dict[str, int] | None = None
 
     def post(self, body: dict):
         for wait in (1, 2, 4, 0):
-            r = self.http.post(HL_INFO, json=body)
+            r = self.http.post(self.url, json=body)
             if r.status_code == 200:
                 return r.json()
             if not wait:
@@ -177,12 +190,16 @@ class DryPerpExecutor:
         return -side * notional_usd * self.info.funding_rate_sum(coin, t0, t1)
 
 
-def make_perp_executor(route: str, cfg: dict, env=None):
+def make_perp_executor(route: str, cfg: dict, env=None, config: dict | None = None, root=None):
     if route == "dry":
         return DryPerpExecutor(taker_fee=cfg.get("taker_fee", PERP_DEFAULTS["taker_fee"]))
-    raise ValueError(f"perp route {route!r} is not built")
+    if route == "live":
+        from .hl_exchange import make_live_perp_executor
+
+        return make_live_perp_executor(config or {}, cfg, os.environ if env is None else env, root)
+    raise ValueError(f"unknown perp route {route!r}")
 
 
 def perp_keys(env=None) -> dict:
     env = os.environ if env is None else env
-    return {k: bool(env.get(k)) for k in ("HYPERLIQUID_AGENT_KEY", "HYPERLIQUID_ACCOUNT")}
+    return {k: bool(env.get(k)) for k in PERP_KEYS}

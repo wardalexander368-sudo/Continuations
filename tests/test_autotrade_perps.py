@@ -59,7 +59,7 @@ def closer(coin="PUMP", price=2.0, at=NOW, kept=False):
 @pytest.fixture
 def info(monkeypatch):
     inf = FakeInfo()
-    monkeypatch.setattr(broker_mod, "make_perp_executor", lambda route, cfg, env=None: DryPerpExecutor(inf, clock=lambda: NOW))
+    monkeypatch.setattr(broker_mod, "make_perp_executor", lambda route, cfg, env=None, *a: DryPerpExecutor(inf, clock=lambda: NOW))
     monkeypatch.setattr(broker_mod, "make_executor", lambda route, cfg, env=None: None)
     monkeypatch.delenv("TARTAR_LIVE_KILL", raising=False)
     return inf
@@ -144,12 +144,12 @@ def test_promoted_only_when_dry_all_is_off(tmp_path, info):
     assert not Ledger(root).positions[0].meta.get("live")
 
 
-def test_live_mode_has_no_perp_route(tmp_path, info, monkeypatch):
+def test_live_mode_without_hyperliquid_keys_has_no_perp_route(tmp_path, info, monkeypatch):
     root = setup(tmp_path, mode="live", status="promoted")
     cfg = {"mode": "live", "live_approved_on": "2026-10-10", "live": {}}
     monkeypatch.setattr(broker_mod, "select_route", lambda cfg, env=None: "jupiter")
     b = LiveBroker(cfg, ledger=Ledger(root), root=root, env={"TARTAR_LIVE_APPROVED": "2026-10-10"}, now=NOW)
     pos, row = b.open(opener())
-    assert "not built" in row["live"]["skipped"]
+    assert "HYPERLIQUID_AGENT_KEY" in row["live"]["skipped"]
     pf = preflight(cfg, Ledger(root), root, env={})
     assert pf["perps"]["route"] is None and pf["perps"]["keys"] == {"HYPERLIQUID_AGENT_KEY": False, "HYPERLIQUID_ACCOUNT": False}

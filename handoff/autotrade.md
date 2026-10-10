@@ -165,16 +165,30 @@ on Hyperliquid at a USD notional, with the same paper-book-unchanged design, kil
   minimum order), $60 notional across open perp twins, $6 daily realized loss cap (halts all live
   entries), 25% per-twin loss and 3 points × 3 closes divergence halts per strategy, reference prices
   up to 2 days old (weekly rules book a day late).
-* **Live: not built.** In mode `live`, `select_perp_route` returns None and perp strategies stay on paper
-  (preflight's `perps` block says so). Real orders would need, from the user:
-  1. a Hyperliquid account with USDC deposited (the trading account);
-  2. an **API wallet** ("agent") created and approved in that account (Hyperliquid → API), whose
-     private key goes in the GitHub Actions secret **`HYPERLIQUID_AGENT_KEY`**: it can place and cancel
-     orders but cannot withdraw;
+* **Live: built 2026-10-10, never used on mainnet.** `tartar/autotrade/hl_exchange.py`: immediate-or-cancel
+  limit orders 1% through the mid (`live.perps.slippage`), size floored to the coin's step, $10 minimum,
+  closes reduce-only, fees read back from `userFills`. Signed with Hyperliquid's L1 EIP-712 scheme
+  (needs `pip install .[live]`: `eth-account`, `msgpack`). It sends only past the **live gate**
+  (`tartar/autotrade/gate.py`, shared with the Solana senders): mode `live`, `live_approved_on` ==
+  `TARTAR_LIVE_APPROVED`, and both `HYPERLIQUID_AGENT_KEY` and `HYPERLIQUID_ACCOUNT`; the gate is
+  re-checked before every order, opens also stop on `HALT`/`HALT_LIVE`/`TARTAR_LIVE_KILL`, closes don't
+  (so a halted agent can still flatten). A failed close becomes an orphan and halts the strategy, as for
+  dry twins. A Solana key is no longer needed for perp-only live trading. Hedged-JLP basket shorts stay
+  on paper in mode `live` because the JLP leg has no live sender (a hedge alone would be a bet).
+  **Tested:** offline (`tests/test_autotrade_hl.py`) and on Hyperliquid **testnet** by the Action
+  `hl-testnet.yml` with a throwaway key generated inside the test: an order sent through the whole agent
+  path comes back "User or API Wallet <our address> does not exist", i.e. the exchange recovered exactly
+  our signer (a tampered signature recovers a different address). Real fills were not tested: a fresh
+  key has no testnet funds, and testnet USDC is only claimable by an address that has deposited on
+  mainnet. **To go live, from the user:**
+  1. a Hyperliquid account with USDC deposited (the trading account); eligibility to use Hyperliquid is
+     the user's to check;
+  2. an **API wallet** ("agent") created and approved in that account (Hyperliquid → API), its private
+     key as the GitHub Actions secret **`HYPERLIQUID_AGENT_KEY`** (can trade, cannot withdraw);
   3. the trading account's address as the secret or variable **`HYPERLIQUID_ACCOUNT`**;
-  4. and on our side a live executor: EIP-712 order signing (e.g. the `hyperliquid-python-sdk`),
-     IOC limit orders priced through the book, fills read back from `userFills`. Not written yet.
-  Eligibility to use Hyperliquid is the user's to check.
+  4. optionally first: the same on testnet (claim test USDC from that account) and run `hl-testnet.yml`
+     with `HYPERLIQUID_*` pointing at it to see real testnet fills;
+  5. then `live_approved_on` + `TARTAR_LIVE_APPROVED` and mode `live`, the same go as for SOL twins.
 
 ### Basket twins: the hedged JLP (JLP on Jupiter + three Hyperliquid shorts)
 
@@ -198,7 +212,7 @@ Built 2026-10-10: `strategies/jlp_hedged.py`, `usd_spot.py`, basket sizing in `b
   JLP leg (and a little SOL for fees); a Hyperliquid account with USDC margin plus `HYPERLIQUID_AGENT_KEY`
   and `HYPERLIQUID_ACCOUNT` for the shorts (see Perp twins); roughly $330 of capital at the $200 twin
   size (JLP $200 plus about $43 of margin at 3x, more for a buffer). **On our side, not built:** a live
-  USDC swap sender (Jupiter Swap API signed with the wallet key), the Hyperliquid order signer, and a
+  USDC swap sender (Jupiter Swap API signed with the wallet key; the Hyperliquid sender now exists), and a
   leg-failure rule (if one leg of an entry or rebalance fails, unwind the others or halt) since a live
   basket with a missing hedge is directional. Mode `live` today skips both routes, so the basket stays on paper.
 
