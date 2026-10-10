@@ -40,13 +40,6 @@ next. Topic documents hold the detail:
   holds: a paper strategy with dry perp twins. Touches `handoff/experiments/edge-hunt/hl_copy/`,
   `handoff/data/edge-hunt/hl-copy/`, and only if it holds `tartar/autotrade/strategies/`.
 
-* **Restart-safety thread** (project thread session, since 2026-10-10 01:35 UTC, branch
-  `claude/project-thread-kytb6q`). **No keys, no real orders.** Make live trading safe across job
-  restarts and overlaps: one trader at a time (concurrency group + lock/lease), orders recorded as
-  pending before they're sent so a retry can't double-buy, state (positions, pending orders, daily
-  loss counter) surviving a job that dies mid-trade, and a wallet-vs-fill-log reconcile at startup
-  before any trade. Tests kill a dry run mid-order.
-
 * **Edge hunt E thread** (project thread session, since 2026-10-09 21:40 UTC, branch
   `claude/project-thread-9op3pf`). **Paper only, no real SOL, no keys.** Task (the user's 21:30
   "work continuously"): edge hunt angle E, TARTAR's assets, beyond the closed predictor + P(rug)
@@ -397,6 +390,22 @@ deep pools match the model, a thin one was 2.4x it). The `launch_selector` slot 
   branch `claude/profitability-backtest`, on `main`).
 
 ## Log (newest first)
+
+* **2026-10-10 ~02:25 UTC, restart-safety thread: live trading survives killed jobs and overlaps.**
+  `tartar/autotrade/safety.py` adds four layers. (1) One trader: the workflow's concurrency group
+  already queued, never overlapped; now there is also a per-checkout lock and, in mode `live`, a lease in
+  `state.json` that makes any other holder skip its run (released at loop end, stale after 10 min).
+  (2) Every live buy and sell goes into `autotrade/pending.json` before it is sent, and the workflow
+  now commits `autotrade/` even after a failed run. (3) Idempotent buys: order id = strategy|key|signal
+  time. Tokens bought by a run that died are claimed and adopted when the entry is re-emitted, not
+  bought again; a sell that landed unrecorded closes the twin without a second sell. (4) Each
+  live/dry_live run reconciles the wallet's holdings and SOL with the book and fill log before
+  trading. Unexplained tokens or SOL halt live entries, and SOL losses count against the live daily
+  cap; if the wallet can't be read, live entries halt and paper continues. The dry route's wallet is
+  now simulated in `autotrade/dry_wallet.json`. 11 tests in `tests/test_restart_safety.py` kill a
+  dry run before and after a buy and a sell lands; 235 pass. **Gap:** perp and USD-spot twins are
+  dry-only and not covered; whoever builds their live orders should reuse `Pending` and `reconcile`.
+  No keys, no real orders.
 
 * 2026-10-10 01:45 UTC, agent-machinery thread: **the agent now searches for its own candidates.**
   `python -m tartar.autotrade search` (weekly Action `autotrade-search.yml`) backtests 94 members of
