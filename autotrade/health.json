@@ -1,5 +1,5 @@
 {
- "checked_at": 1791590064.1510851,
+ "checked_at": 1791594213.656549,
  "status": "green",
  "items": [
   {
@@ -28,29 +28,34 @@
    "detail": "Hyperliquid OI/funding snapshots, every 4 h"
   },
   {
+   "check": "Action pumpflow-live.yml",
+   "level": "green",
+   "detail": "pump.fun curve volume from the recorder, daily"
+  },
+  {
    "check": "Recorder hours",
    "level": "green",
-   "detail": "all 1 hours through 20261009-21 UTC uploaded"
+   "detail": "all 3 hours through 20261009-23 UTC uploaded"
   },
   {
    "check": "Input: JLP snapshots",
    "level": "green",
-   "detail": "newest 3.0 h old"
+   "detail": "newest 0.0 h old"
   },
   {
    "check": "Input: dip cohorts",
    "level": "green",
-   "detail": "newest 21.5 h old"
+   "detail": "newest 22.7 h old"
   },
   {
    "check": "Input: pumpflow snapshots",
    "level": "green",
-   "detail": "newest 2.3 h old"
+   "detail": "newest 3.4 h old"
   },
   {
    "check": "Input: HL OI/funding snapshots",
    "level": "green",
-   "detail": "newest 0.3 h old"
+   "detail": "newest 1.4 h old"
   },
   {
    "check": "Agent",
