@@ -32,6 +32,14 @@ next. Topic documents hold the detail:
 
 ## Active
 
+* **Code audit thread** (project thread session, since 2026-10-10 00:40 UTC, branch
+  `claude/project-thread-kytb6q`). **No keys, no real orders.** Correctness audit of today's code
+  before anything goes live: autotrade spot + perp twins, pumpflow capture and rule, the health
+  check, and the scorers of the running paper tests (dip, JLP, xs-momentum, pumpflow). Looking for
+  look-ahead, fee/funding errors, UTC day boundaries, paper-vs-live price sampling, limits that
+  don't fire. Bugs get a test and a fix on main; anything that would change a pre-registered rule
+  is logged here, not edited silently. Owners: I'll note each fix in the Log.
+
 * **Hedged-JLP twin in the agent** (edge hunt E thread session, since 2026-10-10 00:35 UTC, branch
   `claude/project-thread-9op3pf`). Dry only, no keys. Mirrors the hedged-JLP paper test inside the
   agent as a basket: JLP leg (dry Jupiter USDC quotes) + SOL/ETH/BTC shorts (dry perp twins), read from
