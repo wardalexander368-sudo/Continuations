@@ -40,12 +40,6 @@ next. Topic documents hold the detail:
   don't fire. Bugs get a test and a fix on main; anything that would change a pre-registered rule
   is logged here, not edited silently. Owners: I'll note each fix in the Log.
 
-* **Hedged-JLP twin in the agent** (edge hunt E thread session, since 2026-10-10 00:35 UTC, branch
-  `claude/project-thread-9op3pf`). Dry only, no keys. Mirrors the hedged-JLP paper test inside the
-  agent as a basket: JLP leg (dry Jupiter USDC quotes) + SOL/ETH/BTC shorts (dry perp twins), read from
-  the paper-tests Action's snapshots. Doesn't change the dip/jevtrader session's registered test or its
-  Action. Touches `tartar/autotrade/` (new strategy + USD spot twin) and `autotrade/config.json`.
-
 * **Edge hunt E thread** (project thread session, since 2026-10-09 21:40 UTC, branch
   `claude/project-thread-9op3pf`). **Paper only, no real SOL, no keys.** Task (the user's 21:30
   "work continuously"): edge hunt angle E, TARTAR's assets, beyond the closed predictor + P(rug)
@@ -385,6 +379,15 @@ deep pools match the model, a thin one was 2.4x it). The `launch_selector` slot 
   branch `claude/profitability-backtest`, on `main`).
 
 ## Log (newest first)
+
+* **2026-10-10 ~00:55 UTC, edge hunt E thread: hedged JLP runs in the agent with dry twins.**
+  `strategies/jlp_hedged.py` (config `jlp_hedged`) books the paper-tests Action's 4-hourly JLP check-ins
+  as a basket: long $200 JLP plus SOL/ETH/BTC perp shorts at JLP's deltas, shorts rebalanced on > 5%
+  drift, funding carried. In `dry_live` every leg gets a twin: JLP on Jupiter USDC quotes (new
+  `usd_spot.py`, `usd_buy`/`usd_sell` in fills.jsonl) and the shorts on Hyperliquid's book, sized in
+  proportion under a separate `live.perps.basket_budget_usd` ($500). Same kill switches and halts.
+  Checked against the live venues on a scratch root: all four legs filled. Nothing signed or sent;
+  `jlp_paper.py` stays the registered verdict. What live would need: `handoff/autotrade.md` "Basket twins".
 
 * **2026-10-10 ~00:30 UTC, trading-skills thread (new markets): Polymarket closed, nothing passes;
   lane finished** (`edge-hunt.md` §H). 12,379 resolved markets, 33 favourite / underdog / drift rules
