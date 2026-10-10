@@ -117,7 +117,14 @@ deep pools match the model, a thin one was 2.4x it). The `launch_selector` slot 
   recorder stopped after hour 18 (hour 19 is partial and only on local disk). **Item (b) done
   (19:10 UTC):** see the log entry. Nothing half-done.
 
-* **REAL MONEY — cost test DONE (19:46–19:49 UTC 2026-10-09). The wallet is held by the "Real-money
+* **REAL MONEY — dip-rule real fills IN PROGRESS (from 02:30 UTC 2026-10-10). The wallet is held by
+  the "Real-money cost test, fresh key" thread session (session_01C3taLfUKfeFUC2zXBZEhaR).** AJ's go
+  (02:18 UTC): "a couple real fills if an opportunity looks good". Limits: at most 2 round trips of
+  0.01 SOL, only when the registered dip rule signals AND the paper agent would take the same entry
+  (so each real fill has a paper twin). `handoff/experiments/dip_real_fills.py watch --real` buys
+  within the signal's next bar and sells after bar t+48 (4 h); `report` compares with the agent's
+  paper trade. Nobody else sends PumpPortal trades.
+* (was) **REAL MONEY — cost test DONE (19:46–19:49 UTC 2026-10-09). The wallet is held by the "Real-money
   cost test, fresh key" thread session (session_01C3taLfUKfeFUC2zXBZEhaR); no further trades are
   planned.** The key now arrives as the `PUMPPORTAL_API_KEY` env var and works. With the user's go:
   2 round trips of 0.01 SOL on CATE/SOL (`pump-amm`, Jupiter routes via Meteora DLMM), 30 s hold,
