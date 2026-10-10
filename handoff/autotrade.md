@@ -2,7 +2,7 @@
 
 Built 2026-10-09 by the agent-machinery thread for the project goal "a fully automated trading
 agent, focused on profitability and self improvement". **Paper, with dry live twins** (see *Going live*). It runs every 5 minutes on GitHub
-Actions (`.github/workflows/autotrade.yml`, every 5 minutes since 2026-10-09 23:20 UTC; hourly before) without any Claude session and
+Actions (`.github/workflows/autotrade.yml`, a job that loops the agent every 5 minutes for ~5.75 h, restarted every 2 h, since 2026-10-10 ~00:30 UTC; hourly before) without any Claude session and
 commits its state to `autotrade/`. Read `autotrade/REPORT.md` for the current picture.
 
 ## What one run does
@@ -190,7 +190,8 @@ A failed live sell also records an orphan and halts that strategy's live entries
 
 ### Known gaps (decisions for the user)
 
-1. **Cadence: resolved 2026-10-09 23:20 UTC.** The user chose a run every 5 minutes, so dip entries
+1. **Cadence: resolved 2026-10-10.** The user chose a run every 5 minutes as a self-looping job
+   (GitHub's `*/5` cron fired once in 30 minutes), so dip entries
    reach the broker within ~10 minutes of their bar, inside `max_signal_age_s` (900 s).
 2. **Perps.** Dry perp twins exist (*Perp twins* above); real ones need the user's Hyperliquid API
    wallet (`HYPERLIQUID_AGENT_KEY`, `HYPERLIQUID_ACCOUNT`) and a live executor that isn't written yet.
