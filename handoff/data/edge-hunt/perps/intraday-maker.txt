@@ -1,0 +1,35 @@
+20 coins, 59160 hours, cost 1.5 bps/side
+  BIG  REV Z=3 H=1        train +5.8bp [-1.9,+13.4] n8603  val -10.7bp [-26.5,+4.9] n3146
+  BIG  REV Z=3 H=4        train +7.2bp [-5.0,+19.7] n7234  val -18.7bp [-43.9,+5.8] n2611
+  BIG  REV Z=3 H=12       train -11.8bp [-31.3,+8.3] n6014  val +2.4bp [-34.5,+39.3] n2130
+  BIG  REV Z=4 H=1        train +15.7bp [+0.7,+31.4] n3729  val -35.1bp [-64.1,-6.7] n1222
+  BIG  REV Z=4 H=4        train +23.4bp [+0.7,+47.8] n3332  val -45.6bp [-90.4,-1.2] n1061
+  BIG  REV Z=4 H=12       train -3.8bp [-31.3,+23.7] n3001  val -39.7bp [-123.0,+40.2] n955
+  BIG  REV Z=6 H=1        train +63.0bp [+24.7,+105.0] n1092  val -68.8bp [-129.8,-5.1] n323
+  BIG  REV Z=6 H=4        train +75.4bp [+10.4,+153.1] n1021  val -14.2bp [-114.4,+81.2] n289
+  BIG  REV Z=6 H=12       train +14.5bp [-36.8,+64.8] n993  val -15.6bp [-197.2,+156.0] n283
+  BIG  MOM Z=3 H=1        train -11.8bp [-19.4,-4.1] n8603  val +4.7bp [-10.9,+20.5] n3146
+  BIG  MOM Z=3 H=4        train -13.2bp [-25.7,-1.0] n7234  val +12.7bp [-11.8,+37.9] n2611
+  BIG  MOM Z=3 H=12       train +5.8bp [-14.3,+25.3] n6014  val -8.4bp [-45.3,+28.5] n2130
+  BIG  MOM Z=4 H=1        train -21.7bp [-37.4,-6.7] n3729  val +29.1bp [+0.7,+58.1] n1222
+  BIG  MOM Z=4 H=4        train -29.4bp [-53.8,-6.7] n3332  val +39.6bp [-4.8,+84.4] n1061
+  BIG  MOM Z=4 H=12       train -2.2bp [-29.7,+25.3] n3001  val +33.7bp [-46.2,+117.0] n955
+  BIG  MOM Z=6 H=1        train -69.0bp [-111.0,-30.7] n1092  val +62.8bp [-0.9,+123.8] n323
+  BIG  MOM Z=6 H=4        train -81.4bp [-159.1,-16.4] n1021  val +8.2bp [-87.2,+108.4] n289
+  BIG  MOM Z=6 H=12       train -20.5bp [-70.8,+30.8] n993  val +9.6bp [-162.0,+191.2] n283
+  -> BIG chosen REV Z=6 H=4: validation disagrees or train <= 0; test not read
+  WICK BOUNCE Z=3 H=1     train +14.8bp [+0.9,+28.9] n2632  val -23.0bp [-58.5,+13.0] n890
+  WICK BOUNCE Z=3 H=4     train +29.3bp [+7.8,+50.7] n2348  val +23.9bp [-19.3,+65.4] n773
+  WICK BOUNCE Z=6 H=1     train +42.6bp [-9.7,+99.8] n413  val -18.9bp [-69.5,+34.1] n135
+  WICK BOUNCE Z=6 H=4     train +67.4bp [-24.5,+177.6] n399  val +93.2bp [+14.5,+170.3] n128
+  WICK FADE Z=3 H=1       train -20.8bp [-34.9,-6.9] n2632  val +17.0bp [-19.0,+52.5] n890
+  WICK FADE Z=3 H=4       train -35.3bp [-56.7,-13.8] n2348  val -29.9bp [-71.4,+13.3] n773
+  WICK FADE Z=6 H=1       train -48.6bp [-105.8,+3.7] n413  val +12.9bp [-40.1,+63.5] n135
+  WICK FADE Z=6 H=4       train -73.4bp [-183.6,+18.5] n399  val -99.2bp [-176.3,-20.5] n128
+  -> WICK chosen BOUNCE Z=6 H=4: TEST +94.2bp [-5.8,+191.3] n125
+/home/user/TARTAR/handoff/experiments/edge-hunt/perps/intraday.py:104: RuntimeWarning: Mean of empty slice
+  m = np.nanmean(R[maj], axis=0)
+  HOD hours traded (UTC, sign): {}
+  HOD  composite          train - n0  val - n0
+  -> HOD chosen composite: validation disagrees or train <= 0; test not read
+rules tried: 27

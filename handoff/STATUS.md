@@ -409,6 +409,14 @@ deep pools match the model, a thin one was 2.4x it). The `launch_selector` slot 
   README replaces the placeholder). Full-history secrets scan: only public Solana tx signatures and a
   simulated `dry_wallet.json`; no keys. Other threads: rebase local commits onto `origin/main` and push.
 
+* **2026-10-10 ~16:40 UTC, trading-skills thread (round 4, intraday): wick bounce pre-registered
+  (low prior); hour of day and big-move reversal closed** (`edge-hunt.md` §J). 27 rules on 20 coins,
+  taker 8.5 bps and maker 1.5 bps. Long after a ≥ 6-sigma lower hourly wick / short after an upper
+  one, hold 4 h: test +80 bp/trade [−20, +177] (125). 52-week test from 2026-10-12
+  (`preregistration/wick-bounce/`, scorer `experiments/edge-hunt/perps/wick_forward.py`; the
+  `perps-ctx` Action now appends HL 1h candles). **Handoff session (`autotrade/`): candidate paper
+  strategy** (event-driven, checks once an hour; reproduce `wick_forward.py`'s signal exactly).
+
 * **2026-10-10 ~16:30 UTC, trading-skills thread (round 3, low-cost venues): nothing passes,
   closed** (`edge-hunt.md` §I). 36 new rules on perps: day of week and weekends, lottery, idio vol,
   betting against beta, skewness, and weekend CME-gap fades/follows (Binance hourly 2020-26). The

@@ -1,5 +1,6 @@
 # Open interest / funding snapshots of every Hyperliquid perp (perps lane): the public API keeps no
-# OI history, so OI-based rules need our own record. Public data only: no wallet, no keys.
+# OI history, so OI-based rules need our own record. Also appends HL 1h candles for the wick-bounce
+# pre-registration (the candle API keeps only ~5,000 bars). Public data only: no wallet, no keys.
 name: perps-ctx
 
 on:
@@ -27,9 +28,10 @@ jobs:
       - run: pip install "httpx>=0.25"
       - run: |
           line=$(python3 handoff/experiments/edge-hunt/perps/hl_ctx_snapshot.py | tee /dev/stderr)
+          python3 handoff/experiments/edge-hunt/perps/wick_forward.py --update || true
           git config user.name "tartar-paper-tests"
           git config user.email "actions@users.noreply.github.com"
-          git add -f handoff/data/edge-hunt/hl-ctx
+          git add -f handoff/data/edge-hunt/hl-ctx handoff/data/edge-hunt/hl-1h
           git commit -m "Perps OI snapshot (perps-ctx action): $line"
           for i in 1 2 3 4; do
             git pull --rebase origin main && git push origin HEAD:main && exit 0

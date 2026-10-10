@@ -195,6 +195,24 @@ commission) earned in every split (+1.33%/month [+0.18, +2.70] in test; 2025 +19
 falling as it grows), so holding it against a 5% cash hurdle is **pre-registered** for 180 days:
 `preregistration/hlp-hold/SPEC.md`, scorer `experiments/edge-hunt/vaults/hlp_forward.py`.
 
+### J. Intraday timing on perps (2026-10-10, trading-skills thread): one weak rule pre-registered
+
+`perps/intraday.py`, 20 liquid HL perp coins, Binance hourly 2020-01..2026-09 as a stand-in (HL keeps
+~5,000 bars; on 2026-03..09 HL's own candles give the same result), splits train ..2023, validation
+2024, test 2025-01..2026-09, bootstrap by day. Costs 8.5 bps/side taker (HL 4.5 + ~4 bps fill at $5k,
+Jev cost session) and 1.5 bps maker-only (`data/edge-hunt/perps/intraday-{taker,maker}.txt`). 27 rules.
+* **Hour of day** (majors, hours with train |t| > 2): no hour qualifies; confirms B's closed result.
+* **Big hourly moves** (≥ 3/4/6 sigma, reverse or follow, hold 1/4/12 h): reversal works in train at
+  6 sigma (+49–61 bp) but loses in validation (−28 to −83); following is the mirror. Closed, also at
+  maker costs.
+* **Liquidation-sized wicks**: chosen BOUNCE Z=6 H=4 (long after a ≥ 6-sigma lower wick, short after
+  an upper one, hold 4 h): train +53 bp [−39, +164], validation +79 [+0.5, +156], **test +80 [−20,
+  +177]** (125 trades; maker-only +94). Neighbours mixed, trades cluster on crash days, 2026-03..09
+  −141 bp. Positive in all three splits, so **pre-registered with a low prior** (52 weeks, free):
+  `preregistration/wick-bounce/SPEC.md`, scorer `perps/wick_forward.py` (HL candles appended by the
+  `perps-ctx` Action).
+* Funding-hour moves: covered by the hour-of-day test (Binance funding hours included) and by B.
+
 ### I. Calendar and risk-shape rules on perps (2026-10-10, trading-skills thread): closed
 
 Round 3 brief (coordinator, under the user's "keep idle threads busy"): low-cost venues, families
@@ -326,6 +344,8 @@ Round 2 has nothing registered; F2 (funding-spike shorts) stays on hold.
 * (added) **E1, pump.fun revenue surprise -> PUMP perp:** both halves positive after costs, each
   ~1.7 SE, beyond-trend part positive. **Forward test registered** (180 days, hourly Action).
   E1b: the same rule on 8 other buyback tokens is flat (family −0.01%/day), so lower the prior.
+* (added) **J, wick bounce on perps:** all three splits positive (test +80 bp/trade, CI spans 0),
+  low prior. **Forward test registered** (52 weeks, free). Hour of day and big-move reversal closed.
 * (added) **I, calendar / lottery / low-vol / beta / skew / CME gap on perps:** 36 rules, none passes (closed).
 * (added) **H, Polymarket biases:** 33 rules, nothing passes (closed).
 * (added) **G, HLP holding:** +11–28% a year in recent halves vs a 5% hurdle, thin and decaying.
