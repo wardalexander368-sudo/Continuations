@@ -4,12 +4,12 @@
  },
  "halted": null,
  "last_run": {
-  "at": 1791614115.4327126,
-  "closed": 1,
+  "at": 1791614416.1839209,
+  "closed": 4,
   "errors": {},
   "halted": null,
   "new_halts": [],
-  "opened": 0,
+  "opened": 1,
   "rejected": 0
  },
  "live": {
@@ -26,48 +26,19 @@
   },
   "unclaimed": {},
   "wallet_sol": {
-   "at": 1791614115.4327126,
+   "at": 1791614416.1839209,
    "sol": 0.05
   }
  },
  "positions": [
-  {
-   "asset": "A7nWJWGUjNyWbVNPA5RrvLoF37j3ovdh8DKdgxYefcdk",
-   "entry_at": 1791585600.0,
-   "entry_cost_usd": 3.35807588105279,
-   "entry_price": 5.1994910960705175e-05,
-   "id": "72c03ca13835",
-   "mark_at": 1791614100.0,
-   "mark_price": 4.486131604370798e-05,
-   "meta": {
-    "alt_cost": {
-     "fee": 0.012,
-     "fixed_usd": 0.05,
-     "impact": 0.01154037940526395
-    },
-    "exit_t": 1791614100.0,
-    "impact_assumed": 0.01154037940526395,
-    "key": "A7nWJWGUjNyWbVNPA5RrvLoF37j3ovdh8DKdgxYefcdk:1791585300",
-    "label": "SENTS / SOL",
-    "liquidity_usd": 34660.9055,
-    "mint": "BLXhcFAtJpCM3HCbdzvr8F3JwGqdMGkAoLXuRmXLpump",
-    "pool": "A7nWJWGUjNyWbVNPA5RrvLoF37j3ovdh8DKdgxYefcdk",
-    "shadow": true,
-    "signal_t": 1791585300.0
-   },
-   "mode": "paper",
-   "notional_usd": 200.0,
-   "side": 1,
-   "strategy": "dip~drop=0.03~hold_bars=96"
-  },
   {
    "asset": "745ATaSSWxvry5qt1XVv9eXuG884hDvNJfvA2o82dNBi",
    "entry_at": 1791585900.0,
    "entry_cost_usd": 2.0567773191035945,
    "entry_price": 0.0004721029992054509,
    "id": "8c64eda4d441",
-   "mark_at": 1791614100.0,
-   "mark_price": 0.0004529631606260402,
+   "mark_at": 1791614400.0,
+   "mark_price": 0.000446213835545253,
    "meta": {
     "alt_cost": {
      "fee": 0.01,
@@ -95,8 +66,8 @@
    "entry_cost_usd": 1.2820867276049883,
    "entry_price": 0.005634282039772834,
    "id": "d1f388dfb27a",
-   "mark_at": 1791614100.0,
-   "mark_price": 0.005818498376910097,
+   "mark_at": 1791614400.0,
+   "mark_price": 0.005842356828827727,
    "meta": {
     "alt_cost": {
      "fee": 0.006,
@@ -119,42 +90,13 @@
    "strategy": "dip~drop=0.03~hold_bars=96"
   },
   {
-   "asset": "A7nWJWGUjNyWbVNPA5RrvLoF37j3ovdh8DKdgxYefcdk",
-   "entry_at": 1791585600.0,
-   "entry_cost_usd": 3.35807588105279,
-   "entry_price": 5.1994910960705175e-05,
-   "id": "656196f5a73b",
-   "mark_at": 1791614100.0,
-   "mark_price": 4.486131604370798e-05,
-   "meta": {
-    "alt_cost": {
-     "fee": 0.012,
-     "fixed_usd": 0.05,
-     "impact": 0.01154037940526395
-    },
-    "exit_t": 1791614100.0,
-    "impact_assumed": 0.01154037940526395,
-    "key": "A7nWJWGUjNyWbVNPA5RrvLoF37j3ovdh8DKdgxYefcdk:1791585300",
-    "label": "SENTS / SOL",
-    "liquidity_usd": 34660.9055,
-    "mint": "BLXhcFAtJpCM3HCbdzvr8F3JwGqdMGkAoLXuRmXLpump",
-    "pool": "A7nWJWGUjNyWbVNPA5RrvLoF37j3ovdh8DKdgxYefcdk",
-    "shadow": true,
-    "signal_t": 1791585300.0
-   },
-   "mode": "paper",
-   "notional_usd": 200.0,
-   "side": 1,
-   "strategy": "dip~drop=0.05~hold_bars=96"
-  },
-  {
    "asset": "CyJwKnLiiY4fmiwqMCSWFSHxo7T9Ubshgs2uRAuJCrk5",
    "entry_at": 1791586200.0,
    "entry_cost_usd": 1.2820867276049883,
    "entry_price": 0.005634282039772834,
    "id": "c8d792d3e391",
-   "mark_at": 1791614100.0,
-   "mark_price": 0.005818498376910097,
+   "mark_at": 1791614400.0,
+   "mark_price": 0.005842356828827727,
    "meta": {
     "alt_cost": {
      "fee": 0.006,
@@ -182,8 +124,8 @@
    "entry_cost_usd": 2.0567773191035945,
    "entry_price": 0.0004752848840487606,
    "id": "950e17aee057",
-   "mark_at": 1791614100.0,
-   "mark_price": 0.0004529631606260402,
+   "mark_at": 1791614400.0,
+   "mark_price": 0.000446213835545253,
    "meta": {
     "alt_cost": {
      "fee": 0.01,
@@ -211,8 +153,8 @@
    "entry_cost_usd": 3.35807588105279,
    "entry_price": 4.742523182015899e-05,
    "id": "197c8502b993",
-   "mark_at": 1791614100.0,
-   "mark_price": 4.486131604370798e-05,
+   "mark_at": 1791614400.0,
+   "mark_price": 4.4553065885360995e-05,
    "meta": {
     "alt_cost": {
      "fee": 0.012,
@@ -240,8 +182,8 @@
    "entry_cost_usd": 2.0567773191035945,
    "entry_price": 0.00047543359040225333,
    "id": "27788a53c86f",
-   "mark_at": 1791614100.0,
-   "mark_price": 0.0004529631606260402,
+   "mark_at": 1791614400.0,
+   "mark_price": 0.000446213835545253,
    "meta": {
     "alt_cost": {
      "fee": 0.01,
@@ -269,8 +211,8 @@
    "entry_cost_usd": 1.3739370613321757,
    "entry_price": 0.0029823205688423427,
    "id": "07cf63c313d8",
-   "mark_at": 1791614100.0,
-   "mark_price": 0.002936729622840171,
+   "mark_at": 1791614400.0,
+   "mark_price": 0.00288631060262617,
    "meta": {
     "alt_cost": {
      "fee": 0.0075,
@@ -298,8 +240,8 @@
    "entry_cost_usd": 1.2820867276049883,
    "entry_price": 0.00509718948767883,
    "id": "38f7805e0822",
-   "mark_at": 1791614100.0,
-   "mark_price": 0.005818498376910097,
+   "mark_at": 1791614400.0,
+   "mark_price": 0.005842356828827727,
    "meta": {
     "alt_cost": {
      "fee": 0.006,
@@ -327,8 +269,8 @@
    "entry_cost_usd": 1.0804163584401223,
    "entry_price": 0.05507821232337558,
    "id": "f52894ce380b",
-   "mark_at": 1791614100.0,
-   "mark_price": 0.05445437402249586,
+   "mark_at": 1791614400.0,
+   "mark_price": 0.05453380079581514,
    "meta": {
     "alt_cost": {
      "fee": 0.003,
@@ -356,8 +298,8 @@
    "entry_cost_usd": 1.3654958847128915,
    "entry_price": 0.004954677363829572,
    "id": "cb3fe78c213e",
-   "mark_at": 1791614100.0,
-   "mark_price": 0.005729975482185854,
+   "mark_at": 1791614400.0,
+   "mark_price": 0.005720739232657906,
    "meta": {
     "alt_cost": {
      "fee": 0.0075,
@@ -385,8 +327,8 @@
    "entry_cost_usd": 1.3654958847128915,
    "entry_price": 0.00489141794098757,
    "id": "b3dac5883650",
-   "mark_at": 1791614100.0,
-   "mark_price": 0.005729975482185854,
+   "mark_at": 1791614400.0,
+   "mark_price": 0.005720739232657906,
    "meta": {
     "alt_cost": {
      "fee": 0.0075,
@@ -453,8 +395,8 @@
    "entry_cost_usd": 0.039316500000000004,
    "entry_price": 109.34,
    "id": "c3863a23fb2f",
-   "mark_at": 1791614115.4327126,
-   "mark_price": 109.835,
+   "mark_at": 1791614416.1839209,
+   "mark_price": 109.925,
    "meta": {
     "basket": "jlp",
     "coin": "SOL",
@@ -488,8 +430,8 @@
    "entry_cost_usd": 0.006916499999999999,
    "entry_price": 2487.8,
    "id": "cc20dc16b623",
-   "mark_at": 1791614115.4327126,
-   "mark_price": 2495.15,
+   "mark_at": 1791614416.1839209,
+   "mark_price": 2495.65,
    "meta": {
     "basket": "jlp",
     "coin": "ETH",
@@ -523,8 +465,8 @@
    "entry_cost_usd": 0.0110385,
    "entry_price": 82520.0,
    "id": "115f17939294",
-   "mark_at": 1791614115.4327126,
-   "mark_price": 82747.5,
+   "mark_at": 1791614416.1839209,
+   "mark_price": 82754.5,
    "meta": {
     "basket": "jlp",
     "coin": "BTC",
@@ -558,8 +500,8 @@
    "entry_cost_usd": 3.4899588572917506,
    "entry_price": 1.8698165016796115e-05,
    "id": "4077b0d5d76b",
-   "mark_at": 1791614100.0,
-   "mark_price": 1.5990323986308513e-05,
+   "mark_at": 1791614400.0,
+   "mark_price": 1.6088515367689136e-05,
    "meta": {
     "alt_cost": {
      "fee": 0.012,
@@ -587,8 +529,8 @@
    "entry_cost_usd": 1.4291490811201166,
    "entry_price": 0.0024044150784949246,
    "id": "1d3041b021a9",
-   "mark_at": 1791614100.0,
-   "mark_price": 0.0023156979841591954,
+   "mark_at": 1791614400.0,
+   "mark_price": 0.0023403824687381735,
    "meta": {
     "alt_cost": {
      "fee": 0.008,
@@ -616,8 +558,8 @@
    "entry_cost_usd": 1.4291490811201166,
    "entry_price": 0.0022973284635201562,
    "id": "23d63267a21e",
-   "mark_at": 1791614100.0,
-   "mark_price": 0.0023156979841591954,
+   "mark_at": 1791614400.0,
+   "mark_price": 0.0023403824687381735,
    "meta": {
     "alt_cost": {
      "fee": 0.008,
@@ -645,8 +587,8 @@
    "entry_cost_usd": 1.4291490811201166,
    "entry_price": 0.002252260154877034,
    "id": "0f3609f8180a",
-   "mark_at": 1791614100.0,
-   "mark_price": 0.0023156979841591954,
+   "mark_at": 1791614400.0,
+   "mark_price": 0.0023403824687381735,
    "meta": {
     "alt_cost": {
      "fee": 0.008,
@@ -670,41 +612,12 @@
   },
   {
    "asset": "4JAnKFddd5fFTk5PxDj3PpTWJuTEfSWQEjZJcgKQ9KwW",
-   "entry_at": 1791600000.0,
-   "entry_cost_usd": 1.3584988294713751,
-   "entry_price": 0.0023801074945824174,
-   "id": "c78647cd1dc6",
-   "mark_at": 1791614100.0,
-   "mark_price": 0.0021335433407277354,
-   "meta": {
-    "alt_cost": {
-     "fee": 0.009,
-     "fixed_usd": 0.05,
-     "impact": 0.0015424941473568753
-    },
-    "exit_t": 1791614100.0,
-    "impact_assumed": 0.0015424941473568753,
-    "key": "4JAnKFddd5fFTk5PxDj3PpTWJuTEfSWQEjZJcgKQ9KwW:1791599700",
-    "label": "e/acc / SOL",
-    "liquidity_usd": 259320.2708,
-    "mint": "CbcyNo7m1amFWqEQm2m4PLv1UNvpcL3C1Ujm6AkzpKoU",
-    "pool": "4JAnKFddd5fFTk5PxDj3PpTWJuTEfSWQEjZJcgKQ9KwW",
-    "shadow": true,
-    "signal_t": 1791599700.0
-   },
-   "mode": "paper",
-   "notional_usd": 200.0,
-   "side": 1,
-   "strategy": "dip~drop=0.03~hold_bars=48"
-  },
-  {
-   "asset": "4JAnKFddd5fFTk5PxDj3PpTWJuTEfSWQEjZJcgKQ9KwW",
    "entry_at": 1791600300.0,
    "entry_cost_usd": 1.3584988294713751,
    "entry_price": 0.0023509077692934503,
    "id": "8acb8733954b",
-   "mark_at": 1791614100.0,
-   "mark_price": 0.0021335433407277354,
+   "mark_at": 1791614400.0,
+   "mark_price": 0.002174677228758519,
    "meta": {
     "alt_cost": {
      "fee": 0.009,
@@ -740,8 +653,8 @@
    "entry_cost_usd": 1.3739370613321757,
    "entry_price": 0.002791081103738193,
    "id": "5d94cf5a0944",
-   "mark_at": 1791614100.0,
-   "mark_price": 0.002936729622840171,
+   "mark_at": 1791614400.0,
+   "mark_price": 0.00288631060262617,
    "meta": {
     "alt_cost": {
      "fee": 0.0075,
@@ -769,8 +682,8 @@
    "entry_cost_usd": 1.20640035884514,
    "entry_price": 0.010541356792175043,
    "id": "0ef57ee2dd4c",
-   "mark_at": 1791614100.0,
-   "mark_price": 0.009197831529846589,
+   "mark_at": 1791614400.0,
+   "mark_price": 0.00912724099169562,
    "meta": {
     "alt_cost": {
      "fee": 0.0033,
@@ -798,8 +711,8 @@
    "entry_cost_usd": 1.20640035884514,
    "entry_price": 0.010541356792175043,
    "id": "181c3384bda1",
-   "mark_at": 1791614100.0,
-   "mark_price": 0.009197831529846589,
+   "mark_at": 1791614400.0,
+   "mark_price": 0.00912724099169562,
    "meta": {
     "alt_cost": {
      "fee": 0.0033,
@@ -827,8 +740,8 @@
    "entry_cost_usd": 1.6307918541839983,
    "entry_price": 0.0014356701150253148,
    "id": "412e96c74219",
-   "mark_at": 1791614100.0,
-   "mark_price": 0.0012460842159637108,
+   "mark_at": 1791614400.0,
+   "mark_price": 0.0012630698752506434,
    "meta": {
     "alt_cost": {
      "fee": 0.0095,
@@ -864,8 +777,8 @@
    "entry_cost_usd": 3.35807588105279,
    "entry_price": 3.982386100419538e-05,
    "id": "def5750b524d",
-   "mark_at": 1791614100.0,
-   "mark_price": 4.486131604370798e-05,
+   "mark_at": 1791614400.0,
+   "mark_price": 4.4553065885360995e-05,
    "meta": {
     "alt_cost": {
      "fee": 0.012,
@@ -893,8 +806,8 @@
    "entry_cost_usd": 1.6307918541839983,
    "entry_price": 0.0014356701150253148,
    "id": "f280e8ddfdbe",
-   "mark_at": 1791614100.0,
-   "mark_price": 0.0012460842159637108,
+   "mark_at": 1791614400.0,
+   "mark_price": 0.0012630698752506434,
    "meta": {
     "alt_cost": {
      "fee": 0.0095,
@@ -922,8 +835,8 @@
    "entry_cost_usd": 1.6307918541839983,
    "entry_price": 0.0014356701150253148,
    "id": "c6d6b71287cc",
-   "mark_at": 1791614100.0,
-   "mark_price": 0.0012460842159637108,
+   "mark_at": 1791614400.0,
+   "mark_price": 0.0012630698752506434,
    "meta": {
     "alt_cost": {
      "fee": 0.0095,
@@ -951,8 +864,8 @@
    "entry_cost_usd": 1.6307918541839983,
    "entry_price": 0.0014356701150253148,
    "id": "0a6988133e8f",
-   "mark_at": 1791614100.0,
-   "mark_price": 0.0012460842159637108,
+   "mark_at": 1791614400.0,
+   "mark_price": 0.0012630698752506434,
    "meta": {
     "alt_cost": {
      "fee": 0.0095,
@@ -980,8 +893,8 @@
    "entry_cost_usd": 1.20640035884514,
    "entry_price": 0.010344530074193803,
    "id": "c83c2e9f2751",
-   "mark_at": 1791614100.0,
-   "mark_price": 0.009197831529846589,
+   "mark_at": 1791614400.0,
+   "mark_price": 0.00912724099169562,
    "meta": {
     "alt_cost": {
      "fee": 0.0033,
@@ -1017,8 +930,8 @@
    "entry_cost_usd": 1.3775764432265074,
    "entry_price": 0.001615693541263544,
    "id": "96ada9ca7013",
-   "mark_at": 1791614100.0,
-   "mark_price": 0.0016226363104142286,
+   "mark_at": 1791614400.0,
+   "mark_price": 0.0016050453856362014,
    "meta": {
     "alt_cost": {
      "fee": 0.0095,
@@ -1046,8 +959,8 @@
    "entry_cost_usd": 1.3775764432265074,
    "entry_price": 0.001615693541263544,
    "id": "8afc675167ba",
-   "mark_at": 1791614100.0,
-   "mark_price": 0.0016226363104142286,
+   "mark_at": 1791614400.0,
+   "mark_price": 0.0016050453856362014,
    "meta": {
     "alt_cost": {
      "fee": 0.0095,
@@ -1075,8 +988,8 @@
    "entry_cost_usd": 1.20640035884514,
    "entry_price": 0.010344530074193803,
    "id": "9a260233b205",
-   "mark_at": 1791614100.0,
-   "mark_price": 0.009197831529846589,
+   "mark_at": 1791614400.0,
+   "mark_price": 0.00912724099169562,
    "meta": {
     "alt_cost": {
      "fee": 0.0033,
@@ -1104,8 +1017,8 @@
    "entry_cost_usd": 2.765401005529901,
    "entry_price": 0.00025566456492763273,
    "id": "a65621c60892",
-   "mark_at": 1791614100.0,
-   "mark_price": 0.00025158028691527295,
+   "mark_at": 1791614400.0,
+   "mark_price": 0.0002576278379981901,
    "meta": {
     "alt_cost": {
      "fee": 0.0115,
@@ -1141,8 +1054,8 @@
    "entry_cost_usd": 2.765401005529901,
    "entry_price": 0.00025566456492763273,
    "id": "7e5117f871ea",
-   "mark_at": 1791614100.0,
-   "mark_price": 0.00025158028691527295,
+   "mark_at": 1791614400.0,
+   "mark_price": 0.0002576278379981901,
    "meta": {
     "alt_cost": {
      "fee": 0.0115,
@@ -1170,8 +1083,8 @@
    "entry_cost_usd": 2.765401005529901,
    "entry_price": 0.00025566456492763273,
    "id": "b4210c71b914",
-   "mark_at": 1791614100.0,
-   "mark_price": 0.00025158028691527295,
+   "mark_at": 1791614400.0,
+   "mark_price": 0.0002576278379981901,
    "meta": {
     "alt_cost": {
      "fee": 0.0115,
@@ -1199,8 +1112,8 @@
    "entry_cost_usd": 2.765401005529901,
    "entry_price": 0.00025566456492763273,
    "id": "f235df9635f4",
-   "mark_at": 1791614100.0,
-   "mark_price": 0.00025158028691527295,
+   "mark_at": 1791614400.0,
+   "mark_price": 0.0002576278379981901,
    "meta": {
     "alt_cost": {
      "fee": 0.0115,
@@ -1228,8 +1141,8 @@
    "entry_cost_usd": 2.765401005529901,
    "entry_price": 0.00025566456492763273,
    "id": "506785ddf7ca",
-   "mark_at": 1791614100.0,
-   "mark_price": 0.00025158028691527295,
+   "mark_at": 1791614400.0,
+   "mark_price": 0.0002576278379981901,
    "meta": {
     "alt_cost": {
      "fee": 0.0115,
@@ -1257,8 +1170,8 @@
    "entry_cost_usd": 2.765401005529901,
    "entry_price": 0.00025566456492763273,
    "id": "325cd5f311b6",
-   "mark_at": 1791614100.0,
-   "mark_price": 0.00025158028691527295,
+   "mark_at": 1791614400.0,
+   "mark_price": 0.0002576278379981901,
    "meta": {
     "alt_cost": {
      "fee": 0.0115,
@@ -1286,8 +1199,8 @@
    "entry_cost_usd": 1.20640035884514,
    "entry_price": 0.010147215560344055,
    "id": "0b4a6e74a254",
-   "mark_at": 1791614100.0,
-   "mark_price": 0.009197831529846589,
+   "mark_at": 1791614400.0,
+   "mark_price": 0.00912724099169562,
    "meta": {
     "alt_cost": {
      "fee": 0.0033,
@@ -1315,8 +1228,8 @@
    "entry_cost_usd": 1.20640035884514,
    "entry_price": 0.010147215560344055,
    "id": "bcdaac5d5e00",
-   "mark_at": 1791614100.0,
-   "mark_price": 0.009197831529846589,
+   "mark_at": 1791614400.0,
+   "mark_price": 0.00912724099169562,
    "meta": {
     "alt_cost": {
      "fee": 0.0033,
@@ -1344,8 +1257,8 @@
    "entry_cost_usd": 3.35807588105279,
    "entry_price": 3.832915361307611e-05,
    "id": "e2307a0db508",
-   "mark_at": 1791614100.0,
-   "mark_price": 4.486131604370798e-05,
+   "mark_at": 1791614400.0,
+   "mark_price": 4.4553065885360995e-05,
    "meta": {
     "alt_cost": {
      "fee": 0.012,
@@ -1373,8 +1286,8 @@
    "entry_cost_usd": 2.0567773191035945,
    "entry_price": 0.0004818087356923701,
    "id": "400e261fffc4",
-   "mark_at": 1791614100.0,
-   "mark_price": 0.0004529631606260402,
+   "mark_at": 1791614400.0,
+   "mark_price": 0.000446213835545253,
    "meta": {
     "alt_cost": {
      "fee": 0.01,
@@ -1410,8 +1323,8 @@
    "entry_cost_usd": 1.0804163584401223,
    "entry_price": 0.053077005151852354,
    "id": "988775d7f48a",
-   "mark_at": 1791614100.0,
-   "mark_price": 0.05445437402249586,
+   "mark_at": 1791614400.0,
+   "mark_price": 0.05453380079581514,
    "meta": {
     "alt_cost": {
      "fee": 0.003,
@@ -1439,8 +1352,8 @@
    "entry_cost_usd": 2.0567773191035945,
    "entry_price": 0.0004818087356923701,
    "id": "7782169e51e2",
-   "mark_at": 1791614100.0,
-   "mark_price": 0.0004529631606260402,
+   "mark_at": 1791614400.0,
+   "mark_price": 0.000446213835545253,
    "meta": {
     "alt_cost": {
      "fee": 0.01,
@@ -1468,8 +1381,8 @@
    "entry_cost_usd": 1.6307918541839983,
    "entry_price": 0.0013866629577726978,
    "id": "6abe988c1df4",
-   "mark_at": 1791614100.0,
-   "mark_price": 0.0012460842159637108,
+   "mark_at": 1791614400.0,
+   "mark_price": 0.0012630698752506434,
    "meta": {
     "alt_cost": {
      "fee": 0.0095,
@@ -1497,8 +1410,8 @@
    "entry_cost_usd": 1.6307918541839983,
    "entry_price": 0.0013866629577726978,
    "id": "e24af9e17ad8",
-   "mark_at": 1791614100.0,
-   "mark_price": 0.0012460842159637108,
+   "mark_at": 1791614400.0,
+   "mark_price": 0.0012630698752506434,
    "meta": {
     "alt_cost": {
      "fee": 0.0095,
@@ -1526,8 +1439,8 @@
    "entry_cost_usd": 2.0567773191035945,
    "entry_price": 0.0004894165307782494,
    "id": "429332cebf06",
-   "mark_at": 1791614100.0,
-   "mark_price": 0.0004529631606260402,
+   "mark_at": 1791614400.0,
+   "mark_price": 0.000446213835545253,
    "meta": {
     "alt_cost": {
      "fee": 0.01,
@@ -1550,42 +1463,13 @@
    "strategy": "dip~drop=0.08~hold_bars=48"
   },
   {
-   "asset": "6QyYdc6jgeKnfP1FWhiexMYq3JQ3sidSYoubjWUTo3rm",
-   "entry_at": 1791607200.0,
-   "entry_cost_usd": 1.2929270109385917,
-   "entry_price": 0.0014370726214460287,
-   "id": "8a4ffcad5408",
-   "mark_at": 1791614100.0,
-   "mark_price": 0.0013682792074518897,
-   "meta": {
-    "alt_cost": {
-     "fee": 0.006,
-     "fixed_usd": 0.05,
-     "impact": 0.0012146350546929578
-    },
-    "exit_t": 1791614100.0,
-    "impact_assumed": 0.0012146350546929578,
-    "key": "6QyYdc6jgeKnfP1FWhiexMYq3JQ3sidSYoubjWUTo3rm:1791606900",
-    "label": "HeeHaw / SOL",
-    "liquidity_usd": 329317.0228,
-    "mint": "EEpng77ZPn9FbgbT4xsRjwuxNCcMBYq3HTwEscyTpump",
-    "pool": "6QyYdc6jgeKnfP1FWhiexMYq3JQ3sidSYoubjWUTo3rm",
-    "shadow": true,
-    "signal_t": 1791606900.0
-   },
-   "mode": "paper",
-   "notional_usd": 200.0,
-   "side": 1,
-   "strategy": "dip~drop=0.08~hold_bars=24"
-  },
-  {
    "asset": "8ewuF2o8ACro7fqWepZ3tKhkbBjndZU4Ldk9scRPw83d",
    "entry_at": 1791607500.0,
    "entry_cost_usd": 1.3739370613321757,
    "entry_price": 0.002867823568040884,
    "id": "ef5013f2af3a",
-   "mark_at": 1791614100.0,
-   "mark_price": 0.002936729622840171,
+   "mark_at": 1791614400.0,
+   "mark_price": 0.00288631060262617,
    "meta": {
     "alt_cost": {
      "fee": 0.0075,
@@ -1613,8 +1497,8 @@
    "entry_cost_usd": 1.3739370613321757,
    "entry_price": 0.002867823568040884,
    "id": "80340400caaf",
-   "mark_at": 1791614100.0,
-   "mark_price": 0.002936729622840171,
+   "mark_at": 1791614400.0,
+   "mark_price": 0.00288631060262617,
    "meta": {
     "alt_cost": {
      "fee": 0.0075,
@@ -1642,8 +1526,8 @@
    "entry_cost_usd": 1.6057263294847641,
    "entry_price": 0.0005168150390416798,
    "id": "a5f9c32220c8",
-   "mark_at": 1791614100.0,
-   "mark_price": 0.0005753401955956554,
+   "mark_at": 1791614400.0,
+   "mark_price": 0.0005793051641747511,
    "meta": {
     "alt_cost": {
      "fee": 0.0095,
@@ -1671,8 +1555,8 @@
    "entry_cost_usd": 1.3584988294713751,
    "entry_price": 0.002578123896747129,
    "id": "86177b8747ee",
-   "mark_at": 1791614100.0,
-   "mark_price": 0.0021335433407277354,
+   "mark_at": 1791614400.0,
+   "mark_price": 0.002174677228758519,
    "meta": {
     "alt_cost": {
      "fee": 0.009,
@@ -1700,8 +1584,8 @@
    "entry_cost_usd": 1.3739370613321757,
    "entry_price": 0.002887618030509442,
    "id": "3a2e6f9b5f4b",
-   "mark_at": 1791614100.0,
-   "mark_price": 0.002936729622840171,
+   "mark_at": 1791614400.0,
+   "mark_price": 0.00288631060262617,
    "meta": {
     "alt_cost": {
      "fee": 0.0075,
@@ -1729,8 +1613,8 @@
    "entry_cost_usd": 1.3584988294713751,
    "entry_price": 0.00254258399164984,
    "id": "6a3191cc84bd",
-   "mark_at": 1791614100.0,
-   "mark_price": 0.0021335433407277354,
+   "mark_at": 1791614400.0,
+   "mark_price": 0.002174677228758519,
    "meta": {
     "alt_cost": {
      "fee": 0.009,
@@ -1758,8 +1642,8 @@
    "entry_cost_usd": 1.20640035884514,
    "entry_price": 0.009334988193972792,
    "id": "c71f644e6785",
-   "mark_at": 1791614100.0,
-   "mark_price": 0.009197831529846589,
+   "mark_at": 1791614400.0,
+   "mark_price": 0.00912724099169562,
    "meta": {
     "alt_cost": {
      "fee": 0.0033,
@@ -1787,8 +1671,8 @@
    "entry_cost_usd": 1.6307918541839983,
    "entry_price": 0.0013724929124334085,
    "id": "70841f2b5121",
-   "mark_at": 1791614100.0,
-   "mark_price": 0.0012460842159637108,
+   "mark_at": 1791614400.0,
+   "mark_price": 0.0012630698752506434,
    "meta": {
     "alt_cost": {
      "fee": 0.0095,
@@ -1816,8 +1700,8 @@
    "entry_cost_usd": 1.6307918541839983,
    "entry_price": 0.0013724929124334085,
    "id": "63ccd5d780f3",
-   "mark_at": 1791614100.0,
-   "mark_price": 0.0012460842159637108,
+   "mark_at": 1791614400.0,
+   "mark_price": 0.0012630698752506434,
    "meta": {
     "alt_cost": {
      "fee": 0.0095,
@@ -1845,8 +1729,8 @@
    "entry_cost_usd": 1.6625830727254987,
    "entry_price": 0.0029102395200781513,
    "id": "12eacbb3bd83",
-   "mark_at": 1791614100.0,
-   "mark_price": 0.003884253369285633,
+   "mark_at": 1791614400.0,
+   "mark_price": 0.0037826033790966654,
    "meta": {
     "alt_cost": {
      "fee": 0.0095,
@@ -1882,8 +1766,8 @@
    "entry_cost_usd": 1.3654958847128915,
    "entry_price": 0.006245078229751694,
    "id": "e1acc82c82fc",
-   "mark_at": 1791614100.0,
-   "mark_price": 0.005729975482185854,
+   "mark_at": 1791614400.0,
+   "mark_price": 0.005720739232657906,
    "meta": {
     "alt_cost": {
      "fee": 0.0075,
@@ -1911,8 +1795,8 @@
    "entry_cost_usd": 1.6625830727254987,
    "entry_price": 0.0029102395200781513,
    "id": "3d7839531a26",
-   "mark_at": 1791614100.0,
-   "mark_price": 0.003884253369285633,
+   "mark_at": 1791614400.0,
+   "mark_price": 0.0037826033790966654,
    "meta": {
     "alt_cost": {
      "fee": 0.0095,
@@ -1940,8 +1824,8 @@
    "entry_cost_usd": 1.4291490811201166,
    "entry_price": 0.0021329096500234228,
    "id": "486b420b1b96",
-   "mark_at": 1791614100.0,
-   "mark_price": 0.0023156979841591954,
+   "mark_at": 1791614400.0,
+   "mark_price": 0.0023403824687381735,
    "meta": {
     "alt_cost": {
      "fee": 0.008,
@@ -1969,8 +1853,8 @@
    "entry_cost_usd": 1.6625830727254987,
    "entry_price": 0.0029102395200781513,
    "id": "d8e8af5609f4",
-   "mark_at": 1791614100.0,
-   "mark_price": 0.003884253369285633,
+   "mark_at": 1791614400.0,
+   "mark_price": 0.0037826033790966654,
    "meta": {
     "alt_cost": {
      "fee": 0.0095,
@@ -1998,8 +1882,8 @@
    "entry_cost_usd": 1.6625830727254987,
    "entry_price": 0.0029102395200781513,
    "id": "fc0c5772c744",
-   "mark_at": 1791614100.0,
-   "mark_price": 0.003884253369285633,
+   "mark_at": 1791614400.0,
+   "mark_price": 0.0037826033790966654,
    "meta": {
     "alt_cost": {
      "fee": 0.0095,
@@ -2027,8 +1911,8 @@
    "entry_cost_usd": 1.3654958847128915,
    "entry_price": 0.006245078229751694,
    "id": "801a3f8f5d9d",
-   "mark_at": 1791614100.0,
-   "mark_price": 0.005729975482185854,
+   "mark_at": 1791614400.0,
+   "mark_price": 0.005720739232657906,
    "meta": {
     "alt_cost": {
      "fee": 0.0075,
@@ -2056,8 +1940,8 @@
    "entry_cost_usd": 1.6625830727254987,
    "entry_price": 0.0029102395200781513,
    "id": "bedb17c08410",
-   "mark_at": 1791614100.0,
-   "mark_price": 0.003884253369285633,
+   "mark_at": 1791614400.0,
+   "mark_price": 0.0037826033790966654,
    "meta": {
     "alt_cost": {
      "fee": 0.0095,
@@ -2085,8 +1969,8 @@
    "entry_cost_usd": 1.6625830727254987,
    "entry_price": 0.0029102395200781513,
    "id": "274d9b6340da",
-   "mark_at": 1791614100.0,
-   "mark_price": 0.003884253369285633,
+   "mark_at": 1791614400.0,
+   "mark_price": 0.0037826033790966654,
    "meta": {
     "alt_cost": {
      "fee": 0.0095,
@@ -2114,8 +1998,8 @@
    "entry_cost_usd": 1.20640035884514,
    "entry_price": 0.009139402001388805,
    "id": "32cb0bbd8662",
-   "mark_at": 1791614100.0,
-   "mark_price": 0.009197831529846589,
+   "mark_at": 1791614400.0,
+   "mark_price": 0.00912724099169562,
    "meta": {
     "alt_cost": {
      "fee": 0.0033,
@@ -2143,8 +2027,8 @@
    "entry_cost_usd": 1.6625830727254987,
    "entry_price": 0.0029468347506172742,
    "id": "03da3b251d90",
-   "mark_at": 1791614100.0,
-   "mark_price": 0.003884253369285633,
+   "mark_at": 1791614400.0,
+   "mark_price": 0.0037826033790966654,
    "meta": {
     "alt_cost": {
      "fee": 0.0095,
@@ -2172,8 +2056,8 @@
    "entry_cost_usd": 1.6625830727254987,
    "entry_price": 0.0029468347506172742,
    "id": "994fc3441d11",
-   "mark_at": 1791614100.0,
-   "mark_price": 0.003884253369285633,
+   "mark_at": 1791614400.0,
+   "mark_price": 0.0037826033790966654,
    "meta": {
     "alt_cost": {
      "fee": 0.0095,
@@ -2201,8 +2085,8 @@
    "entry_cost_usd": 1.6625830727254987,
    "entry_price": 0.0029468347506172742,
    "id": "9eb5896c51e8",
-   "mark_at": 1791614100.0,
-   "mark_price": 0.003884253369285633,
+   "mark_at": 1791614400.0,
+   "mark_price": 0.0037826033790966654,
    "meta": {
     "alt_cost": {
      "fee": 0.0095,
@@ -2230,8 +2114,8 @@
    "entry_cost_usd": 1.4291490811201166,
    "entry_price": 0.002147850779659148,
    "id": "e0e2276a5e4d",
-   "mark_at": 1791614100.0,
-   "mark_price": 0.0023156979841591954,
+   "mark_at": 1791614400.0,
+   "mark_price": 0.0023403824687381735,
    "meta": {
     "alt_cost": {
      "fee": 0.008,
@@ -2267,8 +2151,8 @@
    "entry_cost_usd": 1.2929270109385917,
    "entry_price": 0.001378081834716407,
    "id": "93fe75a592b4",
-   "mark_at": 1791614100.0,
-   "mark_price": 0.0013682792074518897,
+   "mark_at": 1791614400.0,
+   "mark_price": 0.0013490411299134832,
    "meta": {
     "alt_cost": {
      "fee": 0.006,
@@ -2304,8 +2188,8 @@
    "entry_cost_usd": 3.4899588572917506,
    "entry_price": 1.5522235138748372e-05,
    "id": "a1457d52bd1b",
-   "mark_at": 1791614100.0,
-   "mark_price": 1.5990323986308513e-05,
+   "mark_at": 1791614400.0,
+   "mark_price": 1.6088515367689136e-05,
    "meta": {
     "alt_cost": {
      "fee": 0.012,
@@ -2333,8 +2217,8 @@
    "entry_cost_usd": 1.2820867276049883,
    "entry_price": 0.006361468274301248,
    "id": "0bd4675d05fa",
-   "mark_at": 1791614100.0,
-   "mark_price": 0.005818498376910097,
+   "mark_at": 1791614400.0,
+   "mark_price": 0.005842356828827727,
    "meta": {
     "alt_cost": {
      "fee": 0.006,
@@ -2362,8 +2246,8 @@
    "entry_cost_usd": 1.2820867276049883,
    "entry_price": 0.006361468274301248,
    "id": "7cef2e9d2107",
-   "mark_at": 1791614100.0,
-   "mark_price": 0.005818498376910097,
+   "mark_at": 1791614400.0,
+   "mark_price": 0.005842356828827727,
    "meta": {
     "alt_cost": {
      "fee": 0.006,
@@ -2391,8 +2275,8 @@
    "entry_cost_usd": 1.4291490811201166,
    "entry_price": 0.0021115554428613012,
    "id": "dd1b4bb9b526",
-   "mark_at": 1791614100.0,
-   "mark_price": 0.0023156979841591954,
+   "mark_at": 1791614400.0,
+   "mark_price": 0.0023403824687381735,
    "meta": {
     "alt_cost": {
      "fee": 0.008,
@@ -2420,8 +2304,8 @@
    "entry_cost_usd": 1.3584988294713751,
    "entry_price": 0.0023422896688564494,
    "id": "817b6862ad38",
-   "mark_at": 1791614100.0,
-   "mark_price": 0.0021335433407277354,
+   "mark_at": 1791614400.0,
+   "mark_price": 0.002174677228758519,
    "meta": {
     "alt_cost": {
      "fee": 0.009,
@@ -2449,8 +2333,8 @@
    "entry_cost_usd": 1.3654958847128915,
    "entry_price": 0.0060093713872496944,
    "id": "fd404e519d79",
-   "mark_at": 1791614100.0,
-   "mark_price": 0.005729975482185854,
+   "mark_at": 1791614400.0,
+   "mark_price": 0.005720739232657906,
    "meta": {
     "alt_cost": {
      "fee": 0.0075,
@@ -2478,8 +2362,8 @@
    "entry_cost_usd": 1.4291490811201166,
    "entry_price": 0.0021115554428613012,
    "id": "498b191b975c",
-   "mark_at": 1791614100.0,
-   "mark_price": 0.0023156979841591954,
+   "mark_at": 1791614400.0,
+   "mark_price": 0.0023403824687381735,
    "meta": {
     "alt_cost": {
      "fee": 0.008,
@@ -2507,8 +2391,8 @@
    "entry_cost_usd": 1.3584988294713751,
    "entry_price": 0.0023422896688564494,
    "id": "6f6a37abc475",
-   "mark_at": 1791614100.0,
-   "mark_price": 0.0021335433407277354,
+   "mark_at": 1791614400.0,
+   "mark_price": 0.002174677228758519,
    "meta": {
     "alt_cost": {
      "fee": 0.009,
@@ -2536,8 +2420,8 @@
    "entry_cost_usd": 1.3654958847128915,
    "entry_price": 0.0060093713872496944,
    "id": "b40afd7c0809",
-   "mark_at": 1791614100.0,
-   "mark_price": 0.005729975482185854,
+   "mark_at": 1791614400.0,
+   "mark_price": 0.005720739232657906,
    "meta": {
     "alt_cost": {
      "fee": 0.0075,
@@ -2565,8 +2449,8 @@
    "entry_cost_usd": 1.3584988294713751,
    "entry_price": 0.0023422896688564494,
    "id": "a71d9c72aa3c",
-   "mark_at": 1791614100.0,
-   "mark_price": 0.0021335433407277354,
+   "mark_at": 1791614400.0,
+   "mark_price": 0.002174677228758519,
    "meta": {
     "alt_cost": {
      "fee": 0.009,
@@ -2594,8 +2478,8 @@
    "entry_cost_usd": 2.0567773191035945,
    "entry_price": 0.0004149647660645588,
    "id": "4e1b440ed798",
-   "mark_at": 1791614100.0,
-   "mark_price": 0.0004529631606260402,
+   "mark_at": 1791614400.0,
+   "mark_price": 0.000446213835545253,
    "meta": {
     "alt_cost": {
      "fee": 0.01,
@@ -2623,8 +2507,8 @@
    "entry_cost_usd": 2.0567773191035945,
    "entry_price": 0.0004149647660645588,
    "id": "9788edb28d3c",
-   "mark_at": 1791614100.0,
-   "mark_price": 0.0004529631606260402,
+   "mark_at": 1791614400.0,
+   "mark_price": 0.000446213835545253,
    "meta": {
     "alt_cost": {
      "fee": 0.01,
@@ -2652,8 +2536,8 @@
    "entry_cost_usd": 1.6057263294847641,
    "entry_price": 0.0005595658438924852,
    "id": "f54699dee7b1",
-   "mark_at": 1791614100.0,
-   "mark_price": 0.0005753401955956554,
+   "mark_at": 1791614400.0,
+   "mark_price": 0.0005793051641747511,
    "meta": {
     "alt_cost": {
      "fee": 0.0095,
@@ -2681,8 +2565,8 @@
    "entry_cost_usd": 1.3584988294713751,
    "entry_price": 0.0024019354842285704,
    "id": "6fd465baf09a",
-   "mark_at": 1791614100.0,
-   "mark_price": 0.0021335433407277354,
+   "mark_at": 1791614400.0,
+   "mark_price": 0.002174677228758519,
    "meta": {
     "alt_cost": {
      "fee": 0.009,
@@ -2710,8 +2594,8 @@
    "entry_cost_usd": 1.3654958847128915,
    "entry_price": 0.005967873546636076,
    "id": "5dac19608bff",
-   "mark_at": 1791614100.0,
-   "mark_price": 0.005729975482185854,
+   "mark_at": 1791614400.0,
+   "mark_price": 0.005720739232657906,
    "meta": {
     "alt_cost": {
      "fee": 0.0075,
@@ -2739,8 +2623,8 @@
    "entry_cost_usd": 1.6057263294847641,
    "entry_price": 0.0005595658438924852,
    "id": "eb1f2990afc1",
-   "mark_at": 1791614100.0,
-   "mark_price": 0.0005753401955956554,
+   "mark_at": 1791614400.0,
+   "mark_price": 0.0005793051641747511,
    "meta": {
     "alt_cost": {
      "fee": 0.0095,
@@ -2768,8 +2652,8 @@
    "entry_cost_usd": 1.3584988294713751,
    "entry_price": 0.0024019354842285704,
    "id": "de2c4cd81d2e",
-   "mark_at": 1791614100.0,
-   "mark_price": 0.0021335433407277354,
+   "mark_at": 1791614400.0,
+   "mark_price": 0.002174677228758519,
    "meta": {
     "alt_cost": {
      "fee": 0.009,
@@ -2797,8 +2681,8 @@
    "entry_cost_usd": 1.2820867276049883,
    "entry_price": 0.0057165878292837905,
    "id": "0369af571744",
-   "mark_at": 1791614100.0,
-   "mark_price": 0.005818498376910097,
+   "mark_at": 1791614400.0,
+   "mark_price": 0.005842356828827727,
    "meta": {
     "alt_cost": {
      "fee": 0.006,
@@ -2834,8 +2718,8 @@
    "entry_cost_usd": 1.2929270109385917,
    "entry_price": 0.0013922794833342484,
    "id": "e189220f277f",
-   "mark_at": 1791614100.0,
-   "mark_price": 0.0013682792074518897,
+   "mark_at": 1791614400.0,
+   "mark_price": 0.0013490411299134832,
    "meta": {
     "alt_cost": {
      "fee": 0.006,
@@ -2863,8 +2747,8 @@
    "entry_cost_usd": 1.3654958847128915,
    "entry_price": 0.005772570127821116,
    "id": "94303ed2b6d5",
-   "mark_at": 1791614100.0,
-   "mark_price": 0.005729975482185854,
+   "mark_at": 1791614400.0,
+   "mark_price": 0.005720739232657906,
    "meta": {
     "alt_cost": {
      "fee": 0.0075,
@@ -2892,8 +2776,8 @@
    "entry_cost_usd": 1.2929270109385917,
    "entry_price": 0.0013922794833342484,
    "id": "6346b421ac07",
-   "mark_at": 1791614100.0,
-   "mark_price": 0.0013682792074518897,
+   "mark_at": 1791614400.0,
+   "mark_price": 0.0013490411299134832,
    "meta": {
     "alt_cost": {
      "fee": 0.006,
@@ -2921,8 +2805,8 @@
    "entry_cost_usd": 1.2820867276049883,
    "entry_price": 0.0057165878292837905,
    "id": "c36956d05bc4",
-   "mark_at": 1791614100.0,
-   "mark_price": 0.005818498376910097,
+   "mark_at": 1791614400.0,
+   "mark_price": 0.005842356828827727,
    "meta": {
     "alt_cost": {
      "fee": 0.006,
@@ -2950,8 +2834,8 @@
    "entry_cost_usd": 1.2929270109385917,
    "entry_price": 0.0013922794833342484,
    "id": "fe32b507adfc",
-   "mark_at": 1791614100.0,
-   "mark_price": 0.0013682792074518897,
+   "mark_at": 1791614400.0,
+   "mark_price": 0.0013490411299134832,
    "meta": {
     "alt_cost": {
      "fee": 0.006,
@@ -2979,8 +2863,8 @@
    "entry_cost_usd": 1.3654958847128915,
    "entry_price": 0.005751983748688471,
    "id": "1c557ef027dd",
-   "mark_at": 1791614100.0,
-   "mark_price": 0.005729975482185854,
+   "mark_at": 1791614400.0,
+   "mark_price": 0.005720739232657906,
    "meta": {
     "alt_cost": {
      "fee": 0.0075,
@@ -3016,8 +2900,8 @@
    "entry_cost_usd": 1.2929270109385917,
    "entry_price": 0.001343199995331227,
    "id": "210dd4efc65d",
-   "mark_at": 1791614100.0,
-   "mark_price": 0.0013682792074518897,
+   "mark_at": 1791614400.0,
+   "mark_price": 0.0013490411299134832,
    "meta": {
     "alt_cost": {
      "fee": 0.006,
@@ -3045,8 +2929,8 @@
    "entry_cost_usd": 2.765401005529901,
    "entry_price": 0.00026324787100459276,
    "id": "3953af6e9e12",
-   "mark_at": 1791614100.0,
-   "mark_price": 0.00025158028691527295,
+   "mark_at": 1791614400.0,
+   "mark_price": 0.0002576278379981901,
    "meta": {
     "alt_cost": {
      "fee": 0.0115,
@@ -3074,8 +2958,8 @@
    "entry_cost_usd": 2.765401005529901,
    "entry_price": 0.00026324787100459276,
    "id": "2aaff571dc80",
-   "mark_at": 1791614100.0,
-   "mark_price": 0.00025158028691527295,
+   "mark_at": 1791614400.0,
+   "mark_price": 0.0002576278379981901,
    "meta": {
     "alt_cost": {
      "fee": 0.0115,
@@ -3096,6 +2980,35 @@
    "notional_usd": 200.0,
    "side": 1,
    "strategy": "dip~drop=0.05~hold_bars=24"
+  },
+  {
+   "asset": "9d6fbbtAGjM6eFHo4NpsPrDgnwhZNdetgewHmupZTVjV",
+   "entry_at": 1791614100.0,
+   "entry_cost_usd": 2.765401005529901,
+   "entry_price": 0.00025158028691527295,
+   "id": "98e707b473c5",
+   "mark_at": 1791614400.0,
+   "mark_price": 0.0002576278379981901,
+   "meta": {
+    "alt_cost": {
+     "fee": 0.0115,
+     "fixed_usd": 0.05,
+     "impact": 0.008577005027649508
+    },
+    "exit_t": 1791621000.0,
+    "impact_assumed": 0.008577005027649508,
+    "key": "9d6fbbtAGjM6eFHo4NpsPrDgnwhZNdetgewHmupZTVjV:1791613800",
+    "label": "QUBIT / SOL",
+    "liquidity_usd": 46636.3257,
+    "mint": "ERkmk5rs8KKD9u2fxoDZUmwwuVc7rT3sSeowGTrQuBit",
+    "pool": "9d6fbbtAGjM6eFHo4NpsPrDgnwhZNdetgewHmupZTVjV",
+    "shadow": true,
+    "signal_t": 1791613800.0
+   },
+   "mode": "paper",
+   "notional_usd": 200.0,
+   "side": 1,
+   "strategy": "dip~drop=0.08~hold_bars=24"
   }
  ],
  "strategies": {
@@ -3104,67 +3017,67 @@
     "pools": {
      "2B8tftZ5ww8TREMr3pgkgERLNjJyJxEAPWMENViGMsL4": {
       "busy_until": 1791627600.0,
-      "cursor": 1791613500.0,
+      "cursor": 1791613800.0,
       "first_bar": 1791581400.0
      },
      "3NBq9zynLPDQQDvYf8xiMbWywQfKZD7m7fyprY524efq": {
       "busy_until": 1791612300.0,
-      "cursor": 1791613500.0,
+      "cursor": 1791613800.0,
       "first_bar": 1791581400.0
      },
      "4JAnKFddd5fFTk5PxDj3PpTWJuTEfSWQEjZJcgKQ9KwW": {
       "busy_until": 1791614400.0,
-      "cursor": 1791613500.0,
+      "cursor": 1791613800.0,
       "first_bar": 1791581400.0
      },
      "4R8CiMnJWDNoes3fQi1ccPFJygPXazaHaWpHrN3rZeNj": {
       "busy_until": 1791617100.0,
-      "cursor": 1791613500.0,
+      "cursor": 1791613800.0,
       "first_bar": 1791601500.0
      },
      "4qxSqMh6iEdbdvtMp8r5MK2psAGKNk57PfGeVo2VhczQ": {
       "busy_until": 0.0,
-      "cursor": 1791613500.0,
+      "cursor": 1791613800.0,
       "first_bar": 1791601500.0
      },
      "65GHmCbyRME3XwKjTqDB7pMJw2gvj2LZryfWKczoAqFR": {
       "busy_until": 1791613500.0,
-      "cursor": 1791613500.0,
+      "cursor": 1791613800.0,
       "first_bar": 1791581400.0
      },
      "6QyYdc6jgeKnfP1FWhiexMYq3JQ3sidSYoubjWUTo3rm": {
       "busy_until": 1791625500.0,
-      "cursor": 1791613500.0,
+      "cursor": 1791613800.0,
       "first_bar": 1791581400.0
      },
      "6qUUCwD9fyRafora8XVmdApQBxCkbUiZTMkcYD47rWsS": {
       "busy_until": 1791616500.0,
-      "cursor": 1791613500.0,
+      "cursor": 1791613800.0,
       "first_bar": 1791601500.0
      },
      "745ATaSSWxvry5qt1XVv9eXuG884hDvNJfvA2o82dNBi": {
       "busy_until": 1791618900.0,
-      "cursor": 1791613500.0,
+      "cursor": 1791613800.0,
       "first_bar": 1791581400.0
      },
      "867dKvaCcyRrUDP66bqNXbujXfjaxsNB9wTpc4CmBdAD": {
       "busy_until": 1791625500.0,
-      "cursor": 1791613500.0,
+      "cursor": 1791613800.0,
       "first_bar": 1791581400.0
      },
      "8ewuF2o8ACro7fqWepZ3tKhkbBjndZU4Ldk9scRPw83d": {
       "busy_until": 1791613500.0,
-      "cursor": 1791613500.0,
+      "cursor": 1791613800.0,
       "first_bar": 1791581400.0
      },
      "9d6fbbtAGjM6eFHo4NpsPrDgnwhZNdetgewHmupZTVjV": {
       "busy_until": 1791617400.0,
-      "cursor": 1791613500.0,
+      "cursor": 1791613800.0,
       "first_bar": 1791601500.0
      },
      "A7nWJWGUjNyWbVNPA5RrvLoF37j3ovdh8DKdgxYefcdk": {
       "busy_until": 1791610800.0,
-      "cursor": 1791613500.0,
+      "cursor": 1791613800.0,
       "first_bar": 1791581400.0
      },
      "CR5dTgvTddGAqDjP8dGHTL51N6PKRaXqxFBp9FQ5PrKn": {
@@ -3174,17 +3087,17 @@
      },
      "CyJwKnLiiY4fmiwqMCSWFSHxo7T9Ubshgs2uRAuJCrk5": {
       "busy_until": 1791627000.0,
-      "cursor": 1791613500.0,
+      "cursor": 1791613800.0,
       "first_bar": 1791581400.0
      },
      "Fe7bpDYCs74GqiCUF14HwgUMToPKV1d9mDYVX5BTohFr": {
       "busy_until": 1791624300.0,
-      "cursor": 1791613500.0,
+      "cursor": 1791613800.0,
       "first_bar": 1791601500.0
      },
      "HMzvsEEmtzHhvZNw9uwbaG85HCTmFnkbhzUx16cy7ca3": {
       "busy_until": 0.0,
-      "cursor": 1791613500.0,
+      "cursor": 1791613800.0,
       "first_bar": 1791581400.0
      }
     }
@@ -3194,12 +3107,12 @@
    "size_factor": 1.0,
    "status": "paper",
    "verdict": {
-    "at": 1791614115.4327126,
+    "at": 1791614416.1839209,
     "decision": "pending",
     "n": 16,
     "reason": "16 trades over 0.4 days: mean net -3.93% [-8.87, +1.47] (-4.95% at measured pool fees) (-10.24% at Jupiter-measured impact, 9 trades), excess over random entries -1.11% [-4.67, +2.81]; scored at 200 trades or 21 days",
     "stats": {
-     "days": 0.37,
+     "days": 0.38,
      "excess": -0.01106317462214858,
      "excess_hi": 0.02812031280782901,
      "excess_lo": -0.046744840506270084,
@@ -3218,67 +3131,67 @@
     "pools": {
      "2B8tftZ5ww8TREMr3pgkgERLNjJyJxEAPWMENViGMsL4": {
       "busy_until": 1791617100.0,
-      "cursor": 1791613500.0,
+      "cursor": 1791613800.0,
       "first_bar": 1791582900.0
      },
      "3NBq9zynLPDQQDvYf8xiMbWywQfKZD7m7fyprY524efq": {
       "busy_until": 1791614700.0,
-      "cursor": 1791613500.0,
+      "cursor": 1791613800.0,
       "first_bar": 1791582900.0
      },
      "4JAnKFddd5fFTk5PxDj3PpTWJuTEfSWQEjZJcgKQ9KwW": {
       "busy_until": 1791615000.0,
-      "cursor": 1791613500.0,
+      "cursor": 1791613800.0,
       "first_bar": 1791582900.0
      },
      "4R8CiMnJWDNoes3fQi1ccPFJygPXazaHaWpHrN3rZeNj": {
       "busy_until": 1791616500.0,
-      "cursor": 1791613500.0,
+      "cursor": 1791613800.0,
       "first_bar": 1791601500.0
      },
      "4qxSqMh6iEdbdvtMp8r5MK2psAGKNk57PfGeVo2VhczQ": {
       "busy_until": 1791609900.0,
-      "cursor": 1791613500.0,
+      "cursor": 1791613800.0,
       "first_bar": 1791601500.0
      },
      "65GHmCbyRME3XwKjTqDB7pMJw2gvj2LZryfWKczoAqFR": {
       "busy_until": 1791618300.0,
-      "cursor": 1791613500.0,
+      "cursor": 1791613800.0,
       "first_bar": 1791582900.0
      },
      "6QyYdc6jgeKnfP1FWhiexMYq3JQ3sidSYoubjWUTo3rm": {
       "busy_until": 1791620400.0,
-      "cursor": 1791613500.0,
+      "cursor": 1791613800.0,
       "first_bar": 1791582900.0
      },
      "6qUUCwD9fyRafora8XVmdApQBxCkbUiZTMkcYD47rWsS": {
       "busy_until": 1791616800.0,
-      "cursor": 1791613500.0,
+      "cursor": 1791613800.0,
       "first_bar": 1791601500.0
      },
      "745ATaSSWxvry5qt1XVv9eXuG884hDvNJfvA2o82dNBi": {
       "busy_until": 1791619200.0,
-      "cursor": 1791613500.0,
+      "cursor": 1791613800.0,
       "first_bar": 1791582900.0
      },
      "867dKvaCcyRrUDP66bqNXbujXfjaxsNB9wTpc4CmBdAD": {
       "busy_until": 1791613200.0,
-      "cursor": 1791613500.0,
+      "cursor": 1791613800.0,
       "first_bar": 1791582900.0
      },
      "8ewuF2o8ACro7fqWepZ3tKhkbBjndZU4Ldk9scRPw83d": {
       "busy_until": 1791614400.0,
-      "cursor": 1791613500.0,
+      "cursor": 1791613800.0,
       "first_bar": 1791582900.0
      },
      "9d6fbbtAGjM6eFHo4NpsPrDgnwhZNdetgewHmupZTVjV": {
       "busy_until": 1791620400.0,
-      "cursor": 1791613500.0,
+      "cursor": 1791613800.0,
       "first_bar": 1791601500.0
      },
      "A7nWJWGUjNyWbVNPA5RrvLoF37j3ovdh8DKdgxYefcdk": {
       "busy_until": 1791609300.0,
-      "cursor": 1791613500.0,
+      "cursor": 1791613800.0,
       "first_bar": 1791582900.0
      },
      "CR5dTgvTddGAqDjP8dGHTL51N6PKRaXqxFBp9FQ5PrKn": {
@@ -3288,17 +3201,17 @@
      },
      "CyJwKnLiiY4fmiwqMCSWFSHxo7T9Ubshgs2uRAuJCrk5": {
       "busy_until": 1791618600.0,
-      "cursor": 1791613500.0,
+      "cursor": 1791613800.0,
       "first_bar": 1791582900.0
      },
      "Fe7bpDYCs74GqiCUF14HwgUMToPKV1d9mDYVX5BTohFr": {
       "busy_until": 1791617100.0,
-      "cursor": 1791613500.0,
+      "cursor": 1791613800.0,
       "first_bar": 1791601500.0
      },
      "HMzvsEEmtzHhvZNw9uwbaG85HCTmFnkbhzUx16cy7ca3": {
       "busy_until": 1791611700.0,
-      "cursor": 1791613500.0,
+      "cursor": 1791613800.0,
       "first_bar": 1791582900.0
      }
     }
@@ -3308,12 +3221,12 @@
    "size_factor": 1.0,
    "status": "paper",
    "verdict": {
-    "at": 1791614115.4327126,
+    "at": 1791614416.1839209,
     "decision": "pending",
     "n": 34,
     "reason": "34 trades over 0.4 days: mean net -2.37% [-6.85, +2.49] (-3.07% at measured pool fees), excess over random entries -1.38% [-7.31, +3.86]; scored at 200 trades or 21 days",
     "stats": {
-     "days": 0.35,
+     "days": 0.36,
      "excess": -0.013782282485290934,
      "excess_hi": 0.03858085717991318,
      "excess_lo": -0.07306748890010084,
@@ -3330,67 +3243,67 @@
     "pools": {
      "2B8tftZ5ww8TREMr3pgkgERLNjJyJxEAPWMENViGMsL4": {
       "busy_until": 1791627000.0,
-      "cursor": 1791613500.0,
+      "cursor": 1791613800.0,
       "first_bar": 1791582900.0
      },
      "3NBq9zynLPDQQDvYf8xiMbWywQfKZD7m7fyprY524efq": {
       "busy_until": 1791612300.0,
-      "cursor": 1791613500.0,
+      "cursor": 1791613800.0,
       "first_bar": 1791582900.0
      },
      "4JAnKFddd5fFTk5PxDj3PpTWJuTEfSWQEjZJcgKQ9KwW": {
       "busy_until": 1791614100.0,
-      "cursor": 1791613500.0,
+      "cursor": 1791613800.0,
       "first_bar": 1791582900.0
      },
      "4R8CiMnJWDNoes3fQi1ccPFJygPXazaHaWpHrN3rZeNj": {
       "busy_until": 1791616200.0,
-      "cursor": 1791613500.0,
+      "cursor": 1791613800.0,
       "first_bar": 1791601500.0
      },
      "4qxSqMh6iEdbdvtMp8r5MK2psAGKNk57PfGeVo2VhczQ": {
       "busy_until": 1791617100.0,
-      "cursor": 1791613500.0,
+      "cursor": 1791613800.0,
       "first_bar": 1791601500.0
      },
      "65GHmCbyRME3XwKjTqDB7pMJw2gvj2LZryfWKczoAqFR": {
       "busy_until": 1791613500.0,
-      "cursor": 1791613500.0,
+      "cursor": 1791613800.0,
       "first_bar": 1791582900.0
      },
      "6QyYdc6jgeKnfP1FWhiexMYq3JQ3sidSYoubjWUTo3rm": {
       "busy_until": 1791627000.0,
-      "cursor": 1791613500.0,
+      "cursor": 1791613800.0,
       "first_bar": 1791582900.0
      },
      "6qUUCwD9fyRafora8XVmdApQBxCkbUiZTMkcYD47rWsS": {
       "busy_until": 1791616500.0,
-      "cursor": 1791613500.0,
+      "cursor": 1791613800.0,
       "first_bar": 1791601500.0
      },
      "745ATaSSWxvry5qt1XVv9eXuG884hDvNJfvA2o82dNBi": {
       "busy_until": 1791618900.0,
-      "cursor": 1791613500.0,
+      "cursor": 1791613800.0,
       "first_bar": 1791582900.0
      },
      "867dKvaCcyRrUDP66bqNXbujXfjaxsNB9wTpc4CmBdAD": {
       "busy_until": 1791624300.0,
-      "cursor": 1791613500.0,
+      "cursor": 1791613800.0,
       "first_bar": 1791582900.0
      },
      "8ewuF2o8ACro7fqWepZ3tKhkbBjndZU4Ldk9scRPw83d": {
       "busy_until": 1791613500.0,
-      "cursor": 1791613500.0,
+      "cursor": 1791613800.0,
       "first_bar": 1791582900.0
      },
      "9d6fbbtAGjM6eFHo4NpsPrDgnwhZNdetgewHmupZTVjV": {
       "busy_until": 1791617400.0,
-      "cursor": 1791613500.0,
+      "cursor": 1791613800.0,
       "first_bar": 1791601500.0
      },
      "A7nWJWGUjNyWbVNPA5RrvLoF37j3ovdh8DKdgxYefcdk": {
       "busy_until": 1791616500.0,
-      "cursor": 1791613500.0,
+      "cursor": 1791613800.0,
       "first_bar": 1791582900.0
      },
      "CR5dTgvTddGAqDjP8dGHTL51N6PKRaXqxFBp9FQ5PrKn": {
@@ -3400,17 +3313,17 @@
      },
      "CyJwKnLiiY4fmiwqMCSWFSHxo7T9Ubshgs2uRAuJCrk5": {
       "busy_until": 1791625800.0,
-      "cursor": 1791613500.0,
+      "cursor": 1791613800.0,
       "first_bar": 1791582900.0
      },
      "Fe7bpDYCs74GqiCUF14HwgUMToPKV1d9mDYVX5BTohFr": {
       "busy_until": 1791624300.0,
-      "cursor": 1791613500.0,
+      "cursor": 1791613800.0,
       "first_bar": 1791601500.0
      },
      "HMzvsEEmtzHhvZNw9uwbaG85HCTmFnkbhzUx16cy7ca3": {
       "busy_until": 1791618900.0,
-      "cursor": 1791613500.0,
+      "cursor": 1791613800.0,
       "first_bar": 1791582900.0
      }
     }
@@ -3420,20 +3333,20 @@
    "size_factor": 1.0,
    "status": "paper",
    "verdict": {
-    "at": 1791614115.4327126,
+    "at": 1791614416.1839209,
     "decision": "pending",
-    "n": 16,
-    "reason": "16 trades over 0.4 days: mean net -3.63% [-11.07, +4.23] (-4.35% at measured pool fees), excess over random entries -0.05% [-4.26, +5.10]; scored at 200 trades or 21 days",
+    "n": 17,
+    "reason": "17 trades over 0.4 days: mean net -4.00% [-11.07, +3.29] (-4.73% at measured pool fees), excess over random entries -0.61% [-4.56, +4.48]; scored at 200 trades or 21 days",
     "stats": {
-     "days": 0.35,
-     "excess": -0.0004917449494965453,
-     "excess_hi": 0.051049431797266336,
-     "excess_lo": -0.042566053199982405,
-     "mean_hi": 0.0423357388772416,
+     "days": 0.36,
+     "excess": -0.0061220556867329235,
+     "excess_hi": 0.04476545615808311,
+     "excess_lo": -0.045609413350152436,
+     "mean_hi": 0.0328814054955178,
      "mean_lo": -0.11068780570613919,
-     "mean_net": -0.036324194874942706,
-     "mean_net_measured_fees": -0.043474252576374765,
-     "n": 16
+     "mean_net": -0.0399941736275596,
+     "mean_net_measured_fees": -0.04726378640811368,
+     "n": 17
     }
    }
   },
@@ -3442,67 +3355,67 @@
     "pools": {
      "2B8tftZ5ww8TREMr3pgkgERLNjJyJxEAPWMENViGMsL4": {
       "busy_until": 1791641100.0,
-      "cursor": 1791613500.0,
+      "cursor": 1791613800.0,
       "first_bar": 1791582900.0
      },
      "3NBq9zynLPDQQDvYf8xiMbWywQfKZD7m7fyprY524efq": {
       "busy_until": 1791641100.0,
-      "cursor": 1791613500.0,
+      "cursor": 1791613800.0,
       "first_bar": 1791582900.0
      },
      "4JAnKFddd5fFTk5PxDj3PpTWJuTEfSWQEjZJcgKQ9KwW": {
       "busy_until": 1791641100.0,
-      "cursor": 1791613500.0,
+      "cursor": 1791613800.0,
       "first_bar": 1791582900.0
      },
      "4R8CiMnJWDNoes3fQi1ccPFJygPXazaHaWpHrN3rZeNj": {
       "busy_until": 1791630600.0,
-      "cursor": 1791613500.0,
+      "cursor": 1791613800.0,
       "first_bar": 1791601500.0
      },
      "4qxSqMh6iEdbdvtMp8r5MK2psAGKNk57PfGeVo2VhczQ": {
       "busy_until": 1791631500.0,
-      "cursor": 1791613500.0,
+      "cursor": 1791613800.0,
       "first_bar": 1791601500.0
      },
      "65GHmCbyRME3XwKjTqDB7pMJw2gvj2LZryfWKczoAqFR": {
       "busy_until": 1791613200.0,
-      "cursor": 1791613500.0,
+      "cursor": 1791613800.0,
       "first_bar": 1791582900.0
      },
      "6QyYdc6jgeKnfP1FWhiexMYq3JQ3sidSYoubjWUTo3rm": {
       "busy_until": 1791641400.0,
-      "cursor": 1791613500.0,
+      "cursor": 1791613800.0,
       "first_bar": 1791582900.0
      },
      "6qUUCwD9fyRafora8XVmdApQBxCkbUiZTMkcYD47rWsS": {
       "busy_until": 1791630900.0,
-      "cursor": 1791613500.0,
+      "cursor": 1791613800.0,
       "first_bar": 1791601500.0
      },
      "745ATaSSWxvry5qt1XVv9eXuG884hDvNJfvA2o82dNBi": {
       "busy_until": 1791614400.0,
-      "cursor": 1791613500.0,
+      "cursor": 1791613800.0,
       "first_bar": 1791582900.0
      },
      "867dKvaCcyRrUDP66bqNXbujXfjaxsNB9wTpc4CmBdAD": {
       "busy_until": 1791623700.0,
-      "cursor": 1791613500.0,
+      "cursor": 1791613800.0,
       "first_bar": 1791582900.0
      },
      "8ewuF2o8ACro7fqWepZ3tKhkbBjndZU4Ldk9scRPw83d": {
       "busy_until": 1791613200.0,
-      "cursor": 1791613500.0,
+      "cursor": 1791613800.0,
       "first_bar": 1791582900.0
      },
      "9d6fbbtAGjM6eFHo4NpsPrDgnwhZNdetgewHmupZTVjV": {
       "busy_until": 1791631800.0,
-      "cursor": 1791613500.0,
+      "cursor": 1791613800.0,
       "first_bar": 1791601500.0
      },
      "A7nWJWGUjNyWbVNPA5RrvLoF37j3ovdh8DKdgxYefcdk": {
       "busy_until": 1791614100.0,
-      "cursor": 1791613500.0,
+      "cursor": 1791613800.0,
       "first_bar": 1791582900.0
      },
      "CR5dTgvTddGAqDjP8dGHTL51N6PKRaXqxFBp9FQ5PrKn": {
@@ -3512,17 +3425,17 @@
      },
      "CyJwKnLiiY4fmiwqMCSWFSHxo7T9Ubshgs2uRAuJCrk5": {
       "busy_until": 1791614700.0,
-      "cursor": 1791613500.0,
+      "cursor": 1791613800.0,
       "first_bar": 1791582900.0
      },
      "Fe7bpDYCs74GqiCUF14HwgUMToPKV1d9mDYVX5BTohFr": {
       "busy_until": 1791638700.0,
-      "cursor": 1791613500.0,
+      "cursor": 1791613800.0,
       "first_bar": 1791601500.0
      },
      "HMzvsEEmtzHhvZNw9uwbaG85HCTmFnkbhzUx16cy7ca3": {
       "busy_until": 1791618600.0,
-      "cursor": 1791613500.0,
+      "cursor": 1791613800.0,
       "first_bar": 1791582900.0
      }
     }
@@ -3532,20 +3445,20 @@
    "size_factor": 1.0,
    "status": "paper",
    "verdict": {
-    "at": 1791614115.4327126,
+    "at": 1791614416.1839209,
     "decision": "pending",
-    "n": 6,
-    "reason": "6 trades over 0.4 days: mean net -2.09% [-22.38, +16.59] (-2.80% at measured pool fees), excess over random entries -0.02% [-1.84, +1.99]; scored at 200 trades or 21 days",
+    "n": 7,
+    "reason": "7 trades over 0.4 days: mean net -4.24% [-20.73, +14.53] (-5.13% at measured pool fees), excess over random entries +0.40% [-1.52, +2.14]; scored at 200 trades or 21 days",
     "stats": {
-     "days": 0.35,
-     "excess": -0.000246232478419254,
-     "excess_hi": 0.019914254498843667,
-     "excess_lo": -0.01844413278373508,
-     "mean_hi": 0.16593665341728034,
-     "mean_lo": -0.22377603593449238,
-     "mean_net": -0.020869281837744908,
-     "mean_net_measured_fees": -0.028045561007048806,
-     "n": 6
+     "days": 0.36,
+     "excess": 0.003959503140504201,
+     "excess_hi": 0.021373915444217958,
+     "excess_lo": -0.01521776618168245,
+     "mean_hi": 0.14530229528860003,
+     "mean_lo": -0.20726897021665913,
+     "mean_net": -0.04240806447147114,
+     "mean_net_measured_fees": -0.05128293391106683,
+     "n": 7
     }
    }
   },
@@ -3554,67 +3467,67 @@
     "pools": {
      "2B8tftZ5ww8TREMr3pgkgERLNjJyJxEAPWMENViGMsL4": {
       "busy_until": 1791617100.0,
-      "cursor": 1791613500.0,
+      "cursor": 1791613800.0,
       "first_bar": 1791582900.0
      },
      "3NBq9zynLPDQQDvYf8xiMbWywQfKZD7m7fyprY524efq": {
       "busy_until": 1791612600.0,
-      "cursor": 1791613500.0,
+      "cursor": 1791613800.0,
       "first_bar": 1791582900.0
      },
      "4JAnKFddd5fFTk5PxDj3PpTWJuTEfSWQEjZJcgKQ9KwW": {
       "busy_until": 1791615300.0,
-      "cursor": 1791613500.0,
+      "cursor": 1791613800.0,
       "first_bar": 1791582900.0
      },
      "4R8CiMnJWDNoes3fQi1ccPFJygPXazaHaWpHrN3rZeNj": {
       "busy_until": 1791617400.0,
-      "cursor": 1791613500.0,
+      "cursor": 1791613800.0,
       "first_bar": 1791601500.0
      },
      "4qxSqMh6iEdbdvtMp8r5MK2psAGKNk57PfGeVo2VhczQ": {
       "busy_until": 0.0,
-      "cursor": 1791613500.0,
+      "cursor": 1791613800.0,
       "first_bar": 1791601500.0
      },
      "65GHmCbyRME3XwKjTqDB7pMJw2gvj2LZryfWKczoAqFR": {
       "busy_until": 1791611100.0,
-      "cursor": 1791613500.0,
+      "cursor": 1791613800.0,
       "first_bar": 1791582900.0
      },
      "6QyYdc6jgeKnfP1FWhiexMYq3JQ3sidSYoubjWUTo3rm": {
       "busy_until": 1791613200.0,
-      "cursor": 1791613500.0,
+      "cursor": 1791613800.0,
       "first_bar": 1791582900.0
      },
      "6qUUCwD9fyRafora8XVmdApQBxCkbUiZTMkcYD47rWsS": {
       "busy_until": 1791616800.0,
-      "cursor": 1791613500.0,
+      "cursor": 1791613800.0,
       "first_bar": 1791601500.0
      },
      "745ATaSSWxvry5qt1XVv9eXuG884hDvNJfvA2o82dNBi": {
       "busy_until": 1791619200.0,
-      "cursor": 1791613500.0,
+      "cursor": 1791613800.0,
       "first_bar": 1791582900.0
      },
      "867dKvaCcyRrUDP66bqNXbujXfjaxsNB9wTpc4CmBdAD": {
       "busy_until": 1791613800.0,
-      "cursor": 1791613500.0,
+      "cursor": 1791613800.0,
       "first_bar": 1791582900.0
      },
      "8ewuF2o8ACro7fqWepZ3tKhkbBjndZU4Ldk9scRPw83d": {
       "busy_until": 1791614400.0,
-      "cursor": 1791613500.0,
+      "cursor": 1791613800.0,
       "first_bar": 1791582900.0
      },
      "9d6fbbtAGjM6eFHo4NpsPrDgnwhZNdetgewHmupZTVjV": {
       "busy_until": 1791620400.0,
-      "cursor": 1791613500.0,
+      "cursor": 1791613800.0,
       "first_bar": 1791601500.0
      },
      "A7nWJWGUjNyWbVNPA5RrvLoF37j3ovdh8DKdgxYefcdk": {
       "busy_until": 1791610500.0,
-      "cursor": 1791613500.0,
+      "cursor": 1791613800.0,
       "first_bar": 1791582900.0
      },
      "CR5dTgvTddGAqDjP8dGHTL51N6PKRaXqxFBp9FQ5PrKn": {
@@ -3624,17 +3537,17 @@
      },
      "CyJwKnLiiY4fmiwqMCSWFSHxo7T9Ubshgs2uRAuJCrk5": {
       "busy_until": 1791619800.0,
-      "cursor": 1791613500.0,
+      "cursor": 1791613800.0,
       "first_bar": 1791582900.0
      },
      "Fe7bpDYCs74GqiCUF14HwgUMToPKV1d9mDYVX5BTohFr": {
       "busy_until": 1791617100.0,
-      "cursor": 1791613500.0,
+      "cursor": 1791613800.0,
       "first_bar": 1791601500.0
      },
      "HMzvsEEmtzHhvZNw9uwbaG85HCTmFnkbhzUx16cy7ca3": {
       "busy_until": 0.0,
-      "cursor": 1791613500.0,
+      "cursor": 1791613800.0,
       "first_bar": 1791582900.0
      }
     }
@@ -3644,12 +3557,12 @@
    "size_factor": 1.0,
    "status": "paper",
    "verdict": {
-    "at": 1791614115.4327126,
+    "at": 1791614416.1839209,
     "decision": "pending",
     "n": 28,
     "reason": "28 trades over 0.4 days: mean net -2.23% [-6.90, +3.70] (-3.02% at measured pool fees), excess over random entries -1.07% [-7.09, +4.45]; scored at 200 trades or 21 days",
     "stats": {
-     "days": 0.35,
+     "days": 0.36,
      "excess": -0.010711926855505271,
      "excess_hi": 0.04453212315145378,
      "excess_lo": -0.0708722587384459,
@@ -3666,67 +3579,67 @@
     "pools": {
      "2B8tftZ5ww8TREMr3pgkgERLNjJyJxEAPWMENViGMsL4": {
       "busy_until": 1791618900.0,
-      "cursor": 1791613500.0,
+      "cursor": 1791613800.0,
       "first_bar": 1791582900.0
      },
      "3NBq9zynLPDQQDvYf8xiMbWywQfKZD7m7fyprY524efq": {
       "busy_until": 1791641100.0,
-      "cursor": 1791613500.0,
+      "cursor": 1791613800.0,
       "first_bar": 1791582900.0
      },
      "4JAnKFddd5fFTk5PxDj3PpTWJuTEfSWQEjZJcgKQ9KwW": {
       "busy_until": 1791641100.0,
-      "cursor": 1791613500.0,
+      "cursor": 1791613800.0,
       "first_bar": 1791582900.0
      },
      "4R8CiMnJWDNoes3fQi1ccPFJygPXazaHaWpHrN3rZeNj": {
       "busy_until": 1791631500.0,
-      "cursor": 1791613500.0,
+      "cursor": 1791613800.0,
       "first_bar": 1791601500.0
      },
      "4qxSqMh6iEdbdvtMp8r5MK2psAGKNk57PfGeVo2VhczQ": {
       "busy_until": 0.0,
-      "cursor": 1791613500.0,
+      "cursor": 1791613800.0,
       "first_bar": 1791601500.0
      },
      "65GHmCbyRME3XwKjTqDB7pMJw2gvj2LZryfWKczoAqFR": {
       "busy_until": 1791613200.0,
-      "cursor": 1791613500.0,
+      "cursor": 1791613800.0,
       "first_bar": 1791582900.0
      },
      "6QyYdc6jgeKnfP1FWhiexMYq3JQ3sidSYoubjWUTo3rm": {
       "busy_until": 1791641400.0,
-      "cursor": 1791613500.0,
+      "cursor": 1791613800.0,
       "first_bar": 1791582900.0
      },
      "6qUUCwD9fyRafora8XVmdApQBxCkbUiZTMkcYD47rWsS": {
       "busy_until": 1791630900.0,
-      "cursor": 1791613500.0,
+      "cursor": 1791613800.0,
       "first_bar": 1791601500.0
      },
      "745ATaSSWxvry5qt1XVv9eXuG884hDvNJfvA2o82dNBi": {
       "busy_until": 1791614700.0,
-      "cursor": 1791613500.0,
+      "cursor": 1791613800.0,
       "first_bar": 1791582900.0
      },
      "867dKvaCcyRrUDP66bqNXbujXfjaxsNB9wTpc4CmBdAD": {
       "busy_until": 1791624600.0,
-      "cursor": 1791613500.0,
+      "cursor": 1791613800.0,
       "first_bar": 1791582900.0
      },
      "8ewuF2o8ACro7fqWepZ3tKhkbBjndZU4Ldk9scRPw83d": {
       "busy_until": 1791613200.0,
-      "cursor": 1791613500.0,
+      "cursor": 1791613800.0,
       "first_bar": 1791582900.0
      },
      "9d6fbbtAGjM6eFHo4NpsPrDgnwhZNdetgewHmupZTVjV": {
       "busy_until": 1791631800.0,
-      "cursor": 1791613500.0,
+      "cursor": 1791613800.0,
       "first_bar": 1791601500.0
      },
      "A7nWJWGUjNyWbVNPA5RrvLoF37j3ovdh8DKdgxYefcdk": {
       "busy_until": 1791614100.0,
-      "cursor": 1791613500.0,
+      "cursor": 1791613800.0,
       "first_bar": 1791582900.0
      },
      "CR5dTgvTddGAqDjP8dGHTL51N6PKRaXqxFBp9FQ5PrKn": {
@@ -3736,17 +3649,17 @@
      },
      "CyJwKnLiiY4fmiwqMCSWFSHxo7T9Ubshgs2uRAuJCrk5": {
       "busy_until": 1791614700.0,
-      "cursor": 1791613500.0,
+      "cursor": 1791613800.0,
       "first_bar": 1791582900.0
      },
      "Fe7bpDYCs74GqiCUF14HwgUMToPKV1d9mDYVX5BTohFr": {
       "busy_until": 1791638700.0,
-      "cursor": 1791613500.0,
+      "cursor": 1791613800.0,
       "first_bar": 1791601500.0
      },
      "HMzvsEEmtzHhvZNw9uwbaG85HCTmFnkbhzUx16cy7ca3": {
       "busy_until": 0.0,
-      "cursor": 1791613500.0,
+      "cursor": 1791613800.0,
       "first_bar": 1791582900.0
      }
     }
@@ -3756,20 +3669,20 @@
    "size_factor": 1.0,
    "status": "paper",
    "verdict": {
-    "at": 1791614115.4327126,
+    "at": 1791614416.1839209,
     "decision": "pending",
-    "n": 5,
-    "reason": "5 trades over 0.4 days: mean net -8.21% [-25.82, +5.66] (-9.05% at measured pool fees), excess over random entries +0.38% [-1.64, +2.10]; scored at 200 trades or 21 days",
+    "n": 6,
+    "reason": "6 trades over 0.4 days: mean net -9.71% [-24.26, +2.82] (-10.72% at measured pool fees), excess over random entries +0.80% [-1.17, +2.55]; scored at 200 trades or 21 days",
     "stats": {
-     "days": 0.35,
-     "excess": 0.0038178458818440932,
-     "excess_hi": 0.020992179802104206,
-     "excess_lo": -0.01637653739542024,
-     "mean_hi": 0.05662219887434502,
-     "mean_lo": -0.2581861739647602,
-     "mean_net": -0.0821319769095504,
-     "mean_net_measured_fees": -0.09052536619511412,
-     "n": 5
+     "days": 0.36,
+     "excess": 0.008047191043877565,
+     "excess_hi": 0.025476309324871816,
+     "excess_lo": -0.011703346481562954,
+     "mean_hi": 0.028176713965996254,
+     "mean_lo": -0.24263323619959598,
+     "mean_net": -0.09705010747026342,
+     "mean_net_measured_fees": -0.10722233371845759,
+     "n": 6
     }
    }
   },
@@ -3778,67 +3691,67 @@
     "pools": {
      "2B8tftZ5ww8TREMr3pgkgERLNjJyJxEAPWMENViGMsL4": {
       "busy_until": 1791618600.0,
-      "cursor": 1791613500.0,
+      "cursor": 1791613800.0,
       "first_bar": 1791582900.0
      },
      "3NBq9zynLPDQQDvYf8xiMbWywQfKZD7m7fyprY524efq": {
       "busy_until": 1791612600.0,
-      "cursor": 1791613500.0,
+      "cursor": 1791613800.0,
       "first_bar": 1791582900.0
      },
      "4JAnKFddd5fFTk5PxDj3PpTWJuTEfSWQEjZJcgKQ9KwW": {
       "busy_until": 1791618600.0,
-      "cursor": 1791613500.0,
+      "cursor": 1791613800.0,
       "first_bar": 1791582900.0
      },
      "4R8CiMnJWDNoes3fQi1ccPFJygPXazaHaWpHrN3rZeNj": {
       "busy_until": 1791610800.0,
-      "cursor": 1791613500.0,
+      "cursor": 1791613800.0,
       "first_bar": 1791601500.0
      },
      "4qxSqMh6iEdbdvtMp8r5MK2psAGKNk57PfGeVo2VhczQ": {
       "busy_until": 0.0,
-      "cursor": 1791613500.0,
+      "cursor": 1791613800.0,
       "first_bar": 1791601500.0
      },
      "65GHmCbyRME3XwKjTqDB7pMJw2gvj2LZryfWKczoAqFR": {
       "busy_until": 1791611100.0,
-      "cursor": 1791613500.0,
+      "cursor": 1791613800.0,
       "first_bar": 1791582900.0
      },
      "6QyYdc6jgeKnfP1FWhiexMYq3JQ3sidSYoubjWUTo3rm": {
       "busy_until": 1791614100.0,
-      "cursor": 1791613500.0,
+      "cursor": 1791613800.0,
       "first_bar": 1791582900.0
      },
      "6qUUCwD9fyRafora8XVmdApQBxCkbUiZTMkcYD47rWsS": {
       "busy_until": 1791612000.0,
-      "cursor": 1791613500.0,
+      "cursor": 1791613800.0,
       "first_bar": 1791601500.0
      },
      "745ATaSSWxvry5qt1XVv9eXuG884hDvNJfvA2o82dNBi": {
       "busy_until": 1791612300.0,
-      "cursor": 1791613500.0,
+      "cursor": 1791613800.0,
       "first_bar": 1791582900.0
      },
      "867dKvaCcyRrUDP66bqNXbujXfjaxsNB9wTpc4CmBdAD": {
       "busy_until": 1791618600.0,
-      "cursor": 1791613500.0,
+      "cursor": 1791613800.0,
       "first_bar": 1791582900.0
      },
      "8ewuF2o8ACro7fqWepZ3tKhkbBjndZU4Ldk9scRPw83d": {
       "busy_until": 1791615000.0,
-      "cursor": 1791613500.0,
+      "cursor": 1791613800.0,
       "first_bar": 1791582900.0
      },
      "9d6fbbtAGjM6eFHo4NpsPrDgnwhZNdetgewHmupZTVjV": {
-      "busy_until": 1791610200.0,
-      "cursor": 1791613500.0,
+      "busy_until": 1791621000.0,
+      "cursor": 1791613800.0,
       "first_bar": 1791601500.0
      },
      "A7nWJWGUjNyWbVNPA5RrvLoF37j3ovdh8DKdgxYefcdk": {
       "busy_until": 1791611400.0,
-      "cursor": 1791613500.0,
+      "cursor": 1791613800.0,
       "first_bar": 1791582900.0
      },
      "CR5dTgvTddGAqDjP8dGHTL51N6PKRaXqxFBp9FQ5PrKn": {
@@ -3848,17 +3761,17 @@
      },
      "CyJwKnLiiY4fmiwqMCSWFSHxo7T9Ubshgs2uRAuJCrk5": {
       "busy_until": 1791594300.0,
-      "cursor": 1791613500.0,
+      "cursor": 1791613800.0,
       "first_bar": 1791582900.0
      },
      "Fe7bpDYCs74GqiCUF14HwgUMToPKV1d9mDYVX5BTohFr": {
       "busy_until": 1791617400.0,
-      "cursor": 1791613500.0,
+      "cursor": 1791613800.0,
       "first_bar": 1791601500.0
      },
      "HMzvsEEmtzHhvZNw9uwbaG85HCTmFnkbhzUx16cy7ca3": {
       "busy_until": 0.0,
-      "cursor": 1791613500.0,
+      "cursor": 1791613800.0,
       "first_bar": 1791582900.0
      }
     }
@@ -3868,20 +3781,20 @@
    "size_factor": 1.0,
    "status": "paper",
    "verdict": {
-    "at": 1791614115.4327126,
+    "at": 1791614416.1839209,
     "decision": "pending",
-    "n": 23,
-    "reason": "23 trades over 0.4 days: mean net -1.88% [-6.32, +4.32] (-2.68% at measured pool fees), excess over random entries +0.69% [-6.50, +8.11]; scored at 200 trades or 21 days",
+    "n": 24,
+    "reason": "24 trades over 0.4 days: mean net -2.11% [-6.36, +4.13] (-2.89% at measured pool fees), excess over random entries +0.59% [-5.92, +8.11]; scored at 200 trades or 21 days",
     "stats": {
-     "days": 0.35,
-     "excess": 0.006872735370577437,
+     "days": 0.36,
+     "excess": 0.005921163894269735,
      "excess_hi": 0.0811060364348152,
-     "excess_lo": -0.0649925486593116,
-     "mean_hi": 0.0431887829185684,
-     "mean_lo": -0.0631687656691201,
-     "mean_net": -0.018804419481537406,
-     "mean_net_measured_fees": -0.026812498064589498,
-     "n": 23
+     "excess_lo": -0.05916819985653188,
+     "mean_hi": 0.041341073011215534,
+     "mean_lo": -0.0636481089886838,
+     "mean_net": -0.021078310645064765,
+     "mean_net_measured_fees": -0.028869759847003917,
+     "n": 24
     }
    }
   },
@@ -3890,67 +3803,67 @@
     "pools": {
      "2B8tftZ5ww8TREMr3pgkgERLNjJyJxEAPWMENViGMsL4": {
       "busy_until": 1791625800.0,
-      "cursor": 1791613500.0,
+      "cursor": 1791613800.0,
       "first_bar": 1791582900.0
      },
      "3NBq9zynLPDQQDvYf8xiMbWywQfKZD7m7fyprY524efq": {
       "busy_until": 1791612300.0,
-      "cursor": 1791613500.0,
+      "cursor": 1791613800.0,
       "first_bar": 1791582900.0
      },
      "4JAnKFddd5fFTk5PxDj3PpTWJuTEfSWQEjZJcgKQ9KwW": {
       "busy_until": 1791625800.0,
-      "cursor": 1791613500.0,
+      "cursor": 1791613800.0,
       "first_bar": 1791582900.0
      },
      "4R8CiMnJWDNoes3fQi1ccPFJygPXazaHaWpHrN3rZeNj": {
       "busy_until": 1791618000.0,
-      "cursor": 1791613500.0,
+      "cursor": 1791613800.0,
       "first_bar": 1791601500.0
      },
      "4qxSqMh6iEdbdvtMp8r5MK2psAGKNk57PfGeVo2VhczQ": {
       "busy_until": 0.0,
-      "cursor": 1791613500.0,
+      "cursor": 1791613800.0,
       "first_bar": 1791601500.0
      },
      "65GHmCbyRME3XwKjTqDB7pMJw2gvj2LZryfWKczoAqFR": {
       "busy_until": 1791608400.0,
-      "cursor": 1791613500.0,
+      "cursor": 1791613800.0,
       "first_bar": 1791582900.0
      },
      "6QyYdc6jgeKnfP1FWhiexMYq3JQ3sidSYoubjWUTo3rm": {
       "busy_until": 1791612300.0,
-      "cursor": 1791613500.0,
+      "cursor": 1791613800.0,
       "first_bar": 1791582900.0
      },
      "6qUUCwD9fyRafora8XVmdApQBxCkbUiZTMkcYD47rWsS": {
       "busy_until": 1791619200.0,
-      "cursor": 1791613500.0,
+      "cursor": 1791613800.0,
       "first_bar": 1791601500.0
      },
      "745ATaSSWxvry5qt1XVv9eXuG884hDvNJfvA2o82dNBi": {
       "busy_until": 1791619500.0,
-      "cursor": 1791613500.0,
+      "cursor": 1791613800.0,
       "first_bar": 1791582900.0
      },
      "867dKvaCcyRrUDP66bqNXbujXfjaxsNB9wTpc4CmBdAD": {
       "busy_until": 1791625800.0,
-      "cursor": 1791613500.0,
+      "cursor": 1791613800.0,
       "first_bar": 1791582900.0
      },
      "8ewuF2o8ACro7fqWepZ3tKhkbBjndZU4Ldk9scRPw83d": {
       "busy_until": 1791615600.0,
-      "cursor": 1791613500.0,
+      "cursor": 1791613800.0,
       "first_bar": 1791582900.0
      },
      "9d6fbbtAGjM6eFHo4NpsPrDgnwhZNdetgewHmupZTVjV": {
       "busy_until": 1791617400.0,
-      "cursor": 1791613500.0,
+      "cursor": 1791613800.0,
       "first_bar": 1791601500.0
      },
      "A7nWJWGUjNyWbVNPA5RrvLoF37j3ovdh8DKdgxYefcdk": {
       "busy_until": 1791618600.0,
-      "cursor": 1791613500.0,
+      "cursor": 1791613800.0,
       "first_bar": 1791582900.0
      },
      "CR5dTgvTddGAqDjP8dGHTL51N6PKRaXqxFBp9FQ5PrKn": {
@@ -3960,17 +3873,17 @@
      },
      "CyJwKnLiiY4fmiwqMCSWFSHxo7T9Ubshgs2uRAuJCrk5": {
       "busy_until": 1791601500.0,
-      "cursor": 1791613500.0,
+      "cursor": 1791613800.0,
       "first_bar": 1791582900.0
      },
      "Fe7bpDYCs74GqiCUF14HwgUMToPKV1d9mDYVX5BTohFr": {
       "busy_until": 1791624600.0,
-      "cursor": 1791613500.0,
+      "cursor": 1791613800.0,
       "first_bar": 1791601500.0
      },
      "HMzvsEEmtzHhvZNw9uwbaG85HCTmFnkbhzUx16cy7ca3": {
       "busy_until": 0.0,
-      "cursor": 1791613500.0,
+      "cursor": 1791613800.0,
       "first_bar": 1791582900.0
      }
     }
@@ -3980,12 +3893,12 @@
    "size_factor": 1.0,
    "status": "paper",
    "verdict": {
-    "at": 1791614115.4327126,
+    "at": 1791614416.1839209,
     "decision": "pending",
     "n": 11,
     "reason": "11 trades over 0.4 days: mean net -6.24% [-12.97, +4.49] (-7.07% at measured pool fees), excess over random entries +0.64% [-5.73, +8.76]; scored at 200 trades or 21 days",
     "stats": {
-     "days": 0.35,
+     "days": 0.36,
      "excess": 0.006367091234782588,
      "excess_hi": 0.08761261473880487,
      "excess_lo": -0.05734656966446363,
@@ -4002,67 +3915,67 @@
     "pools": {
      "2B8tftZ5ww8TREMr3pgkgERLNjJyJxEAPWMENViGMsL4": {
       "busy_until": 1791619200.0,
-      "cursor": 1791613500.0,
+      "cursor": 1791613800.0,
       "first_bar": 1791582900.0
      },
      "3NBq9zynLPDQQDvYf8xiMbWywQfKZD7m7fyprY524efq": {
       "busy_until": 1791612000.0,
-      "cursor": 1791613500.0,
+      "cursor": 1791613800.0,
       "first_bar": 1791582900.0
      },
      "4JAnKFddd5fFTk5PxDj3PpTWJuTEfSWQEjZJcgKQ9KwW": {
       "busy_until": 1791640200.0,
-      "cursor": 1791613500.0,
+      "cursor": 1791613800.0,
       "first_bar": 1791582900.0
      },
      "4R8CiMnJWDNoes3fQi1ccPFJygPXazaHaWpHrN3rZeNj": {
       "busy_until": 1791632400.0,
-      "cursor": 1791613500.0,
+      "cursor": 1791613800.0,
       "first_bar": 1791601500.0
      },
      "4qxSqMh6iEdbdvtMp8r5MK2psAGKNk57PfGeVo2VhczQ": {
       "busy_until": 0.0,
-      "cursor": 1791613500.0,
+      "cursor": 1791613800.0,
       "first_bar": 1791601500.0
      },
      "65GHmCbyRME3XwKjTqDB7pMJw2gvj2LZryfWKczoAqFR": {
       "busy_until": 1791622800.0,
-      "cursor": 1791613500.0,
+      "cursor": 1791613800.0,
       "first_bar": 1791582900.0
      },
      "6QyYdc6jgeKnfP1FWhiexMYq3JQ3sidSYoubjWUTo3rm": {
       "busy_until": 1791612000.0,
-      "cursor": 1791613500.0,
+      "cursor": 1791613800.0,
       "first_bar": 1791582900.0
      },
      "6qUUCwD9fyRafora8XVmdApQBxCkbUiZTMkcYD47rWsS": {
       "busy_until": 1791633600.0,
-      "cursor": 1791613500.0,
+      "cursor": 1791613800.0,
       "first_bar": 1791601500.0
      },
      "745ATaSSWxvry5qt1XVv9eXuG884hDvNJfvA2o82dNBi": {
       "busy_until": 1791615000.0,
-      "cursor": 1791613500.0,
+      "cursor": 1791613800.0,
       "first_bar": 1791582900.0
      },
      "867dKvaCcyRrUDP66bqNXbujXfjaxsNB9wTpc4CmBdAD": {
       "busy_until": 1791625500.0,
-      "cursor": 1791613500.0,
+      "cursor": 1791613800.0,
       "first_bar": 1791582900.0
      },
      "8ewuF2o8ACro7fqWepZ3tKhkbBjndZU4Ldk9scRPw83d": {
       "busy_until": 1791615300.0,
-      "cursor": 1791613500.0,
+      "cursor": 1791613800.0,
       "first_bar": 1791582900.0
      },
      "9d6fbbtAGjM6eFHo4NpsPrDgnwhZNdetgewHmupZTVjV": {
       "busy_until": 1791631800.0,
-      "cursor": 1791613500.0,
+      "cursor": 1791613800.0,
       "first_bar": 1791601500.0
      },
      "A7nWJWGUjNyWbVNPA5RrvLoF37j3ovdh8DKdgxYefcdk": {
       "busy_until": 1791615000.0,
-      "cursor": 1791613500.0,
+      "cursor": 1791613800.0,
       "first_bar": 1791582900.0
      },
      "CR5dTgvTddGAqDjP8dGHTL51N6PKRaXqxFBp9FQ5PrKn": {
@@ -4072,17 +3985,17 @@
      },
      "CyJwKnLiiY4fmiwqMCSWFSHxo7T9Ubshgs2uRAuJCrk5": {
       "busy_until": 1791615900.0,
-      "cursor": 1791613500.0,
+      "cursor": 1791613800.0,
       "first_bar": 1791582900.0
      },
      "Fe7bpDYCs74GqiCUF14HwgUMToPKV1d9mDYVX5BTohFr": {
       "busy_until": 1791639000.0,
-      "cursor": 1791613500.0,
+      "cursor": 1791613800.0,
       "first_bar": 1791601500.0
      },
      "HMzvsEEmtzHhvZNw9uwbaG85HCTmFnkbhzUx16cy7ca3": {
       "busy_until": 0.0,
-      "cursor": 1791613500.0,
+      "cursor": 1791613800.0,
       "first_bar": 1791582900.0
      }
     }
@@ -4092,12 +4005,12 @@
    "size_factor": 1.0,
    "status": "paper",
    "verdict": {
-    "at": 1791614115.4327126,
+    "at": 1791614416.1839209,
     "decision": "pending",
     "n": 2,
     "reason": "2 trades over 0.4 days: mean net -24.78% [-31.32, -18.25] (-25.68% at measured pool fees), excess over random entries -1.42% [-2.51, -0.33]; scored at 200 trades or 21 days",
     "stats": {
-     "days": 0.35,
+     "days": 0.36,
      "excess": -0.014199149791733257,
      "excess_hi": -0.0033122117732983236,
      "excess_lo": -0.02508608781016819,
@@ -4120,7 +4033,7 @@
    "size_factor": 1.0,
    "status": "paper",
    "verdict": {
-    "at": 1791614115.4327126,
+    "at": 1791614416.1839209,
     "decision": "pending",
     "n": 0,
     "reason": "0 interval(s); scored after 2027-04-10 (registered)",
@@ -4138,7 +4051,7 @@
    "size_factor": 1.0,
    "status": "paper",
    "verdict": {
-    "at": 1791614115.4327126,
+    "at": 1791614416.1839209,
     "decision": "pending",
     "n": 0,
     "reason": "0 closed legs, basket P&L $+0.00 on $200 of JLP; the registered verdict is `jlp_paper.py evaluate --final` after 2027-01-08",
@@ -4172,7 +4085,7 @@
    "size_factor": 1.0,
    "status": "paper",
    "verdict": {
-    "at": 1791614115.4327126,
+    "at": 1791614416.1839209,
     "decision": "pending",
     "n": 0,
     "reason": "0 complete week(s); scored at 52 weeks (registered)",
@@ -4188,7 +4101,7 @@
    "size_factor": 1.0,
    "status": "paper",
    "verdict": {
-    "at": 1791614115.4327126,
+    "at": 1791614416.1839209,
     "decision": "pending",
     "n": 0,
     "reason": "0 complete week(s); scored at 52 weeks (registered)",
