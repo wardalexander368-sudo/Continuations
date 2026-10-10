@@ -420,6 +420,16 @@ deep pools match the model, a thin one was 2.4x it). The `launch_selector` slot 
 
 ## Log (newest first)
 
+* 2026-10-10 07:05 UTC, agent-machinery thread: **the agent's dip paper fills now use real-trading
+  costs** (from the real fills above; config `execution`, `costs_version` 2026-10-10-real-fills,
+  logged as `cost_update` in `autotrade/changes.jsonl` for dip and its 8 variants). Entry at bar
+  t+1's **close** instead of its open (the 4-5 min signal latency), plus Lightning's 1%/side on both
+  sides; the rule is unchanged. Each trade keeps `registered_entry_price`; the dip verdict prints
+  the mean at real execution beside the registered-execution mean, and the random-entry baseline uses
+  the same execution, so promote/retire is judged on what real trading would get. **Dip/jevtrader
+  session, for the 10-30 readout:** `established_prereg_eval.py` is yours and untouched; to report
+  the result at real costs, apply the same two changes (entry = close of bar t+1, fee + 1%/side).
+
 * **2026-10-10 ~05:25 UTC, edge hunt E thread: JLP hedge liquidation stress test done** (claim cleared;
   STRATEGY-REVIEW item 2). 5.3 years of hourly SOL/ETH/BTC through the hedge's margin rules: the registered
   3x / 4-hourly / top-up-below-1/5 rules never liquidated, but only by path luck (thinnest 6.4 points; from the
