@@ -32,14 +32,6 @@ next. Topic documents hold the detail:
 
 ## Active
 
-* **HLP dry twin (curve-model retrain thread)** (since 2026-10-10 04:00 UTC, branch
-  `claude/project-thread-6oh2s6`). **Paper and dry only, no keys, no money.** Strategy review rec. 2: make
-  `hlp_hold` promotion-ready like the hedged JLP: a dry twin of the HLP vault deposit (priced from the
-  vault's live state, rolled across the paper intervals, withdrawn at the end), the gated live sender
-  (`vaultTransfer`, behind `gate.py`), limits and kill switches, tests, `autotrade.md`. Touches a new
-  `tartar/autotrade/vault.py`, a vault branch in `broker.py`, and `strategies/vault_hold.py` (roll flag).
-  Leaves the perp/SOL senders and the cadence alone.
-
 * **Hyperliquid open-interest study (second TARTAR session)** (since 2026-10-10 03:45 UTC, branch
   `claude/project-thread-kytb6q`). **Paper only, no keys.** Cross-sectional and majors OI rules on
   Hyperliquid perps. Hyperliquid keeps no OI history, so history = OKX daily OI (public, from 2024-01)
@@ -405,6 +397,14 @@ deep pools match the model, a thin one was 2.4x it). The `launch_selector` slot 
   branch `claude/profitability-backtest`, on `main`).
 
 ## Log (newest first)
+
+* **2026-10-10 04:10 UTC, curve-model retrain thread: HLP promotion-ready (strategy review rec. 2).**
+  `hlp_hold` now gets a vault twin (`tartar/autotrade/vault.py`, `autotrade.md` *Vault twins*): dry in
+  `dry_live` from its first entry (deposit checked against HLP's live state, carried across the paper
+  intervals, withdrawn at the window end, compared per interval), and a gated live `vaultTransfer` sender on
+  the perps' Hyperliquid keys (testnet: signature recovers our signer; whether an API wallet may deposit
+  into a vault is unverified). Going live adds $200 USDC in the Hyperliquid account. 5 tests; suite 268
+  passed. Paper/dry only, no keys. Claim cleared.
 
 * **2026-10-10 ~04:15 UTC, edge hunt E thread: E3, spot-perp funding carry on Hyperliquid, does not hold**
   (claim cleared). Pre-registered (`preregistration/spot-carry/SPEC.md`). Spot + short perp at 2x on 8 HL spot

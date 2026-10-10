@@ -262,7 +262,18 @@ def live_report(ledger: Ledger, mode: str) -> list[str]:
     usd_open = [p for p in ledger.positions if p.meta.get("live", {}).get("venue") == "jupiter_usd"]
     if usd_open or usd:
         out += ["", f"Open USD spot twins {len(usd_open)} (${sum(p.meta['live']['notional_in'] for p in usd_open):.2f})."]
-    open_twins = [p for p in ledger.positions if p.meta.get("live") and p.meta["live"].get("venue") not in ("hyperliquid", "jupiter_usd")]
+    vault = [r for r in rows if r.get("event") in ("vault_roll_out", "vault_withdraw")]
+    if vault:
+        d = sorted(r["compare"]["live_minus_paper"] for r in vault)
+        out += ["", "| Vault twin intervals (Hyperliquid HLP) | Mean twin | Mean paper | Median twin − paper | Net USD | Dry |",
+                "|---|---|---|---|---|---|",
+                f"| {len(vault)} | {100 * sum(r['compare']['live_net_return_usd'] for r in vault) / len(vault):+.2f}% | "
+                f"{100 * sum(r['compare']['paper_net_return'] for r in vault) / len(vault):+.2f}% | {100 * d[len(d) // 2]:+.2f} points | "
+                f"{sum(r['compare']['net_usd'] for r in vault):+.2f} | {sum(1 for r in vault if r['compare'].get('dry'))} |"]
+    vault_open = [p for p in ledger.positions if p.meta.get("live", {}).get("venue") == "hyperliquid_vault"]
+    if vault_open or vault:
+        out += ["", f"Open vault twins {len(vault_open)} (${sum(p.meta['live']['equity'] for p in vault_open):.2f} at their last mark)."]
+    open_twins = [p for p in ledger.positions if p.meta.get("live") and p.meta["live"].get("venue") not in ("hyperliquid", "jupiter_usd", "hyperliquid_vault")]
     skips = [r for r in rows if r.get("event") == "skip"]
     out += ["", f"Open twins {len(open_twins)} ({sum(p.meta['live']['sol_in'] for p in open_twins):.4f} SOL); "
                 f"skipped entries {len(skips)}" + (f" (latest: {skips[-1]['reason']})" if skips else "") +

@@ -28,6 +28,7 @@ from .gate import LiveNotAllowed, approval_reason, kill_reason, require_live  # 
 from .safety import Pending, buy_order_id
 from .perps import PERP_DEFAULTS, cloid, is_perp, make_perp_executor, perp_keys, select_perp_route
 from .usd_spot import is_usd_spot, make_usd_spot_executor, sim_wallet_move
+from .vault import VAULT_DEFAULTS, VaultPending, is_vault, make_vault_executor
 
 
 
@@ -125,7 +126,7 @@ class LiveBroker(PaperBroker):
     """The paper fill plus a live twin. ``entries=False`` only runs exits of existing twins."""
 
     def __init__(self, config: dict, ledger=None, root=None, executor=None, env=None, entries: bool = True, now: float | None = None,
-                 perp_executor=None, usd_executor=None):
+                 perp_executor=None, usd_executor=None, vault_executor=None):
         env = os.environ if env is None else env
         mode = config.get("mode")
         self.cfg = {**LIVE_DEFAULTS, **config.get("live", {})}
@@ -166,6 +167,9 @@ class LiveBroker(PaperBroker):
         self.pcfg = {**PERP_DEFAULTS, **self.cfg.get("perps", {})}
         self._perp_exec = perp_executor
         self._usd_exec = usd_executor
+        self.vcfg = {**VAULT_DEFAULTS, **self.cfg.get("vault", {})}
+        self._vault_exec = vault_executor
+        self.vault_pending = VaultPending(self.root)
 
     # state
     def live_state(self) -> dict:
@@ -230,7 +234,7 @@ class LiveBroker(PaperBroker):
         age = self.now - intent.at
         if age > self.cfg["max_signal_age_s"]:
             return f"signal {age:.0f} s old > {self.cfg['max_signal_age_s']:.0f} s", 0.0
-        twins = [p.meta["live"] for p in positions if p.meta.get("live") and not is_perp(p.meta["live"]) and not is_usd_spot(p.meta["live"])]
+        twins = [p.meta["live"] for p in positions if p.meta.get("live") and not is_perp(p.meta["live"]) and not is_usd_spot(p.meta["live"]) and not is_vault(p.meta["live"])]
         if any(t["mint"] == mint for t in twins):
             return "a live twin already holds this mint", 0.0
         at_risk = sum(t["sol_in"] for t in twins)
@@ -245,6 +249,8 @@ class LiveBroker(PaperBroker):
         return None, round(size, 6)
 
     def open(self, intent: Intent, positions: list[Position] | None = None) -> tuple[Position, dict]:
+        if is_vault(intent.meta):
+            return self._open_vault(intent, positions or [])
         if is_perp(intent.meta):
             return self._open_perp(intent, positions or [])
         if is_usd_spot(intent.meta):
@@ -305,6 +311,8 @@ class LiveBroker(PaperBroker):
     # exit
     def close(self, pos: Position, intent: Intent) -> tuple[Trade, dict]:
         twin = pos.meta.get("live")
+        if twin and is_vault(twin):
+            return self._close_vault(pos, intent)
         if twin and is_perp(twin):
             return self._close_perp(pos, intent)
         if twin and is_usd_spot(twin):
@@ -709,6 +717,194 @@ class LiveBroker(PaperBroker):
         self.pending.done(sid)
         return trade, row
 
+    # vault deposits (Hyperliquid HLP; vault.py). The route is the perp route: same account, same keys.
+    def vault_exec(self):
+        if self._vault_exec is None:
+            self._vault_exec = make_vault_executor(self.perp_route, self.vcfg, self.env, self.config, self.root, self.pcfg)
+        return self._vault_exec
+
+    def _vault_twins(self, positions: list[Position], vault: str | None = None) -> list[dict]:
+        out = [p.meta["live"] for p in positions if p.meta.get("live") and is_vault(p.meta["live"])]
+        out += self.live_state().get("vault_handover", [])
+        return [t for t in out if vault is None or t["vault"] == vault]
+
+    def _vault_leftover(self, oid: str, vault: str, positions: list[Position], usd: float) -> tuple[str, float]:
+        """A transfer a dead run left in ``vault_pending.json``: ("none" | "landed" | "unclear", USD the account holds
+        beyond the book). Dry moved nothing, so it is always "none"."""
+        if oid not in self.vault_pending.load():
+            return "none", 0.0
+        try:
+            held = self.vault_exec().held(vault)
+        except Exception:  # noqa: BLE001 - can't tell: don't send blind
+            return "unclear", 0.0
+        if held is None:
+            self.vault_pending.done(oid)
+            return "none", 0.0
+        extra = held - sum(t["equity"] for t in self._vault_twins(positions, vault) if t.get("route") == self.perp_route)
+        return ("landed" if extra >= 0.9 * usd else "none"), extra
+
+    def vault_entry_block(self, intent: Intent, positions: list[Position]) -> tuple[str | None, float]:
+        if intent.meta.get("shadow"):
+            return "shadow variant", 0.0
+        if self.perp_route is None:
+            return "no vault route: mode live needs the approval plus HYPERLIQUID_AGENT_KEY and HYPERLIQUID_ACCOUNT", 0.0
+        if not (self.entries or (self.perp_route == "dry" and self.vcfg["dry_all"])):
+            return "strategy not promoted", 0.0
+        why = self.kill_reason(intent.strategy)
+        if why:
+            return why, 0.0
+        age = self.now - intent.at
+        if age > self.vcfg["max_signal_age_s"]:
+            return f"signal {age:.0f} s old > {self.vcfg['max_signal_age_s']:.0f} s", 0.0
+        at_risk = sum(t["equity"] for t in self._vault_twins(positions))
+        size = min(self.vcfg["max_usd"], intent.notional_usd, self.vcfg["budget_usd"] - at_risk)
+        size *= self.ledger.strategy(intent.strategy).get("size_factor", 1.0) if self.ledger else 1.0
+        if size < self.vcfg["min_usd"]:
+            return f"size ${size:.2f} < min ${self.vcfg['min_usd']:.0f} (budget ${self.vcfg['budget_usd']:.0f}, at risk ${at_risk:.2f})", 0.0
+        return None, round(size, 2)
+
+    def _open_vault(self, intent: Intent, positions: list[Position]) -> tuple[Position, dict]:
+        pos, row = PaperBroker.open(self, intent)
+        pos.mode = row["mode"] = "paper"
+        vault = intent.meta["vault"]
+        hand = self.live_state().setdefault("vault_handover", [])
+        held = next((h for h in hand if h["strategy"] == intent.strategy and h["vault"] == vault), None)
+        if held:  # the next paper interval: the deposit carries on
+            hand.remove(held)
+            pos.meta["live"] = {k: v for k, v in held.items() if k != "strategy"} | {"paper_price_in": intent.price}
+            pos.mode = row["mode"] = self.mode
+            row["live"] = {"rolled": True, "equity": held["equity"]}
+            self.log({"event": "vault_roll_in", "strategy": intent.strategy, "position": pos.id, "vault": vault, "equity": held["equity"]})
+            return pos, row
+        why, usd = self.vault_entry_block(intent, positions)
+        if why:
+            row["live"] = {"skipped": why}
+            if not intent.meta.get("shadow"):
+                self.log({"event": "skip", "venue": "hyperliquid_vault", "strategy": intent.strategy, "position": pos.id, "reason": why, "at": intent.at})
+            return pos, row
+        oid = f"vault_deposit|{buy_order_id(intent)}"
+        state, extra = self._vault_leftover(oid, vault, positions, usd)
+        if state == "unclear":
+            row["live"] = {"skipped": "an earlier deposit for this entry may have landed and the account can't be read"}
+            self.log({"event": "skip", "venue": "hyperliquid_vault", "strategy": intent.strategy, "position": pos.id, **row["live"]})
+            return pos, row
+        if state == "landed":  # a run that died deposited already: adopt it, don't deposit again
+            ex = self.vault_exec()
+            m = ex.mark(vault)
+            pos.meta["live"] = {"venue": "hyperliquid_vault", "vault": vault, "route": self.perp_route, "usd_in": extra, "equity": extra,
+                                "mark": m.__dict__, "opened_at": self.now, "lockup_until": None, "paper_price_in": intent.price,
+                                "dry": self.perp_route == "dry", "adopted": oid}
+            pos.mode = row["mode"] = self.mode
+            row["live"] = {"adopted": oid, "equity": extra}
+            self.log({"event": "vault_deposit_adopted", "strategy": intent.strategy, "position": pos.id, "order_id": oid, "equity": extra})
+            self.vault_pending.done(oid)
+            return pos, row
+        self.vault_pending.add(oid, {"leg": "vault_deposit", "venue": "hyperliquid_vault", "strategy": intent.strategy, "position": pos.id,
+                                     "vault": vault, "usd": usd, "at": self.now, "route": self.perp_route})
+        f = self.vault_exec().deposit(vault, usd)
+        rec = {"event": "vault_deposit", "strategy": intent.strategy, "position": pos.id, "order_id": oid, "fill": f.to_dict(),
+               "paper_price": intent.price, "paper_at": intent.at}
+        if f.ok:
+            pos.meta["live"] = {"venue": "hyperliquid_vault", "vault": vault, "route": self.perp_route, "usd_in": f.usd, "equity": f.usd,
+                                "mark": f.mark, "opened_at": self.now, "lockup_until": f.lockup_until, "paper_price_in": intent.price,
+                                "dry": f.dry}
+            pos.mode = row["mode"] = self.mode
+            row["live"] = {"venue": "hyperliquid_vault", "usd_in": f.usd}
+            self.vault_pending.done(oid)
+        else:
+            row["live"] = {"failed": f.error}
+            self.ledger.journal({"event": "live_error", "strategy": intent.strategy, "position": pos.id, "leg": "vault_deposit",
+                                 "error": f.error, "at": self.now})
+            if f.unknown:  # it may have landed: the pending row stays, so a re-run checks the account before depositing again
+                self.halt(intent.strategy, f"vault deposit outcome unknown ({f.error}); check the account, then resume-live")
+            else:
+                self.vault_pending.done(oid)
+        self.log(rec)
+        return pos, row
+
+    def _close_vault(self, pos: Position, intent: Intent) -> tuple[Trade, dict]:
+        from .vault import Mark
+
+        twin = pos.meta["live"]
+        trade, row = PaperBroker.close(self, pos, intent)
+        trade.mode = pos.mode
+        vault = twin["vault"]
+        if twin["route"] != self.perp_route:
+            if twin.get("dry"):
+                row["live"] = {"dropped": f"dry vault twin closed while the route is {self.perp_route}"}
+                return trade, row
+            self.live_state()["orphans"].append({"position": pos.id, "strategy": pos.strategy, **twin, "at": self.now,
+                                                 "error": f"deposited on {twin['route']}, route now {self.perp_route}"})
+            row["live"] = {"failed": "vault route changed"}
+            return trade, row
+        ex = self.vault_exec()
+        try:
+            m1 = ex.mark(vault)
+            ferr = None
+        except Exception as exc:  # noqa: BLE001 - mark with the paper move instead
+            m1, ferr = None, f"{type(exc).__name__}: {exc}"[:200]
+        m0 = Mark(**twin["mark"]) if twin.get("mark") else None
+        growth = m0.growth(m1) if (m0 and m1) else (intent.price / twin["paper_price_in"] - 1)
+        equity = twin["equity"] * (1 + growth)
+        kept = bool(intent.meta.get("kept"))
+        if kept:
+            event, out_usd = "vault_roll_out", equity
+        else:
+            oid = f"vault_withdraw|{pos.id}"
+            if oid in self.vault_pending.load():  # a run that died while withdrawing: did it go out?
+                try:
+                    held = ex.held(vault)
+                except Exception:  # noqa: BLE001 - can't tell: don't send blind
+                    held = -1.0
+                book = twin["equity"] + sum(t["equity"] for t in self.live_state().get("vault_handover", []) if t["vault"] == vault)
+                if held is not None and held >= 0 and held < book - 0.5 * twin["equity"]:
+                    self.vault_pending.done(oid)
+                    trade.meta["live"] = row["live"] = {"withdrawn_unrecorded": True, "equity_est": equity, "route": twin["route"]}
+                    self.log({"event": "vault_withdraw_unrecorded", "strategy": pos.strategy, "position": pos.id, "held": held, "twin": twin})
+                    return trade, row
+                if held is not None and held < 0:
+                    self.live_state()["orphans"].append({"position": pos.id, "strategy": pos.strategy, **twin, "equity": equity,
+                                                         "error": "earlier withdrawal unclear and the account can't be read", "at": self.now})
+                    self.halt(pos.strategy, "vault withdrawal unclear; check the account, then resume-live")
+                    row["live"] = {"failed": "withdrawal unclear"}
+                    return trade, row
+            self.vault_pending.add(oid, {"leg": "vault_withdraw", "venue": "hyperliquid_vault", "strategy": pos.strategy, "position": pos.id,
+                                         "vault": vault, "usd": equity, "at": self.now, "route": self.perp_route})
+            f = ex.withdraw(vault, equity, twin.get("lockup_until"))
+            if not f.ok:
+                if not f.unknown:
+                    self.vault_pending.done(oid)
+                self.live_state()["orphans"].append({"position": pos.id, "strategy": pos.strategy, **twin, "equity": equity,
+                                                     "error": f.error, "unknown": f.unknown, "at": self.now})
+                self.ledger.journal({"event": "live_error", "strategy": pos.strategy, "position": pos.id, "leg": "vault_withdraw",
+                                     "error": f.error, "at": self.now})
+                self.log({"event": "vault_withdraw_failed", "strategy": pos.strategy, "position": pos.id, "fill": f.to_dict()})
+                self.halt(pos.strategy, f"vault withdrawal failed ({f.error}); twin kept in live.orphans")
+                row["live"] = {"failed": f.error}
+                return trade, row
+            self.vault_pending.done(oid)
+            event, out_usd = "vault_withdraw", f.usd
+        ret = out_usd / twin["equity"] - 1
+        cmp = {"venue": "hyperliquid_vault", "live_net_return_usd": ret, "paper_net_return": trade.net_return,
+               "live_minus_paper": ret - trade.net_return, "net_usd": out_usd - twin["equity"], "equity_in": twin["equity"],
+               "equity_out": out_usd, "usd_in": twin["usd_in"], "route": twin["route"], "dry": bool(twin.get("dry")), "rolled": kept,
+               "mark_error": ferr, "paper_exit_price": intent.price, "hold_s": self.now - twin["opened_at"]}
+        trade.meta["live"] = cmp
+        row["live"] = cmp
+        self.log({"event": event, "strategy": pos.strategy, "position": pos.id, "vault": vault, "compare": cmp})
+        if kept:
+            self.live_state().setdefault("vault_handover", []).append(
+                {**{k: v for k, v in twin.items() if k != "paper_price_in"}, "strategy": pos.strategy, "equity": equity,
+                 "mark": m1.__dict__ if m1 else twin.get("mark")})
+        srec = self.strat_state(pos.strategy)
+        if ret < -self.vcfg["max_trade_loss_pct"] and not srec["halted"]:
+            self.halt(pos.strategy, f"vault twin interval {100 * ret:+.1f}% < -{100 * self.vcfg['max_trade_loss_pct']:.0f}%")
+        srec["divergence_run"] = srec["divergence_run"] + 1 if cmp["live_minus_paper"] < -self.vcfg["max_divergence_pct"] else 0
+        if srec["divergence_run"] >= self.vcfg["divergence_streak"] and not srec["halted"]:
+            self.halt(pos.strategy, f"vault twin worse than paper by > {100 * self.vcfg['max_divergence_pct']:.0f} points "
+                                    f"{srec['divergence_run']} intervals in a row")
+        return trade, row
+
 
 def make_broker(config: dict, strategy_status: str, ledger=None, root=None, now: float | None = None) -> PaperBroker:
     """Paper unless the mode has live twins; live conditions that fail raise LiveNotAllowed (the runner then
@@ -739,7 +935,9 @@ def preflight(config: dict, ledger, root, env=None) -> dict:
            "limits": cfg, "problems": [],
            "perps": {"route": select_perp_route(mode, env, config), "keys": perp_keys(env),
                      "limits": {**PERP_DEFAULTS, **cfg.get("perps", {})},
-                     "note": "live: IOC orders via hl_exchange.py, only past the gate (gate.py)"}}
+                     "note": "live: IOC orders via hl_exchange.py, only past the gate (gate.py)"},
+           "vault": {"route": select_perp_route(mode, env, config), "limits": {**VAULT_DEFAULTS, **cfg.get("vault", {})},
+                     "note": "HLP deposits: vaultTransfer via vault.py with the perp keys, only past the gate"}}
     p = out["problems"]
     if mode == "paper":
         p.append("mode is paper: no live twins")

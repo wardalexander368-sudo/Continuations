@@ -21,7 +21,7 @@ promotes it** (status `promoted` in `autotrade/REPORT.md`). None is promoted as 
 | `launch_selector` | Solana token buys/sells in SOL | Same as `dip` (disabled until its thread registers a rule). |
 | `xs_momentum`, `vol_momentum`, `pumpflow` | Hyperliquid perps (USD) | Secrets `HYPERLIQUID_AGENT_KEY` (an API/agent wallet the account approved: it can trade, not withdraw) and `HYPERLIQUID_ACCOUNT` (the account address), USDC deposited in that account: `live.perps.budget_usd` **$60** of notional at current limits, plus margin headroom. |
 | `jlp_hedged` (basket) | JLP bought with USDC on Jupiter + SOL/ETH/BTC shorts on Hyperliquid | **Both** sets above. Also **USDC in the Solana wallet** for the JLP leg (`twin_basket_usd` **$200**) and a little SOL for fees: roughly **$330** of capital in all at the $200 size (JLP $200, shorts' margin at 3x, a buffer). The basket trades only when both venues work; a failed or short hedge unwinds it. |
-| `hlp_hold` | none: the HLP vault deposit has no live sender | Stays paper. |
+| `hlp_hold` | USDC deposited in Hyperliquid's HLP vault (`vaultTransfer`), held across the paper intervals, withdrawn at the end | The Hyperliquid secrets above (same account, `HYPERLIQUID_AGENT_KEY` + `HYPERLIQUID_ACCOUNT`) and **$200 of USDC** in that account on top of the perps' margin. Deposits lock for 4 days. Whether Hyperliquid accepts a vault deposit signed by an API wallet is unverified (see *Vault twins*). |
 
 **Always available:** `autotrade/HALT_LIVE` (commit it, or run `python -m tartar.autotrade halt-live "reason"`)
 stops live entries within 5 minutes and exits still run. The `TARTAR_LIVE_KILL` variable applies only
@@ -284,6 +284,40 @@ Built 2026-10-10: `strategies/jlp_hedged.py`, `usd_spot.py`, basket sizing in `b
   and `HYPERLIQUID_ACCOUNT` for the shorts (see Perp twins); roughly $330 of capital at the $200 twin
   size (JLP $200 plus about $43 of margin at 3x, more for a buffer). **On our side: built 2026-10-10**
   (the live USDC swap sender and the leg-failure rule; see *Restarts and overlaps*, "The hedged JLP basket").
+
+### Vault twins: HLP (a deposit in Hyperliquid's HLP vault)
+
+Built 2026-10-10 (strategy review recommendation 2): `tartar/autotrade/vault.py`, a vault branch in `broker.py`,
+tests in `tests/test_autotrade_vault.py`. `hlp_hold`'s intents carry `meta.venue = "hyperliquid_vault"` and
+`meta.vault`. The paper book is unchanged. The twin deposits at the paper entry, is **carried across the
+paper interval closes** (they carry `meta.kept`; `vault_roll_out` / `vault_roll_in`, marked, nothing moves,
+like a kept perp leg) and is withdrawn at the window-end close (`vault_withdraw`). Each interval is compared
+with its paper interval in `fills.jsonl` and in REPORT.md's *Vault twin intervals* table.
+
+* **Pricing:** equity × (1 + ΔPnL / account value) between marks, from the newest point of HLP's `allTime`
+  history (cumulative PnL, so marks chain across fetches). HLP has no commission and transfers have no
+  fee, so twin − paper is timing only. A real follower's equity is read back from `followerState`.
+* **Dry (mode `dry_live`, now; `dry_all`, so before promotion too):** each deposit is checked against the
+  vault's live state (open, `allowDeposits`, the $10 minimum), books the 4-day HLP lockup, and each
+  withdrawal checks the lockup and the vault's `maxDistributable`. Nothing is signed or sent. Checked
+  2026-10-10 04:05 UTC against the live vault: a $200 deposit passes (HLP open, accepting deposits, APR
+  shown 3.9%), a withdrawal before the lockup is refused, after it passes.
+* **Live:** a `vaultTransfer` L1 action (micro-USDC, as the official SDK) signed with the agent key through
+  `hl_exchange.HyperliquidExchange`, behind the same gate as the perps (mode `live`, approval, both
+  Hyperliquid secrets). Deposits stop on any kill switch; withdrawals don't. **Never used on mainnet.**
+  Signature checked 2026-10-10 on testnet with a throwaway key: the exchange answered "User or API Wallet
+  <our address> does not exist", i.e. it recovered exactly our signer. Unverified: whether an API wallet
+  may move funds into a vault (it can trade but not withdraw from the account). If it may not, the first
+  deposit fails as a failed leg and the strategy stays paper; the fix would then be a deposit signed by the
+  account itself, which is the user's call.
+* **Limits (config `live.vault`, defaults `vault.VAULT_DEFAULTS`):** $200 per twin and in all vault twins,
+  $10 minimum, signal up to 3 days old; an interval losing over 10% halts the strategy's live entries, as do
+  3 intervals in a row more than 1 point worse than paper. `HALT`, `HALT_LIVE`, `TARTAR_LIVE_KILL` stop deposits.
+* **Restarts:** each transfer is written to `autotrade/vault_pending.json` before it is sent. A deposit a
+  dead run left there is adopted if the account's vault equity shows it landed, never repeated blind; a
+  withdrawal likewise. A failed or locked withdrawal becomes an orphan and halts the strategy.
+* **Known gap:** while `HALT` blocks the paper reopen, the deposit stays in the vault (`live.vault_handover`)
+  and rolls into the next paper interval; nothing withdraws it before the window ends except a hand step.
 
 ### Restarts and overlaps (`safety.py`)
 
