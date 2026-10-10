@@ -1,0 +1,45 @@
+# The agent's weekly candidate search (tartar/autotrade/search.py), without a Claude session. Paper only:
+# nothing is signed or sent. It backtests every member of the perps-momentum family on Hyperliquid's history
+# (walk-forward splits, Bonferroni penalty over every rule ever tested), queues survivors as draft
+# pre-registrations in autotrade/candidates/ (the agent paper-trades them after a 7-day wait), and commits
+# autotrade/search/ (REPORT.md, tested.jsonl, the funding cache) and autotrade/candidates/ to main.
+name: autotrade-search
+
+on:
+  schedule:
+    - cron: "30 3 * * 3"  # Wednesdays 03:30 UTC, after Tuesday's daily close
+  workflow_dispatch: {}
+
+permissions:
+  contents: write
+
+concurrency:
+  group: autotrade-search
+  cancel-in-progress: false
+
+jobs:
+  search:
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install "httpx>=0.25" "numpy>=1.24"
+      - name: Search, judge, queue
+        run: |
+          set -o pipefail
+          python3 -m tartar.autotrade search | tee search.json
+          git config user.name "tartar-autotrade"
+          git config user.email "actions@users.noreply.github.com"
+          git add -f autotrade/search autotrade/candidates 2>/dev/null || git add -f autotrade/search
+          if git diff --cached --quiet; then exit 0; fi
+          git commit -q -m "Autotrade search: $(python3 -c "import json;s=json.load(open('search.json'));print(f\"{s['tested']} rules tested (M={s['M']}), {len(s['survivors'])} survived, queued: {', '.join(s['queued']) or 'none'}\")")"
+          for i in 1 2 3 4; do
+            if git pull -q --rebase origin main && git push -q origin HEAD:main; then exit 0; fi
+            sleep $((2 ** i))
+          done
+          exit 1

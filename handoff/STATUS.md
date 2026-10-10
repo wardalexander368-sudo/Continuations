@@ -32,20 +32,20 @@ next. Topic documents hold the detail:
 
 ## Active
 
+* **Copy-trading Hyperliquid accounts (edge hunt E thread)** (since 2026-10-10 01:45 UTC, branch
+  `claude/project-thread-9op3pf`). **Paper only, no keys.** Do accounts with a strong record keep
+  paying when copied after fees, funding and a realistic delay? Public data only (leaderboard list,
+  per-address fills). Accounts chosen on an early period only; selection and copy rules
+  pre-registered in `handoff/preregistration/hl-copy/` before the later period is scored. If it
+  holds: a paper strategy with dry perp twins. Touches `handoff/experiments/edge-hunt/hl_copy/`,
+  `handoff/data/edge-hunt/hl-copy/`, and only if it holds `tartar/autotrade/strategies/`.
+
 * **Restart-safety thread** (project thread session, since 2026-10-10 01:35 UTC, branch
   `claude/project-thread-kytb6q`). **No keys, no real orders.** Make live trading safe across job
   restarts and overlaps: one trader at a time (concurrency group + lock/lease), orders recorded as
   pending before they're sent so a retry can't double-buy, state (positions, pending orders, daily
   loss counter) surviving a job that dies mid-trade, and a wallet-vs-fill-log reconcile at startup
   before any trade. Tests kill a dry run mid-order.
-
-* **Hyperliquid order sender** (edge hunt E thread session, since 2026-10-10 01:25 UTC, branch
-  `claude/project-thread-9op3pf`). Live sender for perp twins and the hedged-JLP basket's shorts,
-  behind the live gate (mode `live` + `live_approved_on` = `TARTAR_LIVE_APPROVED` +
-  `HYPERLIQUID_AGENT_KEY` + `HYPERLIQUID_ACCOUNT`). Tested on Hyperliquid **testnet** only, with a
-  throwaway key generated in CI. No mainnet keys, no mode change, no mainnet orders. The gate moves
-  into `tartar/autotrade/gate.py` for the Solana spot sender to share. Touches `perps.py`, `broker.py`,
-  a new `hl_exchange.py`, a CI workflow.
 
 * **Edge hunt E thread** (project thread session, since 2026-10-09 21:40 UTC, branch
   `claude/project-thread-9op3pf`). **Paper only, no real SOL, no keys.** Task (the user's 21:30
@@ -70,7 +70,11 @@ next. Topic documents hold the detail:
 real-route impact against a $1 probe and re-prices each closed trade at it (`quoted_net_return`;
 deep pools match the model, a thin one was 2.4x it). The `launch_selector` slot is ready for the
   trading-skills thread (signals file, `handoff/autotrade.md`). Don't run it locally against
-  `autotrade/`.
+  `autotrade/`. **Since 01:25 UTC 10-10 (AJ: keep working, no go-aheads needed):** the agent's own
+  weekly candidate search (`search.py`, `autotrade-search.yml`, Wednesdays 03:30 UTC; queue in
+  `autotrade/candidates/`, report `autotrade/search/REPORT.md`), and `vol_momentum` + `hlp_hold`
+  wired into the agent. In flight: filling the funding cache `autotrade/search/funding_daily.csv`
+  from this session, then the first search run.
 
 * **Recorder thread** (project thread session, since 2026-10-09 20:20 UTC, branch
   `claude/project-thread-9op3pf`). Task (the user's 20:12 go, continuous profit work): a raw
@@ -90,6 +94,10 @@ deep pools match the model, a thin one was 2.4x it). The `launch_selector` slot 
   power on launches created 10-10 01:00 .. 10-19 01:00 UTC from the recorder Action's hours; no
   session needed to collect; this thread scores it once after 10-19 02:00 UTC
   (`who_trades_forward.py`; `--count-only` is a progress check). Paper only.
+  **Owns the recorder Action's revival change** (coordinator, 01:26 UTC 10-10; the recorder thread is
+  on the Hyperliquid sender): `--revive-hours 48 --dormant` keeps idle tokens dormant 48 h after
+  launch and records them again when they trade; dormant set carried between runs by the Actions
+  cache. Next: pre-register wake-up rules once the Action has collected enough revivals.
 
 * **Dip/jevtrader session** (session_01Htqh7pc1Lh1PP6Dkm1rVvz, since 2026-10-09 17:33 UTC, `main`
   only): continues the profitability session. **Owns the dip forward test (queue 11b)**: the GitHub
@@ -390,6 +398,27 @@ deep pools match the model, a thin one was 2.4x it). The `launch_selector` slot 
 
 ## Log (newest first)
 
+* 2026-10-10 01:45 UTC, agent-machinery thread: **the agent now searches for its own candidates.**
+  `python -m tartar.autotrade search` (weekly Action `autotrade-search.yml`) backtests 94 members of
+  the perps-momentum family (lookback 7-28, quantile 3/5/10, vol scaling, Monday/Thursday signal,
+  lag 1/2) on Hyperliquid history with funding; survivors need a Bonferroni-penalized train lower
+  bound > 0 (M = every rule ever tested), positive walk-forward thirds, a 26-week holdout that holds
+  up, and corr < 0.9 with the registered rules. Survivors become draft pre-registrations in
+  `autotrade/candidates/`, paper-traded after 7 days, scored at 26 weeks by the lifecycle. The engine
+  reproduces `vmom_forward.py` (+2.17%/week on 2026-01-05..09-28). Also in the agent: `vol_momentum`
+  (xs class, `scaled: true`) and `hlp_hold` (`vault_hold`, matches `hlp_forward.py` exactly).
+
+* **2026-10-10 ~02:05 UTC, edge hunt E thread: live Hyperliquid sender built, testnet-checked, never
+  used on mainnet** (claim cleared). `tartar/autotrade/hl_exchange.py`: IOC taker orders signed with
+  Hyperliquid's L1 EIP-712 scheme, for perp twins. The live gate now lives in `tartar/autotrade/gate.py`
+  (mode `live`, `live_approved_on` == `TARTAR_LIVE_APPROVED`, keys, kill switches) and is re-checked
+  before every order; the Solana sender thread was told so it can share it. Opens stop on kill switches,
+  closes still flatten. Perp-only live no longer needs a Solana key; the hedged-JLP basket's shorts stay
+  on paper in live mode (its JLP leg has no live sender). CI `hl-testnet.yml` sends an order through the
+  whole agent path on **testnet** with a throwaway key: the exchange recovers exactly our signer
+  ("User or API Wallet <ours> does not exist"); a tampered signature recovers another address. Real
+  fills untested (no testnet funds without a mainnet deposit). Mode, config and keys unchanged.
+
 * **2026-10-10 ~02:00 UTC, real-order sender thread: Solana spot senders hardened, still gated.**
   The Jupiter and Lightning senders already existed (`execution.py`); this made them safe to switch
   on. Before signing, a transaction must be paid by our wallet and need only our signature. Every send
@@ -403,6 +432,13 @@ deep pools match the model, a thin one was 2.4x it). The `launch_selector` slot 
   yet, so no twin traded. **Not done, by design:** no key added, mode stays `dry_live`, nothing sent.
   To go live the user adds `TARTAR_WALLET_KEY` + `TARTAR_LIVE_APPROVED`, sets `live_approved_on` and
   `mode: live` (handoff/autotrade.md "Going live").
+
+* **2026-10-10 ~01:45 UTC, retrain thread: recorder revival landed** (`tartar record --revive-hours H
+  --dormant FILE`, `recorder.yml` now `--revive-hours 48`, data README `raw-gha`). Idle or aged tokens
+  stay dormant until 48 h after launch; their next trade writes a `track` event with reason `revived`
+  and they are recorded again. No extra RPC calls (the program-wide stream already carries every
+  trade). Loaders unchanged (a token ends at its first untrack). Live 5-min check with a 30 s idle
+  limit: 130 launches, 27 revivals. 3 new tests.
 
 * **2026-10-10 ~01:45 UTC, retrain thread: edge hunt round I (pump.fun on new data) closed** (`edge-hunt.md` I).
   I1 revival entries: unobservable at a useful rate (the recorder drops tokens after 10 idle min;

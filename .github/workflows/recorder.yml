@@ -6,6 +6,11 @@
 # Finished hours go to a GitHub Release per UTC day (tag raw-gha-YYYYMMDD), not into git:
 # at ~40 MB/hour the repository would grow ~1 GB a day. Each run is one recorder's timeline, so
 # assets carry the run id; `handoff/experiments/fetch_gha_raw.py` lays them out one directory per run.
+#
+# Revival (--revive-hours 48): a token that goes idle stays dormant for 48 h after its launch, and
+# its next trade re-tracks it (a `track` event with reason "revived"). The dormant set passes from
+# run to run through the Actions cache (dormant.json, a few MB). Loaders still end a token at its
+# first untrack, so earlier studies and training read the files as before.
 name: recorder
 
 on:
@@ -46,14 +51,26 @@ jobs:
         with:
           python-version: "3.12"
       - run: pip install -e .
+      - name: Restore the dormant tokens from the previous run
+        uses: actions/cache/restore@v4
+        with:
+          path: dormant.json
+          key: recorder-dormant-${{ github.run_id }}
+          restore-keys: recorder-dormant-
       - name: Record and upload each finished hour
         run: |
           bash .github/workflows/recorder-upload.sh loop &
           uploader=$!
-          python3 -m tartar record --out "$OUT" --track-minutes 120 --pumpswap-hours 4 \
+          python3 -m tartar record --out "$OUT" --track-minutes 120 --pumpswap-hours 4 --revive-hours 48 --dormant dormant.json \
             --hours "${{ github.event_name == 'workflow_dispatch' && inputs.hours || '5.75' }}" 2>&1 | tee "recorder-run$RUN.log" || true
           kill "$uploader" 2>/dev/null || true
           wait "$uploader" 2>/dev/null || true
           bash .github/workflows/recorder-upload.sh once
           gzip -f "recorder-run$RUN.log"
           bash .github/workflows/recorder-upload.sh file "recorder-run$RUN.log.gz" "$(date -u +%Y%m%d)"
+      - name: Save the dormant tokens for the next run
+        if: always() && hashFiles('dormant.json') != ''
+        uses: actions/cache/save@v4
+        with:
+          path: dormant.json
+          key: recorder-dormant-${{ github.run_id }}

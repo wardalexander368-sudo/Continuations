@@ -37,6 +37,9 @@ the repository owner.
 | `xs_momentum` | `handoff/preregistration/xs-momentum/SPEC.md`, Hyperliquid perps, booked each Wednesday for Tuesday's close; turnover costs + funding | at 52 weeks: mean weekly > 0 and block-bootstrap CI > 0 |
 | `pumpflow` | `handoff/preregistration/pumpflow/SPEC.md`: reads the pumpflow-paper Action's daily snapshots, long/short PUMP perp at each snapshot's mid, 0.10%/side on turnover + funding; dry perp twins | after 2027-04-08: ≥ 120 trades, block-bootstrap CI > 0, timing part > 0. **Disabled 2026-10-10:** DefiLlama's 25+ h publish delay leaves no backtest edge (edge-hunt.md E1 "publish delay") |
 | `jlp_hedged` | `handoff/experiments/jlp_paper.py` (hedged JLP): reads the paper-tests Action's 4-hourly check-ins; long $200 JLP plus SOL/ETH/BTC perp shorts at JLP's deltas, shorts rebalanced when any is off by > 5% of the JLP leg (taker fee on the changed size) + funding; dry twins of all four legs | pending; `jlp_paper.py evaluate --final` after 2027-01-08 is the verdict |
+| `vol_momentum` | `handoff/preregistration/vol-momentum/SPEC.md`: the `xs_momentum` class with `scaled: true` (14-day return / std of the last 14 daily returns), same days, costs and funding | at 52 weeks, as registered; `vmom_forward.py --final` stays the authority |
+| `hlp_hold` | `handoff/preregistration/hlp-hold/SPEC.md`: $200 in HLP on paper, one closed trade per allTime history point (~14 days), no cost; `kind: vault_hold` | after 2027-04-10: annualised return minus 5% > 0 with block-bootstrap CI > 0 (matches `hlp_forward.py` exactly on 2025-07..2026-09) |
+| `cand-xsm-…` | members of the perps-momentum family found by the agent's own search (below), from `autotrade/candidates/` | their file's `success` rule, at 26 weeks; shadow (outside the risk caps, no twins) |
 | `dip~drop=…~hold_bars=…` (8) | shadow variants of the dip rule (drop 3/5/8% × hold 2/4/8 h, minus the registered one) | same, with the CI widened for a family of 9 (Bonferroni); outside the risk caps |
 | `launch_selector` | disabled slot (`kind: external`) | config `eval` |
 
@@ -47,6 +50,33 @@ the registered tests. The agent's verdicts score only its own paper book.
 The hedged-JLP test runs in the agent as a basket (`strategies/jlp_hedged.py`, added 2026-10-10) so it
 gets dry twins like the signal rules, but its own recorder and scorer (`jlp_paper.py`) stay the record:
 the agent's book leaves out the registered test's margin top-ups and 3x margin accounting.
+
+## Self improvement: the weekly candidate search (`autotrade-search.yml`)
+
+Wednesdays 03:30 UTC, `python -m tartar.autotrade search` (`tartar/autotrade/search.py`):
+
+1. **Generates** the perps-momentum family on a grid: lookback 7/14/21/28 days × quantile 3/5/10 ×
+   volatility scaling off/on × signal Monday/Thursday × execution lag 1/2 days = 96 rules, minus the two
+   already registered (`xs_momentum`, `vol_momentum`), which are backtested for reference.
+2. **Backtests** each on Hyperliquid's daily history, delisted perps included (`hl_data.py`: the
+   edge-hunt `hl-daily` CSVs, read only, plus fresh candles), with the registered universe, 20 bps per
+   side of turnover and actual funding (daily sums cached in `autotrade/search/funding_daily.csv`). The
+   engine reproduces `vmom_forward.py` exactly (+2.17%/week on 2026-01-05..09-28, funding off).
+3. **Judges**: the last 26 weeks are held out. A rule survives only if (a) on the train weeks its
+   one-sided block-bootstrap lower bound at level 0.10/M is above 0, with M = every distinct rule the
+   search has ever tested (Bonferroni, cumulative across runs); (b) its mean is positive in each third of
+   the train weeks (walk-forward stability); (c) the holdout mean is positive and at least half the
+   train mean; (d) its weekly returns correlate below 0.9 with each registered rule.
+4. **Queues** up to 3 survivors a run (8 waiting or running at most) as draft pre-registrations,
+   `autotrade/candidates/<name>.json` (rule, backtest numbers, success rule, start date). The commit
+   that adds the file is the registration. After `WAIT_DAYS` (7) the agent adds it as a paper
+   strategy (`runner.py` → `search.active_candidates`), and the normal lifecycle scores it at 26 weeks
+   with the CI widened by Bonferroni over every candidate ever queued. To withdraw one, set its
+   `status` to `withdrawn`.
+
+`autotrade/search/REPORT.md` shows the latest run (top rules, why each failed); every tested rule and
+its numbers are appended to `autotrade/search/tested.jsonl`. Promoted candidates are still shadow (no
+twins); making one eligible for live twins is a deliberate config change.
 
 ## Health (`health.yml`, hourly)
 
@@ -177,16 +207,30 @@ on Hyperliquid at a USD notional, with the same paper-book-unchanged design, kil
   minimum order), $60 notional across open perp twins, $6 daily realized loss cap (halts all live
   entries), 25% per-twin loss and 3 points × 3 closes divergence halts per strategy, reference prices
   up to 2 days old (weekly rules book a day late).
-* **Live: not built.** In mode `live`, `select_perp_route` returns None and perp strategies stay on paper
-  (preflight's `perps` block says so). Real orders would need, from the user:
-  1. a Hyperliquid account with USDC deposited (the trading account);
-  2. an **API wallet** ("agent") created and approved in that account (Hyperliquid → API), whose
-     private key goes in the GitHub Actions secret **`HYPERLIQUID_AGENT_KEY`**: it can place and cancel
-     orders but cannot withdraw;
+* **Live: built 2026-10-10, never used on mainnet.** `tartar/autotrade/hl_exchange.py`: immediate-or-cancel
+  limit orders 1% through the mid (`live.perps.slippage`), size floored to the coin's step, $10 minimum,
+  closes reduce-only, fees read back from `userFills`. Signed with Hyperliquid's L1 EIP-712 scheme
+  (needs `pip install .[live]`: `eth-account`, `msgpack`). It sends only past the **live gate**
+  (`tartar/autotrade/gate.py`, shared with the Solana senders): mode `live`, `live_approved_on` ==
+  `TARTAR_LIVE_APPROVED`, and both `HYPERLIQUID_AGENT_KEY` and `HYPERLIQUID_ACCOUNT`; the gate is
+  re-checked before every order, opens also stop on `HALT`/`HALT_LIVE`/`TARTAR_LIVE_KILL`, closes don't
+  (so a halted agent can still flatten). A failed close becomes an orphan and halts the strategy, as for
+  dry twins. A Solana key is no longer needed for perp-only live trading. Hedged-JLP basket shorts stay
+  on paper in mode `live` because the JLP leg has no live sender (a hedge alone would be a bet).
+  **Tested:** offline (`tests/test_autotrade_hl.py`) and on Hyperliquid **testnet** by the Action
+  `hl-testnet.yml` with a throwaway key generated inside the test: an order sent through the whole agent
+  path comes back "User or API Wallet <our address> does not exist", i.e. the exchange recovered exactly
+  our signer (a tampered signature recovers a different address). Real fills were not tested: a fresh
+  key has no testnet funds, and testnet USDC is only claimable by an address that has deposited on
+  mainnet. **To go live, from the user:**
+  1. a Hyperliquid account with USDC deposited (the trading account); eligibility to use Hyperliquid is
+     the user's to check;
+  2. an **API wallet** ("agent") created and approved in that account (Hyperliquid → API), its private
+     key as the GitHub Actions secret **`HYPERLIQUID_AGENT_KEY`** (can trade, cannot withdraw);
   3. the trading account's address as the secret or variable **`HYPERLIQUID_ACCOUNT`**;
-  4. and on our side a live executor: EIP-712 order signing (e.g. the `hyperliquid-python-sdk`),
-     IOC limit orders priced through the book, fills read back from `userFills`. Not written yet.
-  Eligibility to use Hyperliquid is the user's to check.
+  4. optionally first: the same on testnet (claim test USDC from that account) and run `hl-testnet.yml`
+     with `HYPERLIQUID_*` pointing at it to see real testnet fills;
+  5. then `live_approved_on` + `TARTAR_LIVE_APPROVED` and mode `live`, the same go as for SOL twins.
 
 ### Basket twins: the hedged JLP (JLP on Jupiter + three Hyperliquid shorts)
 
@@ -210,7 +254,7 @@ Built 2026-10-10: `strategies/jlp_hedged.py`, `usd_spot.py`, basket sizing in `b
   JLP leg (and a little SOL for fees); a Hyperliquid account with USDC margin plus `HYPERLIQUID_AGENT_KEY`
   and `HYPERLIQUID_ACCOUNT` for the shorts (see Perp twins); roughly $330 of capital at the $200 twin
   size (JLP $200 plus about $43 of margin at 3x, more for a buffer). **On our side, not built:** a live
-  USDC swap sender (Jupiter Swap API signed with the wallet key), the Hyperliquid order signer, and a
+  USDC swap sender (Jupiter Swap API signed with the wallet key; the Hyperliquid sender now exists), and a
   leg-failure rule (if one leg of an entry or rebalance fails, unwind the others or halt) since a live
   basket with a missing hedge is directional. Mode `live` today skips both routes, so the basket stays on paper.
 

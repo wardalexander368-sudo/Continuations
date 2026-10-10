@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import argparse
 import asyncio
+import json
 import sys
 import time
 from contextlib import aclosing
@@ -111,6 +112,8 @@ def build_parser() -> argparse.ArgumentParser:
     record.add_argument("--idle-minutes", type=float, default=10.0, help="stop recording a token after this long without trades")
     record.add_argument("--max-tokens", type=int, default=3000, help="most tokens tracked at once")
     record.add_argument("--pumpswap-hours", type=float, default=0.0, help="also record each graduated token's PumpSwap pool for this long (chain source; default off)")
+    record.add_argument("--revive-hours", type=float, default=0.0, help="keep idle or aged tokens dormant until this long after launch and record them again when they trade (chain source; default off)")
+    record.add_argument("--dormant", help="JSON file of dormant tokens: read at start if present, written every 10 min and at the end (with --revive-hours)")
     record.add_argument(
         "--source",
         choices=("chain", "pumpportal"),
@@ -495,21 +498,40 @@ async def cmd_record(args) -> int:
 
     console = Console()
     if args.source == "chain":
+        dormant = {}
+        if args.dormant and Path(args.dormant).exists():
+            dormant = {m: (float(v[0]), str(v[1])) for m, v in json.loads(Path(args.dormant).read_text()).items()}
         recorder = ChainRecorder(
             args.out, track_minutes=args.track_minutes, idle_minutes=args.idle_minutes, max_tokens=args.max_tokens,
-            pumpswap_hours=args.pumpswap_hours,
+            pumpswap_hours=args.pumpswap_hours, revive_hours=args.revive_hours, dormant=dormant,
         )  # fmt: skip
+        if args.revive_hours > 0:
+            console.print(f"revival on: {len(recorder.dormant)} dormant tokens carried over, kept {args.revive_hours:g} h after launch")
         recorder.on_status = lambda message: console.print(f"{datetime.now():%H:%M:%S}  ! {message}")
     else:
         recorder = Recorder(args.out, track_minutes=args.track_minutes, idle_minutes=args.idle_minutes, max_tokens=args.max_tokens)
     console.print(f"Recording pump.fun launches and trades to {args.out} (Ctrl+C to stop)…")
 
+    saved = [time.time()]
+
+    def save_dormant() -> None:
+        if args.dormant and getattr(recorder, "revive_seconds", 0) > 0:
+            tmp = Path(args.dormant + ".tmp")
+            tmp.write_text(json.dumps(recorder.dormant_state()))
+            tmp.replace(args.dormant)
+            saved[0] = time.time()
+
     def report(stats) -> None:
+        if time.time() - saved[0] >= 600:
+            save_dormant()
         state = "connected" if stats.connected else "reconnecting"
         pools = f" · {len(recorder.pools)} PumpSwap pools, {recorder.swaps} swaps" if getattr(recorder, "pumpswap_seconds", 0) else ""
         console.print(f"{datetime.now():%H:%M:%S}  {state} · {stats.tracked} tokens tracked · {stats.total_tokens} launches · {stats.trades} trades{pools}")
 
-    stats = await recorder.run(None if args.hours is None else args.hours * 3600, on_stats=report)
+    try:
+        stats = await recorder.run(None if args.hours is None else args.hours * 3600, on_stats=report)
+    finally:
+        save_dormant()
     report(stats)
     return 0
 
