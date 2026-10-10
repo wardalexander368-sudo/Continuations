@@ -2,7 +2,7 @@
 
 Registered 2026-10-10 ~02:00 UTC, **before any account's performance was looked at** (only the leaderboard's
 size and volume columns, to set the pool). Paper only, public data, no keys. Code:
-`handoff/experiments/edge-hunt/hl_copy/` (`fetch.py`, `select.py`, `copysim.py`); outputs
+`handoff/experiments/edge-hunt/hl_copy/` (`fetch.py`, `pick.py`, `copysim.py`); outputs
 `handoff/data/edge-hunt/hl-copy/`.
 
 ## Question
