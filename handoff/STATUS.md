@@ -54,17 +54,18 @@ the Log). Owner thread names are the project's thread titles.
 * **Real-money cost test, fresh key:** holds the wallet (0.0466 SOL, no spending). Work done and on `main`.
 * **Improve the agent's trading skills:** intraday hunt done; wick-bounce pre-registered (paper from 10-12).
 * **Continue Jev cost handoff session:** scheduled scoring routines: 10-14 HL cost rescore, 10-24 jevtrader
-  readout, 10-30 dip forward test, 2027-01-08 hedged JLP, 2027-10-21 momentum. Each hands a bundle to the
-  coordinator.
+  readout, 10-30 dip forward test, 2027-01-08 hedged JLP, 2027-04-09 pumpflow, 2027-10-21 momentum. Each
+  hands a bundle to the coordinator.
 * **Collectors (no session needed):** `paper-tests.yml` (JLP every 4 h, dip cohort daily),
   `pumpflow-paper.yml`, `perps-ctx.yml` (OI/funding + HL 1h candles), `hl-book.yml`, `health.yml`,
   weekly `autotrade-search.yml`. `recorder.yml` and `pumpflow-live.yml` are off (manual runs only).
 * **F1 who-trades forward test: CLOSED** (2026-10-10 23:40 UTC, coordinator). It needs pump.fun data from the
   recorder, which is off since the 2026-10-10 terms decision, and pump.fun launch trading is a closed lane. Reopen
   only if a compliant collector is approved. No job or routine scores it.
-* **Pumpflow forward test (E1): still collecting, scoring unowned.** It does not depend on the disabled
+* **Pumpflow forward test (E1): still collecting; scoring owned by "Continue Jev cost handoff session"
+  (one-shot routine 2027-04-09 06:00 UTC).** It does not depend on the disabled
   `pumpflow-live`: `pumpflow-paper.yml` records DefiLlama's daily revenue plus the HL PUMP mid (one small commit a
-  day) and is running. Score after 2027-04-08 with `pumpflow_paper.py evaluate --final`; the coordinator assigns it.
+  day) and is running. Scored after 2027-04-08 with `pumpflow_paper.py evaluate --final`.
 
 ### Recent results (moved here from the old Active list)
 
