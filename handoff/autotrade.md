@@ -279,6 +279,7 @@ Built 2026-10-10: `strategies/jlp_hedged.py`, `usd_spot.py`, basket sizing in `b
   `TARTAR_LIVE_KILL` all apply to every leg.
 * Checked 2026-10-10 against the live venues on a scratch root: all four dry legs filled (JLP $200 quote,
   SOL $87.48, BTC $23.93, ETH $15.18 after Hyperliquid's size rounding).
+* **Hedge margin for live:** 2x, restored to target at every check-in, not the paper test's 3x with a 1/5 trigger (stress test, edge-hunt.md §A: 3x would have been liquidatable in 9 spikes since 2021).
 * **Going live would need, from the user:** `TARTAR_WALLET_KEY` with USDC in that Solana wallet for the
   JLP leg (and a little SOL for fees); a Hyperliquid account with USDC margin plus `HYPERLIQUID_AGENT_KEY`
   and `HYPERLIQUID_ACCOUNT` for the shorts (see Perp twins); roughly $330 of capital at the $200 twin

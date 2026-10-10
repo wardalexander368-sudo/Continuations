@@ -47,12 +47,6 @@ next. Topic documents hold the detail:
   equal-weight long, then score after 20 bps/side per leg + funding on D's splits. A dry paper strategy only if
   it clears. Writes `handoff/experiments/edge-hunt/unlocks/` and `handoff/preregistration/unlocks/`.
 
-* **JLP hedge liquidation stress test (edge hunt E thread)** (since 2026-10-10 04:50 UTC, branch
-  `claude/project-thread-9op3pf`). STRATEGY-REVIEW item 2: replay the worst SOL/ETH/BTC spike windows
-  through the registered hedged-JLP rules (3x shorts, 4-hourly check-ins, 5% drift) to see what would have
-  liquidated the shorts and what margin or cadence avoids it. Analysis only; doesn't change the running test.
-  Touches `handoff/experiments/edge-hunt/jlp_stress.py` and its output.
-
 * **Edge hunt E thread** (project thread session, since 2026-10-09 21:40 UTC, branch
   `claude/project-thread-9op3pf`). **Paper only, no real SOL, no keys.** Task (the user's 21:30
   "work continuously"): edge hunt angle E, TARTAR's assets, beyond the closed predictor + P(rug)
@@ -410,6 +404,13 @@ deep pools match the model, a thin one was 2.4x it). The `launch_selector` slot 
   branch `claude/profitability-backtest`, on `main`).
 
 ## Log (newest first)
+
+* **2026-10-10 ~05:25 UTC, edge hunt E thread: JLP hedge liquidation stress test done** (claim cleared;
+  STRATEGY-REVIEW item 2). 5.3 years of hourly SOL/ETH/BTC through the hedge's margin rules: the registered
+  3x / 4-hourly / top-up-below-1/5 rules never liquidated, but only by path luck (thinnest 6.4 points; from the
+  top-up trigger a +17.4% basket rise between check-ins liquidates, and 9 spikes since 2021 were bigger). Live
+  recommendation: 2x margin restored every check-in (needs +46.8% in one gap; worst seen +29.7%), costing ~0.6
+  points of APR. Paper test unchanged. `edge-hunt.md` §A, `data/edge-hunt/jlp-stress.txt`.
 
 * **2026-10-10 05:00 UTC, curve-model retrain thread: HLP API-wallet question settled.** `vaultTransfer`
   is an L1 action (official SDK `sign_l1_action`, like orders), not a user-signed funds-out action, so

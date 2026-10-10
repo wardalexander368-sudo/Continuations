@@ -74,6 +74,16 @@ Unavailable: Binance (HTTP 451) and Bybit (403) are geo-blocked here, and Drift'
      - the primary statistic is annualized excess over Kamino USDC with a 90% moving-block bootstrap CI (10-day blocks);
      - success means a mean above 0, a CI lower bound above 0 and no simulated liquidation;
      - a 120–180-day window would be more decisive.
+**A1 liquidation stress test (2026-10-10, edge hunt E thread).** 5.3 years of hourly SOL/ETH/BTC (Coinbase,
+2021-07..2026-10) replayed through the hedge's margin rules with today's short weights (SOL 69%, ETH 12%, BTC 19%):
+`experiments/edge-hunt/jlp_stress.py`, output `data/edge-hunt/jlp-stress.txt`. **The registered rules (3x, 4-hourly
+check-ins, top up below 1/5) never liquidated, but only by path luck:** their thinnest moment left 6.4 points over
+maintenance (the FTX-week rebound, +29.7% in 5 h on 2022-11-10, came after the shorts had banked margin). From a
+margin sitting at the top-up trigger, a +17.4% basket rise between check-ins liquidates, and 9 separate 5-hour
+episodes since 2021 were larger. **For live use: 2x margin, restored to target at every check-in.** That needs a
++46.8% rise within one gap (none since 2021, worst +29.7%), its thinnest moment was 22 points over maintenance, and it
+costs roughly 0.6 points of the +7.9% APR excess (more capital idle as margin). The running paper test is unchanged.
+
 2. **LST cash-and-carry** (prior 0.25): hold JitoSOL (staked SOL) and short the same amount of SOL perpetual.
    - The edge is **decaying**. Excess over USDC: +40% APR in 2023 Q4, +16% in 2024, +4.7% in 2025, +0.3% in 2026 to date.
    - Time-split test (2025-07 to 2026-10, always-on was chosen on train): +2.34% APR [−0.05, +4.81].
