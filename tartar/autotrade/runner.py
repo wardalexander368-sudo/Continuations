@@ -216,7 +216,18 @@ def live_report(ledger: Ledger, mode: str) -> list[str]:
     perp_open = [p for p in ledger.positions if p.meta.get("live", {}).get("venue") == "hyperliquid"]
     if perp_open or perp:
         out += ["", f"Open perp twins {len(perp_open)} (${sum(p.meta['live']['notional_in'] for p in perp_open):.2f} notional)."]
-    open_twins = [p for p in ledger.positions if p.meta.get("live") and p.meta["live"].get("venue") != "hyperliquid"]
+    usd = [r for r in rows if r.get("event") == "usd_sell"]
+    if usd:
+        d = sorted(r["compare"]["live_minus_paper"] for r in usd)
+        out += ["", "| USD spot twins closed (Jupiter, USDC) | Mean twin net | Mean paper net | Median twin − paper | Net USD | Dry |",
+                "|---|---|---|---|---|---|",
+                f"| {len(usd)} | {100 * sum(r['compare']['live_net_return_usd'] for r in usd) / len(usd):+.2f}% | "
+                f"{100 * sum(r['compare']['paper_net_return'] for r in usd) / len(usd):+.2f}% | {100 * d[len(d) // 2]:+.2f} points | "
+                f"{sum(r['compare']['net_usd'] for r in usd):+.2f} | {sum(1 for r in usd if r['compare'].get('dry'))} |"]
+    usd_open = [p for p in ledger.positions if p.meta.get("live", {}).get("venue") == "jupiter_usd"]
+    if usd_open or usd:
+        out += ["", f"Open USD spot twins {len(usd_open)} (${sum(p.meta['live']['notional_in'] for p in usd_open):.2f})."]
+    open_twins = [p for p in ledger.positions if p.meta.get("live") and p.meta["live"].get("venue") not in ("hyperliquid", "jupiter_usd")]
     skips = [r for r in rows if r.get("event") == "skip"]
     out += ["", f"Open twins {len(open_twins)} ({sum(p.meta['live']['sol_in'] for p in open_twins):.4f} SOL); "
                 f"skipped entries {len(skips)}" + (f" (latest: {skips[-1]['reason']})" if skips else "") +
