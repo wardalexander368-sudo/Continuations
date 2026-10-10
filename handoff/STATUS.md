@@ -1,5 +1,11 @@
 # STATUS: read this first
 
+> **REPO MOVED (2026-10-10):** the project now lives in `wardalexander368-sudo/Continuations`
+> (PUBLIC: never commit keys). The old `StaticPush7217/TARTAR` is gone. `main` here holds the full
+> TARTAR history up to 69f93a1, restored from the backup bundle and rescanned for secrets (clean).
+> Threads holding local commits: `git remote set-url origin https://github.com/wardalexander368-sudo/Continuations`,
+> `git fetch origin && git rebase origin/main`, then push.
+
 Two Claude sessions on different accounts take turns on this repo. When one
 hits its usage limit, the other continues. Their turns can overlap a little,
 so this file is the shared board: who is working, on what, and what comes
@@ -397,6 +403,11 @@ deep pools match the model, a thin one was 2.4x it). The `launch_selector` slot 
   branch `claude/profitability-backtest`, on `main`).
 
 ## Log (newest first)
+
+* **2026-10-10 ~18:50 UTC, repo move: TARTAR history imported into Continuations.** All 412 commits
+  from the backup bundle merged into Continuations `main` (AJ's `.claude/settings.json` kept, TARTAR
+  README replaces the placeholder). Full-history secrets scan: only public Solana tx signatures and a
+  simulated `dry_wallet.json`; no keys. Other threads: rebase local commits onto `origin/main` and push.
 
 * **2026-10-10 ~02:45 UTC, JLP leg + go-live thread: the live path is complete; checklist written.**
   The hedged basket's JLP leg now has a live sender (`usd_spot.LiveUsdSpotExecutor`: USDC to JLP on
