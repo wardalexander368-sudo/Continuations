@@ -161,3 +161,12 @@ much for git, so they stay out of the repository. Get them with
 which writes `data/raw-gha/run<RUN>/` (one directory per run = one recorder) and prints the
 directories comma-separated for `--raw`. A run's first and last hours are partial, and
 consecutive runs overlap in the same hour; the loaders keep one copy per mint.
+
+**Revival (from the first run after 2026-10-10 ~01:45 UTC):** the Action also passes `--revive-hours 48
+--dormant dormant.json`. A token untracked as `idle` or `age` stays dormant until 48 h after its
+launch; its next trade writes `{"e": "track", "reason": "revived", "created": <launch t>, "creator":
+...}` and the token is recorded again (120 min, or until 10 idle minutes). The dormant set carries
+over between runs through the Actions cache, so a token launched in an earlier run can be revived in a
+later one (its create is then in the earlier run's files). The loaders still end a token at its first
+`untrack`, so training and every earlier study read the files exactly as before; revival studies read
+the `revived` events and the trades after them.
