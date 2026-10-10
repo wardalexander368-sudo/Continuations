@@ -1,0 +1,45 @@
+# Edge hunt E1 paper forward test (handoff/preregistration/pumpflow/SPEC.md), without a Claude session.
+# Hourly: if DefiLlama has published a new day of pump.fun + PumpSwap revenue, record it with
+# Hyperliquid's PUMP mid and commit. Paper only: no wallet, no keys, nothing signed.
+name: pumpflow-paper
+
+on:
+  schedule:
+    - cron: "15 * * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: pumpflow-paper
+  cancel-in-progress: false
+
+jobs:
+  snapshot:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+          sparse-checkout: |
+            handoff/experiments
+            handoff/data/pumpflow-paper
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install "httpx>=0.25" "numpy>=1.24"
+      - name: Snapshot
+        run: |
+          line=$(python3 handoff/experiments/pumpflow_paper.py snapshot | tee /dev/stderr)
+          git diff --quiet -- handoff/data/pumpflow-paper && exit 0
+          git config user.name "tartar-paper-tests"
+          git config user.email "actions@users.noreply.github.com"
+          git add handoff/data/pumpflow-paper
+          git commit -m "pumpflow check-in (pumpflow-paper action): $line"
+          for i in 1 2 3 4; do
+            git pull --rebase origin main && git push origin HEAD:main && exit 0
+            sleep $((2 ** i))
+          done
+          exit 1

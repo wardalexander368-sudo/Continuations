@@ -1,0 +1,10 @@
+train k=1 H= 7: n= 90 mean -31.03% [-70.84%,-2.07%] median +1.25% win 50%
+train k=1 H=14: n= 90 mean -29.12% [-56.75%,-5.58%] median -0.41% win 49%
+train k=1 H=28: n= 90 mean -48.45% [-89.41%,-10.83%] median +1.81% win 51%
+train k=3 H= 7: n= 90 mean -11.83% [-21.96%,-2.37%] median -1.03% win 48%
+train k=3 H=14: n= 90 mean -20.12% [-33.92%,-6.18%] median +0.04% win 50%
+train k=3 H=28: n= 90 mean -24.22% [-40.60%,-5.24%] median -1.28% win 48%
+chosen on train: k=3 H=7
+validation: n= 51 mean +5.65% [-9.39%,+19.62%] median +13.19% win 67%
+validation, BTC-hedged (secondary): n= 51 mean +4.64% [-9.81%,+17.62%] median +13.02% win 65%
+listings without funding history (train+val): 8

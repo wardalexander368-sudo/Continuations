@@ -1,0 +1,44 @@
+{
+ "note": "v3.2, trained by handoff/experiments/predictor_v32.py (predictor doc 8.2.2e); test = latest 15% of launches, unseen by v3.1 and v3.2",
+ "chosen_old_recorder_weight": 1,
+ "tokens": 28500,
+ "rows": 1935654,
+ "installed v3.1": {
+  "valid_ll": 0.3433,
+  "test_ll": 0.3912,
+  "open hit/stated": [
+   0.889,
+   0.886
+  ],
+  "edge_open": 0.0306,
+  "live all/trading": [
+   0.0341,
+   0.0367
+  ],
+  "trading hit/stated": [
+   0.6123,
+   0.6274
+  ],
+  "temperature": 1.021,
+  "iters": 193
+ },
+ "old rows x1": {
+  "valid_ll": 0.3381,
+  "test_ll": 0.387,
+  "open hit/stated": [
+   0.89,
+   0.89
+  ],
+  "edge_open": 0.0351,
+  "live all/trading": [
+   0.0346,
+   0.0372
+  ],
+  "trading hit/stated": [
+   0.6229,
+   0.6358
+  ],
+  "temperature": 0.98,
+  "iters": 249
+ }
+}

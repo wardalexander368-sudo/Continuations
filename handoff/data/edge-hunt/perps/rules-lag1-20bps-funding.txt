@@ -1,0 +1,33 @@
+cost 20 bps/side, funding on
+  TS weekly  L=7    train -0.84%/wk [-2.31,+0.63] n92  val -1.27% [-2.87,+0.50]
+  TS weekly  L=14   train +0.72%/wk [-0.37,+1.86] n92  val +0.25% [-1.85,+2.43]
+  TS weekly  L=28   train +0.96%/wk [-0.31,+2.27] n92  val +1.40% [+0.08,+2.90]
+  TS weekly  L=56   train +1.04%/wk [-0.27,+2.40] n92  val -0.86% [-2.51,+0.59]
+  TS weekly  L=112  train +0.66%/wk [-0.57,+1.87] n92  val -0.51% [-2.84,+1.63]
+  -> TS weekly chosen L=56: validation disagrees or train <= 0; test not read
+  TS daily   L=7    train -0.15%/wk [-1.18,+0.93] n92  val -0.19% [-1.77,+1.50]
+  TS daily   L=14   train +0.65%/wk [-0.35,+1.65] n92  val -1.07% [-3.20,+1.03]
+  TS daily   L=28   train +1.29%/wk [+0.05,+2.59] n92  val -0.24% [-1.98,+1.66]
+  TS daily   L=56   train +0.87%/wk [-0.50,+2.27] n92  val -0.40% [-2.13,+1.13]
+  TS daily   L=112  train +0.55%/wk [-0.72,+1.76] n92  val -0.88% [-3.08,+1.16]
+  -> TS daily chosen L=28: validation disagrees or train <= 0; test not read
+  XREV daily L=1    train -5.99%/wk [-8.54,-3.69] n69  val -4.12% [-6.56,-1.74]
+  XREV daily L=2    train -4.17%/wk [-6.83,-1.91] n69  val -5.01% [-7.89,-2.49]
+  XREV daily L=3    train -3.48%/wk [-5.38,-1.77] n69  val -3.85% [-5.61,-2.11]
+  -> XREV daily chosen L=3: validation disagrees or train <= 0; test not read
+  VMOM       L=7    train -0.38%/wk [-2.34,+1.67] n68  val +1.46% [+0.32,+2.47]
+  VMOM       L=14   train +0.73%/wk [-1.22,+2.74] n68  val +2.15% [+0.46,+3.88]
+  VMOM       L=28   train -0.46%/wk [-2.99,+1.64] n68  val +0.40% [-1.47,+2.13]
+  -> VMOM chosen L=14: TEST +2.03%/wk [+0.26,+3.97] n39
+  RMOM       L=7    train +0.11%/wk [-2.43,+2.93] n68  val +1.38% [+0.06,+2.71]
+  RMOM       L=14   train +0.51%/wk [-1.57,+2.61] n68  val +1.13% [-0.79,+3.09]
+  RMOM       L=28   train -1.39%/wk [-5.21,+1.67] n68  val +0.16% [-1.73,+2.02]
+  -> RMOM chosen L=14: TEST +1.40%/wk [-0.31,+3.28] n39
+  VLM        L=7    train +0.48%/wk [-1.62,+2.58] n68  val +0.27% [-1.31,+1.72]
+  VLM        L=14   train +1.72%/wk [-0.00,+3.58] n68  val +1.78% [-0.84,+4.37]
+  VLM        L=28   train +1.12%/wk [-0.61,+2.83] n68  val +0.91% [-0.80,+2.55]
+  -> VLM chosen L=14: TEST -0.02%/wk [-1.53,+1.56] n39
+  HIGH       L=30   train +2.01%/wk [-0.25,+4.36] n68  val -0.18% [-3.02,+2.34]
+  HIGH       L=90   train +1.09%/wk [-1.48,+3.42] n68  val -0.46% [-4.26,+2.70]
+  -> HIGH chosen L=30: validation disagrees or train <= 0; test not read
+rules tried: 24

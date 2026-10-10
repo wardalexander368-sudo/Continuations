@@ -1,0 +1,53 @@
+# Edge hunt E1, faster source: yesterday's pump.fun bonding-curve volume from the recorder's hours
+# (handoff/experiments/edge-hunt/pumpflow/curve_flow.py), so it can be checked against DefiLlama's
+# day-late numbers before any forward test uses it. Paper only: reads releases, commits one row a day.
+name: pumpflow-live
+
+on:
+  schedule:
+    - cron: "30 3 * * *"
+  workflow_dispatch:
+    inputs:
+      days:
+        description: "UTC days to (re)compute, YYYY-MM-DD separated by spaces (default: yesterday)"
+        required: false
+
+permissions:
+  contents: write
+
+concurrency:
+  group: pumpflow-live
+  cancel-in-progress: false
+
+jobs:
+  day:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+          sparse-checkout: |
+            handoff/experiments
+            handoff/data/pumpflow-live
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install "httpx>=0.25"
+      - name: Aggregate
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          days="${{ github.event.inputs.days }}"
+          [ -z "$days" ] && days=$(date -u -d yesterday +%F)
+          line=$(python3 handoff/experiments/edge-hunt/pumpflow/curve_flow.py $days | tail -1)
+          [ -z "$(git status --porcelain handoff/data/pumpflow-live)" ] && exit 0
+          git config user.name "tartar-paper-tests"
+          git config user.email "actions@users.noreply.github.com"
+          git add handoff/data/pumpflow-live
+          git commit -m "pumpflow curve volume (pumpflow-live action): $line"
+          for i in 1 2 3 4; do
+            git pull --rebase origin main && git push origin HEAD:main && exit 0
+            sleep $((2 ** i))
+          done
+          exit 1

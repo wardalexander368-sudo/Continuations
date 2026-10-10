@@ -1,0 +1,121 @@
+{
+  "mode": "dry_live",
+  "live_approved_on": null,
+  "live": {
+    "route": "auto",
+    "max_trade_sol": 0.01,
+    "min_trade_sol": 0.002,
+    "budget_sol": 0.03,
+    "reserve_sol": 0.01,
+    "daily_loss_cap_sol": 0.01,
+    "max_trade_loss_pct": 0.25,
+    "max_divergence_pct": 0.03,
+    "divergence_streak": 3,
+    "max_signal_age_s": 1800,
+    "priority_sol": 2e-05,
+    "lightning_wallet": null,
+    "note": "live twins (tartar/autotrade/broker.py): mode dry_live mirrors promoted strategies on Jupiter quotes, nothing sent; mode live needs live_approved_on = TARTAR_LIVE_APPROVED and a route key. See handoff/autotrade.md 'Going live'."
+  },
+  "risk": {
+    "max_position_usd": 250,
+    "max_open_per_strategy": 200,
+    "max_open_total": 400,
+    "max_gross_usd": 20000,
+    "daily_loss_cap_usd": 1000,
+    "max_consecutive_errors": 3,
+    "flatten_on_halt": false
+  },
+  "lifecycle": {
+    "rolling_window": 30,
+    "max_drawdown_pct": 0.25,
+    "demoted_size_factor": 0.5,
+    "retire_after_demoted_trades": 60
+  },
+  "strategies": {
+    "dip": {
+      "kind": "dip",
+      "enabled": true,
+      "prereg": "handoff/preregistration/dip-rolling",
+      "size_usd": 200
+    },
+    "xs_momentum": {
+      "kind": "xs_momentum",
+      "enabled": true,
+      "prereg": "handoff/preregistration/xs-momentum/SPEC.md",
+      "leg_usd": 1000
+    },
+    "pumpflow": {
+      "kind": "pumpflow",
+      "enabled": false,
+      "note": "disabled 2026-10-10: DefiLlama publishes a day 25+ h after it ends, and the backtest edge is gone at that lag (edge-hunt.md E1 'Publish delay'); the registered forward test (pumpflow-paper.yml) keeps recording",
+      "prereg": "handoff/preregistration/pumpflow/SPEC.md",
+      "size_usd": 200,
+      "snapshots": "handoff/data/pumpflow-paper/snapshots.jsonl"
+    },
+    "jlp_hedged": {
+      "kind": "jlp_hedged",
+      "enabled": true,
+      "prereg": "handoff/experiments/jlp_paper.py",
+      "size_usd": 200,
+      "twin_basket_usd": 200,
+      "snapshots": "handoff/data/jlp-paper/snapshots.jsonl"
+    },
+    "launch_selector": {
+      "kind": "external",
+      "enabled": false,
+      "prereg": "set by the launch-selector thread when it registers a rule",
+      "signals": "autotrade/signals/launch_selector.jsonl",
+      "cost": {
+        "fee": 0.0125,
+        "impact": 0.006,
+        "fixed_usd": 0.02
+      },
+      "eval": {
+        "min_trades": 100,
+        "deadline_days": 30
+      }
+    },
+    "vol_momentum": {
+      "kind": "xs_momentum",
+      "enabled": true,
+      "prereg": "handoff/preregistration/vol-momentum/SPEC.md",
+      "scaled": true,
+      "leg_usd": 1000
+    },
+    "hlp_hold": {
+      "kind": "vault_hold",
+      "enabled": true,
+      "prereg": "handoff/preregistration/hlp-hold/SPEC.md",
+      "size_usd": 200,
+      "start": "2026-10-12",
+      "end": "2027-04-10",
+      "hurdle_apr": 0.05
+    }
+  },
+  "variants": [
+    {
+      "base": "dip",
+      "base_rule": {
+        "drop": 0.05,
+        "hold_bars": 48
+      },
+      "grid": {
+        "drop": [
+          0.03,
+          0.05,
+          0.08
+        ],
+        "hold_bars": [
+          24,
+          48,
+          96
+        ]
+      },
+      "note": "shadow research copies of the registered dip rule: scored with Bonferroni-widened CIs (family of 9), outside the risk caps"
+    }
+  ],
+  "execution": {
+    "quote_check": true,
+    "note": "record a Jupiter quote beside each fresh paper entry (tartar/autotrade/quotes.py); fills are unchanged"
+  }
+}
