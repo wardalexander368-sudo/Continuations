@@ -32,6 +32,13 @@ next. Topic documents hold the detail:
 
 ## Active
 
+* **Restart-safety thread** (project thread session, since 2026-10-10 01:35 UTC, branch
+  `claude/project-thread-kytb6q`). **No keys, no real orders.** Make live trading safe across job
+  restarts and overlaps: one trader at a time (concurrency group + lock/lease), orders recorded as
+  pending before they're sent so a retry can't double-buy, state (positions, pending orders, daily
+  loss counter) surviving a job that dies mid-trade, and a wallet-vs-fill-log reconcile at startup
+  before any trade. Tests kill a dry run mid-order.
+
 * **Hyperliquid order sender** (edge hunt E thread session, since 2026-10-10 01:25 UTC, branch
   `claude/project-thread-9op3pf`). Live sender for perp twins and the hedged-JLP basket's shorts,
   behind the live gate (mode `live` + `live_approved_on` = `TARTAR_LIVE_APPROVED` +
