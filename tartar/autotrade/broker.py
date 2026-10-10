@@ -23,12 +23,49 @@ import time
 from pathlib import Path
 
 from .core import CostModel, Intent, Position, Trade
-from .execution import make_executor, select_route
-from .gate import LiveNotAllowed, approval_reason, kill_reason  # LiveNotAllowed is re-exported for the runner
-from .perps import PERP_DEFAULTS, is_perp, make_perp_executor, perp_keys, select_perp_route
-from .usd_spot import is_usd_spot, make_usd_spot_executor
+from .execution import DryExecutor, make_executor, select_route
+from .gate import LiveNotAllowed, approval_reason, kill_reason, require_live  # LiveNotAllowed is re-exported for the runner
+from .safety import Pending, buy_order_id
+from .perps import PERP_DEFAULTS, cloid, is_perp, make_perp_executor, perp_keys, select_perp_route
+from .usd_spot import is_usd_spot, make_usd_spot_executor, sim_wallet_move
 
 
+
+
+def perp_open_cloid(intent: Intent, coin: str) -> str:
+    return cloid(f"perp_open|{intent.strategy}|{intent.meta.get('key') or ''}|{coin}|{intent.side}|{intent.at:.0f}")
+
+
+def perp_close_cloid(position_id: str) -> str:
+    return cloid(f"perp_close|{position_id}")
+
+
+def perp_twins_held(ledger, live_state: dict, route: str) -> list[dict]:
+    """Every perp leg the book says the account holds on ``route``: open twins, handed-over kept legs, and
+    unresolved perp orphans."""
+    out = [p.meta["live"] for p in (ledger.positions if ledger else []) if p.meta.get("live") and is_perp(p.meta["live"])
+           and p.meta["live"].get("route") == route]
+    out += [h for h in live_state.get("perp_handover", []) if h.get("route") == route]
+    out += [o for o in live_state.get("orphans", []) if o.get("venue") == "hyperliquid" and o.get("route") == route
+            and o.get("sz") and not o.get("resolved")]
+    return out
+
+
+def seed_usd_twins(path: Path, ledger) -> None:
+    """Once: put the dry USD-spot twins already in the book (the hedged basket's JLP) into the simulated wallet,
+    which only started tracking them on 2026-10-10, so the first reconcile doesn't read them as missing."""
+    import json
+
+    w = json.loads(path.read_text()) if path.exists() else None
+    if w is not None and w.get("usd_seeded"):
+        return
+    for p in ledger.positions:
+        t = p.meta.get("live") or {}
+        if is_usd_spot(t) and t.get("route") == "dry" and t.get("token_raw"):
+            sim_wallet_move(path, t["mint"], int(t["token_raw"]))
+    w = json.loads(path.read_text()) if path.exists() else {"sol": LIVE_DEFAULTS["dry_balance_sol"], "tokens": {}}
+    w["usd_seeded"] = True
+    path.write_text(json.dumps(w, indent=1, sort_keys=True))
 
 
 class PaperBroker:
@@ -64,6 +101,8 @@ class PaperBroker:
                        "asset": pos.asset, "price": intent.price, "at": intent.at, "cost_usd": round(exit_cost, 6),
                        "pnl_usd": round(pnl, 6), "net_return": round(trade.net_return, 6), "reason": intent.reason}
 
+
+BASKET_MIN_FILL = 0.95  # a basket hedge filling less than this share of its size unwinds the basket
 
 LIVE_DEFAULTS = {
     "route": "auto",              # auto | jupiter | lightning | dry
@@ -108,6 +147,20 @@ class LiveBroker(PaperBroker):
         self.mode = "dry_live" if mode == "dry_live" else "live"
         self.executor = executor or (make_executor(route, self.cfg, env) if route else None)
         self.ledger, self.root, self.env, self.entries = ledger, Path(root) if root else None, env, entries
+        self.pending = Pending(self.root)
+        if route in ("jupiter", "lightning") and hasattr(self.executor, "guard"):  # re-checked right before every send
+            keys = ("TARTAR_WALLET_KEY",) if route == "jupiter" else ("PUMPPORTAL_API_KEY",)
+            self.executor.guard = lambda: require_live(config, env, keys=keys, root=self.root)
+        if isinstance(self.executor, DryExecutor) and self.root:
+            seed: dict[str, int] = {}
+            for p in (ledger.positions if ledger else []):
+                t = p.meta.get("live") or {}
+                if t.get("route") == "dry" and "sol_in" in t and "mint" in t:
+                    seed[t["mint"]] = seed.get(t["mint"], 0) + int(t["token_raw"])
+            self.executor.attach(self.root / "dry_wallet.json", seed)
+        self.usd_route = "dry" if mode == "dry_live" else ("jupiter" if route == "jupiter" else None)
+        if mode == "dry_live" and self.root and ledger is not None:
+            seed_usd_twins(self.root / "dry_wallet.json", ledger)
         self.now = time.time() if now is None else now
         self._sol_usd: float | None = None
         self.pcfg = {**PERP_DEFAULTS, **self.cfg.get("perps", {})}
@@ -151,6 +204,12 @@ class LiveBroker(PaperBroker):
         st = self.live_state()
         return st["halted"] or self.ledger.state.get("halted") or self.strat_state(strategy)["halted"]
 
+    def _sol_usd_or_none(self) -> float | None:
+        try:
+            return self.sol_usd()
+        except Exception:  # noqa: BLE001
+            return None
+
     # entry
     def entry_block(self, intent: Intent, positions: list[Position]) -> tuple[str | None, float]:
         """(why not, SOL size)."""
@@ -192,6 +251,18 @@ class LiveBroker(PaperBroker):
             return self._open_usd(intent, positions or [])
         pos, row = super().open(intent)
         pos.mode = row["mode"] = "paper"  # until a twin is bought
+        oid = buy_order_id(intent)
+        claim = self.live_state().get("unclaimed", {}).pop(oid, None)
+        if claim:  # a run that died bought this entry's tokens already: adopt them, don't buy again
+            pos.meta["live"] = {"mint": claim["mint"], "route": self.route, "sol_in": claim["sol_in"], "token_raw": claim["token_raw"],
+                                "sol_usd_in": claim.get("sol_usd_in") or self._sol_usd_or_none(), "paper_price_in": intent.price,
+                                "bought_at": claim["at"],
+                                "rent_sol": claim.get("rent_sol", 0.0), "signature": claim.get("signature"),
+                                "dry": self.route == "dry", "adopted": oid}
+            pos.mode = row["mode"] = self.mode
+            row["live"] = {"adopted": oid, "token_raw": claim["token_raw"]}
+            self.log({"event": "buy_adopted", "strategy": intent.strategy, "position": pos.id, "order_id": oid, "claim": claim})
+            return pos, row
         why, size = self.entry_block(intent, positions or [])
         if why:
             row["live"] = {"skipped": why}
@@ -204,8 +275,10 @@ class LiveBroker(PaperBroker):
         except Exception as exc:  # noqa: BLE001 - no reference price: don't trade blind
             self.log({"event": "skip", "strategy": intent.strategy, "position": pos.id, "reason": f"SOL/USD unavailable: {exc}"[:200]})
             return pos, row
+        self.pending.add(oid, {"leg": "buy", "strategy": intent.strategy, "position": pos.id, "mint": mint, "sol": size,
+                               "at": self.now, "route": self.route})
         f = self.executor.buy(mint, size)
-        rec = {"event": "buy", "strategy": intent.strategy, "position": pos.id, "asset": intent.asset, "fill": f.to_dict(),
+        rec = {"event": "buy", "strategy": intent.strategy, "position": pos.id, "order_id": oid, "asset": intent.asset, "fill": f.to_dict(),
                "paper_price_usd": intent.price, "paper_at": intent.at, "sol_usd": sol_usd,
                "paper_side_cost_pct": 100 * intent.cost.side_cost(intent.notional_usd) / intent.notional_usd}
         if f.ok:
@@ -226,6 +299,7 @@ class LiveBroker(PaperBroker):
                                                      "error": f.error, "at": self.now})
                 self.halt(intent.strategy, f"live buy outcome unknown ({f.signature}); check it, then resume-live")
         self.log(rec)
+        self.pending.done(oid)
         return pos, row
 
     # exit
@@ -249,8 +323,17 @@ class LiveBroker(PaperBroker):
                                  "reason": f"twin bought on {twin['route']}, current route {self.route}; tokens still held"})
             row["live"] = {"failed": "route changed"}
             return trade, row
+        if twin.get("sold_unrecorded"):  # reconcile found the tokens gone after a run died mid-sell
+            row["live"] = {"sold_unrecorded": twin["sold_unrecorded"]}
+            trade.meta["live"] = {"sold_unrecorded": True, "sol_in": twin["sol_in"], "route": twin["route"]}
+            self.log({"event": "sell_unrecorded", "strategy": pos.strategy, "position": pos.id, "twin": twin})
+            return trade, row
+        sid = f"sell|{pos.id}"
+        self.pending.add(sid, {"leg": "sell", "strategy": pos.strategy, "position": pos.id, "mint": twin["mint"],
+                               "token_raw": twin["token_raw"], "at": self.now, "route": self.route})
         f = self.executor.sell(twin["mint"], twin["token_raw"])
         if not f.ok:
+            self.pending.done(sid)
             self.live_state()["orphans"].append({"position": pos.id, "strategy": pos.strategy, **twin, "error": f.error, "at": self.now,
                                                  **({"sell_signature": f.signature, "unknown": True} if f.unknown else {})})
             self.ledger.journal({"event": "live_error", "strategy": pos.strategy, "position": pos.id, "leg": "sell",
@@ -274,6 +357,7 @@ class LiveBroker(PaperBroker):
         trade.meta["live"] = cmp
         row["live"] = cmp
         self.log({"event": "sell", "strategy": pos.strategy, "position": pos.id, "fill": f.to_dict(), "compare": cmp})
+        self.pending.done(sid)
         st = self.live_state()
         day = time.strftime("%Y-%m-%d", time.gmtime(self.now))
         st["daily_sol"][day] = st["daily_sol"].get(day, 0.0) + net_sol
@@ -293,7 +377,33 @@ class LiveBroker(PaperBroker):
     def perp_exec(self):
         if self._perp_exec is None:
             self._perp_exec = make_perp_executor(self.perp_route, self.pcfg, self.env, self.config, self.root)
+            if self.root and callable(getattr(self._perp_exec, "attach", None)):  # the dry route's simulated account
+                seed: dict[str, float] = {}
+                for t in perp_twins_held(self.ledger, self.live_state(), "dry"):
+                    seed[t["coin"]] = seed.get(t["coin"], 0.0) + t["side"] * t["sz"]
+                self._perp_exec.attach(self.root / "dry_perp_account.json", seed)
         return self._perp_exec
+
+    def perp_order(self, leg: str, oid: str, coin: str, side: int, strategy: str, position: str, **kw):
+        """Send a perp leg idempotently: an earlier order with this client order id is adopted, not repeated."""
+        ex = self.perp_exec()
+        find = getattr(ex, "find", None)
+        if callable(find):
+            try:
+                prior = find(oid)
+            except Exception as exc:  # noqa: BLE001 - can't tell whether it went out: don't send blind
+                from .perps import PerpFill
+
+                return PerpFill(self.perp_route, leg, coin, side, False, error=f"order lookup failed: {exc}"[:300]), False
+            if prior is not None and prior.ok:
+                self.live_state().get("perp_inflight", {}).pop(oid, None)
+                prior.leg = leg
+                prior.extra = {**prior.extra, "adopted": oid}
+                return prior, True
+        self.pending.add(oid, {"leg": f"perp_{leg}", "venue": "hyperliquid", "strategy": strategy, "position": position, "coin": coin,
+                               "side": side, "at": self.now, "route": self.perp_route, **kw})
+        f = ex.open(coin, side, kw["usd"], cloid=oid) if leg == "open" else ex.close(coin, side, kw["sz"], cloid=oid)
+        return f, False
 
     def perp_entry_block(self, intent: Intent, positions: list[Position]) -> tuple[str | None, float]:
         """(why not, USD notional)."""
@@ -301,12 +411,17 @@ class LiveBroker(PaperBroker):
             return "shadow variant", 0.0
         if self.perp_route is None:
             return "no perp route: mode live needs the approval plus HYPERLIQUID_AGENT_KEY and HYPERLIQUID_ACCOUNT (perps.py)", 0.0
-        if intent.meta.get("basket") and self.perp_route == "live":
-            # a basket's other legs (the hedged JLP's JLP leg) have no live sender: a hedge alone is a bet
-            return "basket leg: the basket's USD spot leg has no live route (usd_spot.py), so its hedges stay on paper", 0.0
+        basket = intent.meta.get("basket")
+        if basket:  # a hedge without the asset it hedges is a bet: the basket's spot leg must hold a twin first
+            if self.usd_route is None:
+                return "basket leg: the basket's USD spot leg has no live route (needs TARTAR_WALLET_KEY), so its hedges stay on paper", 0.0
+            if (self.live_state().get("basket_broken") or {}).get(basket):
+                return f"basket {basket} stopped: {self.live_state()['basket_broken'][basket]}", 0.0
+            if not any(p.meta.get("live") and is_usd_spot(p.meta["live"]) and p.meta["live"].get("basket") == basket for p in positions):
+                return f"basket leg: basket {basket}'s spot leg has no live twin, so its hedge stays on paper", 0.0
         if not (self.entries or (self.perp_route == "dry" and self.pcfg["dry_all"])):
             return "strategy not promoted", 0.0
-        why = self.kill_reason(intent.strategy)
+        why = self.kill_reason(intent.strategy) or self.live_state().get("perps_halted")
         if why:
             return why, 0.0
         age = self.now - intent.at
@@ -349,8 +464,10 @@ class LiveBroker(PaperBroker):
             if not intent.meta.get("shadow"):
                 self.log({"event": "skip", "venue": "hyperliquid", "strategy": intent.strategy, "position": pos.id, "reason": why, "at": intent.at})
             return pos, row
-        f = self.perp_exec().open(coin, side, usd)
-        rec = {"event": "perp_open", "strategy": intent.strategy, "position": pos.id, "coin": coin, "fill": f.to_dict(),
+        oid = perp_open_cloid(intent, coin)
+        f, adopted = self.perp_order("open", oid, coin, side, intent.strategy, pos.id, usd=usd)
+        rec = {"event": "perp_open_adopted" if adopted else "perp_open", "strategy": intent.strategy, "position": pos.id, "coin": coin,
+               "cloid": oid, "fill": f.to_dict(),
                "paper_price_usd": intent.price, "paper_at": intent.at,
                "paper_side_cost_pct": 100 * intent.cost.side_cost(intent.notional_usd) / intent.notional_usd}
         if f.ok:
@@ -365,7 +482,43 @@ class LiveBroker(PaperBroker):
             self.ledger.journal({"event": "live_error", "strategy": intent.strategy, "position": pos.id, "leg": "perp_open",
                                  "error": f.error, "at": self.now})
         self.log(rec)
+        self.pending.done(oid)
+        basket = intent.meta.get("basket")
+        if basket and (not f.ok or f.notional_usd < BASKET_MIN_FILL * usd):
+            why = f"hedge {coin} {'failed: ' + str(f.error) if not f.ok else f'filled ${f.notional_usd:.2f} of ${usd:.2f}'}"
+            self.unwind_basket(basket, intent.strategy, list(positions) + [pos], why)
+            row["live"] = {**row.get("live", {}), "basket_unwound": why}
         return pos, row
+
+    def unwind_basket(self, basket: str, strategy: str, positions: list[Position], why: str) -> None:
+        """A basket leg failed or filled short: close every live twin of the basket (the paper legs stay), stop
+        the basket's live entries, and leave nothing unhedged. A twin that can't be closed becomes an orphan."""
+        st = self.live_state()
+        st.setdefault("basket_broken", {})[basket] = why
+        for p in positions:
+            t = p.meta.get("live")
+            if not t or t.get("basket") != basket:
+                continue
+            if is_usd_spot(t):
+                f = self.usd_exec().sell(t["mint"], t["token_raw"])
+                ok, err, fill = f.ok, f.error, f.to_dict()
+            elif is_perp(t):
+                f, _ = self.perp_order("close", cloid(f"basket_unwind|{p.id}"), t["coin"], t["side"], p.strategy, p.id, sz=t["sz"])
+                self.pending.done(cloid(f"basket_unwind|{p.id}"))
+                ok, err, fill = f.ok, f.error, f.to_dict()
+                if ok and f.sz < t["sz"] * (1 - 1e-9):  # a partial close: the rest stays open on the venue, as an orphan
+                    rest = {**t, "sz": t["sz"] - f.sz, "notional_in": t["notional_in"] * (1 - f.sz / t["sz"])}
+                    st["orphans"].append({"position": p.id, "strategy": p.strategy, **rest, "at": self.now,
+                                          "error": f"basket unwind closed {f.sz:g} of {t['sz']:g}"})
+            else:
+                continue
+            self.log({"event": "basket_unwind", "strategy": p.strategy, "position": p.id, "basket": basket, "reason": why, "fill": fill})
+            if ok:
+                del p.meta["live"]
+                p.mode = "paper"
+            else:
+                st["orphans"].append({"position": p.id, "strategy": p.strategy, **t, "error": f"basket unwind failed: {err}", "at": self.now})
+        self.halt(strategy, f"basket {basket} unwound: {why}")
 
     def _close_perp(self, pos: Position, intent: Intent) -> tuple[Trade, dict]:
         twin = pos.meta["live"]
@@ -391,8 +544,10 @@ class LiveBroker(PaperBroker):
                 px_out, fee_out = intent.price * twin["px_in"] / twin["paper_price_in"], 0.0
             event = "perp_roll_out"
         else:
-            f = ex.close(coin, side, twin["sz"])
+            oid = perp_close_cloid(pos.id)
+            f, adopted = self.perp_order("close", oid, coin, side, pos.strategy, pos.id, sz=twin["sz"])
             if not f.ok:
+                self.pending.done(oid)
                 self.live_state()["orphans"].append({"position": pos.id, "strategy": pos.strategy, **twin, "error": f.error, "at": self.now})
                 self.ledger.journal({"event": "live_error", "strategy": pos.strategy, "position": pos.id, "leg": "perp_close",
                                      "error": f.error, "at": self.now})
@@ -400,7 +555,8 @@ class LiveBroker(PaperBroker):
                 self.halt(pos.strategy, f"perp close failed ({f.error}); twin kept in live.orphans")
                 row["live"] = {"failed": f.error}
                 return trade, row
-            px_out, fee_out, event = f.px, f.fee_usd, "perp_close"
+            px_out, fee_out, event = f.px, f.fee_usd, "perp_close_adopted" if adopted else "perp_close"
+            self.pending.done(oid)
         try:
             funding = ex.funding_usd(coin, side, twin["notional_in"], twin["opened_at"], self.now)
             ferr = None
@@ -438,15 +594,40 @@ class LiveBroker(PaperBroker):
 
 
     # USD spot (Jupiter USDC quotes; usd_spot.py)
+    def usd_exec(self):
+        if self._usd_exec is None:
+            self._usd_exec = make_usd_spot_executor(self.usd_route)
+            if self.usd_route == "dry" and self.root and callable(getattr(self._usd_exec, "attach", None)):
+                self._usd_exec.attach(self.root / "dry_wallet.json")
+            if self.usd_route == "jupiter" and hasattr(self._usd_exec, "guard"):  # re-checked right before every send
+                self._usd_exec.guard = lambda: require_live(self.config, self.env, keys=("TARTAR_WALLET_KEY",), root=self.root)
+        return self._usd_exec
+
     def _open_usd(self, intent: Intent, positions: list[Position]) -> tuple[Position, dict]:
         pos, row = PaperBroker.open(self, intent)
         pos.mode = row["mode"] = "paper"
+        mint, basket = intent.meta["mint"], intent.meta.get("basket")
+        oid = buy_order_id(intent)
+        claim = self.live_state().get("unclaimed", {}).pop(oid, None)
+        if claim:  # a run that died bought this leg's tokens already: adopt them, don't buy again
+            pos.meta["live"] = {"venue": "jupiter_usd", "mint": claim["mint"], "route": self.usd_route, "usd_in": claim.get("usd_in"),
+                                "notional_in": claim.get("usd_in") or float(intent.meta.get("twin_usd", intent.notional_usd)),
+                                "token_raw": claim["token_raw"], "opened_at": claim["at"], "paper_price_in": intent.price,
+                                "dry": self.usd_route == "dry", "basket": basket, "adopted": oid}
+            pos.mode = row["mode"] = self.mode
+            row["live"] = {"adopted": oid, "token_raw": claim["token_raw"]}
+            self.log({"event": "usd_buy_adopted", "strategy": intent.strategy, "position": pos.id, "order_id": oid, "claim": claim})
+            return pos, row
         why = None
         if intent.meta.get("shadow"):
             why = "shadow variant"
-        elif self.perp_route != "dry":
-            why = "no USD spot route: live USDC swaps are not built (usd_spot.py)"
-        elif not (self.entries or self.pcfg["dry_all"]):
+        elif self.usd_route is None:
+            why = "no USD spot route: mode live needs TARTAR_WALLET_KEY (Jupiter)"
+        elif basket and self.perp_route is None:
+            why = "basket leg: no perp route for its hedges, so the spot leg stays on paper (unhedged it would be a bet)"
+        elif basket and (self.live_state().get("basket_broken") or {}).get(basket):
+            why = f"basket {basket} stopped: {self.live_state()['basket_broken'][basket]}"
+        elif not (self.entries or (self.usd_route == "dry" and self.pcfg["dry_all"])):
             why = "strategy not promoted"
         elif intent.side != 1:
             why = "short side has no spot route"
@@ -462,52 +643,70 @@ class LiveBroker(PaperBroker):
             if not intent.meta.get("shadow"):
                 self.log({"event": "skip", "venue": "jupiter_usd", "strategy": intent.strategy, "position": pos.id, "reason": why, "at": intent.at})
             return pos, row
-        if self._usd_exec is None:
-            self._usd_exec = make_usd_spot_executor("dry")
-        mint = intent.meta["mint"]
-        f = self._usd_exec.buy(mint, usd)
-        rec = {"event": "usd_buy", "strategy": intent.strategy, "position": pos.id, "asset": intent.asset, "fill": f.to_dict(),
-               "paper_price_usd": intent.price, "paper_at": intent.at}
+        self.pending.add(oid, {"leg": "usd_buy", "strategy": intent.strategy, "position": pos.id, "mint": mint, "usd": usd,
+                               "at": self.now, "route": self.usd_route})
+        f = self.usd_exec().buy(mint, usd)
+        rec = {"event": "usd_buy", "strategy": intent.strategy, "position": pos.id, "order_id": oid, "asset": intent.asset,
+               "fill": f.to_dict(), "paper_price_usd": intent.price, "paper_at": intent.at}
         if f.ok:
-            pos.meta["live"] = {"venue": "jupiter_usd", "mint": mint, "route": "dry", "usd_in": f.usd, "notional_in": usd,
+            pos.meta["live"] = {"venue": "jupiter_usd", "mint": mint, "route": self.usd_route, "usd_in": f.usd, "notional_in": usd,
                                 "token_raw": f.token_raw, "opened_at": self.now, "paper_price_in": intent.price, "dry": f.dry,
-                                "basket": intent.meta.get("basket")}
+                                "basket": basket, "signature": f.signature}
             pos.mode = row["mode"] = self.mode
             row["live"] = {"venue": "jupiter_usd", "usd_in": f.usd, "token_raw": f.token_raw}
         else:
             row["live"] = {"failed": f.error}
             self.ledger.journal({"event": "live_error", "strategy": intent.strategy, "position": pos.id, "leg": "usd_buy",
                                  "error": f.error, "at": self.now})
+            if f.unknown:  # it may have filled: keep the signature for a hand check and stop entering blind
+                self.live_state()["orphans"].append({"position": pos.id, "strategy": intent.strategy, "mint": mint, "route": self.usd_route,
+                                                     "venue": "jupiter_usd", "leg": "usd_buy", "usd_in": usd, "signature": f.signature,
+                                                     "unknown": True, "error": f.error, "at": self.now})
+                self.halt(intent.strategy, f"live USD buy outcome unknown ({f.signature}); check it, then resume-live")
         self.log(rec)
+        self.pending.done(oid)
         return pos, row
 
     def _close_usd(self, pos: Position, intent: Intent) -> tuple[Trade, dict]:
         twin = pos.meta["live"]
         trade, row = PaperBroker.close(self, pos, intent)
         trade.mode = pos.mode
-        if self.perp_route != "dry":
+        if twin.get("route") != self.usd_route:
             if twin.get("dry"):
-                row["live"] = {"dropped": "dry USD twin closed outside dry_live"}
+                row["live"] = {"dropped": f"dry USD twin closed while the USD route is {self.usd_route}"}
+                return trade, row
+            self.live_state()["orphans"].append({"position": pos.id, "strategy": pos.strategy, **twin, "at": self.now,
+                                                 "error": f"bought on {twin.get('route')}, USD route now {self.usd_route}"})
+            row["live"] = {"failed": "USD route changed"}
             return trade, row
-        if self._usd_exec is None:
-            self._usd_exec = make_usd_spot_executor("dry")
-        f = self._usd_exec.sell(twin["mint"], twin["token_raw"])
+        if twin.get("sold_unrecorded"):  # reconcile found the tokens gone after a run died mid-sell
+            row["live"] = {"sold_unrecorded": twin["sold_unrecorded"]}
+            trade.meta["live"] = {"sold_unrecorded": True, "usd_in": twin.get("usd_in"), "route": twin["route"]}
+            self.log({"event": "usd_sell_unrecorded", "strategy": pos.strategy, "position": pos.id, "twin": twin})
+            return trade, row
+        sid = f"usd_sell|{pos.id}"
+        self.pending.add(sid, {"leg": "usd_sell", "strategy": pos.strategy, "position": pos.id, "mint": twin["mint"],
+                               "token_raw": twin["token_raw"], "at": self.now, "route": self.usd_route})
+        f = self.usd_exec().sell(twin["mint"], twin["token_raw"])
         if not f.ok:
-            self.live_state()["orphans"].append({"position": pos.id, "strategy": pos.strategy, **twin, "error": f.error, "at": self.now})
+            self.pending.done(sid)
+            self.live_state()["orphans"].append({"position": pos.id, "strategy": pos.strategy, **twin, "error": f.error, "at": self.now,
+                                                 **({"sell_signature": f.signature, "unknown": True} if f.unknown else {})})
             self.ledger.journal({"event": "live_error", "strategy": pos.strategy, "position": pos.id, "leg": "usd_sell",
                                  "error": f.error, "at": self.now})
             self.halt(pos.strategy, f"USD spot sell failed ({f.error}); twin kept in live.orphans")
             row["live"] = {"failed": f.error}
             return trade, row
-        net = f.usd - twin["usd_in"]
+        net = f.usd - (twin.get("usd_in") or twin["notional_in"])
         ret = net / twin["notional_in"]
         cmp = {"venue": "jupiter_usd", "live_net_return_usd": ret, "paper_net_return": trade.net_return,
                "live_minus_paper": ret - trade.net_return, "net_usd": net, "notional_in": twin["notional_in"],
-               "usd_in": twin["usd_in"], "usd_out": f.usd, "route": "dry", "dry": True, "paper_exit_price": intent.price,
-               "hold_s": self.now - twin["opened_at"], "basket": twin.get("basket")}
+               "usd_in": twin.get("usd_in"), "usd_out": f.usd, "route": twin["route"], "dry": bool(twin.get("dry")),
+               "paper_exit_price": intent.price, "hold_s": self.now - twin["opened_at"], "basket": twin.get("basket")}
         trade.meta["live"] = cmp
         row["live"] = cmp
         self.log({"event": "usd_sell", "strategy": pos.strategy, "position": pos.id, "fill": f.to_dict(), "compare": cmp})
+        self.pending.done(sid)
         return trade, row
 
 

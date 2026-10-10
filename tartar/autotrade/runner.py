@@ -12,6 +12,7 @@ from .broker import LiveBroker, LiveNotAllowed, PaperBroker, make_broker
 from .core import Context, Intent
 from .ledger import Ledger
 from .risk import Risk
+from .safety import holder_id, lease_blocker, reconcile, reconcile_perps, record_wallet
 
 ROOT = Path("autotrade")
 
@@ -75,6 +76,13 @@ def run_once(root: Path = ROOT, now: float | None = None, strategies: dict | Non
     config = load_config(root)
     config["mode"] = config.get("mode", "paper")
     ledger = Ledger(root)
+    summary = {"at": now, "opened": 0, "closed": 0, "rejected": 0, "errors": {}}
+    n_changes = len(ledger.changes())
+    if config["mode"] == "live":  # one live trader at a time (safety.py)
+        blocker = lease_blocker(ledger.state, holder_id(), now)
+        if blocker:
+            ledger.journal({"event": "run_skipped", "at": now, "reason": f"live lease held by {blocker}"})
+            return {**summary, "skipped": f"live lease held by {blocker}", "changes": [], "halted": None, "new_halts": []}
     risk = Risk(config, root, ledger)
     if strategies is None:
         from .search import active_candidates
@@ -82,8 +90,28 @@ def run_once(root: Path = ROOT, now: float | None = None, strategies: dict | Non
         # candidates queued by the agent's own search (search.py), once their wait is over
         config.setdefault("strategies", {}).update(active_candidates(root, now))
         strategies = build_strategies(config)
-    summary = {"at": now, "opened": 0, "closed": 0, "rejected": 0, "errors": {}}
-    n_changes = len(ledger.changes())
+    wallet = None
+    if config["mode"] in ("live", "dry_live"):  # the book must match the wallet before anything trades
+        wallet = _exit_broker(config, ledger, root, now)
+        if wallet is not None:
+            try:
+                rec = reconcile(wallet, now)
+            except Exception as exc:  # noqa: BLE001 - can't verify the wallet: paper goes on, live entries stop
+                rec = {}
+                if not wallet.live_state()["halted"]:
+                    wallet.halt("live", f"reconcile failed: {type(exc).__name__}: {exc}"[:300])
+            if rec.get("claims") or rec.get("orphans") or rec.get("sold_unrecorded"):
+                summary["reconcile"] = {k: len(rec[k]) for k in ("claims", "orphans", "sold_unrecorded")}
+            try:
+                prec = reconcile_perps(wallet, now)
+            except Exception as exc:  # noqa: BLE001 - can't verify the perp account: perp entries stop
+                prec = {}
+                st = wallet.live_state()
+                if not st.get("perps_halted"):
+                    st["perps_halted"] = f"perp reconcile failed: {type(exc).__name__}: {exc}"[:300]
+                    ledger.change({"t": now, "kind": "halt", "scope": "live:perps", "reason": st["perps_halted"]})
+            if prec.get("inflight") or prec.get("mismatch") or prec.get("orphans"):
+                summary["perp_reconcile"] = {k: len(prec[k]) for k in ("inflight", "mismatch", "orphans")}
 
     for name, strat in strategies.items():
         rec = ledger.strategy(name)
@@ -135,6 +163,8 @@ def run_once(root: Path = ROOT, now: float | None = None, strategies: dict | Non
     summary["changes"] = lifecycle.review(ledger, strategies, now, config.get("lifecycle", {}))
     summary["halted"] = risk.kill_reason()
     summary["new_halts"] = [c for c in ledger.changes()[n_changes:] if c.get("kind") == "halt"]
+    if wallet is not None:
+        record_wallet(wallet, now)
     ledger.state["last_run"] = {k: v for k, v in summary.items() if k != "changes"}
     ledger._append("equity.jsonl", {
         "t": now, "realized_usd": round(sum(t.pnl_usd for t in ledger.trades()), 4),

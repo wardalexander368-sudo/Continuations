@@ -250,11 +250,58 @@ class DryExecutor:
     def __init__(self, quotes: Quotes | None = None, balance_sol: float = 0.05, priority_sol: float = 0.00002):
         self.quotes = quotes or Quotes()
         self._balance = balance_sol
+        self._tokens: dict[str, int] = {}
         self.fee_sol = self.BASE_FEE_SOL + priority_sol
         self.wallet = STAND_IN
+        self.path = None
+
+    def attach(self, path, seed: dict[str, int] | None = None) -> None:
+        """Keep the simulated wallet in ``path`` (written through on every fill, like a chain), so a run that
+        dies mid-order leaves it the way a real wallet would be. A new file starts at ``balance_sol`` holding
+        ``seed`` (the twins already in the book)."""
+        import json
+        from pathlib import Path
+
+        self.path = Path(path)
+        if not self.path.exists():
+            self._tokens = {m: int(r) for m, r in (seed or {}).items() if r}
+            self._save()
+        self._load()
+
+    def _load(self) -> None:
+        import json
+
+        if self.path and self.path.exists():
+            w = json.loads(self.path.read_text())
+            self._balance, self._tokens = float(w["sol"]), {m: int(r) for m, r in w["tokens"].items()}
+
+    def _save(self) -> None:
+        import json
+
+        if self.path:
+            keep = json.loads(self.path.read_text()) if self.path.exists() else {}
+            keep.update({"sol": round(self._balance, 9), "tokens": self._tokens, "note": "simulated wallet of the dry route (no real funds)"})
+            tmp = self.path.with_suffix(".tmp")
+            tmp.write_text(json.dumps(keep, indent=1, sort_keys=True))
+            tmp.replace(self.path)
+
+    def _move(self, sol: float, mint: str, raw: int) -> None:
+        self._load()
+        self._balance += sol
+        left = self._tokens.get(mint, 0) + raw
+        if left > 0:
+            self._tokens[mint] = left
+        else:
+            self._tokens.pop(mint, None)
+        self._save()
 
     def balance_sol(self) -> float:
+        self._load()
         return self._balance
+
+    def holdings(self, mints) -> dict[str, int]:
+        self._load()
+        return {m: self._tokens.get(m, 0) for m in mints}
 
     def sol_usd(self) -> float:
         return self.quotes.sol_usd()
@@ -265,7 +312,7 @@ class DryExecutor:
             q = self.quotes.quote(SOL, mint, int(sol * 1e9))
         except Exception as exc:  # noqa: BLE001
             return Fill(self.name, "buy", mint, False, dry=True, error=f"{type(exc).__name__}: {exc}"[:300])
-        self._balance -= sol + self.fee_sol
+        self._move(-(sol + self.fee_sol), mint, int(q["outAmount"]))
         return Fill(self.name, "buy", mint, True, sol=sol + self.fee_sol, token_raw=int(q["outAmount"]), quote_out=int(q["outAmount"]),
                     fee_sol=self.fee_sol, sent_at=t0, confirmed_at=t0, dry=True)
 
@@ -276,7 +323,7 @@ class DryExecutor:
         except Exception as exc:  # noqa: BLE001
             return Fill(self.name, "sell", mint, False, dry=True, error=f"{type(exc).__name__}: {exc}"[:300])
         sol = int(q["outAmount"]) / 1e9 - self.fee_sol
-        self._balance += sol
+        self._move(sol, mint, -token_raw)
         return Fill(self.name, "sell", mint, True, sol=sol, token_raw=token_raw, quote_out=int(q["outAmount"]),
                     fee_sol=self.fee_sol, sent_at=t0, confirmed_at=t0, dry=True)
 
@@ -299,9 +346,18 @@ def simulated(chain: Chain, route: str, leg: str, mint: str, raw: bytes, amount,
 
 
 def send_signed(chain: Chain, keypair, route: str, leg: str, mint: str, raw: bytes, wallet: str, out: int | None,
-                last_valid: int | None, timeout: float = 90.0) -> Fill:
-    """Sign ``raw`` (already through ``check_tx``) with our key, send it, and read the fill from the chain."""
+                last_valid: int | None, timeout: float = 90.0, guard=None, counter: str | None = None) -> Fill:
+    """Sign ``raw`` (already through ``check_tx``) with our key, send it, and read the fill from the chain.
+    ``guard`` (the shared live gate, ``gate.require_live``) runs first; if it raises, nothing is signed.
+    ``counter``: the swap's other token when it is not SOL (e.g. USDC); its change goes to
+    ``extra["counter_change"]`` and decides, with the token change, whether the swap filled."""
     from solders.transaction import VersionedTransaction
+
+    try:
+        if guard:
+            guard()
+    except Exception as exc:  # noqa: BLE001
+        return Fill(route, leg, mint, False, quote_out=out, error=f"live gate: {exc}"[:300])
 
     signed = VersionedTransaction(VersionedTransaction.from_bytes(raw).message, [keypair])
     t0 = time.time()
@@ -312,6 +368,13 @@ def send_signed(chain: Chain, keypair, route: str, leg: str, mint: str, raw: byt
         return Fill(route, leg, mint, False, quote_out=out, sent_at=t0, error=f"send: {exc}"[:300])
     tx, seen = chain.confirm(sig, timeout=timeout, last_valid=last_valid)
     eff = effects(tx, mint, wallet) if tx else None
+    if counter and eff and not eff.get("err"):
+        c = effects(tx, counter, wallet)["token_change"]
+        raw = eff["token_change"] if leg == "buy" else -eff["token_change"]
+        ok = raw > 0 and (c < 0 if leg == "buy" else c > 0)
+        return Fill(route, leg, mint, ok, sol=-eff["sol_change"], token_raw=raw, fee_sol=eff["fee_sol"], rent_sol=eff["rent_sol"],
+                    quote_out=out, signature=sig, sent_at=t0, confirmed_at=seen, error=None if ok else "no tokens moved",
+                    extra={"slot": eff.get("slot"), "counter_change": c})
     return fill_from(route, leg, mint, eff, quote_out=out, signature=sig, sent_at=t0, confirmed_at=seen)
 
 
@@ -327,6 +390,7 @@ class JupiterExecutor:
         self.chain = chain or Chain()
         self.priority_sol = priority_sol
         self.simulate = simulate
+        self.guard = None  # set by the broker to the shared live gate, checked right before each send
         self.keypair = None
         if not simulate:
             from solders.keypair import Keypair
@@ -339,6 +403,9 @@ class JupiterExecutor:
 
     def balance_sol(self) -> float:
         return self.chain.balance_sol(self.wallet)
+
+    def holdings(self, mints) -> dict[str, int]:
+        return {m: self.chain.held(self.wallet, m)[0] for m in mints}
 
     def sol_usd(self) -> float:
         return self.quotes.sol_usd()
@@ -354,7 +421,7 @@ class JupiterExecutor:
         out = int(q["outAmount"])
         if self.simulate:
             return simulated(self.chain, self.name, leg, mint, raw, amount, out)
-        return send_signed(self.chain, self.keypair, self.name, leg, mint, raw, self.wallet, out, last_valid)
+        return send_signed(self.chain, self.keypair, self.name, leg, mint, raw, self.wallet, out, last_valid, guard=self.guard)
 
     def buy(self, mint: str, sol: float) -> Fill:
         return self._swap("buy", mint, int(sol * 1e9))
@@ -408,6 +475,7 @@ class LightningExecutor:
         import httpx
 
         self.simulate = simulate
+        self.guard = None  # set by the broker to the shared live gate, checked right before each send
         if simulate:
             wallet, api_key = wallet or STAND_IN, None
         else:
@@ -426,6 +494,9 @@ class LightningExecutor:
     def balance_sol(self) -> float:
         return self.chain.balance_sol(self.wallet)
 
+    def holdings(self, mints) -> dict[str, int]:
+        return {m: self.chain.held(self.wallet, m)[0] for m in mints}
+
     def sol_usd(self) -> float:
         return self.quotes.sol_usd()
 
@@ -441,6 +512,11 @@ class LightningExecutor:
             except Exception as exc:  # noqa: BLE001
                 return Fill(self.name, leg, mint, False, dry=True, quote_out=quote_out, error=f"{type(exc).__name__}: {exc}"[:300])
             return simulated(self.chain, self.name, leg, mint, r.content, raw_amount, quote_out)
+        try:
+            if self.guard:
+                self.guard()
+        except Exception as exc:  # noqa: BLE001
+            return Fill(self.name, leg, mint, False, quote_out=quote_out, error=f"live gate: {exc}"[:300])
         t0 = time.time()
         try:
             r = self.http.post(LIGHTNING, params={"api-key": self.api_key}, data=payload)

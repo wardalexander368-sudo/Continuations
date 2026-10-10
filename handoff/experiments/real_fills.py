@@ -40,7 +40,7 @@ MAX_SIZE, MAX_TRIPS = 0.02, 5
 PROBE_MINT = "HXqxTwCzREUXNK4CbNDgNEUEh2jLzFKdC4tvTuojpump"  # any token the wallet does not hold
 
 ap = argparse.ArgumentParser()
-ap.add_argument("mode", choices=("probe", "roundtrip", "summary", "sell", "record"))
+ap.add_argument("mode", choices=("probe", "roundtrip", "summary", "buy", "sell", "record"))
 ap.add_argument("--sig", help="record: signature of a leg that was sent but not logged")
 ap.add_argument("--leg", choices=("buy", "sell"), help="record: which leg --sig was")
 ap.add_argument("--mint")
@@ -223,11 +223,33 @@ def summary() -> None:
         print(f"round trip: {spent:.6f} -> {back:.6f} SOL: net {1e4 * (back / spent - 1):+.0f} bps (rent excluded, refundable by closing the token account)")
 
 
+WALLET = "HZkGXYm2JLH8VUwqMcaVDJYFuokpQZ4vi4RDrVjBE28z"  # the Lightning wallet (public address)
+
+
+def held_raw(mint: str) -> int:
+    """Raw token units of --mint the wallet holds (0 if none)."""
+    res = rpc("getTokenAccountsByOwner", [WALLET, {"mint": mint}, {"encoding": "jsonParsed"}])
+    return sum(int(a["account"]["data"]["parsed"]["info"]["tokenAmount"]["amount"]) for a in res["value"])
+
+
+def buy_one() -> None:
+    """One buy of --size SOL (a strategy's entry; its exit is a separate `sell`)."""
+    if not args.real or not args.mint:
+        sys.exit("buy needs --real and --mint")
+    if not 0 < args.size <= MAX_SIZE:
+        sys.exit(f"cap: size in (0, {MAX_SIZE}] SOL")
+    b = leg("buy", args.size, True, quote(SOL, args.mint, int(args.size * 1e9)))
+    print("bought" if b.get("effects") and not b["effects"].get("err") else "buy did not confirm", flush=True)
+
+
 def sell_held() -> None:
-    """Sell 100% of --mint held (finishes a round trip a crash left open)."""
+    """Sell 100% of --mint held (a strategy's exit, or a round trip a crash left open)."""
     if not args.real or not args.mint:
         sys.exit("sell needs --real and --mint")
-    sell = leg("sell", "100%", False, None)
+    raw = held_raw(args.mint)
+    if not raw:
+        sys.exit("nothing held")
+    sell = leg("sell", "100%", False, quote(args.mint, SOL, raw))
     print("sold" if sell.get("effects") and not sell["effects"].get("err") else "sell did not confirm", flush=True)
 
 
@@ -247,4 +269,4 @@ def probe() -> None:
     print(json.dumps({"probe_response": body, "seconds": round(t1 - t0, 2)})[:1500])
 
 
-{"probe": probe, "roundtrip": roundtrip, "summary": summary, "sell": sell_held, "record": record}[args.mode]()
+{"probe": probe, "roundtrip": roundtrip, "summary": summary, "buy": buy_one, "sell": sell_held, "record": record}[args.mode]()
