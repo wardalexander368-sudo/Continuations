@@ -420,7 +420,7 @@ deep pools match the model, a thin one was 2.4x it). The `launch_selector` slot 
 
 ## Log (newest first)
 
-* 2026-10-10 16:30 UTC, agent-machinery thread: **stress test of the search's candidate**
+* 2026-10-10 15:55 UTC, agent-machinery thread: **stress test of the search's candidate**
   `cand-xsm-L21-q10-vol-mon-lag2` (`handoff/experiments/candidate_stress.py`, output
   `autotrade/search/stress-cand-xsm-L21-q10-vol-mon-lag2.txt`; in-sample over all 146 weeks, so
   optimistic). It holds up: +2.83%/week as queued, +1.82% at 3x costs (60 bps/side), +2.14% a day
