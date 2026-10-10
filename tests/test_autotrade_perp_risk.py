@@ -1,3 +1,4 @@
+import pytest
 import json
 
 from tartar.autotrade.core import Position
@@ -95,3 +96,22 @@ def test_dry_perp_fill_carries_the_exact_unsigned_order():
     assert f.extra["ioc_fill_frac"] == 1.0
     c = ex.close("X", 1, 0.5)
     assert c.extra["order"]["r"] is True and c.extra["order"]["b"] is False
+
+
+def test_book_vol_target_scales_new_legs(tmp_path):
+    from tartar.autotrade import perp_risk
+    from tartar.autotrade.core import Trade
+
+    root = setup(tmp_path)
+    led = Ledger(root)
+    cfg = json.loads((root / "config.json").read_text())
+    assert perp_risk.book_scale(led, cfg, {})[0] == 1.0  # no history yet
+    for k, r in enumerate([0.08, -0.08] * 5):  # 8%/week book vol -> scale clipped to 0.5
+        led.add_trade(Trade(f"t{k}", "xs", "A", 1, 1000, 1, 0, 1, 1, 0, 1000 * r, r,
+                            meta={"week": f"2026-{k + 1:02d}", "leg_usd": 1000.0}))
+    k, why = perp_risk.book_scale(led, cfg, {})
+    assert k == 0.5 and "scale x0.50" in why
+    for t in led.trades():
+        t.pnl_usd /= 10  # 0.8%/week -> clipped to 1.5
+    assert perp_risk.book_scale(led, cfg, {})[0] == 1.5
+    assert perp_risk.book_scale(led, cfg, {"book_vol_target": 0.0113})[0] == pytest.approx(0.0113 / 0.008433, rel=1e-3)

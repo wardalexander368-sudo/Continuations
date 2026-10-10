@@ -119,6 +119,12 @@ Applied to the paper book every run; live twins exit with their paper legs, so t
   their combined side notional below its peak, the agent writes `HALT` and logs a halt (the Action fails,
   so the owner is emailed). Delete `HALT` to resume.
 * **Sizing:** legs stay equal weight; inverse-volatility sizing cost return on every rule.
+* **Book volatility target, 2%/week (from 2026-10-10 late):** `xs_momentum` and `vol_momentum` form one
+  equal-weight book. Once it has 8 completed weeks, every new leg (and its `leg_usd`) is multiplied by
+  clip(0.02 / std of the book's last 13 weekly returns, 0.5, 1.5) (`perp_risk.book_scale`; the leg's meta
+  carries `book_scale` and why). This is the real-money thread's recommendation
+  (`handoff/experiments/perps_book.py`: worst week −18% vs −22%, max drawdown 24% vs 38%, mean lower).
+  Scores are per unit of `leg_usd`, so verdicts are unaffected.
 
 The paper books of `xs_momentum` and `vol_momentum` now carry these controls; their official scorers
 (`xs_momentum_forward.py`, `vmom_forward.py`) score the registered rule without them and stay the authority.
@@ -171,6 +177,25 @@ daily closes, so a gap within a day can still overshoot), `handoff/experiments/p
 The chosen default (equal weight, weekly stop 12%) keeps the mean weekly return and cuts the worst week by a
 quarter to a third; it does not remove large drawdowns over several weeks (31-63% at 1x), which is what the
 account stop and small live legs are for. At 35% the account stop would have fired in the histories of `vol_momentum` and `xs_momentum` (drawdowns 58-63%), not the candidate's (31% with the weekly stop).
+
+## Dip rule: entry delay and the out-of-sample replay (2026-10-10 late)
+
+* Paper entry is now 60 s into bar t+1 (`execution.entry: delay`, `entry_delay_s: 60`), priced by
+  interpolating that bar's open and close; it was the bar's close (+5 min) when the watcher took 4–5 min.
+  The watcher now acts in ~3 s; 60 s is a margin. Logged as a `cost_update` (`2026-10-10-fast-watcher`).
+* The retire check counts the real-money thread's 90-trade replay of the same rule
+  (`handoff/data/dip-cost/replay-oos-2026-10-10.json`, config `replay`) at the agent's execution costs,
+  minus trades the agent also took on paper (same pool, within 10 min). They join the mean-net verdict,
+  not the excess-over-random test. On the live ledger: 116 trades (74 replay), mean net −6.3%
+  [−10.3, −2.4], so the dip rule reaches its 200-trade verdict sooner.
+
+## Wick bounce (`wick_bounce`, from 2026-10-12)
+
+The trading-skills thread's pre-registered rule (`handoff/preregistration/wick-bounce/SPEC.md`): on 20
+liquid HL perps, long after an hourly lower wick of ≥ 6 sigma, short after an upper one, hold 4 h,
+8.5 bps per side, $200 per trade, paper. The agent reads hourly candles once per closed hour and books
+every signal since its last look. Replaying 2026-03..09 HL candles through the runner (a run every
+3 h) reproduces `wick_forward.py` exactly: 28 of 28 trades, same returns. The scorer stays the authority.
 
 ## Perps costs and the order dry run (from 2026-10-10)
 

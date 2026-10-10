@@ -58,7 +58,10 @@ class DipStrategy:
         self._last_call = 0.0
         self.fetch = cfg.get("_fetch") or self._fetch  # tests inject a fake fetcher
         ex = cfg.get("execution") or {}
-        self.late_entry = ex.get("entry") == "next_bar_close"
+        self.late_entry = ex.get("entry") in ("next_bar_close", "delay")
+        # entry this many seconds into bar t+1, priced between its open and close (300 = its close)
+        self.entry_delay = float(ex.get("entry_delay_s", 300.0 if ex.get("entry") == "next_bar_close" else 0.0))
+        self.replay = None if cfg.get("rule_overrides") else cfg.get("replay")  # registered rule only
         self.route_fee = float(ex.get("route_fee_per_side", 0.0))
         self.costs_version = ex.get("version")
 
@@ -166,10 +169,11 @@ class DipStrategy:
                 if c[i] / c[i - L] - 1 < -drop:
                     exit_t = float(t[i] + H * bar)
                     key = f"{pid}:{int(t[i])}"
-                    at, px = (float(t[i + 1] + bar), float(c[i + 1])) if self.late_entry else (float(t[i + 1]), float(o[i + 1]))
+                    at, px = (float(t[i + 1] + self.entry_delay), self.delayed_px(o[i + 1], c[i + 1])) if self.late_entry \
+                        else (float(t[i + 1]), float(o[i + 1]))
                     intents.append(Intent("open", self.name, at, px,
                                           f"close fell {100 * (1 - c[i] / c[i - L]):.1f}% over {L} bars"
-                                          + (" (entry at bar t+1's close: real-trading latency)" if self.late_entry else ""),
+                                          + (f" (entry {self.entry_delay:.0f} s into bar t+1: real-trading latency)" if self.late_entry else ""),
                                           asset=pid, side=1, notional_usd=self.size, cost=cost,
                                           meta={"pool": pid, "label": p["name"], "signal_t": float(t[i]), "exit_t": exit_t,
                                                 "key": key, "liquidity_usd": p["liquidity_usd"],
@@ -188,12 +192,17 @@ class DipStrategy:
             raise RuntimeError(f"no pool data this run ({failures} fetch failures)")
         return intents
 
+    def delayed_px(self, o: float, c: float) -> float:
+        """Price ``entry_delay`` seconds into a bar, interpolated between its open and close."""
+        f = min(max(self.entry_delay / self.rule["bar_seconds"], 0.0), 1.0)
+        return float(o + (c - o) * f)
+
     def describe(self) -> dict:
         return {"rule": self.rule, "costs": self.costs, "size_usd": self.size, "shadow": self.shadow,
                 "family_size": self.family_size, "costs_version": self.costs_version,
-                "execution": {"entry": "next_bar_close" if self.late_entry else "next_bar_open",
+                "execution": {"entry": f"{self.entry_delay:.0f} s into bar t+1" if self.late_entry else "next_bar_open",
                               "route_fee_per_side": self.route_fee},
-                "change_note": (f"paper execution at real-trading costs: entry at bar t+1's close (signal latency), "
+                "change_note": (f"paper execution at real-trading costs: entry {self.entry_delay:.0f} s into bar t+1 (signal latency), "
                                 f"+{100 * self.route_fee:g}%/side route fee; rule unchanged "
                                 "(handoff/data/real-fills/dip-report-2026-10-10.txt)") if self.costs_version else "",
                 "success": "at >= 200 trades or 21 days: excess over random entries > 0 with its CI above 0 "
@@ -203,6 +212,34 @@ class DipStrategy:
         """The registered cost model with the pool's measured PumpSwap fee (secondary, ADDENDUM-2026-10-09-fees)."""
         fee = self.measured.get(pool, {}).get("fee_per_side", self.costs["fee_per_side"]) + (cost.fee - self.costs["fee_per_side"])
         return {"fee": fee, "impact": cost.impact, "fixed_usd": cost.fixed_usd}
+
+    def replay_rows(self) -> list[dict]:
+        if not getattr(self, "replay", None):
+            return []
+        if not hasattr(self, "_replay_rows"):
+            path = Path(self.replay)
+            self._replay_rows = json.loads(path.read_text()) if path.exists() else []
+        return self._replay_rows
+
+    def replay_nets(self, trades: list[Trade] = ()) -> tuple[list[float], list[str]]:
+        """Net returns of the replay's trades (gross from bar t+1's open) at this strategy's execution costs:
+        registered fee + route fee and the pool's impact on both sides, network fees; the entry delay is not
+        re-applied (the replay has no intrabar prices), so this is if anything optimistic. Replay trades the
+        agent also took on paper (same pool label, within 10 minutes) are dropped so nothing counts twice."""
+        seen = [(t.meta.get("label"), t.meta.get("signal_t", t.entry_at)) for t in trades]
+        rows = [r for r in self.replay_rows()
+                if not any(lab == r["name"] and abs(st - r["t"]) <= 600 for lab, st in seen)]
+        if not rows:
+            return [], []
+        by_name = {p["name"]: p for p in self.pools()}
+        fee = self.costs["fee_per_side"] + self.route_fee
+        out, groups = [], []
+        for r in rows:
+            p = by_name.get(r["name"])
+            impact = self.size / max(p["liquidity_usd"] / 2.0, 1.0) if p else 0.0
+            out.append((1 + r["gross"]) * (1 - fee) ** 2 * (1 - impact) ** 2 - 1 - 2 * self.costs["network_usd_per_tx"] / self.size)
+            groups.append(p["pool"] if p else r["name"])
+        return out, groups
 
     def spec_net(self, t: Trade) -> float:
         """A closed trade's net return as the registration and its official scorer compute it
@@ -228,7 +265,8 @@ class DipStrategy:
         i = np.arange(lo, hi - H - 1)
         if not len(i):
             return float("nan")
-        gross = c[i + H] / (c[i + 1] if self.late_entry else o[i + 1])  # same execution as the agent's entries
+        f = min(max(self.entry_delay / self.rule["bar_seconds"], 0.0), 1.0) if self.late_entry else 0.0
+        gross = c[i + H] / (o[i + 1] + (c[i + 1] - o[i + 1]) * f)  # same execution as the agent's entries
         return float(np.mean(gross * (1 - cost.fee) ** 2 * (1 - cost.impact) ** 2 - 1 - 2 * cost.fixed_usd / self.size))
 
     def marks(self, ctx: Context) -> dict[str, tuple[float, float]]:
@@ -241,17 +279,20 @@ class DipStrategy:
 
     def evaluate(self, trades: list[Trade], now: float, state: dict) -> Verdict:
         n = len(trades)
-        if not n:
+        if not n and not self.replay_rows():
             return Verdict("pending", 0, {}, "no closed trades yet")
-        first = min(t.entry_at for t in trades)
+        first = min([t.entry_at for t in trades] + [r["t"] for r in self.replay_rows()])
         days = (now - first) / 86400
         net = [self.spec_net(t) for t in trades]
         pools = [t.meta.get("pool", t.asset) for t in trades]
+        rep_net, rep_pools = self.replay_nets(trades)
+        if rep_net:  # out-of-sample replay of the same rule (counts toward the verdict, never toward the excess test)
+            net, pools, n = net + rep_net, pools + rep_pools, n + len(rep_net)
         valid = [(self.spec_net(t) - t.meta["baseline"], t.meta.get("pool", t.asset)) for t in trades
                  if t.meta.get("baseline") == t.meta.get("baseline") and t.meta.get("baseline") is not None]
         a = 0.05 / self.family_size  # Bonferroni across a variant family (1 for the registered rule)
         m, lo_m, hi_m = bootstrap_ci(net, pools, q=(a, 1 - a))
-        stats = {"n": n, "days": round(days, 2), "mean_net": m, "mean_lo": lo_m, "mean_hi": hi_m}
+        stats = {"n": n, "days": round(days, 2), "mean_net": m, "mean_lo": lo_m, "mean_hi": hi_m, "n_replay": len(rep_net)}
         if valid:
             e, lo_e, hi_e = bootstrap_ci([x for x, _ in valid], [g for _, g in valid], q=(a, 1 - a))
             stats.update(excess=e, excess_lo=lo_e, excess_hi=hi_e)
@@ -268,7 +309,8 @@ class DipStrategy:
             stats["mean_net_quoted_impact"] = float(np.mean(quoted))
             stats["n_quoted"] = len(quoted)
         due = n >= 200 or days >= 21
-        summary = (f"{n} trades over {days:.1f} days: mean net {100 * m:+.2f}% [{100 * lo_m:+.2f}, {100 * hi_m:+.2f}]"
+        summary = (f"{n} trades{f' ({len(rep_net)} from the out-of-sample replay)' if rep_net else ''} over {days:.1f} days: "
+                   f"mean net {100 * m:+.2f}% [{100 * lo_m:+.2f}, {100 * hi_m:+.2f}]"
                    + (f" ({len(late)} at real-trading execution: {100 * stats['mean_net_real_execution']:+.2f}% vs "
                       f"{100 * stats['mean_net_registered_execution']:+.2f}% at the registered execution)" if late else "")
                    + (f" ({100 * stats['mean_net_measured_fees']:+.2f}% at measured pool fees)" if alt else "")

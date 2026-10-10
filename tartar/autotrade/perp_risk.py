@@ -13,14 +13,24 @@ backtest by handoff/experiments/perps_risk_controls.py (results in handoff/autot
   peak, the agent writes the kill switch file ``HALT`` (new entries stop everywhere; exits still run) and
   logs a halt, which fails the Action so the owner is emailed.
 
+* **Book volatility target** (``book_vol_target``, default 0.02): the registered perps strategies are one
+  equal-weight book; once it has ``book_min_weeks`` (8) weekly returns, every new leg's size (and its
+  ``leg_usd``) is multiplied by clip(target / std of the book's last 13 weekly returns, 0.5, 1.5), the
+  book construction recommended by handoff/experiments/perps_book.py (worst week -18% vs -22%, max
+  drawdown 24% vs 38%, at a lower mean). Scoring is per unit of ``leg_usd``, so verdicts don't change;
+  a coin kept on the same side across a resize still pays no cost (the scale moves slowly).
+
 Inverse-volatility sizing was scored too and cost return on every rule, so legs stay equal weight.
 """
 
 from __future__ import annotations
 
+import numpy as np
+
 from .core import Context, CostModel, Intent
 
-DEFAULTS = {"weekly_stop_frac": 0.12, "account_drawdown_stop_frac": 0.35, "exit_cost": 0.002}
+DEFAULTS = {"weekly_stop_frac": 0.12, "account_drawdown_stop_frac": 0.35, "exit_cost": 0.002,
+            "book_vol_target": 0.02, "book_window_weeks": 13, "book_min_weeks": 8, "book_scale_min": 0.5, "book_scale_max": 1.5}
 
 
 def is_perp_book(pos) -> bool:
@@ -68,11 +78,39 @@ def weekly_stops(ledger, strategies: dict, now: float, cfg: dict, http=None) -> 
     return out
 
 
+def book_names(config: dict) -> list[str]:
+    return [n for n, s in config.get("strategies", {}).items()
+            if s.get("kind") == "xs_momentum" and s.get("enabled", True) and not s.get("shadow")]
+
+
+def book_weeks(ledger, names: list[str]) -> list[float]:
+    """The equal-weight book's weekly returns: each week, the mean of its strategies' returns per unit of leg_usd."""
+    by_week: dict[str, dict[str, float]] = {}
+    for n in names:
+        for t in ledger.trades(n):
+            w = t.meta.get("week")
+            if w and t.meta.get("leg_usd"):
+                d = by_week.setdefault(w, {})
+                d[n] = d.get(n, 0.0) + t.pnl_usd / float(t.meta["leg_usd"])
+    open_weeks = {p.meta.get("week") for p in ledger.positions if p.strategy in names}
+    return [sum(d.values()) / len(d) for w, d in sorted(by_week.items()) if w not in open_weeks]
+
+
+def book_scale(ledger, config: dict, cfg: dict) -> tuple[float, str]:
+    """Size multiplier for new legs of the registered perps book, and a one-line reason."""
+    lim = {**DEFAULTS, **cfg}
+    x = book_weeks(ledger, book_names(config))
+    if len(x) < lim["book_min_weeks"]:
+        return 1.0, f"book vol target off until {lim['book_min_weeks']} weeks ({len(x)} so far)"
+    vol = float(np.std(x[-int(lim["book_window_weeks"]):], ddof=1))
+    k = float(np.clip(lim["book_vol_target"] / max(vol, 1e-4), lim["book_scale_min"], lim["book_scale_max"]))
+    return k, f"book vol {100 * vol:.2f}%/week over {min(len(x), int(lim['book_window_weeks']))} weeks -> scale x{k:.2f}"
+
+
 def account_drawdown(ledger, config: dict, root, now: float, cfg: dict) -> str | None:
     """Write HALT when the registered perps book's drawdown passes the limit; returns the reason if it fired now."""
     lim = {**DEFAULTS, **cfg}
-    names = [n for n, s in config.get("strategies", {}).items()
-             if s.get("kind") == "xs_momentum" and s.get("enabled", True) and not s.get("shadow")]
+    names = book_names(config)
     capital = sum(float(config["strategies"][n].get("leg_usd", 100.0)) for n in names)
     if not names or capital <= 0:
         return None

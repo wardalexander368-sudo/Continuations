@@ -367,3 +367,25 @@ def test_dip_real_trading_execution_late_entry_and_route_fee(tmp_path):
     assert trade.pnl_usd == pytest.approx(-2 * side_cost)
     assert strat.registered_net(trade) > strat.spec_net(trade) + 0.03  # +2.2% rebound and 2 x 1% route fee
     assert len([c for c in Ledger(root).changes() if c["kind"] == "cost_update"]) == 1  # logged once
+
+
+def test_dip_entry_delay_prices_inside_next_bar_and_replay_counts(tmp_path):
+    prereg = write_dip_prereg(tmp_path)
+    s = DipStrategy("dip", {"prereg": str(prereg), "_fetch": lambda ctx, pool: None,
+                            "execution": {"entry": "delay", "entry_delay_s": 60, "version": "v"}})
+    assert s.late_entry and s.delayed_px(1.0, 1.5) == pytest.approx(1.1)  # 60 s of a 300 s bar
+    assert "60 s into bar t+1" in s.describe()["execution"]["entry"]
+    # replay rows count toward the verdict, except ones the agent also traded
+    rows = [{"name": f"P{i % 7}", "t": 1_800_000_000 + 3600 * i, "gross": -0.05} for i in range(30)]
+    (tmp_path / "rep.json").write_text(json.dumps(rows))
+    s = DipStrategy("dip", {"prereg": str(prereg), "_fetch": lambda ctx, pool: None, "replay": str(tmp_path / "rep.json")})
+    s.pools = lambda: []
+    mine = Trade("x", "dip", "addr", 1, 200, 1, 1_800_000_000, 1.0, 1_800_000_000 + 1, 0, 0, 0.0,
+                 meta={"label": "P0", "signal_t": 1_800_000_100, "pool": "addr"})
+    nets, _ = s.replay_nets([mine])
+    assert len(nets) == 29 and all(x < -0.05 for x in nets)
+    v = s.evaluate([mine], 1_800_000_000 + 86400 * 22, {})
+    assert v.stats["n"] == 30 and v.stats["n_replay"] == 29 and v.decision == "fail"
+    s2 = DipStrategy("dip", {"prereg": str(prereg), "_fetch": lambda ctx, pool: None, "replay": str(tmp_path / "rep.json"),
+                             "rule_overrides": {"hold_bars": 24}})
+    assert s2.replay_rows() == []  # variants don't borrow the registered rule's replay

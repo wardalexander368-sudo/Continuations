@@ -113,6 +113,10 @@ def run_once(root: Path = ROOT, now: float | None = None, strategies: dict | Non
             if prec.get("inflight") or prec.get("mismatch") or prec.get("orphans"):
                 summary["perp_reconcile"] = {k: len(prec[k]) for k in ("inflight", "mismatch", "orphans")}
 
+    from . import perp_risk
+
+    book = set(perp_risk.book_names(config))
+    scale, scale_why = perp_risk.book_scale(ledger, config, config.get("perp_risk", {}))
     for name, strat in strategies.items():
         rec = ledger.strategy(name)
         if "registered_at" not in rec:  # the agent's own pre-registration: rule and criteria before any data
@@ -144,6 +148,9 @@ def run_once(root: Path = ROOT, now: float | None = None, strategies: dict | Non
         broker = _broker(config, rec["status"], ledger, name, now, root)
         exits = lambda: _exit_broker(config, ledger, root, now)  # noqa: E731
         for intent in sorted(intents, key=lambda i: (i.at, i.kind != "close")):
+            if intent.kind == "open" and name in book and "leg_usd" in intent.meta and scale != 1.0:
+                intent.notional_usd *= scale  # book volatility target (perp_risk.book_scale)
+                intent.meta.update(leg_usd=float(intent.meta["leg_usd"]) * scale, book_scale=scale, book_scale_why=scale_why)
             summary_key = _apply(intent, rec, ledger, risk, broker, now,
                                  quote=bool(config.get("execution", {}).get("quote_check")) and not intent.meta.get("shadow"),
                                  exit_broker=exits)
@@ -159,8 +166,6 @@ def run_once(root: Path = ROOT, now: float | None = None, strategies: dict | Non
                 pos.mark_price, pos.mark_at = marks[pos.id]
 
     # perps risk controls (perp_risk.py): weekly loss limit per strategy, then the account drawdown stop
-    from . import perp_risk
-
     prc = config.get("perp_risk", {})
     for intent in perp_risk.weekly_stops(ledger, strategies, now, prc, http):
         rec = ledger.strategy(intent.strategy)

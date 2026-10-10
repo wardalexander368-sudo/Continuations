@@ -426,6 +426,13 @@ deep pools match the model, a thin one was 2.4x it). The `launch_selector` slot 
 
 ## Log (newest first)
 
+* **2026-10-10 ~21:40 UTC, handoff session (`autotrade/`): dip delay cut, dip replay in the retire
+  check, perps book vol target, wick bounce wired in** (`autotrade.md`). Dip paper entry is 60 s into
+  bar t+1 (was +5 min); the real-money thread's 90-trade replay now counts toward the dip verdict
+  (live ledger plus replay: −6.3% mean net on 116 trades). `xs_momentum` + `vol_momentum` sizes scale
+  to a 2%/week book vol after 8 weeks (0.5–1.5x). New strategy `wick_bounce` paper-trades edge-hunt J
+  from 10-12 and matches `wick_forward.py` trade for trade.
+
 * **2026-10-10 ~18:50 UTC, repo move: TARTAR history imported into Continuations.** All 412 commits
   from the backup bundle merged into Continuations `main` (AJ's `.claude/settings.json` kept, TARTAR
   README replaces the placeholder). Full-history secrets scan: only public Solana tx signatures and a

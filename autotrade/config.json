@@ -38,11 +38,13 @@
       "prereg": "handoff/preregistration/dip-rolling",
       "size_usd": 200,
       "execution": {
-        "entry": "next_bar_close",
+        "entry": "delay",
+        "entry_delay_s": 60,
         "route_fee_per_side": 0.01,
-        "version": "2026-10-10-real-fills",
-        "note": "paper fills at real-trading costs: two real 0.01 SOL round trips trailed the rule's gross by 5-6 points (handoff/data/real-fills/dip-report-2026-10-10.txt): entry at bar t+1's close for the 4-5 min signal latency, plus PumpPortal Lightning's 1%/side. The rule itself is unchanged."
-      }
+        "version": "2026-10-10-fast-watcher",
+        "note": "paper fills at real-trading costs: entry 60 s into bar t+1 (the watcher's latency was cut from 4-5 min to ~3 s; 60 s is a margin), priced between that bar's open and close, plus PumpPortal Lightning's 1%/side. The rule itself is unchanged."
+      },
+      "replay": "handoff/data/dip-cost/replay-oos-2026-10-10.json"
     },
     "xs_momentum": {
       "kind": "xs_momentum",
@@ -108,6 +110,13 @@
       "start": "2026-10-12",
       "end": "2027-04-10",
       "hurdle_apr": 0.05
+    },
+    "wick_bounce": {
+      "kind": "wick_bounce",
+      "enabled": true,
+      "size_usd": 200,
+      "prereg": "handoff/preregistration/wick-bounce/SPEC.md",
+      "note": "pre-registered by the trading-skills thread (edge-hunt J): 6-sigma hourly wicks on 20 HL perps, 4 h hold, 8.5 bps/side, entries 2026-10-12..2027-10-11; paper only. Signal matches wick_forward.py exactly (28/28 trades on 2026-03..09)."
     }
   },
   "variants": [
