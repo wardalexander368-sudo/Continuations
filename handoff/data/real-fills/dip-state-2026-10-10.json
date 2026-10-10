@@ -1,0 +1,247 @@
+{
+ "trips": [
+  {
+   "key": "2B8tftZ5ww8TREMr3pgkgERLNjJyJxEAPWMENViGMsL4:1791598500",
+   "pool": "2B8tftZ5ww8TREMr3pgkgERLNjJyJxEAPWMENViGMsL4",
+   "mint": "BXoHJddsWJLHtAopeiSbKUSELsu8hSFMs8baGMDkpump",
+   "label": "CRAWL / SOL",
+   "signal_t": 1791598500,
+   "entry_bar": 1791598800,
+   "exit_t": 1791612900,
+   "drop": -0.08627978612174825,
+   "status": "closed",
+   "buy": {
+    "t": "2026-10-10T02:23:48.251+00:00",
+    "leg": "buy",
+    "mint": "BXoHJddsWJLHtAopeiSbKUSELsu8hSFMs8baGMDkpump",
+    "pool": "pump-amm",
+    "amount": 0.01,
+    "priority": 2e-05,
+    "slippage": 5.0,
+    "quote": {
+     "out": 166247945,
+     "route": [
+      "Hadron"
+     ],
+     "slot": 455089038
+    },
+    "response": {
+     "signature": "eCFFj5T372RbP6HNgt3HzAxeaXan5scGdjw9xPbAuY9BDBWAiSzFYNBDmAUt4mnDzW6ffzGSofGvBQAirgvoj3L",
+     "errors": [],
+     "http_status": 200
+    },
+    "sent_at": 1791599027.703269,
+    "answered_at": 1791599028.2517889,
+    "confirmed_at": 1791599029.1226602,
+    "effects": {
+     "wallet": "HZkGXYm2JLH8VUwqMcaVDJYFuokpQZ4vi4RDrVjBE28z",
+     "slot": 455089042,
+     "err": null,
+     "fee_sol": 1.1e-05,
+     "sol_change": -0.011756545,
+     "token_change": 167.257823,
+     "ata_rent_sol": 0.00151384,
+     "ata_created": true,
+     "cu": 114281
+    },
+    "block_time": 1791599028
+   },
+   "sell": {
+    "t": "2026-10-10T06:21:17.176+00:00",
+    "leg": "sell",
+    "mint": "BXoHJddsWJLHtAopeiSbKUSELsu8hSFMs8baGMDkpump",
+    "pool": "pump-amm",
+    "amount": "100%",
+    "priority": 2e-05,
+    "slippage": 5.0,
+    "quote": {
+     "out": 8867180,
+     "route": [
+      "Pump.fun Amm"
+     ],
+     "slot": 455154368
+    },
+    "response": {
+     "signature": "3hSzBMGrZcvMixnaYN8fwEcGq47d6tgiZaUmdo6grGBPVzMuGpAvUuGP6ZcwT7pJDs9fQ5nP7v4FDnTQ9B9BV4vM",
+     "errors": [],
+     "http_status": 200
+    },
+    "sent_at": 1791613276.609857,
+    "answered_at": 1791613277.176327,
+    "confirmed_at": 1791613277.8760016,
+    "effects": {
+     "wallet": "HZkGXYm2JLH8VUwqMcaVDJYFuokpQZ4vi4RDrVjBE28z",
+     "slot": 455154373,
+     "err": null,
+     "fee_sol": 1.1e-05,
+     "sol_change": 0.008754592,
+     "token_change": -167.257823,
+     "ata_rent_sol": 0.0,
+     "ata_created": true,
+     "cu": 85956
+    },
+    "block_time": 1791613277
+   }
+  },
+  {
+   "key": "65GHmCbyRME3XwKjTqDB7pMJw2gvj2LZryfWKczoAqFR:1791599100",
+   "pool": "65GHmCbyRME3XwKjTqDB7pMJw2gvj2LZryfWKczoAqFR",
+   "mint": "HaQdrXRUoxxk1qLFZJNrSyzWNjn16o1r1np5h6jipump",
+   "label": "SharkTank / SOL",
+   "signal_t": 1791599100,
+   "entry_bar": 1791599400,
+   "exit_t": 1791613500,
+   "drop": -0.15881173221600053,
+   "status": "failed",
+   "buy": {
+    "t": "2026-10-10T02:31:22.136+00:00",
+    "leg": "buy",
+    "mint": "HaQdrXRUoxxk1qLFZJNrSyzWNjn16o1r1np5h6jipump",
+    "pool": "pump-amm",
+    "amount": 0.01,
+    "priority": 2e-05,
+    "slippage": 5.0,
+    "quote": {
+     "out": 70600612162,
+     "route": [
+      "Pump.fun Amm"
+     ],
+     "slot": 455091113
+    },
+    "response": {
+     "signature": "2A765B9dHtf45VhzC74ovXBRyopmRpFcXYXBK2sF9R4U6iYVBWQhRTt5km8SR8HW6zdFKJFhqeDjmSbrW6DiK9ZE",
+     "errors": [
+      "Simulation failed. \nMessage: Transaction simulation failed: Error processing Instruction 4: custom program error: 0x1774. \nLogs: \n[\n  \"Program log: Instruction: GetFeesWithQuoteMint\",\n  \"Program pfeeUxB6jkeY1Hxd7CsFCAjcbHA9rWtchMGdZ6VojVZ consumed 6121 of 177451 compute units\",\n  \"Program return: pfeeUxB6jkeY1Hxd7CsFCAjcbHA9rWtchMGdZ6VojVZ AgAAAAAAAABdAAAAAAAAAB4AAAAAAAAA\",\n  \"Program pfeeUxB6jkeY1Hxd7CsFCAjcbHA9rWtchMGdZ6VojVZ success\",\n  \"Program log: AnchorError thrown in programs/pump-amm/src/instructions/swap/buy.rs:388. Error Code: ExceededSlippage. Error Number: 6004. Error Message: ExceededSlippage.\",\n  \"Program log: Left: 10500000\",\n  \"Program log: Right: 14130551\",\n  \"Program pAMMBay6oceH9fJKBRHGP5D4bD4sWpmSwMn52FMfXEA consumed 52730 of 219120 compute units\",\n  \"Program return: pAMMBay6oceH9fJKBRHGP5D4bD4sWpmSwMn52FMfXEA AgAAAAAAAABdAAAAAAAAAB4AAAAAAAAA\",\n  \"Program pAMMBay6oceH9fJKBRHGP5D4bD4sWpmSwMn52FMfXEA failed: custom program error: 0x1774\"\n]. \nCatch the `SendTransactionError` and call `getLogs()` on it for full details."
+     ],
+     "http_status": 400
+    },
+    "sent_at": 1791599481.3021202,
+    "answered_at": 1791599482.1361773,
+    "confirmed_at": null
+   }
+  },
+  {
+   "key": "65GHmCbyRME3XwKjTqDB7pMJw2gvj2LZryfWKczoAqFR:1791599100",
+   "pool": "65GHmCbyRME3XwKjTqDB7pMJw2gvj2LZryfWKczoAqFR",
+   "mint": "HaQdrXRUoxxk1qLFZJNrSyzWNjn16o1r1np5h6jipump",
+   "label": "SharkTank / SOL",
+   "signal_t": 1791599100,
+   "entry_bar": 1791599400,
+   "exit_t": 1791613500,
+   "drop": -0.15881173221600053,
+   "status": "failed",
+   "buy": {
+    "t": "2026-10-10T02:33:24.731+00:00",
+    "leg": "buy",
+    "mint": "HaQdrXRUoxxk1qLFZJNrSyzWNjn16o1r1np5h6jipump",
+    "pool": "pump-amm",
+    "amount": 0.01,
+    "priority": 2e-05,
+    "slippage": 5.0,
+    "quote": {
+     "out": 70600612162,
+     "route": [
+      "Pump.fun Amm"
+     ],
+     "slot": 455091671
+    },
+    "response": {
+     "signature": "5DFDn7fHZbnrTxpza9mftyzKoKK32hAdVN5dauXTbiyPMUG9DJCqypxU63Lymd6qvrGAycTtCgo7tFaTGwoxWSDK",
+     "errors": [
+      "Simulation failed. \nMessage: Transaction simulation failed: Error processing Instruction 4: custom program error: 0x1774. \nLogs: \n[\n  \"Program log: Instruction: GetFeesWithQuoteMint\",\n  \"Program pfeeUxB6jkeY1Hxd7CsFCAjcbHA9rWtchMGdZ6VojVZ consumed 6121 of 177407 compute units\",\n  \"Program return: pfeeUxB6jkeY1Hxd7CsFCAjcbHA9rWtchMGdZ6VojVZ AgAAAAAAAABdAAAAAAAAAB4AAAAAAAAA\",\n  \"Program pfeeUxB6jkeY1Hxd7CsFCAjcbHA9rWtchMGdZ6VojVZ success\",\n  \"Program log: AnchorError thrown in programs/pump-amm/src/instructions/swap/buy.rs:388. Error Code: ExceededSlippage. Error Number: 6004. Error Message: ExceededSlippage.\",\n  \"Program log: Left: 10500000\",\n  \"Program log: Right: 14130551\",\n  \"Program pAMMBay6oceH9fJKBRHGP5D4bD4sWpmSwMn52FMfXEA consumed 52774 of 219120 compute units\",\n  \"Program return: pAMMBay6oceH9fJKBRHGP5D4bD4sWpmSwMn52FMfXEA AgAAAAAAAABdAAAAAAAAAB4AAAAAAAAA\",\n  \"Program pAMMBay6oceH9fJKBRHGP5D4bD4sWpmSwMn52FMfXEA failed: custom program error: 0x1774\"\n]. \nCatch the `SendTransactionError` and call `getLogs()` on it for full details."
+     ],
+     "http_status": 400
+    },
+    "sent_at": 1791599604.1656022,
+    "answered_at": 1791599604.7315524,
+    "confirmed_at": null
+   }
+  },
+  {
+   "key": "8ewuF2o8ACro7fqWepZ3tKhkbBjndZU4Ldk9scRPw83d:1791599100",
+   "pool": "8ewuF2o8ACro7fqWepZ3tKhkbBjndZU4Ldk9scRPw83d",
+   "mint": "5tCju6YNxHq5zrA6tGndr6F7TK42mpUFmeE31cSFpump",
+   "label": "swordcat / SOL",
+   "signal_t": 1791599100,
+   "entry_bar": 1791599400,
+   "exit_t": 1791613500,
+   "drop": -0.11537297166092408,
+   "status": "closed",
+   "buy": {
+    "t": "2026-10-10T02:34:56.682+00:00",
+    "leg": "buy",
+    "mint": "5tCju6YNxHq5zrA6tGndr6F7TK42mpUFmeE31cSFpump",
+    "pool": "pump-amm",
+    "amount": 0.01,
+    "priority": 2e-05,
+    "slippage": 5.0,
+    "quote": {
+     "out": 382675134,
+     "route": [
+      "PancakeSwap",
+      "GoonFi V2",
+      "Meteora DLMM"
+     ],
+     "slot": 455092090
+    },
+    "response": {
+     "signature": "67FYfvQXwjfe5iyZZQccBvy3iPbrXCL3hkc68HNqBD8p1m3EnPFoahEq9hxnnwfGYnSuDNj5wnMdbNdzJB7zVr2z",
+     "errors": [],
+     "http_status": 200
+    },
+    "sent_at": 1791599696.142676,
+    "answered_at": 1791599696.682751,
+    "confirmed_at": 1791599697.5162923,
+    "effects": {
+     "wallet": "HZkGXYm2JLH8VUwqMcaVDJYFuokpQZ4vi4RDrVjBE28z",
+     "slot": 455092093,
+     "err": null,
+     "fee_sol": 1.1e-05,
+     "sol_change": -0.011813809,
+     "token_change": 384.804881,
+     "ata_rent_sol": 0.00151384,
+     "ata_created": true,
+     "cu": 120363
+    },
+    "block_time": 1791599696
+   },
+   "sell": {
+    "t": "2026-10-10T06:31:16.696+00:00",
+    "leg": "sell",
+    "mint": "5tCju6YNxHq5zrA6tGndr6F7TK42mpUFmeE31cSFpump",
+    "pool": "pump-amm",
+    "amount": "100%",
+    "priority": 2e-05,
+    "slippage": 5.0,
+    "quote": {
+     "out": 10329431,
+     "route": [
+      "Meteora DLMM",
+      "Flux"
+     ],
+     "slot": 455157118
+    },
+    "response": {
+     "signature": "2e4U4xj7W3NAdXrwbut3q4caSWxRwZ5WXofCArTdHCV2VaqdLX5ZgqP5nP5qhzQjahDtq7WG3BhREC9b7ssevwmS",
+     "errors": [],
+     "http_status": 200
+    },
+    "sent_at": 1791613876.130382,
+    "answered_at": 1791613876.6962032,
+    "confirmed_at": 1791613877.3922987,
+    "effects": {
+     "wallet": "HZkGXYm2JLH8VUwqMcaVDJYFuokpQZ4vi4RDrVjBE28z",
+     "slot": 455157123,
+     "err": null,
+     "fee_sol": 1.1e-05,
+     "sol_change": 0.010169856,
+     "token_change": -384.804881,
+     "ata_rent_sol": 0.0,
+     "ata_created": true,
+     "cu": 92126
+    },
+    "block_time": 1791613876
+   }
+  }
+ ]
+}

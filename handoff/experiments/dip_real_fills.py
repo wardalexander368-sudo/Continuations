@@ -155,8 +155,9 @@ def watch() -> None:
                 ok = bool(leg and leg.get("effects") and not leg["effects"].get("err"))
                 tr["status"] = "closed" if ok else "open"
                 save(st)
-        started = len(st["trips"])
-        if started >= args.trips and all(tr["status"] == "closed" for tr in st["trips"]):
+        live = [tr for tr in st["trips"] if tr["status"] != "failed"]  # a buy that failed spent nothing
+        started = len(live)
+        if started >= args.trips and all(tr["status"] == "closed" for tr in live):
             log("all trips closed")
             return
         # entries: scan just after each bar closes (GeckoTerminal needs ~a minute to publish it)
@@ -164,7 +165,7 @@ def watch() -> None:
             busy = {tr["pool"] for tr in st["trips"] if tr["status"] == "open"}
             agent = agent_pools()
             for p in pools():
-                if p["pool"] in busy or len(st["trips"]) >= args.trips:
+                if p["pool"] in busy or sum(tr["status"] != "failed" for tr in st["trips"]) >= args.trips:
                     continue
                 try:
                     t, o, c = grid(bars(p["pool"]), time.time())

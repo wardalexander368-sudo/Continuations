@@ -5,7 +5,8 @@ The vault's allTime history has a point about every 14 days plus a moving "now" 
 (every point but the newest) inside the window is one interval: the paper position closes at the
 vault's index there and reopens at once, so each closed trade is one interval's time-weighted return
 (PnL change / account value at the interval's start; HLP takes no commission, so no cost). Marks use
-the newest point. Scoring follows the registration: annualised return minus a 5% a year hurdle, 90%
+the newest point. Interval closes carry ``kept`` (the position reopens at once), so a vault twin
+(``vault.py``) stays deposited across them; only the window-end close withdraws it. Scoring follows the registration: annualised return minus a 5% a year hurdle, 90%
 moving-block bootstrap CI over intervals (2-interval blocks), at the end of the window; nothing earlier.
 """
 
@@ -79,11 +80,11 @@ class VaultHold:
                 idx *= 1 + (pnl[t] - pnl[last]) / st["last_av"]
                 if key:
                     intents.append(Intent("close", self.name, t, idx, "vault history point", cost=CostModel(),
-                                          meta={"key": key, "interval_days": (t - last) / 86400}))
+                                          meta={"key": key, "interval_days": (t - last) / 86400, "kept": True}))
             key = f"{self.name}:{int(t)}"
             intents.append(Intent("open", self.name, t, idx, "hold the vault", asset=f"vault:{self.vault[:10]}",
                                   side=1, notional_usd=self.size_usd, cost=CostModel(),
-                                  meta={"key": key, "venue": "hyperliquid_vault"}))
+                                  meta={"key": key, "venue": "hyperliquid_vault", "vault": self.vault}))
             last, st["last_av"] = t, v
         st["index"], st["last_t"], st["open_key"] = idx, last, key
         return intents

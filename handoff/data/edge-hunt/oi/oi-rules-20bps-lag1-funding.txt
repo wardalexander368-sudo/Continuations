@@ -1,0 +1,27 @@
+cost 20 bps/side, lag 1, funding on, 148 coins with OKX OI
+/home/user/TARTAR/handoff/experiments/edge-hunt/perps/perp_rules.py:87: RuntimeWarning: All-NaN slice encountered
+  medv = np.nanmedian(V[i - 29: i + 1], axis=0)
+  OIC   L=3 +   train -1.60%/wk [-2.73,-0.46] n61  val -0.42% [-2.10,+1.16] n39
+  OIC   L=3 -   train +0.30%/wk [-0.85,+1.41] n61  val -0.88% [-2.46,+0.80] n39
+  OIC   L=7 +   train +0.03%/wk [-1.75,+1.87] n61  val +0.87% [-0.46,+2.23] n39
+  OIC   L=7 -   train -1.37%/wk [-3.20,+0.39] n61  val -2.22% [-3.60,-0.90] n39
+  OIC   L=14 +  train -1.57%/wk [-3.63,+0.29] n61  val +0.53% [-1.67,+2.80] n39
+  OIC   L=14 -  train +0.49%/wk [-1.36,+2.53] n61  val -1.56% [-3.82,+0.67] n39
+  -> OIC chosen L=14 -: validation disagrees or train <= 0; test not read
+  CONF  L=7     train -1.52%/wk [-3.14,+0.13] n61  val +1.02% [-0.46,+2.52] n39
+  CONF  L=14    train -1.30%/wk [-2.65,+0.06] n61  val +1.16% [-0.15,+2.54] n39
+  -> CONF chosen L=14: validation disagrees or train <= 0; test not read
+  DIV   L=7 +   train +0.86%/wk [-2.42,+4.54] n61  val -1.69% [-3.07,-0.43] n39
+  DIV   L=7 -   train -2.22%/wk [-5.88,+1.02] n61  val +0.37% [-0.89,+1.73] n39
+  DIV   L=14 +  train +0.61%/wk [-1.78,+3.46] n61  val -0.74% [-2.50,+0.97] n39
+  DIV   L=14 -  train -1.67%/wk [-4.52,+0.71] n61  val -0.28% [-1.97,+1.44] n39
+  -> DIV chosen L=7 +: validation disagrees or train <= 0; test not read
+/home/user/TARTAR/handoff/experiments/edge-hunt/oi/oi_rules.py:84: RuntimeWarning: Mean of empty slice
+  return pr.quintile_weights(np.log(O[i - 1] / np.nanmean(O[i - 30: i], axis=0)), ok, sign=sign)
+  OIZ   +       train -0.16%/wk [-1.56,+1.24] n61  val +0.09% [-1.56,+1.82] n39
+  OIZ   -       train -0.79%/wk [-2.19,+0.62] n61  val -1.04% [-2.77,+0.60] n39
+  -> OIZ chosen +: validation disagrees or train <= 0; test not read
+  MAJ   H=1     train -0.29%/wk [-0.56,-0.03] n61  val +0.06% [-0.13,+0.24] n39
+  MAJ   H=3     train -0.02%/wk [-0.29,+0.25] n61  val +0.16% [-0.16,+0.56] n39
+  -> MAJ chosen H=3: validation disagrees or train <= 0; test not read
+rules tried: 16

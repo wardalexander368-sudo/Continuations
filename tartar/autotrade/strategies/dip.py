@@ -14,6 +14,15 @@ trades or 21 days since the agent's first trade, success = excess over random en
 pools > 0 with its 90% pool-bootstrap CI above 0, AND mean net > 0. The random-entry baseline per
 trade is the mean net of entering the same pool at every bar since the agent first saw it (within
 the ~3.5 days of 5-minute bars one GeckoTerminal request returns), same hold.
+
+Execution at real-trading costs (config ``execution``, from 2026-10-10, profitability real fills): two
+real 0.01 SOL round trips on the rule's signals trailed its gross by 5-6 points
+(handoff/data/real-fills/dip-report-2026-10-10.txt). With ``entry: next_bar_close`` the paper entry is
+bar t+1's close instead of its open (the real buys went out 228-296 s into bar t+1, after GeckoTerminal's
+~1 min publish delay and the pool scan, and the price had already rebounded 1-2%), booked when that bar
+completes; ``route_fee_per_side`` adds the route's own fee (PumpPortal Lightning 1%) on both sides. The
+rule (signal, hold, exit at bar t+48's close) is unchanged. The random-entry baseline uses the same
+execution, and each trade keeps the registered-execution figure (``registered_net``) as a secondary.
 """
 
 from __future__ import annotations
@@ -48,6 +57,10 @@ class DipStrategy:
         self._grids: dict[str, tuple[np.ndarray, np.ndarray, np.ndarray]] = {}
         self._last_call = 0.0
         self.fetch = cfg.get("_fetch") or self._fetch  # tests inject a fake fetcher
+        ex = cfg.get("execution") or {}
+        self.late_entry = ex.get("entry") == "next_bar_close"
+        self.route_fee = float(ex.get("route_fee_per_side", 0.0))
+        self.costs_version = ex.get("version")
 
     # data
     def pools(self) -> list[dict]:
@@ -97,9 +110,10 @@ class DipStrategy:
             prev = c[i]
         return t, o, c
 
-    def cost(self, liquidity_usd: float) -> CostModel:
+    def cost(self, liquidity_usd: float, route_fee: float | None = None) -> CostModel:
         impact = self.size / max(liquidity_usd / 2.0, 1.0)
-        return CostModel(fee=self.costs["fee_per_side"], impact=impact, fixed_usd=self.costs["network_usd_per_tx"])
+        fee = self.costs["fee_per_side"] + (self.route_fee if route_fee is None else route_fee)
+        return CostModel(fee=fee, impact=impact, fixed_usd=self.costs["network_usd_per_tx"])
 
     # the Strategy interface
     def step(self, ctx: Context) -> list[Intent]:
@@ -138,8 +152,9 @@ class DipStrategy:
                 exit_t = pos.meta["exit_t"]
                 idx = np.searchsorted(t, exit_t)
                 if idx < len(t) and t[idx] == exit_t:
+                    pos_cost = self.cost(p["liquidity_usd"], pos.meta.get("route_fee", 0.0))  # as it was opened
                     intents.append(Intent("close", self.name, float(exit_t + bar), float(c[idx]), "hold elapsed",
-                                          position_id=pos.id, cost=cost,
+                                          position_id=pos.id, cost=pos_cost,
                                           meta={"baseline": self.baseline(t, o, c, st["first_bar"], exit_t, cost)}))
             # entries: signal at bar i (completed, after the cursor), filled at bar i+1's open
             start = int(np.searchsorted(t, st["cursor"], side="right"))
@@ -151,13 +166,17 @@ class DipStrategy:
                 if c[i] / c[i - L] - 1 < -drop:
                     exit_t = float(t[i] + H * bar)
                     key = f"{pid}:{int(t[i])}"
-                    intents.append(Intent("open", self.name, float(t[i + 1]), float(o[i + 1]),
-                                          f"close fell {100 * (1 - c[i] / c[i - L]):.1f}% over {L} bars",
+                    at, px = (float(t[i + 1] + bar), float(c[i + 1])) if self.late_entry else (float(t[i + 1]), float(o[i + 1]))
+                    intents.append(Intent("open", self.name, at, px,
+                                          f"close fell {100 * (1 - c[i] / c[i - L]):.1f}% over {L} bars"
+                                          + (" (entry at bar t+1's close: real-trading latency)" if self.late_entry else ""),
                                           asset=pid, side=1, notional_usd=self.size, cost=cost,
                                           meta={"pool": pid, "label": p["name"], "signal_t": float(t[i]), "exit_t": exit_t,
                                                 "key": key, "liquidity_usd": p["liquidity_usd"],
                                                 "alt_cost": self.measured_cost(pid, cost), "shadow": self.shadow,
-                                                "mint": p["token"].split("_", 1)[-1], "impact_assumed": cost.impact}))
+                                                "mint": p["token"].split("_", 1)[-1], "impact_assumed": cost.impact,
+                                                "registered_entry_price": float(o[i + 1]), "route_fee": self.route_fee,
+                                                "late_entry": self.late_entry}))
                     st["busy_until"] = exit_t
                     idx = np.searchsorted(t, exit_t)
                     if idx < len(t) and t[idx] == exit_t:  # the whole hold is already in the data
@@ -171,13 +190,18 @@ class DipStrategy:
 
     def describe(self) -> dict:
         return {"rule": self.rule, "costs": self.costs, "size_usd": self.size, "shadow": self.shadow,
-                "family_size": self.family_size,
+                "family_size": self.family_size, "costs_version": self.costs_version,
+                "execution": {"entry": "next_bar_close" if self.late_entry else "next_bar_open",
+                              "route_fee_per_side": self.route_fee},
+                "change_note": (f"paper execution at real-trading costs: entry at bar t+1's close (signal latency), "
+                                f"+{100 * self.route_fee:g}%/side route fee; rule unchanged "
+                                "(handoff/data/real-fills/dip-report-2026-10-10.txt)") if self.costs_version else "",
                 "success": "at >= 200 trades or 21 days: excess over random entries > 0 with its CI above 0 "
                            f"(two-sided {100 * (1 - 0.1 / self.family_size):.1f}% pool bootstrap) AND mean net > 0"}
 
     def measured_cost(self, pool: str, cost: CostModel) -> dict:
         """The registered cost model with the pool's measured PumpSwap fee (secondary, ADDENDUM-2026-10-09-fees)."""
-        fee = self.measured.get(pool, {}).get("fee_per_side", cost.fee)
+        fee = self.measured.get(pool, {}).get("fee_per_side", self.costs["fee_per_side"]) + (cost.fee - self.costs["fee_per_side"])
         return {"fee": fee, "impact": cost.impact, "fixed_usd": cost.fixed_usd}
 
     def spec_net(self, t: Trade) -> float:
@@ -185,7 +209,15 @@ class DipStrategy:
         (established_prereg_eval.py ``net``: fee and impact multiply both sides). The paper broker books
         costs additively; scoring uses this so the agent's verdict and the baseline match the scorer."""
         impact = t.meta.get("impact_assumed", 0.0)
-        return ((t.exit_price / t.entry_price) * (1 - self.costs["fee_per_side"]) ** 2 * (1 - impact) ** 2
+        fee = self.costs["fee_per_side"] + t.meta.get("route_fee", 0.0)
+        return ((t.exit_price / t.entry_price) * (1 - fee) ** 2 * (1 - impact) ** 2
+                - 1 - 2 * self.costs["network_usd_per_tx"] / self.size)
+
+    def registered_net(self, t: Trade) -> float:
+        """The same trade under the registered execution (bar t+1's open, no route fee): secondary."""
+        impact = t.meta.get("impact_assumed", 0.0)
+        entry = t.meta.get("registered_entry_price", t.entry_price)
+        return ((t.exit_price / entry) * (1 - self.costs["fee_per_side"]) ** 2 * (1 - impact) ** 2
                 - 1 - 2 * self.costs["network_usd_per_tx"] / self.size)
 
     def baseline(self, t, o, c, first_bar, exit_t, cost: CostModel) -> float:
@@ -196,7 +228,7 @@ class DipStrategy:
         i = np.arange(lo, hi - H - 1)
         if not len(i):
             return float("nan")
-        gross = c[i + H] / o[i + 1]  # same formula as spec_net and the official scorer
+        gross = c[i + H] / (c[i + 1] if self.late_entry else o[i + 1])  # same execution as the agent's entries
         return float(np.mean(gross * (1 - cost.fee) ** 2 * (1 - cost.impact) ** 2 - 1 - 2 * cost.fixed_usd / self.size))
 
     def marks(self, ctx: Context) -> dict[str, tuple[float, float]]:
@@ -226,12 +258,19 @@ class DipStrategy:
         alt = [t.meta["alt_net_return"] for t in trades if "alt_net_return" in t.meta]
         if alt:
             stats["mean_net_measured_fees"] = float(np.mean(alt))
+        late = [t for t in trades if t.meta.get("late_entry") or t.meta.get("route_fee")]
+        if late:
+            stats["mean_net_registered_execution"] = float(np.mean([self.registered_net(t) for t in late]))
+            stats["mean_net_real_execution"] = float(np.mean([self.spec_net(t) for t in late]))
+            stats["n_real_execution"] = len(late)
         quoted = [t.meta["quoted_net_return"] for t in trades if "quoted_net_return" in t.meta]
         if quoted:
             stats["mean_net_quoted_impact"] = float(np.mean(quoted))
             stats["n_quoted"] = len(quoted)
         due = n >= 200 or days >= 21
         summary = (f"{n} trades over {days:.1f} days: mean net {100 * m:+.2f}% [{100 * lo_m:+.2f}, {100 * hi_m:+.2f}]"
+                   + (f" ({len(late)} at real-trading execution: {100 * stats['mean_net_real_execution']:+.2f}% vs "
+                      f"{100 * stats['mean_net_registered_execution']:+.2f}% at the registered execution)" if late else "")
                    + (f" ({100 * stats['mean_net_measured_fees']:+.2f}% at measured pool fees)" if alt else "")
                    + (f" ({100 * stats['mean_net_quoted_impact']:+.2f}% at Jupiter-measured impact, {len(quoted)} trades)" if quoted else "")
                    + (f", excess over random entries {100 * stats['excess']:+.2f}% [{100 * stats['excess_lo']:+.2f}, {100 * stats['excess_hi']:+.2f}]" if valid else ""))

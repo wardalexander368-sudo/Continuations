@@ -38,13 +38,20 @@ next. Topic documents hold the detail:
 
 ## Active
 
-* **Copy-trading Hyperliquid accounts (edge hunt E thread)** (since 2026-10-10 01:45 UTC, branch
-  `claude/project-thread-9op3pf`). **Paper only, no keys.** Do accounts with a strong record keep
-  paying when copied after fees, funding and a realistic delay? Public data only (leaderboard list,
-  per-address fills). Accounts chosen on an early period only; selection and copy rules
-  pre-registered in `handoff/preregistration/hl-copy/` before the later period is scored. If it
-  holds: a paper strategy with dry perp twins. Touches `handoff/experiments/edge-hunt/hl_copy/`,
-  `handoff/data/edge-hunt/hl-copy/`, and only if it holds `tartar/autotrade/strategies/`.
+* **Funding-spike shorts on Hyperliquid perps, edge hunt F2 (curve-model retrain thread)** (since
+  2026-10-10 05:15 UTC, branch `claude/project-thread-6oh2s6`). **Paper only, no keys.** Round 2's held item:
+  per coin, short the perp after its funding spikes far above its own history (crowded longs), hedged
+  against the equal-weight market, hold days to weeks. Design written in `preregistration/funding-spike/`
+  before any number is read; D's universe, splits (train 2023-07..2025-03, val 2025-04..12, test 2026),
+  20 bps/side, 1-day lag, funding charged. Not D2 (cross-section, closed) or spot carry (E thread). A dry
+  paper strategy only if validation and test both clear. Writes `experiments/edge-hunt/fundspike/`.
+
+* **Token-unlock shorts on Hyperliquid perps (second TARTAR session)** (since 2026-10-10 05:05 UTC, branch
+  `claude/project-thread-kytb6q`). **Paper only, no keys.** Reopens edge-hunt F4, which was dropped as "no free
+  data". DefiLlama's free `defillama-datasets.llama.fi/emissions/<slug>` serves the unlock schedules. Plan:
+  pre-register event rules (insider cliff unlocks, size vs supply, entry/exit windows), short the perp vs an
+  equal-weight long, then score after 20 bps/side per leg + funding on D's splits. A dry paper strategy only if
+  it clears. Writes `handoff/experiments/edge-hunt/unlocks/` and `handoff/preregistration/unlocks/`.
 
 * **Edge hunt E thread** (project thread session, since 2026-10-09 21:40 UTC, branch
   `claude/project-thread-9op3pf`). **Paper only, no real SOL, no keys.** Task (the user's 21:30
@@ -72,8 +79,8 @@ deep pools match the model, a thin one was 2.4x it). The `launch_selector` slot 
   `autotrade/`. **Since 01:25 UTC 10-10 (AJ: keep working, no go-aheads needed):** the agent's own
   weekly candidate search (`search.py`, `autotrade-search.yml`, Wednesdays 03:30 UTC; queue in
   `autotrade/candidates/`, report `autotrade/search/REPORT.md`), and `vol_momentum` + `hlp_hold`
-  wired into the agent. In flight: filling the funding cache `autotrade/search/funding_daily.csv`
-  from this session, then the first search run.
+  wired into the agent. First run 03:15 UTC: 94 rules tested, 1 survivor queued
+  (`cand-xsm-L21-q10-vol-mon-lag2`, paper from 10-17). Funding cache filled; the Action continues it.
 
 * **Recorder thread** (project thread session, since 2026-10-09 20:20 UTC, branch
   `claude/project-thread-9op3pf`). Task (the user's 20:12 go, continuous profit work): a raw
@@ -123,13 +130,28 @@ deep pools match the model, a thin one was 2.4x it). The `launch_selector` slot 
   recorder stopped after hour 18 (hour 19 is partial and only on local disk). **Item (b) done
   (19:10 UTC):** see the log entry. Nothing half-done.
 
-* **REAL MONEY — dip-rule real fills IN PROGRESS (from 02:30 UTC 2026-10-10). The wallet is held by
-  the "Real-money cost test, fresh key" thread session (session_01C3taLfUKfeFUC2zXBZEhaR).** AJ's go
-  (02:18 UTC): "a couple real fills if an opportunity looks good". Limits: at most 2 round trips of
-  0.01 SOL, only when the registered dip rule signals AND the paper agent would take the same entry
-  (so each real fill has a paper twin). `handoff/experiments/dip_real_fills.py watch --real` buys
-  within the signal's next bar and sells after bar t+48 (4 h); `report` compares with the agent's
-  paper trade. Nobody else sends PumpPortal trades.
+* **REAL MONEY — dip-rule real fills DONE (02:23–06:31 UTC 2026-10-10). The wallet is held by the
+  "Real-money cost test, fresh key" thread session (session_01C3taLfUKfeFUC2zXBZEhaR); no further
+  trades planned.** AJ's go (02:18 UTC): "a couple real fills if an opportunity looks good". 2 round
+  trips of 0.01 SOL, each on a registered dip signal the paper agent also took
+  (`handoff/experiments/dip_real_fills.py`; fills, state and report in `handoff/data/real-fills/*2026-10-10*`).
+  | | CRAWL (−8.6% dip) | swordcat (−11.5% dip) |
+  |---|---|---|
+  | rule's gross in SOL (bar t+1 open → bar t+48 close) | −9.51% | +4.80% |
+  | real net in SOL (rent excluded) | **−14.53%** | **−1.26%** |
+  | real minus rule gross | −5.0 pts | −6.1 pts |
+  | entry price vs bar t+1 open (pool side) | +2.20% | +1.09% |
+  | exit SOL vs bar t+48 close (after Lightning 1%) | −1.12% | −1.90% |
+  | paper agent's twin (USD) | gross −9.45%, net −11.31% at measured fees | closes on its next run |
+  - **Real fills trail the rule's gross by 5–6 points per round trip; the paper agent's costs
+    (0.5–0.75%/side + impact) cover about 2 of them.** The rest: Lightning's 1%/side (~2 pts) and
+    entry timing (bought 228–296 s into bar t+1, because GeckoTerminal publishes a bar ~1 min late
+    and the scan walks the pools; the price had already rebounded 1–2%). The dip rule's paper edge
+    must clear ~5–6% per trade to survive real execution through Lightning at this latency.
+  - SharkTank (−15.9% dip) was rejected twice by PumpSwap's slippage check at 5% (ExceededSlippage
+    in simulation; nothing spent). Fast-moving dips may not fill at 5% slippage.
+  - Wallet after: 0.0466 SOL liquid; 0.0045 SOL parked as token-account rent (CATE, CRAWL, swordcat),
+    reclaimable only with the wallet's private key. This run cost 0.0016 SOL in trading losses.
 * (was) **REAL MONEY — cost test DONE (19:46–19:49 UTC 2026-10-09). The wallet is held by the "Real-money
   cost test, fresh key" thread session (session_01C3taLfUKfeFUC2zXBZEhaR); no further trades are
   planned.** The key now arrives as the `PUMPPORTAL_API_KEY` env var and works. With the user's go:
@@ -422,6 +444,96 @@ deep pools match the model, a thin one was 2.4x it). The `launch_selector` slot 
   betting against beta, skewness, and weekend CME-gap fades/follows (Binance hourly 2020-26). The
   two that reached test lost there (long Wednesday −0.20%/week, low idio vol −0.46%/week).
   Cross-venue funding, listings, unlocks and LST spreads were already closed. Nothing for `autotrade/`.
+
+* 2026-10-10 16:35 UTC, agent-machinery thread: **perps paper fills at measured Hyperliquid costs**
+  (`xs_momentum`, `vol_momentum`: taker 4.5 bps + 2.2% x sqrt(order / 30-day median daily volume), from
+  the Jev cost session's numbers; ~5 bps a side at the paper legs' size) and **the dry run now records
+  the exact unsigned order** for every perp twin (asset, IOC limit, rounded size, reduce-only, cloid,
+  share fillable inside the limit) in `fills.jsonl`. **Jev cost session:** please push
+  `handoff/hl-costs.md` when GitHub is back; the agent's docstring and guide point at it. Committed
+  locally; pushed when GitHub access returns.
+
+* 2026-10-10 16:25 UTC, agent-machinery thread: **perps risk controls in the agent** (`perp_risk.py`,
+  config `perp_risk`; scored by `handoff/experiments/perps_risk_controls.py`, table in
+  `handoff/autotrade.md`). A perps strategy whose week P&L drops below −12% of its side notional is
+  flattened until its next rebalance (logged `pause`); a registered perps book drawdown past 35% of its
+  side notional writes `HALT`. On 146 weeks the 12% stop kept the mean (candidate +2.92% vs +2.83%/wk,
+  vol +1.31 vs +1.42, xs +1.10 vs +1.03) and cut the worst week (−36/−24/−31% → −25/−22/−18%);
+  inverse-vol sizing cost return everywhere, so legs stay equal weight. Live twins exit with paper
+  legs, so these are the live defaults. Committed locally; pushed when GitHub access returns.
+
+* 2026-10-10 15:55 UTC, agent-machinery thread: **stress test of the search's candidate**
+  `cand-xsm-L21-q10-vol-mon-lag2` (`handoff/experiments/candidate_stress.py`, output
+  `autotrade/search/stress-cand-xsm-L21-q10-vol-mon-lag2.txt`; in-sample over all 146 weeks, so
+  optimistic). It holds up: +2.83%/week as queued, +1.82% at 3x costs (60 bps/side), +2.14% a day
+  slower, positive on every neighbouring signal day, lookback and quantile; trimmed mean (each side's
+  best and worst leg dropped weekly) +3.08% vs +3.34% gross, both sides contribute. **Risk:** only ~4
+  legs a side (min 1) and a worst week of −36% of one side's notional, so a live version needs small
+  legs and a weekly loss cap. The coordinator's suggested Hyperliquid order path already exists
+  (edge hunt E thread, `hl_exchange.py`, testnet-checked); real testnet fills need an account with a
+  mainnet deposit (AJ). Not pushed until GitHub access returns (403 from ~15:50 UTC).
+
+* 2026-10-10 07:05 UTC, agent-machinery thread: **the agent's dip paper fills now use real-trading
+  costs** (from the real fills above; config `execution`, `costs_version` 2026-10-10-real-fills,
+  logged as `cost_update` in `autotrade/changes.jsonl` for dip and its 8 variants). Entry at bar
+  t+1's **close** instead of its open (the 4-5 min signal latency), plus Lightning's 1%/side on both
+  sides; the rule is unchanged. Each trade keeps `registered_entry_price`; the dip verdict prints
+  the mean at real execution beside the registered-execution mean, and the random-entry baseline uses
+  the same execution, so promote/retire is judged on what real trading would get. **Dip/jevtrader
+  session, for the 10-30 readout:** `established_prereg_eval.py` is yours and untouched; to report
+  the result at real costs, apply the same two changes (entry = close of bar t+1, fee + 1%/side).
+
+* **2026-10-10 ~05:25 UTC, edge hunt E thread: JLP hedge liquidation stress test done** (claim cleared;
+  STRATEGY-REVIEW item 2). 5.3 years of hourly SOL/ETH/BTC through the hedge's margin rules: the registered
+  3x / 4-hourly / top-up-below-1/5 rules never liquidated, but only by path luck (thinnest 6.4 points; from the
+  top-up trigger a +17.4% basket rise between check-ins liquidates, and 9 spikes since 2021 were bigger). Live
+  recommendation: 2x margin restored every check-in (needs +46.8% in one gap; worst seen +29.7%), costing ~0.6
+  points of APR. Paper test unchanged. `edge-hunt.md` §A, `data/edge-hunt/jlp-stress.txt`.
+
+* **2026-10-10 05:00 UTC, curve-model retrain thread: HLP API-wallet question settled.** `vaultTransfer`
+  is an L1 action (official SDK `sign_l1_action`, like orders), not a user-signed funds-out action, so
+  the Hyperliquid agent key deposits and withdraws; no main key. Not proven with funds (a testnet
+  account needs a mainnet deposit). The live sender now refuses a deposit when the account's perp
+  `withdrawable` is short; checklist says the USDC must sit in the perp balance (`autotrade.md`).
+
+* **2026-10-10 ~04:50 UTC, second TARTAR session: Hyperliquid OI study closed, null** (claim cleared).
+  Design was pre-registered first (`preregistration/oi-study/SPEC.md`). History came from OKX daily OI,
+  because Hyperliquid keeps none. 16 rules ran at 20 bps/side + funding with a 1-day lag. No family had
+  both train and validation positive, so test was never read and there is no paper test.
+  Result: `preregistration/oi-study/RESULT-2026-10-10.md`, edge-hunt.md §D4.
+
+* **2026-10-10 04:10 UTC, curve-model retrain thread: HLP promotion-ready (strategy review rec. 2).**
+  `hlp_hold` now gets a vault twin (`tartar/autotrade/vault.py`, `autotrade.md` *Vault twins*): dry in
+  `dry_live` from its first entry (deposit checked against HLP's live state, carried across the paper
+  intervals, withdrawn at the window end, compared per interval), and a gated live `vaultTransfer` sender on
+  the perps' Hyperliquid keys (testnet: signature recovers our signer; whether an API wallet may deposit
+  into a vault is unverified). Going live adds $200 USDC in the Hyperliquid account. 5 tests; suite 268
+  passed. Paper/dry only, no keys. Claim cleared.
+
+* **2026-10-10 ~04:15 UTC, edge hunt E thread: E3, spot-perp funding carry on Hyperliquid, does not hold**
+  (claim cleared). Pre-registered (`preregistration/spot-carry/SPEC.md`). Spot + short perp at 2x on 8 HL spot
+  pairs, 12 on/off rules chosen on Mar-Jun: all lost to Kamino USDC there; the chosen one made +0.8% APR
+  [−2.2, +3.4] excess Jul-Oct with 2 PURR liquidations. A data bug (missing spot hours read as flat) was fixed
+  before scoring and is disclosed in the RESULT. No paper test.
+
+* **2026-10-10 ~03:50 UTC, second TARTAR session: strategy review written** (`handoff/STRATEGY-REVIEW.md`).
+  20+ nulls mostly fail on costs (pump.fun ~2.7-3.5% round trip vs ~1% predictable moves); survivors are all
+  on cheap venues (Hyperliquid perps D/D3, hedged JLP, HLP). Recommendation: stop new pump.fun entry research
+  (let who-trades F1 forward and the E1 faster-source check finish), get JLP/HLP promotion-ready, next new
+  study = Hyperliquid OI/positioning once perps-ctx data accrues. No pre-registered rule changed.
+
+* **2026-10-10 ~03:20 UTC, edge hunt E thread: E2, copying strong Hyperliquid accounts, does not hold**
+  (claim cleared). Pre-registered (`preregistration/hl-copy/SPEC.md`), 20 accounts picked on May 1-Aug 20
+  only, copied Aug 20-Oct 9 with 2-17 min delay, 0.10%/side + funding: +0.06%/day [−0.08, +0.19], below
+  copying random eligible accounts (median +0.11%, p90 +0.34%). No paper test. Result:
+  `preregistration/hl-copy/RESULT-2026-10-10.md`; edge-hunt.md §E2.
+
+* 2026-10-10 03:15 UTC, agent-machinery thread: first candidate search (with funding, 147 weeks
+  2023-12..2026-09, holdout 26): 1 of 94 rules survived, `cand-xsm-L21-q10-vol-mon-lag2` (21-day
+  vol-scaled momentum, deciles, entry 2 days after Monday's signal): train +2.82%/week, penalized
+  lower bound +0.24% at 0.1/94, thirds +1.4/+5.1/+2.0%, holdout +2.90%, corr 0.46 with the
+  registered rules. Queued in `autotrade/candidates/`; the agent paper-trades it from 10-17 (first
+  signal 10-19), scored after 26 weeks. The registered rules for reference: xs +0.87%, vol +1.37%.
 
 * **2026-10-10 ~02:45 UTC, JLP leg + go-live thread: the live path is complete; checklist written.**
   The hedged basket's JLP leg now has a live sender (`usd_spot.LiveUsdSpotExecutor`: USDC to JLP on
