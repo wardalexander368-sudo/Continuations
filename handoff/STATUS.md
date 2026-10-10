@@ -398,6 +398,12 @@ deep pools match the model, a thin one was 2.4x it). The `launch_selector` slot 
 
 ## Log (newest first)
 
+* **2026-10-10 ~03:50 UTC, second TARTAR session: strategy review written** (`handoff/STRATEGY-REVIEW.md`).
+  20+ nulls mostly fail on costs (pump.fun ~2.7-3.5% round trip vs ~1% predictable moves); survivors are all
+  on cheap venues (Hyperliquid perps D/D3, hedged JLP, HLP). Recommendation: stop new pump.fun entry research
+  (let who-trades F1 forward and the E1 faster-source check finish), get JLP/HLP promotion-ready, next new
+  study = Hyperliquid OI/positioning once perps-ctx data accrues. No pre-registered rule changed.
+
 * **2026-10-10 ~03:20 UTC, edge hunt E thread: E2, copying strong Hyperliquid accounts, does not hold**
   (claim cleared). Pre-registered (`preregistration/hl-copy/SPEC.md`), 20 accounts picked on May 1-Aug 20
   only, copied Aug 20-Oct 9 with 2-17 min delay, 0.10%/side + funding: +0.06%/day [−0.08, +0.19], below
