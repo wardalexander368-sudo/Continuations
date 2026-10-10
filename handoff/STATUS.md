@@ -32,14 +32,6 @@ next. Topic documents hold the detail:
 
 ## Active
 
-* **Copy-trading Hyperliquid accounts (edge hunt E thread)** (since 2026-10-10 01:45 UTC, branch
-  `claude/project-thread-9op3pf`). **Paper only, no keys.** Do accounts with a strong record keep
-  paying when copied after fees, funding and a realistic delay? Public data only (leaderboard list,
-  per-address fills). Accounts chosen on an early period only; selection and copy rules
-  pre-registered in `handoff/preregistration/hl-copy/` before the later period is scored. If it
-  holds: a paper strategy with dry perp twins. Touches `handoff/experiments/edge-hunt/hl_copy/`,
-  `handoff/data/edge-hunt/hl-copy/`, and only if it holds `tartar/autotrade/strategies/`.
-
 * **Edge hunt E thread** (project thread session, since 2026-10-09 21:40 UTC, branch
   `claude/project-thread-9op3pf`). **Paper only, no real SOL, no keys.** Task (the user's 21:30
   "work continuously"): edge hunt angle E, TARTAR's assets, beyond the closed predictor + P(rug)
@@ -397,6 +389,12 @@ deep pools match the model, a thin one was 2.4x it). The `launch_selector` slot 
   branch `claude/profitability-backtest`, on `main`).
 
 ## Log (newest first)
+
+* **2026-10-10 ~03:20 UTC, edge hunt E thread: E2, copying strong Hyperliquid accounts, does not hold**
+  (claim cleared). Pre-registered (`preregistration/hl-copy/SPEC.md`), 20 accounts picked on May 1-Aug 20
+  only, copied Aug 20-Oct 9 with 2-17 min delay, 0.10%/side + funding: +0.06%/day [−0.08, +0.19], below
+  copying random eligible accounts (median +0.11%, p90 +0.34%). No paper test. Result:
+  `preregistration/hl-copy/RESULT-2026-10-10.md`; edge-hunt.md §E2.
 
 * 2026-10-10 03:15 UTC, agent-machinery thread: first candidate search (with funding, 147 weeks
   2023-12..2026-09, holdout 26): 1 of 94 rules survived, `cand-xsm-L21-q10-vol-mon-lag2` (21-day

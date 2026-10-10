@@ -264,6 +264,14 @@ exists:** once 21 complete recorder days (all 24 hours) are in, compare the curv
 base. Usable only if signs agree on at least 12 of 14 and the correlation is at least 0.8; then a new
 forward test (entry ~00:30 UTC d+1) gets its own pre-registration. Otherwise E1 is closed.
 
+**E2. Copying Hyperliquid accounts with a strong record: does not hold (2026-10-10).**
+Pre-registered before any performance was read (`preregistration/hl-copy/SPEC.md`): pick 20 accounts on their
+weekly Sharpe from May 1 to Aug 20 (from 1,500 random accounts with $5M-$2B lifetime volume; size, activity and
+followability filters), then copy their perp positions Aug 20-Oct 9 at the same leverage, 2-17 minutes late,
+0.10%/side plus funding. Result: +0.06%/day [−0.08, +0.19], **below** copying 20 random eligible accounts
+(median +0.11%, 90th percentile +0.34%). Same at 0.20%/side or one more candle of delay. A good record doesn't
+carry over; no forward test (`preregistration/hl-copy/RESULT-2026-10-10.md`).
+
 **E1b. The same rule on 8 other buyback / revenue-share tokens: does not hold (2026-10-09).**
 Pre-registered before any of their data was read (`preregistration/revflow/SPEC.md`): HYPE, JUP,
 AAVE, DYDX, GMX, CAKE, SKY, BANANA on Hyperliquid. Equal-weight family −0.01%/day [−0.14, +0.13]
