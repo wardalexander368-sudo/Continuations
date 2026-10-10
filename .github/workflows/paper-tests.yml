@@ -29,7 +29,7 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
-      - run: pip install "httpx>=0.25" "numpy>=1.24"
+      - run: pip install "httpx>=0.25" "numpy>=1.24" "websockets>=13"
       - name: Run the job
         env:
           JOB: ${{ github.event_name == 'workflow_dispatch' && inputs.job || (github.event.schedule == '24 2 * * *' && 'dip' || 'jlp') }}
@@ -37,7 +37,9 @@ jobs:
           if [ "$JOB" = "dip" ]; then
             out=$(python3 handoff/experiments/established_cohort.py | tee /dev/stderr)
             file=${out%%:*}
-            python3 handoff/experiments/pumpswap_fees.py --cohort "$file" --save handoff/preregistration/dip-rolling/fees-measured.json
+            # the cohort's commit time is its registration: never let the fee step lose it
+            python3 handoff/experiments/pumpswap_fees.py --cohort "$file" --save handoff/preregistration/dip-rolling/fees-measured.json \
+              || echo "fee measurement failed; cohort committed without it"
             msg="Dip cohort (paper-tests action): $out"
           else
             line=$(python3 handoff/experiments/jlp_paper.py snapshot | tee /dev/stderr)
