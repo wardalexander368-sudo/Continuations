@@ -40,6 +40,13 @@ next. Topic documents hold the detail:
   into `tartar/autotrade/gate.py` for the Solana spot sender to share. Touches `perps.py`, `broker.py`,
   a new `hl_exchange.py`, a CI workflow.
 
+* **Real-order sender thread** (project thread session, since 2026-10-10 01:25 UTC, branch
+  `claude/project-thread-kytb6q`). **No keys, no real transactions, mode stays dry_live.** Harden
+  the Solana spot senders in `tartar/autotrade/execution.py` (Jupiter, Lightning) behind the existing
+  live gate: pre-sign checks, definitive confirmation (blockhash expiry), unknown outcomes recorded
+  and halted, Lightning sells sized to the twin, simulation of both routes. Tests: unit, RPC
+  simulation with signature checks off, dry-run end to end.
+
 * **Edge hunt E thread** (project thread session, since 2026-10-09 21:40 UTC, branch
   `claude/project-thread-9op3pf`). **Paper only, no real SOL, no keys.** Task (the user's 21:30
   "work continuously"): edge hunt angle E, TARTAR's assets, beyond the closed predictor + P(rug)
@@ -83,6 +90,10 @@ deep pools match the model, a thin one was 2.4x it). The `launch_selector` slot 
   power on launches created 10-10 01:00 .. 10-19 01:00 UTC from the recorder Action's hours; no
   session needed to collect; this thread scores it once after 10-19 02:00 UTC
   (`who_trades_forward.py`; `--count-only` is a progress check). Paper only.
+  **Since 01:25 UTC:** edge hunt round I (pump.fun / PumpSwap, data since round F): I1 revival
+  entries (a token quiet for minutes, 30-110 min after launch, that gets a burst of new buyers),
+  I2 PumpSwap pools after their first hour with the new PumpSwap models. Dev / pre-register / test
+  as in F. Paper only. Not touching the order senders.
 
 * **Dip/jevtrader session** (session_01Htqh7pc1Lh1PP6Dkm1rVvz, since 2026-10-09 17:33 UTC, `main`
   only): continues the profitability session. **Owns the dip forward test (queue 11b)**: the GitHub
