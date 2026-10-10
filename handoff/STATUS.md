@@ -130,6 +130,131 @@ deep pools match the model, a thin one was 2.4x it). The `launch_selector` slot 
   recorder stopped after hour 18 (hour 19 is partial and only on local disk). **Item (b) done
   (19:10 UTC):** see the log entry. Nothing half-done.
 
+* **2026-10-10 20:20 UTC, "Real-money cost test, fresh key" thread: smallest account for the recommended
+  perps book (go-live input for AJ; paper only). Answer: $1,000 is the floor where every order clears
+  Hyperliquid's $10 minimum, with no margin for rounding; $2,000 is the practical minimum.**
+  `handoff/experiments/perps_min_account.py`, output `handoff/data/perps-book/min-account-2026-10-10.txt`.
+  Book: 1/4 each to xs_momentum, vol_momentum, the search winner and HLP, scaled to 2%/week vol
+  (x0.5–1.5; the scale sat near its 0.5 floor most weeks, median 0.57). Costs 6 bps per side
+  (measured book walk incl. 4.5 bps taker fee) plus funding; the winner's return cut by 0.33 pts/wk
+  for selection. Backtest: **+1.09%/week** (last 26 weeks +1.61), **+0.65% without the best 5 weeks**,
+  5th-percentile week −4.1%, worst week −18.2%, max drawdown 21.9%. Coins per side over the last 52
+  weeks: xs and vol momentum median 7 (6–12), the winner median 3 (3–6).
+  | account | smallest position (at scale 0.5 / median) | opens+closes under $10, last 52 wks | weekly $ (backtest) | weekly $ (without best 5 wks) | 1-in-20 bad week | worst week |
+  |---|---|---|---|---|---|---|
+  | $200 | $2 / $4 | 95% | +$2.18 | +$1.30 | −$8 | −$36 |
+  | $500 | $5 / $10 | 51% | +$5.46 | +$3.26 | −$20 | −$91 |
+  | $1,000 | $10 / $20 | 0% (smallest $10.4) | +$10.92 | +$6.51 | −$41 | −$182 |
+  | $2,000 | $21 / $41 | 0% | +$21.84 | +$13.02 | −$81 | −$364 |
+  | $5,000 | $52 / $102 | 0% | +$54.60 | +$32.55 | −$203 | −$910 |
+  - Below $1,000 the book can't be built as designed; dropping sleeves to fit would concentrate it
+    further (the winner already holds ~3 coins a side).
+  - At $1,000 the smallest legs sit right at $10: size rounding (szDecimals) or a position that shrank
+    can fall under the minimum; closes should go as reduce-only orders (check whether Hyperliquid
+    exempts those from the $10 minimum before relying on it).
+  - Margin: gross exposure is 1.5 x scale x account (0.75–2.2x) on the 75% not in HLP: well inside
+    Hyperliquid's limits. HLP: 25% deposited in the vault (4-day lockup on withdrawals).
+  - These are backtest dollars; the audit's caveats apply (xs_momentum's concentration, the winner's
+    selection). Real money still needs AJ's go and a wallet key.
+* **2026-10-10 20:00 UTC, "Real-money cost test, fresh key" thread: how to build the live perps book
+  (paper backtest). Recommendation for the autotrade owner: equal weights per strategy, then scale
+  the whole book to ~2%/week realised vol (trailing 13 weeks, scale 0.5–1.5x); no per-coin caps.**
+  `handoff/experiments/perps_book.py`, full table `handoff/data/perps-book/report-2026-10-10.txt`.
+  Sleeves: xs_momentum, vol_momentum, the search winner (legs, costs, funding as `search.backtest`) and
+  HLP (vault allTime history); a coin held by several sleeves is netted. 146 weeks 2023-12-18 .. 2026-09-28.
+  | book | mean/wk | worst week | max DD | without best 5 wks | weeks < −12% | 35% DD stop | last 26 wks |
+  |---|---|---|---|---|---|---|---|
+  | equal (now) | +1.47% | −22.1% | 37.8% | +0.94% | 3 | fires (2024-08) | +1.59% |
+  | **equal + vol target 2%/wk** | **+0.99%** | **−18.4%** | **23.6%** | **+0.54%** | **1 (2024-11-18)** | **never** | **+1.53%** |
+  | equal + vol target 2.5%/wk | +1.06% | −20.8% | 25.7% | +0.57% | 1 | never | +1.64% |
+  | equal + coin cap 5% of book | +0.62% | −10.3% | 26.0% | +0.29% | 0 | never | +0.74% |
+  | equal + cap 5% + winner ≥ 8 coins/side | +0.50% | −12.5% | 30.5% | +0.16% | 1 | never | +0.68% |
+  | risk parity (1/vol, 26 wks) | +0.67% | −7.6% | 14.7% | +0.40% | 0 | never | +0.35% |
+  | risk parity + vol target | +0.77% | −5.7% | 11.6% | +0.50% | 0 | never | +0.47% |
+  | momentum risk parity + 25% HLP | +1.43% | −21.0% | 35.8% | +0.92% | 3 | fires | +1.54% |
+  - **Why not risk parity:** it puts 75–95% of the book in HLP because HLP's measured vol is tiny
+    (worst week −0.8%), and its full-period return is HLP's old yield: **HLP made +0.03%/week over the
+    last 26 weeks** (+0.59 over the whole period). Its vol also hides tail risk (vault losses in
+    squeezes like JELLY). Treat HLP as ballast, not a return source.
+  - **Why no coin caps:** they cut return much more than risk (weekly Sharpe 0.24 → 0.18 at 5%, 0.09 at
+    3%); the edge sits in coins several sleeves agree on. The winner's ≥ 8 coins/side floor also
+    lowered return (+0.50 vs +0.62 with the cap alone).
+  - **What vol targeting buys:** max drawdown 38% → 24% and the 35% stop never fires, for about a
+    third less mean return; the risk-adjusted return is unchanged (0.23 vs 0.24 a week). It can't stop a
+    single bad week: 2024-11-18 (the post-election alt squeeze on the short legs) is −18% even scaled.
+  - Backtest means are optimistic (see the audit entry below: xs_momentum's concentration, the
+    winner's selection); expect less live.
+* **2026-10-10 19:30 UTC, "Real-money cost test, fresh key" thread: pre-live audit of the perps momentum
+  strategies (paper only). No survivorship, lookahead, funding or fill bug found; the backtests are
+  if anything conservative on costs. The real risks are concentration (xs_momentum) and selection
+  (the search winner).** `handoff/experiments/momentum_audit.py`, output in
+  `handoff/data/momentum-audit/report-2026-10-10.txt`. Base = the agent's own backtest
+  (`search.backtest`, 20 bps/side + funding, 146 weeks to 2026-09-28): xs_momentum **+1.03%/wk**
+  (SE 0.78), vol_momentum **+1.42** (SE 0.66), search winner cand-xsm-L21-q10-vol-mon-lag2 **+2.83** (SE 0.92).
+  | check | finding | effect on weekly return (xs / vol / cand) |
+  |---|---|---|
+  | Survivorship | all 56 delisted perps are in the history up to their delisting (meta's `isDelisted` list = hl-daily); 7–8% of legs are on now-delisted coins | dropping them: −0.27 / −0.08 / +0.35 pts, so nothing is missing |
+  | Stale exits | a leg on a coin delisted mid-week exits at its last close (forward fill); 2–3 legs in 146 weeks, none on live coins | ~0 |
+  | Lookahead | signal uses closes up to the signal day; entry 1–2 days later at a close. Entry and exit 1 h after the close (what an hourly agent run gets), 28 weeks of hourly candles | +0.08 / +0.01 / +0.14 pts (SE 0.12–0.24): no penalty |
+  | Funding | cached daily sums equal the API exactly (84 sampled coin-days); JELLY, PONS, USELESS have no funding (count as 0) | funding costs −0.08 / −0.08 / −0.13 pts; the 3 gaps are noise |
+  | Fills vs books | live L2 walk of the current picks at the agent's leg sizes ($91–100 per coin): 5–6 bps per side incl. the 4.5 bps taker fee (max 11); at 100x size median 7–8 bps, thin tails (PURR 39, CASHCAT 25 bps; 20 levels only). One snapshot, not the Tuesday 00:00 UTC book | 20 bps assumed → at 10 bps: +0.22 / +0.24 / +0.23 pts |
+  | Concentration | best 5 of 146 weeks carry xs_momentum (WIF +154%, kPEPE +139% in Feb 2024 were real) | without them: **+0.14** / +0.73 / +1.79; median week +0.56 / +1.09 / +2.37; legs capped ±25%: +0.21 / +0.77 / +1.69 |
+  | Selection (cand) | winner of 94 searched rules (train rank 2/94; the 26-week holdout was also a pass filter, so it is not clean out of sample). Across the 94, holdout ≈ 0.70% + 0.64 × train | expect about +2.5%/wk, not +2.8; the decile family averages +1.3 (train) / +2.0 (holdout) |
+  - **For the autotrade owner (Continue TARTAR handoff session): no code change required.** Optional:
+    (a) the 20 bps/side cost is ~3x what the books charge at these sizes; keep it as a safety margin
+    for the Tuesday 00:00 UTC book or measure that book; (b) equal-weight resets of kept legs aren't
+    charged (~0.02 pts/wk, negligible); (c) if one strategy goes live first, vol_momentum is the most
+    robust registered one; xs_momentum's edge rests on a handful of memecoin-rally weeks, and cand's
+    backtest is selection-biased upward by roughly 0.3+ pts/wk.
+* **2026-10-10 18:45 UTC, "Real-money cost test, fresh key" thread: DIP RULE DOES NOT CLEAR ITS COSTS
+  ON ANY ROUTE. Real-money dip lane CLOSED (coordinator agreed 18:20 UTC); no case for the
+  TARTAR_WALLET_KEY wallet from it. The wallet stays held by this thread; no SOL is to be spent.**
+  **For the autotrade owner: the dip rule's pre-registered retire check can use the 90-trade
+  out-of-sample replay (gross −3.94% per trade before fees, SE 2.57; file below).**
+  (Paper only, no SOL.) The rule's gross is already negative before costs:
+  - **Gross:** the registered rule replayed on GeckoTerminal SOL-quoted bars, only bars after each
+    cohort registered, one position per pool (`handoff/experiments/dip_oos_replay.py`,
+    `handoff/data/dip-cost/replay-oos-2026-10-10.json`): **90 trades 10-09 02:25 .. 10-10 14:00, mean
+    −3.94% (SE 2.57), median −2.89%.** The paper agent's own 14 dip trades to 06:30: −2.95% (SE 4.6).
+  - **Round-trip cost, quoted now on all 17 pools** (Jupiter lite-api buy then sell of the same
+    tokens, + 0.000011 SOL network per tx; `roundtrip-quotes-2026-10-10.json`):
+    | size | own wallet, Jupiter best route | PumpSwap only | Lightning (PumpSwap + 1%/side) |
+    |---|---|---|---|
+    | 0.01 SOL | 1.89% | 2.04% | 3.99% |
+    | 0.1 SOL | **1.75%** | 1.87% | 3.82% |
+    | 1 SOL | 2.67% | 2.74% | 4.68% |
+  - **Net ≈ −5.7% per trade on the cheapest route (own wallet, Jupiter, 0.1 SOL), ≈ −7.8% via
+    Lightning.** Even the gross's one-sided 95% upper bound (≈ +0.3%) is below the 1.75% break-even.
+    An own key saves ~2 points per round trip over Lightning (and gets token-account rent back), but
+    that only matters for a rule with positive gross.
+  - **Watcher fixed** (`dip_real_fills.py`: wakes 2 s after bar end, re-polls pools whose bar isn't
+    out). `dip_cost_paper.py` (live paper trades on Jupiter/PumpSwap quotes) saw signals 3 s after
+    bar end for the first pool; 7 entries in one bar were all quoted within 66 s (each quote set
+    takes ~6 s). Its open paper trades were stopped before their exits: the verdict above doesn't
+    need them.
+  - **For the autotrade owner (Continue TARTAR handoff session):** yes, drop the dip rule's +5 min
+    entry penalty to about +1 min. With the fixed watcher a signal is seen within ~3–60 s of bar end
+    (median 69 s for Gecko's bar to be final, but its first close was final 95% of the time), and the
+    price moved median −0.01% (mean +0.24%) over that wait (fast_dip report, n = 92). It won't rescue
+    the rule: the gross is negative before any penalty.
+* **2026-10-10 18:05 UTC, "Real-money cost test, fresh key" thread: fast dip detector built and measured
+  (paper only, no SOL).** `handoff/experiments/fast_dip.py` reads every registered dip pool's price from
+  the free public RPC (one `getMultipleAccounts` on pools + vaults; quote = vault + the pool's signed
+  `virtual_quote_reserves`, without which boosted pools read up to 72% low) 0.4 s after each 5-minute
+  bar ends, and applies the registered rule against GeckoTerminal's close of bar i-12. 22 bars x 17
+  pools beside GeckoTerminal (`handoff/data/fast-dip/report-2026-10-10.txt`):
+  - fast close vs Gecko's close of the same bar: median +0.31%, mean |diff| 0.55%; signals agreed
+    99 times, fast only 2, Gecko only 6.
+  - **GeckoTerminal is not the bottleneck:** its first poll after bar end (median 27 s, only because
+    the scan walks 17 pools at 2.2 s) already had the final close for 315 of 330 pool-bars; the signal
+    flipped only twice.
+  - **Price gained by entering at the fast signal instead of when Gecko's bar was final (median 69 s
+    later): median −0.01%, mean +0.24% (n = 92).** Speed buys about nothing. The 4–5 min delay in the
+    two real fills came from the watcher itself (the first buy came right after it started; the
+    second waited behind two failed SharkTank buys), not from GeckoTerminal.
+  - **For the autotrade owner (Continue TARTAR handoff session):** no integration needed for speed. If
+    a live dip sender is ever built, poll Gecko right at bar end (or use `onchain_prices()` from this
+    module for one-call prices) and buy immediately; skip the hourly cadence for entries.
 * **REAL MONEY — dip-rule real fills DONE (02:23–06:31 UTC 2026-10-10). The wallet is held by the
   "Real-money cost test, fresh key" thread session (session_01C3taLfUKfeFUC2zXBZEhaR); no further
   trades planned.** AJ's go (02:18 UTC): "a couple real fills if an opportunity looks good". 2 round
