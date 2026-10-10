@@ -32,6 +32,13 @@ next. Topic documents hold the detail:
 
 ## Active
 
+* **Token-unlock shorts on Hyperliquid perps (second TARTAR session)** (since 2026-10-10 05:05 UTC, branch
+  `claude/project-thread-kytb6q`). **Paper only, no keys.** Reopens edge-hunt F4, which was dropped as "no free
+  data". DefiLlama's free `defillama-datasets.llama.fi/emissions/<slug>` serves the unlock schedules. Plan:
+  pre-register event rules (insider cliff unlocks, size vs supply, entry/exit windows), short the perp vs an
+  equal-weight long, then score after 20 bps/side per leg + funding on D's splits. A dry paper strategy only if
+  it clears. Writes `handoff/experiments/edge-hunt/unlocks/` and `handoff/preregistration/unlocks/`.
+
 * **JLP hedge liquidation stress test (edge hunt E thread)** (since 2026-10-10 04:50 UTC, branch
   `claude/project-thread-9op3pf`). STRATEGY-REVIEW item 2: replay the worst SOL/ETH/BTC spike windows
   through the registered hedged-JLP rules (3x shorts, 4-hourly check-ins, 5% drift) to see what would have
