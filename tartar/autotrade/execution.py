@@ -279,9 +279,10 @@ class DryExecutor:
         import json
 
         if self.path:
+            keep = json.loads(self.path.read_text()) if self.path.exists() else {}
+            keep.update({"sol": round(self._balance, 9), "tokens": self._tokens, "note": "simulated wallet of the dry route (no real funds)"})
             tmp = self.path.with_suffix(".tmp")
-            tmp.write_text(json.dumps({"sol": round(self._balance, 9), "tokens": self._tokens,
-                                       "note": "simulated wallet of the dry route (no real funds)"}, indent=1, sort_keys=True))
+            tmp.write_text(json.dumps(keep, indent=1, sort_keys=True))
             tmp.replace(self.path)
 
     def _move(self, sol: float, mint: str, raw: int) -> None:
@@ -345,9 +346,11 @@ def simulated(chain: Chain, route: str, leg: str, mint: str, raw: bytes, amount,
 
 
 def send_signed(chain: Chain, keypair, route: str, leg: str, mint: str, raw: bytes, wallet: str, out: int | None,
-                last_valid: int | None, timeout: float = 90.0, guard=None) -> Fill:
+                last_valid: int | None, timeout: float = 90.0, guard=None, counter: str | None = None) -> Fill:
     """Sign ``raw`` (already through ``check_tx``) with our key, send it, and read the fill from the chain.
-    ``guard`` (the shared live gate, ``gate.require_live``) runs first; if it raises, nothing is signed."""
+    ``guard`` (the shared live gate, ``gate.require_live``) runs first; if it raises, nothing is signed.
+    ``counter``: the swap's other token when it is not SOL (e.g. USDC); its change goes to
+    ``extra["counter_change"]`` and decides, with the token change, whether the swap filled."""
     from solders.transaction import VersionedTransaction
 
     try:
@@ -365,6 +368,13 @@ def send_signed(chain: Chain, keypair, route: str, leg: str, mint: str, raw: byt
         return Fill(route, leg, mint, False, quote_out=out, sent_at=t0, error=f"send: {exc}"[:300])
     tx, seen = chain.confirm(sig, timeout=timeout, last_valid=last_valid)
     eff = effects(tx, mint, wallet) if tx else None
+    if counter and eff and not eff.get("err"):
+        c = effects(tx, counter, wallet)["token_change"]
+        raw = eff["token_change"] if leg == "buy" else -eff["token_change"]
+        ok = raw > 0 and (c < 0 if leg == "buy" else c > 0)
+        return Fill(route, leg, mint, ok, sol=-eff["sol_change"], token_raw=raw, fee_sol=eff["fee_sol"], rent_sol=eff["rent_sol"],
+                    quote_out=out, signature=sig, sent_at=t0, confirmed_at=seen, error=None if ok else "no tokens moved",
+                    extra={"slot": eff.get("slot"), "counter_change": c})
     return fill_from(route, leg, mint, eff, quote_out=out, signature=sig, sent_at=t0, confirmed_at=seen)
 
 

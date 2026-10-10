@@ -171,16 +171,16 @@ def reconcile(broker, now: float) -> dict:
     logged_buys = {}
     for r in _fill_rows(root):
         f = r.get("fill") or {}
-        if r.get("event") == "buy" and f.get("ok") and r.get("route") == broker.route and r.get("order_id") \
+        if r.get("event") in ("buy", "usd_buy") and f.get("ok") and r.get("route") == broker.route and r.get("order_id") \
                 and r["position"] not in open_twins and r["position"] not in closed and r["position"] not in orphaned \
                 and r["position"] not in claimed:
-            logged_buys[r["order_id"]] = {"mint": f["mint"], "token_raw": int(f["token_raw"]), "sol_in": f["sol"],
+            logged_buys[r["order_id"]] = {"mint": f["mint"], "token_raw": int(f["token_raw"]), "sol_in": f.get("sol", 0.0), "usd_in": f.get("usd"),
                                           "strategy": r["strategy"], "position": r["position"], "rent_sol": f.get("rent_sol", 0.0),
                                           "signature": f.get("signature"), "source": "fill log"}
-    pend_buys = {oid: {"mint": r["mint"], "token_raw": None, "sol_in": r["sol"], "strategy": r["strategy"],
+    pend_buys = {oid: {"mint": r["mint"], "token_raw": None, "sol_in": r.get("sol", 0.0), "usd_in": r.get("usd"), "strategy": r["strategy"],
                        "position": r["position"], "rent_sol": 0.0, "source": "pending order"}
-                 for oid, r in pend.items() if r["leg"] == "buy" and oid not in logged_buys}
-    pend_sells = {r["position"]: r for r in pend.values() if r["leg"] == "sell"}
+                 for oid, r in pend.items() if r["leg"] in ("buy", "usd_buy") and oid not in logged_buys}
+    pend_sells = {r["position"]: r for r in pend.values() if r["leg"] in ("sell", "usd_sell")}
 
     mints = set(tracked) | {r["mint"] for r in pend.values()} | {b["mint"] for b in logged_buys.values()}
     mints |= {(r.get("fill") or {}).get("mint") for r in _fill_rows(root) if r.get("route") == broker.route} - {None}
@@ -234,7 +234,7 @@ def reconcile(broker, now: float) -> dict:
         bal = None
     last = st.get("wallet_sol")
     if bal is not None and last is not None:
-        explained = sum(c["sol_in"] for c in report["claims"])
+        explained = sum(c.get("sol_in") or 0.0 for c in report["claims"])
         drop = float(last["sol"]) - bal - explained
         report["sol"] = {"last": last["sol"], "now": bal, "explained": explained, "unexplained_drop": drop}
         if drop > SOL_SLACK:
@@ -261,9 +261,8 @@ def record_wallet(broker, now: float) -> None:
 
 def _is_sol_spot(twin: dict) -> bool:
     from .perps import is_perp
-    from .usd_spot import is_usd_spot
 
-    return "mint" in twin and "sol_in" in twin and not is_perp(twin) and not is_usd_spot(twin)
+    return "mint" in twin and "token_raw" in twin and not is_perp(twin)  # SOL twins and USD-spot (USDC) twins share the wallet
 
 
 PERP_TOL = 1e-9

@@ -1,5 +1,34 @@
 # The automated paper-trading agent (`tartar/autotrade`)
 
+## Go-live checklist (what the user adds; nothing here is done by any session)
+
+Live trading is built and gated. Today the agent runs `dry_live`: every leg is priced on real quotes
+and books, and nothing is signed or sent. A strategy only trades live after **its own paper test
+promotes it** (status `promoted` in `autotrade/REPORT.md`). None is promoted as of 2026-10-10.
+
+**Once, for any live trading:**
+1. Choose the approval date, e.g. `2026-11-01`. Add the GitHub Actions secret `TARTAR_LIVE_APPROVED` with
+   that exact text.
+2. In `autotrade/config.json`, set `"live_approved_on": "2026-11-01"` (the same text) and
+   `"mode": "live"`. Commit to main. The next job start picks the secrets up (jobs start every 2 h).
+3. Check `python -m tartar.autotrade preflight` (or the report header) shows no problems.
+
+**Per strategy (what its live legs need):**
+
+| Strategy | Live legs | Add |
+|---|---|---|
+| `dip` (and its variants) | Solana token buys/sells in SOL | Secret `TARTAR_WALLET_KEY` (base58 secret key of a fresh wallet), wallet funded with SOL: `budget_sol` 0.03 + `reserve_sol` 0.01 = **0.04 SOL** at current limits. (Or `PUMPPORTAL_API_KEY` + `live.lightning_wallet`: 1% per side more.) |
+| `launch_selector` | Solana token buys/sells in SOL | Same as `dip` (disabled until its thread registers a rule). |
+| `xs_momentum`, `vol_momentum`, `pumpflow` | Hyperliquid perps (USD) | Secrets `HYPERLIQUID_AGENT_KEY` (an API/agent wallet the account approved: it can trade, not withdraw) and `HYPERLIQUID_ACCOUNT` (the account address), USDC deposited in that account: `live.perps.budget_usd` **$60** of notional at current limits, plus margin headroom. |
+| `jlp_hedged` (basket) | JLP bought with USDC on Jupiter + SOL/ETH/BTC shorts on Hyperliquid | **Both** sets above. Also **USDC in the Solana wallet** for the JLP leg (`twin_basket_usd` **$200**) and a little SOL for fees: roughly **$330** of capital in all at the $200 size (JLP $200, shorts' margin at 3x, a buffer). The basket trades only when both venues work; a failed or short hedge unwinds it. |
+| `hlp_hold` | none: the HLP vault deposit has no live sender | Stays paper. |
+
+**Always available:** `autotrade/HALT_LIVE` (commit it, or run `python -m tartar.autotrade halt-live "reason"`)
+stops live entries within 5 minutes and exits still run. The `TARTAR_LIVE_KILL` variable applies only
+at the next job start. Removing `TARTAR_LIVE_APPROVED` turns live off at the next job start; twins
+still open then become orphans. Limits are in `config.json` `live` (SOL) and `live.perps` (USD). The
+details are under *Going live* below.
+
 Built 2026-10-09 by the agent-machinery thread for the project goal "a fully automated trading
 agent, focused on profitability and self improvement". **Paper, with dry live twins** (see *Going live*). It runs every 5 minutes on GitHub
 Actions (`.github/workflows/autotrade.yml`, a job that loops the agent every 5 minutes for ~5.75 h, restarted every 2 h, since 2026-10-10 ~00:30 UTC; hourly before) without any Claude session and
@@ -253,10 +282,8 @@ Built 2026-10-10: `strategies/jlp_hedged.py`, `usd_spot.py`, basket sizing in `b
 * **Going live would need, from the user:** `TARTAR_WALLET_KEY` with USDC in that Solana wallet for the
   JLP leg (and a little SOL for fees); a Hyperliquid account with USDC margin plus `HYPERLIQUID_AGENT_KEY`
   and `HYPERLIQUID_ACCOUNT` for the shorts (see Perp twins); roughly $330 of capital at the $200 twin
-  size (JLP $200 plus about $43 of margin at 3x, more for a buffer). **On our side, not built:** a live
-  USDC swap sender (Jupiter Swap API signed with the wallet key; the Hyperliquid sender now exists), and a
-  leg-failure rule (if one leg of an entry or rebalance fails, unwind the others or halt) since a live
-  basket with a missing hedge is directional. Mode `live` today skips both routes, so the basket stays on paper.
+  size (JLP $200 plus about $43 of margin at 3x, more for a buffer). **On our side: built 2026-10-10**
+  (the live USDC swap sender and the leg-failure rule; see *Restarts and overlaps*, "The hedged JLP basket").
 
 ### Restarts and overlaps (`safety.py`)
 
@@ -284,11 +311,18 @@ Built 2026-10-10: `strategies/jlp_hedged.py`, `usd_spot.py`, basket sizing in `b
   plus orders a dead run filled that are waiting to be re-adopted (1 h, then orphan). Any difference,
   or an unreadable account, stops perp entries (`live.perps_halted`). Closes still run, reduce-only.
   `resume-live perps` clears the halt.
-* The dry routes simulate the wallet (`autotrade/dry_wallet.json`) and the Hyperliquid account
-  (`autotrade/dry_perp_account.json`), seeded from the twins already in the book, so all of this
-  runs end to end in `dry_live`. `tests/test_restart_safety.py` and
-  `tests/test_perp_restart_safety.py` kill runs before and after a buy, sell, perp open and perp close
-  lands. The basket's JLP leg (USD spot) is dry-only and not covered yet.
+* **The hedged JLP basket.** The JLP leg is a USD-spot twin. It buys JLP with USDC from the same
+  wallet on the same gated Jupiter path (`usd_spot.LiveUsdSpotExecutor`), with pending orders,
+  adopt-on-retry and the wallet reconcile. A hedge opens only once the basket's JLP twin exists, and
+  the JLP leg opens only when a perp route exists. If a hedge fails or fills under 95% of its size,
+  every live twin of the basket is closed (`basket_unwind` in `fills.jsonl`; whatever can't be closed
+  becomes an orphan) and the basket's live entries stop (`live.basket_broken`, strategy halted). The
+  paper basket is untouched.
+* The dry routes simulate the wallet (`autotrade/dry_wallet.json`, JLP included) and the Hyperliquid
+  account (`autotrade/dry_perp_account.json`), seeded from the twins already in the book, so all of
+  this runs end to end in `dry_live`. `tests/test_restart_safety.py`,
+  `tests/test_perp_restart_safety.py` and `tests/test_basket_live.py` kill runs mid-order and break
+  basket legs.
 
 ### Kill switches
 
@@ -309,7 +343,7 @@ A failed live sell also records an orphan and halts that strategy's live entries
 1. **Cadence: resolved 2026-10-10.** The user chose a run every 5 minutes as a self-looping job
    (GitHub's `*/5` cron fired once in 30 minutes), so dip entries
    reach the broker within ~10-20 minutes of their bar, inside `max_signal_age_s` (1800 s since the 2026-10-10 audit).
-2. **Perps.** Dry perp twins exist (*Perp twins* above); real ones need the user's Hyperliquid API
-   wallet (`HYPERLIQUID_AGENT_KEY`, `HYPERLIQUID_ACCOUNT`) and a live executor that isn't written yet.
+2. **Perps: built 2026-10-10** (`hl_exchange.py`, behind the shared gate, with restart safety). Real
+   orders need the user's Hyperliquid API wallet (`HYPERLIQUID_AGENT_KEY`, `HYPERLIQUID_ACCOUNT`).
 3. **Lightning** reads fills from chain for its custodial wallet, so `live.lightning_wallet` must be set
    before that route can be used; Jupiter needs only the key.
