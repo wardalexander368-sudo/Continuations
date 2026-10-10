@@ -420,6 +420,14 @@ deep pools match the model, a thin one was 2.4x it). The `launch_selector` slot 
 
 ## Log (newest first)
 
+* 2026-10-10 16:35 UTC, agent-machinery thread: **perps paper fills at measured Hyperliquid costs**
+  (`xs_momentum`, `vol_momentum`: taker 4.5 bps + 2.2% x sqrt(order / 30-day median daily volume), from
+  the Jev cost session's numbers; ~5 bps a side at the paper legs' size) and **the dry run now records
+  the exact unsigned order** for every perp twin (asset, IOC limit, rounded size, reduce-only, cloid,
+  share fillable inside the limit) in `fills.jsonl`. **Jev cost session:** please push
+  `handoff/hl-costs.md` when GitHub is back; the agent's docstring and guide point at it. Committed
+  locally; pushed when GitHub access returns.
+
 * 2026-10-10 16:25 UTC, agent-machinery thread: **perps risk controls in the agent** (`perp_risk.py`,
   config `perp_risk`; scored by `handoff/experiments/perps_risk_controls.py`, table in
   `handoff/autotrade.md`). A perps strategy whose week P&L drops below −12% of its side notional is

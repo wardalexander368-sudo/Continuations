@@ -61,3 +61,37 @@ def test_account_drawdown_writes_halt(tmp_path):
     s = run_once(root, now=3000.0, strategies={"xs": Idle("xs", {"A": 0.6, "B": 0.6, "C": 1.4, "D": 1.4})})
     assert (root / "HALT").exists() and "drawdown" in (root / "HALT").read_text()
     assert s["new_halts"] and s["halted"]
+
+
+def test_hl_sqrt_costs_scale_with_size_and_liquidity():
+    import pytest
+    from tartar.autotrade.strategies.xs_momentum import XSMomentum
+
+    flat = XSMomentum("xs", {})
+    assert flat.side_cost(1e6, 1e6) == 0.002  # registered: flat 20 bps
+    s = XSMomentum("xs", {"costs": {"model": "hl_sqrt", "taker": 0.00045, "impact_k": 0.022}})
+    assert s.side_cost(5_000, 10e6) == pytest.approx(0.00045 + 0.00049, abs=1e-5)   # ~4 bps over the fee
+    assert s.side_cost(100_000, 2e6) == pytest.approx(0.00045 + 0.0049, abs=1e-4)   # ~49 bps over the fee
+    assert s.side_cost(100, float("nan")) < 0.001
+
+
+def test_dry_perp_fill_carries_the_exact_unsigned_order():
+    from tartar.autotrade.perps import DryPerpExecutor
+
+    class Info:
+        def book(self, coin):
+            return ([{"px": "99.9", "sz": "5"}], [{"px": "100.1", "sz": "0.05"}, {"px": "100.5", "sz": "5"}, {"px": "102", "sz": "9"}])
+
+        def sz_decimals(self, coin):
+            return 2
+
+        def asset_index(self, coin):
+            return 7
+
+    ex = DryPerpExecutor(info=Info(), clock=lambda: 0.0, slippage=0.01)
+    f = ex.open("X", 1, 50.0, cloid="0xabc")
+    o = f.extra["order"]
+    assert o == {"a": 7, "b": True, "p": "101", "s": "0.5", "r": False, "t": {"limit": {"tif": "Ioc"}}, "c": "0xabc"}
+    assert f.extra["ioc_fill_frac"] == 1.0
+    c = ex.close("X", 1, 0.5)
+    assert c.extra["order"]["r"] is True and c.extra["order"]["b"] is False

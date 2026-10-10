@@ -48,7 +48,13 @@
       "kind": "xs_momentum",
       "enabled": true,
       "prereg": "handoff/preregistration/xs-momentum/SPEC.md",
-      "leg_usd": 1000
+      "leg_usd": 1000,
+      "costs": {
+        "model": "hl_sqrt",
+        "taker": 0.00045,
+        "impact_k": 0.022,
+        "note": "measured Hyperliquid costs (handoff/hl-costs.md, Jev cost session 2026-10-10): taker 4.5 bps + 2.2% x sqrt(order / 30-day median daily USD volume); the registered 20 bps stays in the official scorers"
+      }
     },
     "pumpflow": {
       "kind": "pumpflow",
@@ -86,7 +92,13 @@
       "enabled": true,
       "prereg": "handoff/preregistration/vol-momentum/SPEC.md",
       "scaled": true,
-      "leg_usd": 1000
+      "leg_usd": 1000,
+      "costs": {
+        "model": "hl_sqrt",
+        "taker": 0.00045,
+        "impact_k": 0.022,
+        "note": "measured Hyperliquid costs (handoff/hl-costs.md, Jev cost session 2026-10-10): taker 4.5 bps + 2.2% x sqrt(order / 30-day median daily USD volume); the registered 20 bps stays in the official scorers"
+      }
     },
     "hlp_hold": {
       "kind": "vault_hold",

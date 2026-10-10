@@ -172,6 +172,20 @@ The chosen default (equal weight, weekly stop 12%) keeps the mean weekly return 
 quarter to a third; it does not remove large drawdowns over several weeks (31-63% at 1x), which is what the
 account stop and small live legs are for. At 35% the account stop would have fired in the histories of `vol_momentum` and `xs_momentum` (drawdowns 58-63%), not the candidate's (31% with the weekly stop).
 
+## Perps costs and the order dry run (from 2026-10-10)
+
+* **Costs:** `xs_momentum` and `vol_momentum` paper fills charge Hyperliquid's measured costs instead of a
+  flat 20 bps (config `costs.model: hl_sqrt`): taker 4.5 bps + 2.2% x sqrt(order / the coin's 30-day median
+  daily USD volume), about 4 bps over the fee for $5k on a $10M/day coin and 49 bps for $100k on a
+  $2M/day coin (Jev cost session's `handoff/hl-costs.md`). At the paper legs' size (~$125) that is ~5 bps a
+  side. Kept legs still pay nothing. The search and its candidates keep the registered flat 20 bps.
+* **Exact orders, unsent:** in mode `dry_live` every perp twin's fill (`fills.jsonl`, `extra`) carries the
+  exact order the live sender would sign: asset index, side, IOC limit 1% through the mid (rounded as the
+  venue requires), size rounded to the coin's step, reduce-only on closes, client order id, and the share
+  of it the visible book would fill inside the limit (`ioc_fill_frac`). Twins already pass the live limits
+  and kill switches, and exit with paper legs (so the weekly loss limit applies). Going live is then AJ's
+  go, a funded account with an approved agent key, and mode `live` ("Going live" below).
+
 ## Health (`health.yml`, hourly)
 
 `python -m tartar.autotrade health` (`health.py`) checks the repo's unattended jobs and writes
