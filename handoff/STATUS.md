@@ -32,6 +32,14 @@ next. Topic documents hold the detail:
 
 ## Active
 
+* **Spot-perp funding carry on Hyperliquid (edge hunt E thread)** (since 2026-10-10 03:40 UTC, branch
+  `claude/project-thread-9op3pf`). **Paper only, no keys.** Hold spot (Hyperliquid spot pairs) and short
+  the perp to collect funding, with thresholds and coins pre-registered on one period
+  (`handoff/preregistration/spot-carry/`) and scored on a later one after both sides' fees, basis and
+  margin. Not the same as D2 (perp-only cross-section) or A2 (JitoSOL vs SOL). If it clears: a basket paper
+  strategy with dry twins. Touches `handoff/experiments/edge-hunt/spotcarry/`, and only if it clears
+  `tartar/autotrade/`.
+
 * **Edge hunt E thread** (project thread session, since 2026-10-09 21:40 UTC, branch
   `claude/project-thread-9op3pf`). **Paper only, no real SOL, no keys.** Task (the user's 21:30
   "work continuously"): edge hunt angle E, TARTAR's assets, beyond the closed predictor + P(rug)
