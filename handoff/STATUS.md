@@ -82,6 +82,10 @@ deep pools match the model, a thin one was 2.4x it). The `launch_selector` slot 
   power on launches created 10-10 01:00 .. 10-19 01:00 UTC from the recorder Action's hours; no
   session needed to collect; this thread scores it once after 10-19 02:00 UTC
   (`who_trades_forward.py`; `--count-only` is a progress check). Paper only.
+  **Owns the recorder Action's revival change** (coordinator, 01:26 UTC 10-10; the recorder thread is
+  on the Hyperliquid sender): `--revive-hours 48 --dormant` keeps idle tokens dormant 48 h after
+  launch and records them again when they trade; dormant set carried between runs by the Actions
+  cache. Next: pre-register wake-up rules once the Action has collected enough revivals.
 
 * **Dip/jevtrader session** (session_01Htqh7pc1Lh1PP6Dkm1rVvz, since 2026-10-09 17:33 UTC, `main`
   only): continues the profitability session. **Owns the dip forward test (queue 11b)**: the GitHub
@@ -406,6 +410,13 @@ deep pools match the model, a thin one was 2.4x it). The `launch_selector` slot 
   yet, so no twin traded. **Not done, by design:** no key added, mode stays `dry_live`, nothing sent.
   To go live the user adds `TARTAR_WALLET_KEY` + `TARTAR_LIVE_APPROVED`, sets `live_approved_on` and
   `mode: live` (handoff/autotrade.md "Going live").
+
+* **2026-10-10 ~01:45 UTC, retrain thread: recorder revival landed** (`tartar record --revive-hours H
+  --dormant FILE`, `recorder.yml` now `--revive-hours 48`, data README `raw-gha`). Idle or aged tokens
+  stay dormant until 48 h after launch; their next trade writes a `track` event with reason `revived`
+  and they are recorded again. No extra RPC calls (the program-wide stream already carries every
+  trade). Loaders unchanged (a token ends at its first untrack). Live 5-min check with a 30 s idle
+  limit: 130 launches, 27 revivals. 3 new tests.
 
 * **2026-10-10 ~01:45 UTC, retrain thread: edge hunt round I (pump.fun on new data) closed** (`edge-hunt.md` I).
   I1 revival entries: unobservable at a useful rate (the recorder drops tokens after 10 idle min;

@@ -191,18 +191,78 @@ class ChainRecorder(Recorder):
     `track_minutes`, or until it goes quiet for `idle_minutes`.
     """
 
-    def __init__(self, out_dir: str | Path, *, urls: tuple[str, ...] | None = None, pumpswap_hours: float = 0.0, pool_idle_minutes: float = 30.0, **kwargs):
+    def __init__(
+        self,
+        out_dir: str | Path,
+        *,
+        urls: tuple[str, ...] | None = None,
+        pumpswap_hours: float = 0.0,
+        pool_idle_minutes: float = 30.0,
+        revive_hours: float = 0.0,
+        dormant: dict[str, tuple[float, str]] | None = None,
+        **kwargs,
+    ):
         kwargs.pop("url", None)
         kwargs.pop("api_key", None)
         super().__init__(out_dir, **kwargs)
         self.urls = urls
         self.on_status = None  # optional callback for connection problems
+        # Revival (0 = off): a token untracked for going idle or reaching `track_minutes` stays
+        # *dormant* until `revive_hours` after its launch. Its next trade re-tracks it (a `track`
+        # event with reason "revived", its launch time and creator), for `track_minutes` or until it
+        # goes idle again. The program-wide stream already carries every trade, so this costs no
+        # RPC calls. `dormant` (mint -> (launch time, creator)) carries the set over from an earlier run.
+        self.revive_seconds = revive_hours * 3600.0
+        self.dormant: dict[str, tuple[float, str]] = dict(dormant or {})
+        self._born: dict[str, tuple[float, str]] = {}  # tracked mints' launch time and creator
+        self._last_prune = 0.0
         # After graduation: each token's canonical PumpSwap pool, recorded for `pumpswap_hours`
         # (0 = off) or until `pool_idle_minutes` pass without a trade.
         self.pumpswap_seconds = pumpswap_hours * 3600.0
         self.pool_idle_seconds = pool_idle_minutes * 60.0
         self.pools: dict[str, _Pool] = {}
         self.swaps = 0
+
+    def handle(self, msg: dict) -> None:
+        if self.revive_seconds > 0:
+            mint, kind = msg.get("mint"), msg.get("txType")
+            if kind in ("buy", "sell") and mint not in self.tracked and mint in self.dormant and len(self.tracked) < self.max_tokens:
+                created, creator = self.dormant.pop(mint)
+                now = self.clock()
+                self.tracked[mint] = _Tracked(now, now)
+                self._born[mint] = (created, creator)
+                self._emit({"e": "track", "t": now, "mint": mint, "reason": "revived", "created": created, "creator": creator})
+            super().handle(msg)
+            if kind == "create" and mint in self.tracked:
+                self._born[mint] = (self.tracked[mint].created, msg.get("traderPublicKey") or "")
+            return
+        super().handle(msg)
+
+    def _untrack(self, mints: list[str], reason: str) -> list[str]:
+        if self.revive_seconds > 0:
+            now = self.clock()
+            for mint in mints:
+                born = self._born.pop(mint, None)
+                if reason in ("idle", "age") and mint in self.tracked:
+                    created, creator = born or (self.tracked[mint].created, "")
+                    if now - created < self.revive_seconds:
+                        self.dormant[mint] = (created, creator)
+        return super()._untrack(mints, reason)
+
+    def _prune_dormant(self, now: float) -> None:
+        if self.revive_seconds > 0 and now - self._last_prune >= 60.0:
+            self._last_prune = now
+            self.dormant = {m: v for m, v in self.dormant.items() if now - v[0] < self.revive_seconds}
+
+    def dormant_state(self) -> dict[str, tuple[float, str]]:
+        """Every token a later run may still revive: the dormant ones and those tracked now."""
+        now = self.clock()
+        state = {m: v for m, v in self.dormant.items() if now - v[0] < self.revive_seconds}
+        for mint, tracked in self.tracked.items():
+            created, creator = self._born.get(mint, (tracked.created, ""))
+            if now - created < self.revive_seconds:
+                state[mint] = (created, creator)
+        return state
 
     def _pools_wanted(self) -> dict:
         from ..feeds.pumpswap import swap_events_from_logs
@@ -318,6 +378,7 @@ class ChainRecorder(Recorder):
                     idle = [m for m, s in self.tracked.items() if m not in expired and now - s.last > self.idle_seconds]
                     self._untrack(expired, "age")
                     self._untrack(idle, "idle")
+                    self._prune_dormant(now)
                     self._expire_pools(now)
                     self._pending.clear()  # nothing to subscribe to: the stream carries every token
                     self.writer.flush()
