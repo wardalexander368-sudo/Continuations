@@ -156,12 +156,14 @@ def quote(inp: str, out: str, amount: int, pump_only: bool) -> dict:
     params = {"inputMint": inp, "outputMint": out, "amount": amount, "slippageBps": 100}
     if pump_only:
         params["dexes"] = "Pump.fun Amm"
-    for attempt in range(4):
+    err = "no attempt"
+    for attempt in range(5):
         pace("jup", 1.1)
         try:
             r = http.get(JUP, params=params)
-            if r.status_code == 429:
-                time.sleep(3 * (attempt + 1))
+            if r.status_code != 200:
+                err = f"http {r.status_code} {r.text[:80]}"
+                time.sleep(2 * (attempt + 1))
                 continue
             q = r.json()
             if "outAmount" in q:
@@ -169,8 +171,9 @@ def quote(inp: str, out: str, amount: int, pump_only: bool) -> dict:
                         "impact": float(q.get("priceImpactPct") or 0)}
             return {"error": str(q)[:200]}
         except (httpx.HTTPError, ValueError) as exc:
-            err = str(exc)[:200]
-    return {"error": err if "err" in locals() else "rate limited"}
+            err = f"{type(exc).__name__} {str(exc)[:150]}"
+            time.sleep(2 * (attempt + 1))
+    return {"error": err}
 
 
 def load() -> dict:
@@ -194,6 +197,9 @@ def enter(st: dict, p: dict, bar_i: int, ret: float, bar_end: int, px: float | N
     for size in SIZES:
         for route, pump in (("best", False), ("pump", True)):
             legs[f"{route}:{size}"] = quote(SOL, p["mint"], int(size * 1e9), pump)
+    if not any("out" in v for v in legs.values()):
+        log(f"{p['name']}: dip {100 * ret:.1f}% but no Jupiter quote ({legs['best:0.1'].get('error')}); not counted")
+        return
     tr = {"key": f"{p['pool']}:{bar_i}", "pool": p["pool"], "mint": p["mint"], "name": p["name"], "signal_bar": bar_i,
           "ret": ret, "seen_lag_s": round(t0 - bar_end, 1), "quoted_lag_s": round(time.time() - bar_end, 1),
           "entry_px_sol": px, "exit_t": bar_i + H * BAR + BAR, "buy": legs}
