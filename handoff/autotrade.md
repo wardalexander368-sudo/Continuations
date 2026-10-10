@@ -108,6 +108,70 @@ Wednesdays 03:30 UTC, `python -m tartar.autotrade search` (`tartar/autotrade/sea
 its numbers are appended to `autotrade/search/tested.jsonl`. Promoted candidates are still shadow (no
 twins); making one eligible for live twins is a deliberate config change.
 
+## Perps risk controls (`perp_risk.py`, config `perp_risk`, from 2026-10-10)
+
+Applied to the paper book every run; live twins exit with their paper legs, so they are the live defaults:
+
+* **Weekly loss limit, 12%:** a perps strategy whose current-week P&L (closed legs of the week plus open
+  legs at marks) is below -12% of its side notional is flattened at its marks (20 bps per side, funding
+  carried) and stays flat until its next rebalance; logged as a `pause` change.
+* **Account drawdown stop, 35%:** when the registered perps strategies' combined P&L is more than 35% of
+  their combined side notional below its peak, the agent writes `HALT` and logs a halt (the Action fails,
+  so the owner is emailed). Delete `HALT` to resume.
+* **Sizing:** legs stay equal weight; inverse-volatility sizing cost return on every rule.
+
+The paper books of `xs_momentum` and `vol_momentum` now carry these controls; their official scorers
+(`xs_momentum_forward.py`, `vmom_forward.py`) score the registered rule without them and stay the authority.
+
+Scored on 146 weeks (late 2023 .. 2026-09, net of 20 bps/side and funding, $1 per side; stops act at
+daily closes, so a gap within a day can still overshoot), `handoff/experiments/perps_risk_controls.py`:
+
+## candidate L21 q10 vol lag2
+
+| Controls | Mean/wk | Worst week | Worst 4 wk | Max drawdown | Sharpe (ann.) |
+|---|---|---|---|---|---|
+| equal, no stop | +2.83% | -36.4% | -31.8% | 42% | 1.84 |
+| inv-vol cap 25% | +2.60% | -27.4% | -26.6% | 38% | 1.88 |
+| inv-vol cap 40% | +2.62% | -34.7% | -31.4% | 38% | 1.79 |
+| equal, weekly stop 8% | +2.40% | -24.5% | -38.6% | 39% | 1.60 |
+| inv-vol cap 40%, weekly stop 8% | +2.39% | -19.7% | -35.0% | 31% | 1.66 |
+| equal, weekly stop 12% | +2.92% | -24.5% | -29.1% | 31% | 1.98 |
+| inv-vol cap 40%, weekly stop 12% | +2.55% | -19.7% | -35.0% | 31% | 1.77 |
+| equal, weekly stop 20% | +2.78% | -28.0% | -38.7% | 47% | 1.81 |
+| inv-vol cap 40%, weekly stop 20% | +2.65% | -27.3% | -38.3% | 43% | 1.82 |
+
+## vol_momentum
+
+| Controls | Mean/wk | Worst week | Worst 4 wk | Max drawdown | Sharpe (ann.) |
+|---|---|---|---|---|---|
+| equal, no stop | +1.42% | -24.1% | -36.1% | 64% | 1.30 |
+| inv-vol cap 25% | +1.14% | -21.7% | -35.2% | 62% | 1.12 |
+| inv-vol cap 40% | +1.10% | -21.5% | -34.7% | 62% | 1.09 |
+| equal, weekly stop 8% | +1.39% | -21.8% | -29.3% | 62% | 1.29 |
+| inv-vol cap 40%, weekly stop 8% | +1.23% | -15.4% | -30.3% | 56% | 1.27 |
+| equal, weekly stop 12% | +1.31% | -21.8% | -32.6% | 63% | 1.18 |
+| inv-vol cap 40%, weekly stop 12% | +1.06% | -21.1% | -34.9% | 65% | 1.04 |
+| equal, weekly stop 20% | +1.35% | -24.5% | -36.1% | 64% | 1.20 |
+| inv-vol cap 40%, weekly stop 20% | +1.05% | -29.4% | -34.7% | 62% | 1.00 |
+
+## xs_momentum
+
+| Controls | Mean/wk | Worst week | Worst 4 wk | Max drawdown | Sharpe (ann.) |
+|---|---|---|---|---|---|
+| equal, no stop | +1.03% | -30.8% | -39.9% | 58% | 0.79 |
+| inv-vol cap 25% | +0.78% | -29.4% | -42.6% | 53% | 0.63 |
+| inv-vol cap 40% | +0.65% | -25.3% | -42.8% | 54% | 0.55 |
+| equal, weekly stop 8% | +0.73% | -17.3% | -34.2% | 54% | 0.57 |
+| inv-vol cap 40%, weekly stop 8% | +0.26% | -19.1% | -35.7% | 59% | 0.22 |
+| equal, weekly stop 12% | +1.10% | -18.0% | -32.1% | 58% | 0.88 |
+| inv-vol cap 40%, weekly stop 12% | +0.57% | -19.1% | -37.8% | 53% | 0.49 |
+| equal, weekly stop 20% | +1.08% | -25.2% | -40.0% | 58% | 0.84 |
+| inv-vol cap 40%, weekly stop 20% | +0.62% | -29.6% | -42.9% | 54% | 0.52 |
+
+The chosen default (equal weight, weekly stop 12%) keeps the mean weekly return and cuts the worst week by a
+quarter to a third; it does not remove large drawdowns over several weeks (31-63% at 1x), which is what the
+account stop and small live legs are for. The account stop would have fired in each rule's history.
+
 ## Health (`health.yml`, hourly)
 
 `python -m tartar.autotrade health` (`health.py`) checks the repo's unattended jobs and writes

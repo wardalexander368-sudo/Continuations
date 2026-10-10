@@ -158,6 +158,16 @@ def run_once(root: Path = ROOT, now: float | None = None, strategies: dict | Non
             if pos.id in marks:
                 pos.mark_price, pos.mark_at = marks[pos.id]
 
+    # perps risk controls (perp_risk.py): weekly loss limit per strategy, then the account drawdown stop
+    from . import perp_risk
+
+    prc = config.get("perp_risk", {})
+    for intent in perp_risk.weekly_stops(ledger, strategies, now, prc, http):
+        rec = ledger.strategy(intent.strategy)
+        k = _apply(intent, rec, ledger, risk, _broker(config, rec["status"], ledger, intent.strategy, now, root), now,
+                   exit_broker=lambda: _exit_broker(config, ledger, root, now))
+        summary[k] = summary.get(k, 0) + 1
+    perp_risk.account_drawdown(ledger, config, root, now, prc)
     why = risk.kill_reason()
     if why and risk.limits.get("flatten_on_halt"):
         for pos in list(ledger.positions):
