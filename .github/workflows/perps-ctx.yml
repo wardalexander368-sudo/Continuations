@@ -18,6 +18,7 @@ concurrency:
 jobs:
   snapshot:
     runs-on: ubuntu-latest
+    timeout-minutes: 20  # a hung job stops here instead of holding a runner for the 6 h default
     steps:
       - uses: actions/checkout@v4
         with:

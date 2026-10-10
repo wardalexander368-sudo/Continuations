@@ -6,6 +6,12 @@
 > Threads holding local commits: `git remote set-url origin https://github.com/wardalexander368-sudo/Continuations`,
 > `git fetch origin && git rebase origin/main`, then push.
 
+> **ACTIONS TERMS CHECK (2026-10-10 21:15 UTC):** `handoff/reviews/tos-check-2026-10-10.md`. The 24/7
+> `recorder` (Solana stream, ~1 GB/day to Releases) and the always-on 5-minute `autotrade` loop are the
+> pattern GitHub's Actions terms bar ("serverless application", "burden disproportionate") and a plausible
+> cause of the StaticPush7217 suspension. Recommended to AJ: disable `recorder`, move `autotrade` to a plain
+> hourly cron. Don't add new always-on or high-volume Actions.
+
 Two Claude sessions on different accounts take turns on this repo. When one
 hits its usage limit, the other continues. Their turns can overlap a little,
 so this file is the shared board: who is working, on what, and what comes
