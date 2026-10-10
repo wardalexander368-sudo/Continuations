@@ -32,6 +32,14 @@ next. Topic documents hold the detail:
 
 ## Active
 
+* **HLP dry twin (curve-model retrain thread)** (since 2026-10-10 04:00 UTC, branch
+  `claude/project-thread-6oh2s6`). **Paper and dry only, no keys, no money.** Strategy review rec. 2: make
+  `hlp_hold` promotion-ready like the hedged JLP: a dry twin of the HLP vault deposit (priced from the
+  vault's live state, rolled across the paper intervals, withdrawn at the end), the gated live sender
+  (`vaultTransfer`, behind `gate.py`), limits and kill switches, tests, `autotrade.md`. Touches a new
+  `tartar/autotrade/vault.py`, a vault branch in `broker.py`, and `strategies/vault_hold.py` (roll flag).
+  Leaves the perp/SOL senders and the cadence alone.
+
 * **Hyperliquid open-interest study (second TARTAR session)** (since 2026-10-10 03:45 UTC, branch
   `claude/project-thread-kytb6q`). **Paper only, no keys.** Cross-sectional and majors OI rules on
   Hyperliquid perps. Hyperliquid keeps no OI history, so history = OKX daily OI (public, from 2024-01)
