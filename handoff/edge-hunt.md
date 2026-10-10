@@ -195,6 +195,25 @@ commission) earned in every split (+1.33%/month [+0.18, +2.70] in test; 2025 +19
 falling as it grows), so holding it against a 5% cash hurdle is **pre-registered** for 180 days:
 `preregistration/hlp-hold/SPEC.md`, scorer `experiments/edge-hunt/vaults/hlp_forward.py`.
 
+### I. Calendar and risk-shape rules on perps (2026-10-10, trading-skills thread): closed
+
+Round 3 brief (coordinator, under the user's "keep idle threads busy"): low-cost venues, families
+not yet tested. Already covered elsewhere, so not redone: cross-venue funding (A3), new HL listings
+(Round 2 F1), token unlocks (F4: no free calendar), LST carry and the LST loop (A2). 36 rules:
+* **Day of week and weekend on BTC/ETH/SOL** (`perps/perp_rules2.py`, DOW, 16 rules, 10 bps/side):
+  chosen "long Wednesday" (train +0.61%/week, validation +0.63%) **fails in test, −0.20% [−1.04,
+  +0.74]**. Weekends: long Fri→Sun close +0.21% train, +0.46% validation, not chosen (lower train).
+* **Lottery (MAX), idiosyncratic volatility, betting against beta, skewness** (same script, weekly
+  quintiles on D's universe, 1-day lag, 8 rules): only IVOL L=56 has train and validation positive;
+  **test −0.46%/week [−2.07, +1.22]**. The others disagree between train and validation.
+* **Weekend "CME gap"** (`perps/weekend_gap.py`, Binance hourly 2020-26 as a stand-in for HL,
+  12 rules): gaps don't fill (fading loses in validation at every size and hold); following them
+  for 24 h won in validation (+1.2–1.8%) but lost in train. Chosen rule: validation disagrees.
+* **Lending-rate rotation** (USDC across Solana lenders by trailing APY), judged without a run:
+  DefiLlama only lists today's surviving pools, the higher rates pay for credit risk (OnRe, Huma),
+  and the gain over Jupiter Lend's ~4–5% would be a point or two on idle cash. Dropped.
+Outputs: `data/edge-hunt/perps/perp-rules2.txt`, `weekend-gap.txt`.
+
 ### H. Polymarket biases (2026-10-10, trading-skills thread): closed, nothing passes
 
 12,379 resolved Polymarket markets with volume ≥ $200k (random sample of the ~72k listed since
@@ -307,6 +326,7 @@ Round 2 has nothing registered; F2 (funding-spike shorts) stays on hold.
 * (added) **E1, pump.fun revenue surprise -> PUMP perp:** both halves positive after costs, each
   ~1.7 SE, beyond-trend part positive. **Forward test registered** (180 days, hourly Action).
   E1b: the same rule on 8 other buyback tokens is flat (family −0.01%/day), so lower the prior.
+* (added) **I, calendar / lottery / low-vol / beta / skew / CME gap on perps:** 36 rules, none passes (closed).
 * (added) **H, Polymarket biases:** 33 rules, nothing passes (closed).
 * (added) **G, HLP holding:** +11–28% a year in recent halves vs a 5% hurdle, thin and decaying.
   **Forward test registered** (180 days, free). Following past-winner vaults: closed.

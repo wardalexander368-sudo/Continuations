@@ -1,0 +1,15 @@
+{'BTCUSDT': 59129, 'ETHUSDT': 59129, 'SOLUSDT': 53783}
+  FADE   |gap|>=1% hold 24h: train -0.26% [-0.89,+0.40] n396  val -1.66% [-2.40,-0.87] n103
+  FADE   |gap|>=1% hold 72h: train -0.70% [-1.65,+0.25] n396  val -0.04% [-1.18,+1.18] n103
+  FADE   |gap|>=2% hold 24h: train -0.28% [-1.13,+0.57] n287  val -1.61% [-2.60,-0.58] n64
+  FADE   |gap|>=2% hold 72h: train -0.72% [-1.96,+0.50] n287  val +0.16% [-0.96,+1.46] n64
+  FADE   |gap|>=4% hold 24h: train -0.01% [-1.19,+1.25] n167  val -2.16% [-3.68,-0.48] n34
+  FADE   |gap|>=4% hold 72h: train -0.45% [-2.13,+1.35] n167  val -0.41% [-2.09,+1.63] n34
+  FOLLOW |gap|>=1% hold 24h: train -0.14% [-0.80,+0.49] n396  val +1.26% [+0.47,+2.00] n103
+  FOLLOW |gap|>=1% hold 72h: train +0.30% [-0.65,+1.25] n396  val -0.36% [-1.58,+0.78] n103
+  FOLLOW |gap|>=2% hold 24h: train -0.12% [-0.97,+0.73] n287  val +1.21% [+0.18,+2.20] n64
+  FOLLOW |gap|>=2% hold 72h: train +0.32% [-0.90,+1.56] n287  val -0.56% [-1.86,+0.56] n64
+  FOLLOW |gap|>=4% hold 24h: train -0.39% [-1.65,+0.79] n167  val +1.76% [+0.08,+3.28] n34
+  FOLLOW |gap|>=4% hold 72h: train +0.05% [-1.75,+1.73] n167  val +0.01% [-2.03,+1.69] n34
+-> chosen ('FOLLOW', 0.02, 72): validation disagrees or train <= 0; test not read
+rules tried: 12, cost 10 bps/side

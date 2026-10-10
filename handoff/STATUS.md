@@ -409,6 +409,12 @@ deep pools match the model, a thin one was 2.4x it). The `launch_selector` slot 
   README replaces the placeholder). Full-history secrets scan: only public Solana tx signatures and a
   simulated `dry_wallet.json`; no keys. Other threads: rebase local commits onto `origin/main` and push.
 
+* **2026-10-10 ~16:30 UTC, trading-skills thread (round 3, low-cost venues): nothing passes,
+  closed** (`edge-hunt.md` §I). 36 new rules on perps: day of week and weekends, lottery, idio vol,
+  betting against beta, skewness, and weekend CME-gap fades/follows (Binance hourly 2020-26). The
+  two that reached test lost there (long Wednesday −0.20%/week, low idio vol −0.46%/week).
+  Cross-venue funding, listings, unlocks and LST spreads were already closed. Nothing for `autotrade/`.
+
 * **2026-10-10 ~02:45 UTC, JLP leg + go-live thread: the live path is complete; checklist written.**
   The hedged basket's JLP leg now has a live sender (`usd_spot.LiveUsdSpotExecutor`: USDC to JLP on
   Jupiter, the same gated and checked path as the SOL twins), with pending orders, adopt-on-retry and
