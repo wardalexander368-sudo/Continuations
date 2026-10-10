@@ -1,11 +1,11 @@
 {
- "checked_at": 1791669422.2894015,
+ "checked_at": 1791673025.5720599,
  "status": "red",
  "items": [
   {
    "check": "Action autotrade.yml",
-   "level": "yellow",
-   "detail": "no runs yet [the agent, hourly]"
+   "level": "green",
+   "detail": "the agent, hourly"
   },
   {
    "check": "Action paper-tests.yml",
@@ -25,22 +25,22 @@
   {
    "check": "Input: JLP snapshots",
    "level": "red",
-   "detail": "newest is 17.0 h old (max 9 h) in handoff/data/jlp-paper/snapshots.jsonl"
+   "detail": "newest is 18.0 h old (max 9 h) in handoff/data/jlp-paper/snapshots.jsonl"
   },
   {
    "check": "Input: dip cohorts",
    "level": "green",
-   "detail": "newest 18.9 h old"
+   "detail": "newest 19.9 h old"
   },
   {
    "check": "Input: pumpflow snapshots",
    "level": "green",
-   "detail": "newest 19.4 h old"
+   "detail": "newest 20.4 h old"
   },
   {
    "check": "Input: HL OI/funding snapshots",
    "level": "green",
-   "detail": "newest 0.9 h old"
+   "detail": "newest 1.9 h old"
   },
   {
    "check": "Agent",
