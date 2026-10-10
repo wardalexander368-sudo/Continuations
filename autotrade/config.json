@@ -36,7 +36,13 @@
       "kind": "dip",
       "enabled": true,
       "prereg": "handoff/preregistration/dip-rolling",
-      "size_usd": 200
+      "size_usd": 200,
+      "execution": {
+        "entry": "next_bar_close",
+        "route_fee_per_side": 0.01,
+        "version": "2026-10-10-real-fills",
+        "note": "paper fills at real-trading costs: two real 0.01 SOL round trips trailed the rule's gross by 5-6 points (handoff/data/real-fills/dip-report-2026-10-10.txt): entry at bar t+1's close for the 4-5 min signal latency, plus PumpPortal Lightning's 1%/side. The rule itself is unchanged."
+      }
     },
     "xs_momentum": {
       "kind": "xs_momentum",

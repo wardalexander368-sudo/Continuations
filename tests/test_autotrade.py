@@ -331,3 +331,39 @@ def test_quoted_net_return_uses_measured_impact():
     trade, _ = broker.close(pos, Intent("close", "fake", 2000, 1.0, "t", position_id=pos.id, cost=o.cost))
     assert trade.net_return == pytest.approx(-0.02)
     assert trade.meta["quoted_net_return"] == pytest.approx(-0.06)
+
+
+def test_dip_real_trading_execution_late_entry_and_route_fee(tmp_path):
+    prereg = write_dip_prereg(tmp_path)
+    t0 = 1_800_000_000 - 1_800_000_000 % 300
+    closes = [1.0] * 200
+    opens = [1.0] * 200
+    data = {"rows": None}
+
+    def bars(n):
+        return [[t0 + 300 * i, opens[i], 1, 1, closes[i], 1.0] for i in range(n)]
+
+    ex = {"entry": "next_bar_close", "route_fee_per_side": 0.01, "version": "2026-10-10-real-fills"}
+    strat = DipStrategy("dip", {"prereg": str(prereg), "_fetch": lambda ctx, pool: data["rows"], "execution": ex})
+    root = setup(tmp_path / "agent")
+    data["rows"] = bars(20)
+    run_once(root, now=t0 + 300 * 20, strategies={"dip": strat})
+    for i in range(30, 200):
+        closes[i] = opens[i] = 0.9
+    closes[31] = 0.92  # bar t+1 rebounds before the real buy lands
+    for i in range(32, 200):
+        opens[i] = closes[i] = 0.92
+    data["rows"] = bars(41)
+    run_once(root, now=t0 + 300 * 41, strategies={"dip": strat})
+    (pos,) = Ledger(root).positions
+    assert pos.entry_at == t0 + 300 * 32 and pos.entry_price == pytest.approx(0.92)
+    assert pos.meta["registered_entry_price"] == pytest.approx(0.9) and pos.meta["route_fee"] == 0.01
+    changes = [c for c in Ledger(root).changes() if c["kind"] == "cost_update"]
+    assert len(changes) == 1 and changes[0]["to"] == "2026-10-10-real-fills"
+    data["rows"] = bars(120)
+    run_once(root, now=t0 + 300 * 120, strategies={"dip": strat})
+    (trade,) = Ledger(root).trades()
+    side_cost = 200 * (0.015 + 200 / 50_000) + 0.05  # registered fee + 1% route, impact, network
+    assert trade.pnl_usd == pytest.approx(-2 * side_cost)
+    assert strat.registered_net(trade) > strat.spec_net(trade) + 0.03  # +2.2% rebound and 2 x 1% route fee
+    assert len([c for c in Ledger(root).changes() if c["kind"] == "cost_update"]) == 1  # logged once

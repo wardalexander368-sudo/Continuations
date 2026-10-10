@@ -120,6 +120,13 @@ def run_once(root: Path = ROOT, now: float | None = None, strategies: dict | Non
             describe = getattr(strat, "describe", None)
             ledger.change({"t": now, "kind": "registered", "scope": name, "reason": "first run under this rule",
                            "rule": describe() if describe else {}, "prereg": getattr(strat, "prereg", "")})
+        describe = getattr(strat, "describe", None)
+        desc = describe() if describe else {}
+        if desc.get("costs_version") != rec.get("costs_version"):  # a strategy's cost or execution model changed
+            if desc.get("costs_version"):
+                ledger.change({"t": now, "kind": "cost_update", "scope": name, "reason": desc.get("change_note") or "cost model updated",
+                               "from": rec.get("costs_version"), "to": desc.get("costs_version"), "rule": desc})
+            rec["costs_version"] = desc.get("costs_version")
         if rec["status"] == "halted":
             continue
         mine = [p for p in ledger.positions if p.strategy == name]
@@ -339,7 +346,7 @@ def write_report(root: Path, ledger: Ledger, strategies: dict, now: float, risk:
         lines += ["## Recent changes", ""]
         for c in reversed(changes):
             what = f"{c.get('from')} → {c.get('to')}" if c.get("kind") == "status" else c.get("kind")
-            if c.get("kind") == "registered" and "~" in c.get("scope", ""):
+            if c.get("kind") in ("registered", "cost_update") and "~" in c.get("scope", ""):
                 continue  # variant registrations: see changes.jsonl
             lines.append(f"* {fmt_t(c['t'])} **{c.get('scope')}** {what}: {c.get('reason')}")
         lines.append("")
