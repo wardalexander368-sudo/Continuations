@@ -50,7 +50,7 @@ def update():
         with f.open("a") as fh:
             for x in new:
                 fh.write(f"{x['t'] // 1000},{x['o']},{x['h']},{x['l']},{x['c']}\n")
-        time.sleep(0.3)
+        time.sleep(1.5)  # a first backfill is ~100 weight per coin; stay under 1200 per minute per IP
     print(f"hl-1h: updated {len(COINS)} coins to hour {now_h}")
 
 
