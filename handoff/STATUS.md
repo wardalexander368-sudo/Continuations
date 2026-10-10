@@ -15,10 +15,9 @@
 > Enable to undo) and the running recorder job was cancelled; `autotrade` is one run per hourly job; health no
 > longer checks the recorder. The F1 forward test has no new pump.fun data from 21:05 UTC.
 
-Two Claude sessions on different accounts take turns on this repo. When one
-hits its usage limit, the other continues. Their turns can overlap a little,
-so this file is the shared board: who is working, on what, and what comes
-next. Topic documents hold the detail:
+Claude threads in the TarTrade project work in parallel lanes. This file is the shared board: who is
+working, on what, and what comes next. Topic documents hold the detail (`handoff/autotrade.md` for the
+agent, `handoff/edge-hunt.md` for research):
 
 * `handoff/candle-prediction-agent.md`: the predictor (architecture, data,
   model results, open problems)
@@ -26,118 +25,45 @@ next. Topic documents hold the detail:
 
 ## Protocol
 
-1. **Start of a turn:** `git fetch origin && git checkout main && git pull`.
-   Read this file, then the topic document for your task.
-2. **Claim before working.** Under *Active*, write your session label, the
-   UTC start time, the task (from *Queue*) and your branch. Commit and push
-   that straight to `main` (`git commit -m "STATUS: claim …"`). If someone
-   else's claim is under 3 hours old, take a different task.
-3. **Work on a branch** `claude/<topic>` from `main`. Push after every unit
-   that passes `pytest`. Nobody gets a warning before a usage limit, so
-   unpushed work can be lost at any moment.
-4. **Land finished units on `main`**: merge `main` into your branch, run
-   `pytest`, then fast-forward `main` (`git push origin HEAD:main`). Never
-   force-push `main`, and never rewrite a branch the other session pushed.
-5. **Keep this file current as you go**, not only at the end: move items
-   between *Queue*, *Active* and *Done*, and add a *Log* entry. On a
-   conflict in this file, keep both sides' entries.
-6. **Leaving** (limit near, or a natural stop): push the branch, land what
-   passes tests, clear your *Active* line, add a *Log* entry saying exactly
-   where you stopped and what is half-done.
+Every Claude session is a thread in the TarTrade project; the coordinator (the project's channel
+session) is the only one that pushes to `main` (AJ, 2026-10-10 20:47 UTC).
+
+1. **Start:** `git fetch origin && git checkout -B <your branch> origin/main`. Read this file and
+   project memory, then the topic document for your task.
+2. **Claim before working:** say so in your thread; the coordinator records it under *Active*. Don't
+   take work another lane holds.
+3. **Finish a step:** rebase on `origin/main`, run `pytest`, write a git bundle to
+   `/mnt/project-files/handoff-bundles/<lane>-<UTC time>.bundle` (state its base and head commits), and
+   message the coordinator with the path and merge notes. Don't push `main` yourself.
+4. **The coordinator** secrets-scans and pushes the bundle (the repo is PUBLIC: never commit keys), then
+   tells the thread it landed. Merge rule: keep `main`'s side for the live paper book files
+   (`autotrade/{state.json,journal.jsonl,trades.jsonl,equity.jsonl,REPORT.md,health.json,changes.jsonl}`);
+   keep both sides in this file.
+5. **Log** each landed step with one entry under *Log* (newest first). Keep edits here small: other
+   threads append too.
+6. **Actions:** no always-on or self-restarting jobs (`handoff/reviews/tos-check-2026-10-10.md`).
+   Real SOL or real orders need AJ's go in words.
 
 ## Active
 
-* **Funding-spike shorts on Hyperliquid perps, edge hunt F2 (curve-model retrain thread)** (since
-  2026-10-10 05:15 UTC, branch `claude/project-thread-6oh2s6`). **Paper only, no keys.** Round 2's held item:
-  per coin, short the perp after its funding spikes far above its own history (crowded longs), hedged
-  against the equal-weight market, hold days to weeks. Design written in `preregistration/funding-spike/`
-  before any number is read; D's universe, splits (train 2023-07..2025-03, val 2025-04..12, test 2026),
-  20 bps/side, 1-day lag, funding charged. Not D2 (cross-section, closed) or spot carry (E thread). A dry
-  paper strategy only if validation and test both clear. Writes `experiments/edge-hunt/fundspike/`.
+Lanes as of 2026-10-10 23:30 UTC (all paper only; the old claims were cleared by the system audit, see
+the Log). Owner thread names are the project's thread titles.
 
-* **Token-unlock shorts on Hyperliquid perps (second TARTAR session)** (since 2026-10-10 05:05 UTC, branch
-  `claude/project-thread-kytb6q`). **Paper only, no keys.** Reopens edge-hunt F4, which was dropped as "no free
-  data". DefiLlama's free `defillama-datasets.llama.fi/emissions/<slug>` serves the unlock schedules. Plan:
-  pre-register event rules (insider cliff unlocks, size vs supply, entry/exit windows), short the perp vs an
-  equal-weight long, then score after 20 bps/side per leg + funding on D's splits. A dry paper strategy only if
-  it clears. Writes `handoff/experiments/edge-hunt/unlocks/` and `handoff/preregistration/unlocks/`.
+* **Continue TARTAR handoff session:** owns `autotrade/` and `tartar/autotrade/` (the hourly agent).
+  Next: the system audit's sections 1-2 (`handoff/reviews/system-audit-2026-10-10.md`).
+* **Real-money cost test, fresh key:** holds the wallet (0.0466 SOL, no spending). Work done and on `main`.
+* **Improve the agent's trading skills:** intraday hunt done; wick-bounce pre-registered (paper from 10-12).
+* **Continue Jev cost handoff session:** scheduled scoring routines: 10-14 HL cost rescore, 10-24 jevtrader
+  readout, 10-30 dip forward test, 2027-01-08 hedged JLP, 2027-10-21 momentum. Each hands a bundle to the
+  coordinator.
+* **Collectors (no session needed):** `paper-tests.yml` (JLP every 4 h, dip cohort daily),
+  `pumpflow-paper.yml`, `perps-ctx.yml` (OI/funding + HL 1h candles), `hl-book.yml`, `health.yml`,
+  weekly `autotrade-search.yml`. `recorder.yml` and `pumpflow-live.yml` are off (manual runs only).
+* **No owner yet:** the pumpflow forward test's scoring (after 2027-04-08, `pumpflow_paper.py evaluate
+  --final`) and the F1 who-trades forward test (`preregistration/who-trades-forward/`; it has no new
+  pump.fun data since the recorder stopped 10-10 21:05 UTC). The coordinator assigns or closes them.
 
-* **Edge hunt E thread** (project thread session, since 2026-10-09 21:40 UTC, branch
-  `claude/project-thread-9op3pf`). **Paper only, no real SOL, no keys.** Task (the user's 21:30
-  "work continuously"): edge hunt angle E, TARTAR's assets, beyond the closed predictor + P(rug)
-  rule (§3.20). First lead, E1: pump.fun's own activity (daily fees/revenue, which fund PUMP
-  buybacks; our decoder sees the same flow live) as a signal for cheap-to-trade Hyperliquid perps
-  (PUMP, SOL, memecoin perps), train/test by time after costs and funding; pre-register a forward
-  test if it holds. Doesn't touch the retrain thread's judging or the forward tests.
-  **22:15 UTC: E1 pre-registered** (`handoff/preregistration/pumpflow/SPEC.md`, edge-hunt.md §E1):
-  long/short the Hyperliquid PUMP perp on sign(log(pump.fun+PumpSwap revenue_d / its 7-day mean)),
-  entering when DefiLlama first publishes day d; backtest +0.76%/day train, +0.95% test after
-  0.10%/side + funding, both ~1.7 SE. 180-day paper test from 2026-10-10; the hourly Action
-  `pumpflow-paper.yml` records snapshots, no session needed; score `pumpflow_paper.py evaluate
-  --final` after 2027-04-08 (report-only look 2027-01-08). This thread owns the scoring.
-
-* **Agent-machinery thread** (project thread session, since 2026-10-09 21:30 UTC, branch
-  `claude/project-thread-12sv1q`). **Paper only, no real SOL, no keys.** The automated agent is
-  live: `tartar/autotrade/`, hourly Action `autotrade.yml`, state and `REPORT.md` in `autotrade/`,
-  guide `handoff/autotrade.md`. Since v1 (21:45 UTC): halts fail the Action (owner is emailed),
-  `equity.jsonl` per run, dip net at measured pool fees, 8 self-registered shadow variants of the
-  dip rule (Bonferroni-scored, outside the risk caps), and a Jupiter execution check that measures
-real-route impact against a $1 probe and re-prices each closed trade at it (`quoted_net_return`;
-deep pools match the model, a thin one was 2.4x it). The `launch_selector` slot is ready for the
-  trading-skills thread (signals file, `handoff/autotrade.md`). Don't run it locally against
-  `autotrade/`. **Since 01:25 UTC 10-10 (AJ: keep working, no go-aheads needed):** the agent's own
-  weekly candidate search (`search.py`, `autotrade-search.yml`, Wednesdays 03:30 UTC; queue in
-  `autotrade/candidates/`, report `autotrade/search/REPORT.md`), and `vol_momentum` + `hlp_hold`
-  wired into the agent. First run 03:15 UTC: 94 rules tested, 1 survivor queued
-  (`cand-xsm-L21-q10-vol-mon-lag2`, paper from 10-17). Funding cache filled; the Action continues it.
-
-* **Recorder thread** (project thread session, since 2026-10-09 20:20 UTC, branch
-  `claude/project-thread-9op3pf`). Task (the user's 20:12 go, continuous profit work): a raw
-  recorder that no Claude session has to keep alive. Plan: a GitHub Action (`recorder.yml`)
-  running `tartar record --track-minutes 120 --pumpswap-hours 4` (processed commitment) in
-  back-to-back ~6 h runs, uploading each finished hour as a GitHub Release asset (not git: ~40 MB/h),
-  plus a fetch script that lays the hours out per run for the loaders. Paper data only, no keys.
-  **20:30 UTC: landed** (`.github/workflows/recorder.yml`, `handoff/experiments/fetch_gha_raw.py`,
-  data README `raw-gha`). **21:01 UTC: working.** First run (37986175087) from 20:33 UTC; hour 20
-  uploaded (17 MB for 27 min: 1,209 curve launches, 34 PumpSwap pools, loads fine). Runs need no
-  Claude session; the cron chains them. Other sessions: don't keep a recorder alive for training
-  data, run `python3 handoff/experiments/fetch_gha_raw.py --dirs` and pass the printed dirs to `--raw`.
-
-* **Curve-model retrain thread** (project thread session, branch `claude/project-thread-6oh2s6`):
-  v3.2 and PumpSwap 5m installed. **Owns the F1 forward test** (registered 00:50 UTC 10-10,
-  `handoff/preregistration/who-trades-forward/`): §3.25's concentrated-seller dip re-tested with
-  power on launches created 10-10 01:00 .. 10-19 01:00 UTC from the recorder Action's hours; no
-  session needed to collect; this thread scores it once after 10-19 02:00 UTC
-  (`who_trades_forward.py`; `--count-only` is a progress check). Paper only.
-  **Owns the recorder Action's revival change** (coordinator, 01:26 UTC 10-10; the recorder thread is
-  on the Hyperliquid sender): `--revive-hours 48 --dormant` keeps idle tokens dormant 48 h after
-  launch and records them again when they trade; dormant set carried between runs by the Actions
-  cache. Next: pre-register wake-up rules once the Action has collected enough revivals.
-
-* **Dip/jevtrader session** (session_01Htqh7pc1Lh1PP6Dkm1rVvz, since 2026-10-09 17:33 UTC, `main`
-  only): continues the profitability session. **Owns the dip forward test (queue 11b)**: the GitHub
-  Action `.github/workflows/paper-tests.yml` adds a cohort at 02:24 UTC daily
-  (`established_cohort.py` + `pumpswap_fees.py --cohort`) and commits it; this session scores it
-  on 2026-10-30. **Owns the jevtrader day-28 readout (queue 12)**: a
-  routine checks on 2026-10-24. Other sessions: no need to add cohorts by hand any more.
-  **Owns the hedged-JLP paper forward test (queue 14, edge hunt A1)**, pre-registered
-  (`handoff/preregistration/jlp-hedged/SPEC.md`), window 2026-10-10 .. 2027-01-08: the same
-  Action runs `handoff/experiments/jlp_paper.py snapshot` every 4 h (:40) and commits
-  `handoff/data/jlp-paper/snapshots.jsonl`; score with `evaluate --final` on 2027-01-08.
-  Commits by `tartar-paper-tests` are this Action's; no Claude session is needed for either job.
-  **Owns the cross-sectional momentum forward test (edge hunt D)**, pre-registered
-  (`handoff/preregistration/xs-momentum/SPEC.md`): 14-day momentum, weekly long-short on every
-  Hyperliquid perp, signal Mondays 2026-10-12 .. 2027-10-11, scored from Hyperliquid history by
-  `handoff/experiments/xs_momentum_forward.py` (no live collection). Edge hunt C is closed.
-
-* **Handoff session** (session_01GAoiXJ4NHWXq6DnP61icSU, since 2026-10-09 13:28 UTC, branch
-  `claude/handoff-overview`). **PumpSwap models done** (15s/30s/1m installed, 5m not; predictor doc
-  §8.2.3) and `handoff/OVERVIEW.md` on `main`. Still in flight: recording `data/raw-v3` here since
-  13:31 UTC (`tartar record --source chain` (the default) `--track-minutes 120 --pumpswap-hours
-  4`, `SOLANA_COMMITMENT=processed`); finished hours go to `handoff/data/raw-v3/` (13–18 saved).
-  It dies when this session goes idle; if this line is still here after ~19:30 UTC, assume the
-  recorder stopped after hour 18 (hour 19 is partial and only on local disk). **Item (b) done
-  (19:10 UTC):** see the log entry. Nothing half-done.
+### Recent results (moved here from the old Active list)
 
 * **2026-10-10 20:20 UTC, "Real-money cost test, fresh key" thread: smallest account for the recommended
   perps book (go-live input for AJ; paper only). Answer: $1,000 is the floor where every order clears
@@ -559,6 +485,10 @@ deep pools match the model, a thin one was 2.4x it). The `launch_selector` slot 
   branch `claude/profitability-backtest`, on `main`).
 
 ## Log (newest first)
+
+* **2026-10-10 ~23:35 UTC, system audit thread: board cleaned** (coordinator's ask). *Protocol* rewritten to the
+  bundle routine (threads hand bundles to the coordinator, who pushes `main`); nine stale *Active* claims replaced by the
+  current lanes; the result entries that sat under *Active* are kept under "Recent results". The cleared claims stay in git history.
 
 * **2026-10-10 ~23:30 UTC, system audit thread: full audit written** (`handoff/reviews/system-audit-2026-10-10.md`).
   Suite on main is 281 pass / 0 fail with deps installed (the "43 failing" was a missing `solders` and env keys leaking
