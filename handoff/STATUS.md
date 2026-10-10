@@ -32,6 +32,12 @@ next. Topic documents hold the detail:
 
 ## Active
 
+* **JLP hedge liquidation stress test (edge hunt E thread)** (since 2026-10-10 04:50 UTC, branch
+  `claude/project-thread-9op3pf`). STRATEGY-REVIEW item 2: replay the worst SOL/ETH/BTC spike windows
+  through the registered hedged-JLP rules (3x shorts, 4-hourly check-ins, 5% drift) to see what would have
+  liquidated the shorts and what margin or cadence avoids it. Analysis only; doesn't change the running test.
+  Touches `handoff/experiments/edge-hunt/jlp_stress.py` and its output.
+
 * **Edge hunt E thread** (project thread session, since 2026-10-09 21:40 UTC, branch
   `claude/project-thread-9op3pf`). **Paper only, no real SOL, no keys.** Task (the user's 21:30
   "work continuously"): edge hunt angle E, TARTAR's assets, beyond the closed predictor + P(rug)
