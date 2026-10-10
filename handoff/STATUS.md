@@ -32,6 +32,13 @@ next. Topic documents hold the detail:
 
 ## Active
 
+* **Real-order sender thread** (project thread session, since 2026-10-10 01:25 UTC, branch
+  `claude/project-thread-kytb6q`). **No keys, no real transactions, mode stays dry_live.** Harden
+  the Solana spot senders in `tartar/autotrade/execution.py` (Jupiter, Lightning) behind the existing
+  live gate: pre-sign checks, definitive confirmation (blockhash expiry), unknown outcomes recorded
+  and halted, Lightning sells sized to the twin, simulation of both routes. Tests: unit, RPC
+  simulation with signature checks off, dry-run end to end.
+
 * **Edge hunt E thread** (project thread session, since 2026-10-09 21:40 UTC, branch
   `claude/project-thread-9op3pf`). **Paper only, no real SOL, no keys.** Task (the user's 21:30
   "work continuously"): edge hunt angle E, TARTAR's assets, beyond the closed predictor + P(rug)
