@@ -32,6 +32,13 @@ next. Topic documents hold the detail:
 
 ## Active
 
+* **Perp restart-safety thread** (project thread session, since 2026-10-10 01:50 UTC, branch
+  `claude/project-thread-kytb6q`). **No keys, no mainnet orders.** Extend `safety.py` to perp and
+  basket twins: one trader at a time; Hyperliquid orders recorded as pending with deterministic client
+  order IDs before sending, so a retry finds the earlier order instead of placing a second; a startup
+  check of Hyperliquid's real positions and open orders against the book that stops perps live
+  trading on any mismatch. Tests kill runs mid-order.
+
 * **Copy-trading Hyperliquid accounts (edge hunt E thread)** (since 2026-10-10 01:45 UTC, branch
   `claude/project-thread-9op3pf`). **Paper only, no keys.** Do accounts with a strong record keep
   paying when copied after fees, funding and a realistic delay? Public data only (leaderboard list,
