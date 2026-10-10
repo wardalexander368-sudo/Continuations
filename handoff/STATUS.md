@@ -78,8 +78,11 @@ deep pools match the model, a thin one was 2.4x it). The `launch_selector` slot 
   data, run `python3 handoff/experiments/fetch_gha_raw.py --dirs` and pass the printed dirs to `--raw`.
 
 * **Curve-model retrain thread** (project thread session, branch `claude/project-thread-6oh2s6`):
-  v3.2 and PumpSwap 5m installed; recalibration (§3.24) and edge hunt F (§3.25) closed. Picking
-  the next unclaimed profit item.
+  v3.2 and PumpSwap 5m installed. **Owns the F1 forward test** (registered 00:50 UTC 10-10,
+  `handoff/preregistration/who-trades-forward/`): §3.25's concentrated-seller dip re-tested with
+  power on launches created 10-10 01:00 .. 10-19 01:00 UTC from the recorder Action's hours; no
+  session needed to collect; this thread scores it once after 10-19 02:00 UTC
+  (`who_trades_forward.py`; `--count-only` is a progress check). Paper only.
 
 * **Dip/jevtrader session** (session_01Htqh7pc1Lh1PP6Dkm1rVvz, since 2026-10-09 17:33 UTC, `main`
   only): continues the profitability session. **Owns the dip forward test (queue 11b)**: the GitHub
@@ -379,6 +382,12 @@ deep pools match the model, a thin one was 2.4x it). The `launch_selector` slot 
   branch `claude/profitability-backtest`, on `main`).
 
 ## Log (newest first)
+
+* **2026-10-10 00:50 UTC, retrain thread: F1 forward test registered** (`preregistration/who-trades-forward/`).
+  The first F1 test was positive but underpowered (+1.1% [−6.3, +8.5], n 175); at ~40 signals per
+  hour of launches, 9 days of the recorder Action should give a ±1–1.5-point CI. Same rule and costs
+  (curve fees, the Jupiter / own-instructions route); window 10-10 01:00 .. 10-19 01:00 UTC; success =
+  CI lower bound > 0. Scorer `who_trades_forward.py`.
 
 * **2026-10-10 ~00:55 UTC, edge hunt E thread: hedged JLP runs in the agent with dry twins.**
   `strategies/jlp_hedged.py` (config `jlp_hedged`) books the paper-tests Action's 4-hourly JLP check-ins

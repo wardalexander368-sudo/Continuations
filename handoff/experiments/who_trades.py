@@ -246,7 +246,8 @@ def explore(launches):
 def test(spec_path, pkls):
     """The pre-registered rule (preregistration/who-trades/SPEC.json) on launches created >= its test_from, once."""
     spec = json.load(open(spec_path))
-    launches = [L for L in load(pkls) if L["created"] >= spec["test_from_unix"]]
+    until = spec.get("test_until_unix", float("inf"))
+    launches = [L for L in load(pkls) if spec["test_from_unix"] <= L["created"] < until]
     sig = dip_signals(launches, spec["peak_real_sol"], spec["dip"])
     rec = track_records(launches)
     feats = f1_f2(launches, sig, Scores(rec))
