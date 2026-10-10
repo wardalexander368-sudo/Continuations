@@ -1,61 +1,46 @@
 {
- "checked_at": 1791665864.995979,
+ "checked_at": 1791669422.2894015,
  "status": "red",
  "items": [
   {
    "check": "Action autotrade.yml",
    "level": "yellow",
-   "detail": "couldn't read runs: Client error '404 Not Found' for url 'https://api.github.com/repos/StaticPush7217/TARTAR/actions/workflows/autotrade.yml/runs?per_page=20'\nFor more information check: https://devel"
-  },
-  {
-   "check": "Action recorder.yml",
-   "level": "yellow",
-   "detail": "couldn't read runs: Client error '404 Not Found' for url 'https://api.github.com/repos/StaticPush7217/TARTAR/actions/workflows/recorder.yml/runs?per_page=20'\nFor more information check: https://develo"
+   "detail": "no runs yet [the agent, hourly]"
   },
   {
    "check": "Action paper-tests.yml",
-   "level": "yellow",
-   "detail": "couldn't read runs: Client error '404 Not Found' for url 'https://api.github.com/repos/StaticPush7217/TARTAR/actions/workflows/paper-tests.yml/runs?per_page=20'\nFor more information check: https://dev"
+   "level": "red",
+   "detail": "latest run failure (https://github.com/wardalexander368-sudo/Continuations/actions/runs/38085172068) [JLP check-ins every 4 h, dip cohort daily]"
   },
   {
    "check": "Action pumpflow-paper.yml",
-   "level": "yellow",
-   "detail": "couldn't read runs: Client error '404 Not Found' for url 'https://api.github.com/repos/StaticPush7217/TARTAR/actions/workflows/pumpflow-paper.yml/runs?per_page=20'\nFor more information check: https://"
+   "level": "green",
+   "detail": "pumpflow snapshots, hourly"
   },
   {
    "check": "Action perps-ctx.yml",
-   "level": "yellow",
-   "detail": "couldn't read runs: Client error '404 Not Found' for url 'https://api.github.com/repos/StaticPush7217/TARTAR/actions/workflows/perps-ctx.yml/runs?per_page=20'\nFor more information check: https://devel"
-  },
-  {
-   "check": "Action pumpflow-live.yml",
-   "level": "yellow",
-   "detail": "couldn't read runs: Client error '404 Not Found' for url 'https://api.github.com/repos/StaticPush7217/TARTAR/actions/workflows/pumpflow-live.yml/runs?per_page=20'\nFor more information check: https://d"
-  },
-  {
-   "check": "Recorder hours",
-   "level": "red",
-   "detail": "22 of the last 22 hours missing: 20261009-21, 20261009-22, 20261009-23, 20261010-00, 20261010-01, 20261010-02, 20261010-03, 20261010-04, 20261010-05, 20261010-06, 20261010-07, 20261010-08 \u2026"
+   "level": "green",
+   "detail": "Hyperliquid OI/funding snapshots, every 4 h"
   },
   {
    "check": "Input: JLP snapshots",
    "level": "red",
-   "detail": "newest is 16.0 h old (max 9 h) in handoff/data/jlp-paper/snapshots.jsonl"
+   "detail": "newest is 17.0 h old (max 9 h) in handoff/data/jlp-paper/snapshots.jsonl"
   },
   {
    "check": "Input: dip cohorts",
    "level": "green",
-   "detail": "newest 17.9 h old"
+   "detail": "newest 18.9 h old"
   },
   {
    "check": "Input: pumpflow snapshots",
    "level": "green",
-   "detail": "newest 18.4 h old"
+   "detail": "newest 19.4 h old"
   },
   {
    "check": "Input: HL OI/funding snapshots",
-   "level": "red",
-   "detail": "newest is 15.9 h old (max 9 h) in handoff/data/edge-hunt/hl-ctx"
+   "level": "green",
+   "detail": "newest 0.9 h old"
   },
   {
    "check": "Agent",
