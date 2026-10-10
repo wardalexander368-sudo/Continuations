@@ -74,6 +74,22 @@
         "min_trades": 100,
         "deadline_days": 30
       }
+    },
+    "vol_momentum": {
+      "kind": "xs_momentum",
+      "enabled": true,
+      "prereg": "handoff/preregistration/vol-momentum/SPEC.md",
+      "scaled": true,
+      "leg_usd": 1000
+    },
+    "hlp_hold": {
+      "kind": "vault_hold",
+      "enabled": true,
+      "prereg": "handoff/preregistration/hlp-hold/SPEC.md",
+      "size_usd": 200,
+      "start": "2026-10-12",
+      "end": "2027-04-10",
+      "hurdle_apr": 0.05
     }
   },
   "variants": [

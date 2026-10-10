@@ -1,5 +1,5 @@
 """python -m tartar.autotrade run | status | halt REASON | resume [STRATEGY] | halt-live REASON | resume-live [STRATEGY]
-       | preflight | health | dry-swap MINT [--sol 0.01] [--route lightning] | dry-perp COIN [--usd 12] [--side -1]   [--root autotrade]
+       | preflight | health | search | dry-swap MINT [--sol 0.01] [--route lightning] | dry-perp COIN [--usd 12] [--side -1]   [--root autotrade]
 
 halt-live stops new live twins (paper and exits keep running); preflight checks the live path without
 trading; dry-swap builds a real Jupiter (or Lightning, via trade-local) buy and sell for MINT and has the RPC simulate them (no key, nothing sent);
@@ -18,7 +18,7 @@ from .runner import ROOT, run_once
 
 def main(argv=None) -> int:
     ap = argparse.ArgumentParser(prog="python -m tartar.autotrade")
-    ap.add_argument("cmd", choices=("run", "status", "halt", "resume", "halt-live", "resume-live", "preflight", "dry-swap", "dry-perp", "health"))
+    ap.add_argument("cmd", choices=("run", "status", "halt", "resume", "halt-live", "resume-live", "preflight", "dry-swap", "dry-perp", "health", "search"))
     ap.add_argument("--sol", type=float, default=0.01)
     ap.add_argument("--route", default="jupiter", choices=("jupiter", "lightning"))
     ap.add_argument("--usd", type=float, default=12.0)
@@ -30,6 +30,11 @@ def main(argv=None) -> int:
     if a.cmd == "run":
         s = run_once(root)
         print(json.dumps({k: v for k, v in s.items()}, default=str))
+        return 0
+    if a.cmd == "search":
+        from .search import run as search
+
+        print(json.dumps(search(root), default=str))
         return 0
     if a.cmd == "health":
         from .health import run as health

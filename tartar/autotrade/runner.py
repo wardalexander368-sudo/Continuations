@@ -76,7 +76,12 @@ def run_once(root: Path = ROOT, now: float | None = None, strategies: dict | Non
     config["mode"] = config.get("mode", "paper")
     ledger = Ledger(root)
     risk = Risk(config, root, ledger)
-    strategies = build_strategies(config) if strategies is None else strategies
+    if strategies is None:
+        from .search import active_candidates
+
+        # candidates queued by the agent's own search (search.py), once their wait is over
+        config.setdefault("strategies", {}).update(active_candidates(root, now))
+        strategies = build_strategies(config)
     summary = {"at": now, "opened": 0, "closed": 0, "rejected": 0, "errors": {}}
     n_changes = len(ledger.changes())
 
@@ -253,15 +258,20 @@ def write_report(root: Path, ledger: Ledger, strategies: dict, now: float, risk:
     total = 0.0
     names = sorted(set(strategies) | set(ledger.state["strategies"]))
     variants = [n for n in names if "~" in n]
-    names = [n for n in names if "~" not in n]
-    for name in names + variants:
+    cands = [n for n in names if n.startswith("cand-")]
+    names = [n for n in names if "~" not in n and not n.startswith("cand-")]
+    for name in names + variants + cands:
         if name == (variants[0] if variants else None):
             lines += ["", "Shadow variants (research copies of a rule; scored with a family-wide CI; outside the risk caps):", "",
                       "| Variant | Status | Open | Closed trades | Mean net/trade | PnL (USD) | Score |", "|---|---|---|---|---|---|---|"]
+        if name == (cands[0] if cands else None):
+            lines += ["", "Candidates found by the agent's own search (autotrade/candidates/, autotrade/search/REPORT.md; "
+                      "paper, outside the risk caps):", "",
+                      "| Candidate | Status | Open | Closed trades | Mean net/trade | PnL (USD) | Score |", "|---|---|---|---|---|---|---|"]
         rec = ledger.strategy(name)
         tr = ledger.trades(name)
         pnl = sum(t.pnl_usd for t in tr)
-        total += 0.0 if "~" in name else pnl
+        total += 0.0 if "~" in name or name.startswith("cand-") else pnl
         mean = f"{100 * sum(t.net_return for t in tr) / len(tr):+.2f}%" if tr else "-"
         v = rec.get("verdict") or {}
         n_open = sum(1 for p in ledger.positions if p.strategy == name)
