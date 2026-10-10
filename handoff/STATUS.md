@@ -420,6 +420,17 @@ deep pools match the model, a thin one was 2.4x it). The `launch_selector` slot 
 
 ## Log (newest first)
 
+* 2026-10-10 16:30 UTC, agent-machinery thread: **stress test of the search's candidate**
+  `cand-xsm-L21-q10-vol-mon-lag2` (`handoff/experiments/candidate_stress.py`, output
+  `autotrade/search/stress-cand-xsm-L21-q10-vol-mon-lag2.txt`; in-sample over all 146 weeks, so
+  optimistic). It holds up: +2.83%/week as queued, +1.82% at 3x costs (60 bps/side), +2.14% a day
+  slower, positive on every neighbouring signal day, lookback and quantile; trimmed mean (each side's
+  best and worst leg dropped weekly) +3.08% vs +3.34% gross, both sides contribute. **Risk:** only ~4
+  legs a side (min 1) and a worst week of −36% of one side's notional, so a live version needs small
+  legs and a weekly loss cap. The coordinator's suggested Hyperliquid order path already exists
+  (edge hunt E thread, `hl_exchange.py`, testnet-checked); real testnet fills need an account with a
+  mainnet deposit (AJ). Not pushed until GitHub access returns (403 from ~15:50 UTC).
+
 * 2026-10-10 07:05 UTC, agent-machinery thread: **the agent's dip paper fills now use real-trading
   costs** (from the real fills above; config `execution`, `costs_version` 2026-10-10-real-fills,
   logged as `cost_update` in `autotrade/changes.jsonl` for dip and its 8 variants). Entry at bar

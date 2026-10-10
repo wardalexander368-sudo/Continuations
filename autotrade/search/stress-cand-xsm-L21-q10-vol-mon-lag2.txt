@@ -1,0 +1,18 @@
+candidate cand-xsm-L21-q10-vol-mon-lag2 (net of costs and funding unless noted; $1 per leg, long + short)
+
+as queued (20 bps/side)            146 wk  mean +2.83%/wk [+1.57, +4.11]  worst -36.4%  2023:+7.17 2024:+2.36 2025:+3.04 2026:+2.97
+costs 40 bps/side                  146 wk  mean +2.33%/wk [+1.06, +3.60]  worst -36.9%  2023:+6.67 2024:+1.80 2025:+2.56 2026:+2.50
+costs 60 bps/side                  146 wk  mean +1.82%/wk [+0.56, +3.10]  worst -37.5%  2023:+6.17 2024:+1.25 2025:+2.09 2026:+2.03
+no funding                         146 wk  mean +2.96%/wk [+1.69, +4.27]  worst -36.5%  2023:+7.43 2024:+2.50 2025:+3.25 2026:+2.98
+one day slower                     146 wk  mean +2.14%/wk [+0.86, +3.41]  worst -26.7%  2023:+7.99 2024:+2.18 2025:+1.96 2026:+2.02
+signal weekday 1                   146 wk  mean +1.55%/wk [+0.03, +3.08]  worst -26.5%  2023:+2.43 2024:+2.82 2025:+0.16 2026:+1.63
+signal weekday 2                   146 wk  mean +2.04%/wk [+0.59, +3.50]  worst -27.3%  2023:+5.74 2024:+3.75 2025:+0.91 2026:+1.10
+signal weekday 4                   146 wk  mean +2.26%/wk [+0.78, +3.73]  worst -37.4%  2023:-3.45 2024:+4.01 2025:+2.32 2026:+0.29
+lookback 18                        146 wk  mean +2.30%/wk [+0.85, +3.79]  worst -36.3%  2023:-10.51 2024:+1.35 2025:+3.15 2026:+3.11
+lookback 24                        146 wk  mean +1.71%/wk [+0.25, +3.14]  worst -63.2%  2023:-1.36 2024:+1.50 2025:+2.89 2026:+0.60
+quant 8                            146 wk  mean +2.19%/wk [+1.10, +3.33]  worst -40.5%  2023:+0.77 2024:+2.37 2025:+2.41 2026:+1.74
+quant 12                           146 wk  mean +3.56%/wk [+2.01, +5.20]  worst -40.5%  2023:+10.87 2024:+2.94 2025:+4.29 2026:+3.06
+
+candidate: legs/side median 4 (min 1, max 6); gross +3.34%/wk; trimmed +3.08% (124 wk); median leg +2.92%; long side +1.76%, short side +1.58%; without its 5 best weeks +2.29%
+vol_momentum: legs/side median 8 (min 3, max 13); gross +1.90%/wk; trimmed +1.31% (146 wk); median leg +0.92%; long side +1.28%, short side +0.62%; without its 5 best weeks +1.21%
+xs_momentum: legs/side median 8 (min 3, max 13); gross +1.49%/wk; trimmed +1.12% (146 wk); median leg +0.48%; long side +0.74%, short side +0.74%; without its 5 best weeks +0.61%
