@@ -272,6 +272,13 @@ followability filters), then copy their perp positions Aug 20-Oct 9 at the same 
 (median +0.11%, 90th percentile +0.34%). Same at 0.20%/side or one more candle of delay. A good record doesn't
 carry over; no forward test (`preregistration/hl-copy/RESULT-2026-10-10.md`).
 
+**E3. Spot-perp funding carry on Hyperliquid: does not hold (2026-10-10).**
+Pre-registered (`preregistration/spot-carry/SPEC.md`): hold Hyperliquid spot (8 pairs with ≥ $1M volume: PURR, HYPE,
+UBTC, UETH, USOL, UPUMP, UENA, UZEC), short the same units of the perp at 2x, 12 on/off funding rules chosen on
+Mar 16-Jul 1, scored Jul 1-Oct 8 against Kamino USDC with measured costs. In A every rule lost to USDC (always-on
+−1.9% APR). The chosen rule made +0.8% APR [−2.2, +3.4] in B, with 2 PURR liquidations (60% intraday spikes). The
+funding floor pays about what USDC lending does. Result: `preregistration/spot-carry/RESULT-2026-10-10.md`.
+
 **E1b. The same rule on 8 other buyback / revenue-share tokens: does not hold (2026-10-09).**
 Pre-registered before any of their data was read (`preregistration/revflow/SPEC.md`): HYPE, JUP,
 AAVE, DYDX, GMX, CAKE, SKY, BANANA on Hyperliquid. Equal-weight family −0.01%/day [−0.14, +0.13]

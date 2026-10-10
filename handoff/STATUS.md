@@ -40,14 +40,6 @@ next. Topic documents hold the detail:
   clears: a dry paper strategy. Touches `handoff/experiments/edge-hunt/oi/`, and only if it clears
   `tartar/autotrade/`.
 
-* **Spot-perp funding carry on Hyperliquid (edge hunt E thread)** (since 2026-10-10 03:40 UTC, branch
-  `claude/project-thread-9op3pf`). **Paper only, no keys.** Hold spot (Hyperliquid spot pairs) and short
-  the perp to collect funding, with thresholds and coins pre-registered on one period
-  (`handoff/preregistration/spot-carry/`) and scored on a later one after both sides' fees, basis and
-  margin. Not the same as D2 (perp-only cross-section) or A2 (JitoSOL vs SOL). If it clears: a basket paper
-  strategy with dry twins. Touches `handoff/experiments/edge-hunt/spotcarry/`, and only if it clears
-  `tartar/autotrade/`.
-
 * **Edge hunt E thread** (project thread session, since 2026-10-09 21:40 UTC, branch
   `claude/project-thread-9op3pf`). **Paper only, no real SOL, no keys.** Task (the user's 21:30
   "work continuously"): edge hunt angle E, TARTAR's assets, beyond the closed predictor + P(rug)
@@ -405,6 +397,12 @@ deep pools match the model, a thin one was 2.4x it). The `launch_selector` slot 
   branch `claude/profitability-backtest`, on `main`).
 
 ## Log (newest first)
+
+* **2026-10-10 ~04:15 UTC, edge hunt E thread: E3, spot-perp funding carry on Hyperliquid, does not hold**
+  (claim cleared). Pre-registered (`preregistration/spot-carry/SPEC.md`). Spot + short perp at 2x on 8 HL spot
+  pairs, 12 on/off rules chosen on Mar-Jun: all lost to Kamino USDC there; the chosen one made +0.8% APR
+  [−2.2, +3.4] excess Jul-Oct with 2 PURR liquidations. A data bug (missing spot hours read as flat) was fixed
+  before scoring and is disclosed in the RESULT. No paper test.
 
 * **2026-10-10 ~03:50 UTC, second TARTAR session: strategy review written** (`handoff/STRATEGY-REVIEW.md`).
   20+ nulls mostly fail on costs (pump.fun ~2.7-3.5% round trip vs ~1% predictable moves); survivors are all
