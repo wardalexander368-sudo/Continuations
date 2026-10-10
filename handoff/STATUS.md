@@ -62,7 +62,11 @@ next. Topic documents hold the detail:
 real-route impact against a $1 probe and re-prices each closed trade at it (`quoted_net_return`;
 deep pools match the model, a thin one was 2.4x it). The `launch_selector` slot is ready for the
   trading-skills thread (signals file, `handoff/autotrade.md`). Don't run it locally against
-  `autotrade/`.
+  `autotrade/`. **Since 01:25 UTC 10-10 (AJ: keep working, no go-aheads needed):** the agent's own
+  weekly candidate search (`search.py`, `autotrade-search.yml`, Wednesdays 03:30 UTC; queue in
+  `autotrade/candidates/`, report `autotrade/search/REPORT.md`), and `vol_momentum` + `hlp_hold`
+  wired into the agent. In flight: filling the funding cache `autotrade/search/funding_daily.csv`
+  from this session, then the first search run.
 
 * **Recorder thread** (project thread session, since 2026-10-09 20:20 UTC, branch
   `claude/project-thread-9op3pf`). Task (the user's 20:12 go, continuous profit work): a raw
@@ -385,6 +389,16 @@ deep pools match the model, a thin one was 2.4x it). The `launch_selector` slot 
   branch `claude/profitability-backtest`, on `main`).
 
 ## Log (newest first)
+
+* 2026-10-10 01:45 UTC, agent-machinery thread: **the agent now searches for its own candidates.**
+  `python -m tartar.autotrade search` (weekly Action `autotrade-search.yml`) backtests 94 members of
+  the perps-momentum family (lookback 7-28, quantile 3/5/10, vol scaling, Monday/Thursday signal,
+  lag 1/2) on Hyperliquid history with funding; survivors need a Bonferroni-penalized train lower
+  bound > 0 (M = every rule ever tested), positive walk-forward thirds, a 26-week holdout that holds
+  up, and corr < 0.9 with the registered rules. Survivors become draft pre-registrations in
+  `autotrade/candidates/`, paper-traded after 7 days, scored at 26 weeks by the lifecycle. The engine
+  reproduces `vmom_forward.py` (+2.17%/week on 2026-01-05..09-28). Also in the agent: `vol_momentum`
+  (xs class, `scaled: true`) and `hlp_hold` (`vault_hold`, matches `hlp_forward.py` exactly).
 
 * **2026-10-10 ~02:05 UTC, edge hunt E thread: live Hyperliquid sender built, testnet-checked, never
   used on mainnet** (claim cleared). `tartar/autotrade/hl_exchange.py`: IOC taker orders signed with
