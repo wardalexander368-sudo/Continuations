@@ -32,14 +32,6 @@ next. Topic documents hold the detail:
 
 ## Active
 
-* **Code audit thread** (project thread session, since 2026-10-10 00:40 UTC, branch
-  `claude/project-thread-kytb6q`). **No keys, no real orders.** Correctness audit of today's code
-  before anything goes live: autotrade spot + perp twins, pumpflow capture and rule, the health
-  check, and the scorers of the running paper tests (dip, JLP, xs-momentum, pumpflow). Looking for
-  look-ahead, fee/funding errors, UTC day boundaries, paper-vs-live price sampling, limits that
-  don't fire. Bugs get a test and a fix on main; anything that would change a pre-registered rule
-  is logged here, not edited silently. Owners: I'll note each fix in the Log.
-
 * **Edge hunt E thread** (project thread session, since 2026-10-09 21:40 UTC, branch
   `claude/project-thread-9op3pf`). **Paper only, no real SOL, no keys.** Task (the user's 21:30
   "work continuously"): edge hunt angle E, TARTAR's assets, beyond the closed predictor + P(rug)
@@ -382,6 +374,27 @@ deep pools match the model, a thin one was 2.4x it). The `launch_selector` slot 
   branch `claude/profitability-backtest`, on `main`).
 
 ## Log (newest first)
+
+* **2026-10-10 ~01:50 UTC, code audit thread: six fixes on main, two scorer corrections to note.**
+  Tests in `tests/test_audit_2026_10_10.py`. **Scorer corrections (not rule changes; they align the
+  code with the SPECs, landed before any signal):** (1) `xs_momentum_forward.py` summed each leg's
+  funding over [Tuesday 00:00, next Tuesday 00:00), a day before the SPEC's hold (Tuesday close to
+  next Tuesday close); now the (entry, exit] hours, since Hyperliquid stamps each payment just after
+  the hour it covers. The agent's `xs_momentum` also dropped the exit hour; fixed the same way.
+  (2) The agent's `dip` verdict used its own cost model; it now uses the official scorer's formula
+  (`established_prereg_eval.py`), so REPORT.md and the registered result can't disagree.
+  **Other fixes:** health check goes red when the agent's last run is over 20 min old; paper caps
+  raised to 200 per strategy and 400 total (a full xs book from Monday is ~60-80 legs and would have
+  been cut at 40); live `max_signal_age_s` 900 to 1800 (spot signals reach the agent 5-21 min old);
+  loop job runs 19800 s so it ends inside its 360-min timeout; autotrade.md notes `TARTAR_LIVE_KILL`
+  only applies at the next job start (use `HALT_LIVE`). **Checked, no bug:** spot twins' limits and
+  kill switches, perp twins' funding sign and book walk, pumpflow (t0, t1] funding and turnover cost,
+  JLP funding/liquidation/top-up math, dip scorer, cohort timestamps. **Findings for owners:**
+  pumpflow: DefiLlama publishes day d only around d+2 UTC, so live entries lag the SPEC backtest's
+  timing by about a day; check whether the edge survives that lag before promoting. Perps (edge
+  hunt E): a kept leg handed over on a roll stays open if the reopen is rejected. The paper daily
+  loss cap halts all entries, registered legs included; conservative, left as is. `jlp_hedged`
+  landed during the audit and was not reviewed.
 
 * **2026-10-10 00:50 UTC, retrain thread: F1 forward test registered** (`preregistration/who-trades-forward/`).
   The first F1 test was positive but underpowered (+1.1% [−6.3, +8.5], n 175); at ~40 signals per
