@@ -130,6 +130,28 @@ deep pools match the model, a thin one was 2.4x it). The `launch_selector` slot 
   recorder stopped after hour 18 (hour 19 is partial and only on local disk). **Item (b) done
   (19:10 UTC):** see the log entry. Nothing half-done.
 
+* **2026-10-10 19:30 UTC, "Real-money cost test, fresh key" thread: pre-live audit of the perps momentum
+  strategies (paper only). No survivorship, lookahead, funding or fill bug found; the backtests are
+  if anything conservative on costs. The real risks are concentration (xs_momentum) and selection
+  (the search winner).** `handoff/experiments/momentum_audit.py`, output in
+  `handoff/data/momentum-audit/report-2026-10-10.txt`. Base = the agent's own backtest
+  (`search.backtest`, 20 bps/side + funding, 146 weeks to 2026-09-28): xs_momentum **+1.03%/wk**
+  (SE 0.78), vol_momentum **+1.42** (SE 0.66), search winner cand-xsm-L21-q10-vol-mon-lag2 **+2.83** (SE 0.92).
+  | check | finding | effect on weekly return (xs / vol / cand) |
+  |---|---|---|
+  | Survivorship | all 56 delisted perps are in the history up to their delisting (meta's `isDelisted` list = hl-daily); 7–8% of legs are on now-delisted coins | dropping them: −0.27 / −0.08 / +0.35 pts, so nothing is missing |
+  | Stale exits | a leg on a coin delisted mid-week exits at its last close (forward fill); 2–3 legs in 146 weeks, none on live coins | ~0 |
+  | Lookahead | signal uses closes up to the signal day; entry 1–2 days later at a close. Entry and exit 1 h after the close (what an hourly agent run gets), 28 weeks of hourly candles | +0.08 / +0.01 / +0.14 pts (SE 0.12–0.24): no penalty |
+  | Funding | cached daily sums equal the API exactly (84 sampled coin-days); JELLY, PONS, USELESS have no funding (count as 0) | funding costs −0.08 / −0.08 / −0.13 pts; the 3 gaps are noise |
+  | Fills vs books | live L2 walk of the current picks at the agent's leg sizes ($91–100 per coin): 5–6 bps per side incl. the 4.5 bps taker fee (max 11); at 100x size median 7–8 bps, thin tails (PURR 39, CASHCAT 25 bps; 20 levels only). One snapshot, not the Tuesday 00:00 UTC book | 20 bps assumed → at 10 bps: +0.22 / +0.24 / +0.23 pts |
+  | Concentration | best 5 of 146 weeks carry xs_momentum (WIF +154%, kPEPE +139% in Feb 2024 were real) | without them: **+0.14** / +0.73 / +1.79; median week +0.56 / +1.09 / +2.37; legs capped ±25%: +0.21 / +0.77 / +1.69 |
+  | Selection (cand) | winner of 94 searched rules (train rank 2/94; the 26-week holdout was also a pass filter, so it is not clean out of sample). Across the 94, holdout ≈ 0.70% + 0.64 × train | expect about +2.5%/wk, not +2.8; the decile family averages +1.3 (train) / +2.0 (holdout) |
+  - **For the autotrade owner (Continue TARTAR handoff session): no code change required.** Optional:
+    (a) the 20 bps/side cost is ~3x what the books charge at these sizes; keep it as a safety margin
+    for the Tuesday 00:00 UTC book or measure that book; (b) equal-weight resets of kept legs aren't
+    charged (~0.02 pts/wk, negligible); (c) if one strategy goes live first, vol_momentum is the most
+    robust registered one; xs_momentum's edge rests on a handful of memecoin-rally weeks, and cand's
+    backtest is selection-biased upward by roughly 0.3+ pts/wk.
 * **2026-10-10 18:45 UTC, "Real-money cost test, fresh key" thread: DIP RULE DOES NOT CLEAR ITS COSTS
   ON ANY ROUTE. Real-money dip lane CLOSED (coordinator agreed 18:20 UTC); no case for the
   TARTAR_WALLET_KEY wallet from it. The wallet stays held by this thread; no SOL is to be spent.**

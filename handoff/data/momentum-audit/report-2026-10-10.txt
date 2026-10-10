@@ -1,0 +1,40 @@
+== Base (the search's own backtest, 20 bps/side + funding) ==
+  xs_momentum   all +1.03%/wk (SE 0.78, n=146); last 26 wk +1.74% (SE 1.45)
+  vol_momentum  all +1.42%/wk (SE 0.66, n=146); last 26 wk +1.68% (SE 1.58)
+  cand          all +2.83%/wk (SE 0.92, n=146); last 26 wk +2.90% (SE 2.01)
+== Survivorship: delisted coins dropped from the panel (if results rose, delisted coins were hurting; the base keeps them) ==
+  xs_momentum   all +0.76%/wk (SE 0.81, n=146); last 26 wk +1.72% (SE 1.48)
+  vol_momentum  all +1.34%/wk (SE 0.65, n=146); last 26 wk +1.69% (SE 1.57)
+  cand          all +3.18%/wk (SE 0.99, n=146); last 26 wk +2.90% (SE 2.01)
+== Delisted coins actually traded, and exits on a forward-filled (stale) close ==
+  xs_momentum   2346 coin-legs; on coins now delisted 185; exit on a stale close 3 (on live coins 0)
+  vol_momentum  2346 coin-legs; on coins now delisted 168; exit on a stale close 2 (on live coins 0)
+  cand          1104 coin-legs; on coins now delisted 88; exit on a stale close 3 (on live coins 0)
+== Cost sensitivity (per side, per unit turnover) ==
+  xs_momentum   last 26 wk: 5 bps +2.07, 10 bps +1.96, 20 bps +1.74, 40 bps +1.30, 60 bps +0.87
+  vol_momentum  last 26 wk: 5 bps +2.04, 10 bps +1.92, 20 bps +1.68, 40 bps +1.20, 60 bps +0.73
+  cand          last 26 wk: 5 bps +3.25, 10 bps +3.13, 20 bps +2.90, 40 bps +2.43, 60 bps +1.96
+== Funding: without it, and with missing-funding coins (JELLY, PONS, USELESS) ==
+  xs_momentum   no funding: all +1.11%/wk (SE 0.78, n=146); last 26 wk +1.89% (SE 1.46)
+  vol_momentum  no funding: all +1.50%/wk (SE 0.66, n=146); last 26 wk +1.83% (SE 1.58)
+  cand          no funding: all +2.96%/wk (SE 0.94, n=146); last 26 wk +3.06% (SE 2.02)
+hourly candles for 61 coins from 2026-03-18
+== Entry and exit 1 h after the daily close vs at the close (same weeks, 20 bps, funding as base) ==
+  xs_momentum   28 weeks: at close +1.40%/wk, +1 h +1.49%/wk, difference +0.08 (SE 0.12)
+  vol_momentum  28 weeks: at close +1.65%/wk, +1 h +1.66%/wk, difference +0.01 (SE 0.12)
+  cand          28 weeks: at close +2.45%/wk, +1 h +2.59%/wk, difference +0.14 (SE 0.24)
+== Entry and exit 2 h after the daily close vs at the close (same weeks, 20 bps, funding as base) ==
+  xs_momentum   28 weeks: at close +1.40%/wk, +2 h +1.52%/wk, difference +0.12 (SE 0.24)
+  vol_momentum  28 weeks: at close +1.65%/wk, +2 h +1.65%/wk, difference -0.01 (SE 0.21)
+  cand          28 weeks: at close +2.45%/wk, +2 h +2.64%/wk, difference +0.18 (SE 0.35)
+  xs_momentum   base +1.03%/wk, median week +0.56%, without best 5 weeks +0.14% (best 5: +18%, +19%, +19%, +20%, +54%); legs capped +-50% +0.65, +-25% +0.21
+  vol_momentum  base +1.42%/wk, median week +1.09%, without best 5 weeks +0.73% (best 5: +17%, +18%, +20%, +21%, +30%); legs capped +-50% +1.11, +-25% +0.77
+  cand          base +2.83%/wk, median week +2.37%, without best 5 weeks +1.79% (best 5: +29%, +31%, +32%, +34%, +36%); legs capped +-50% +2.46, +-25% +1.69
+signal day 2026-10-05; taker fee 4.5 bps (base tier) added to the book walk
+  xs_momentum   22 coins at $91 each: cost per side median 5.1 bps, mean 5.7, max 12.8; worst [('PURR', 12.8), ('STRK', 9.8), ('VVV', 6.5)]
+  vol_momentum  22 coins at $91 each: cost per side median 5.1 bps, mean 5.2, max 7.2; worst [('PUMP', 7.2), ('FET', 6.1), ('kBONK', 6.0)]
+  cand          10 coins at $100 each: cost per side median 4.9 bps, mean 5.3, max 7.6; worst [('CASHCAT', 7.6), ('PENDLE', 6.1), ('ENA', 5.4)]
+signal day 2026-10-05; taker fee 4.5 bps (base tier) added to the book walk
+  xs_momentum   22 coins at $9,091 each: cost per side median 7.7 bps, mean 10.4, max 54.8; worst [('PURR', 54.8), ('STRK', 16.4), ('GRASS', 14.3)]; SOME BOOKS TOO THIN
+  vol_momentum  22 coins at $9,091 each: cost per side median 7.1 bps, mean 7.6, max 12.6; worst [('GRASS', 12.6), ('XMR', 10.9), ('ZRO', 10.6)]
+  cand          10 coins at $10,000 each: cost per side median 9.4 bps, mean 9.9, max 18.9; worst [('CASHCAT', 18.9), ('GRASS', 14.5), ('ZRO', 10.4)]
