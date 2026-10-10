@@ -1,0 +1,18 @@
+
+=== 5m: 689 pools, 68988 rows (train 57846, valid 6930, test 4212); built in 282s
+  leaves  15  min_leaf  100: valid 1.1663  rounds  118  (15s)
+  leaves  15  min_leaf  400: valid 1.1643  rounds  107  (13s)
+  leaves  15  min_leaf 1500: valid 1.1585  rounds  122  (16s)
+  leaves  31  min_leaf  100: valid 1.1711  rounds   89  (17s)
+  leaves  31  min_leaf  400: valid 1.1669  rounds   86  (17s)
+  leaves  31  min_leaf 1500: valid 1.1583  rounds   92  (14s)
+  leaves  63  min_leaf  100: valid 1.1772  rounds   70  (21s)
+  leaves  63  min_leaf  400: valid 1.1709  rounds   66  (19s)
+  leaves  63  min_leaf 1500: valid 1.1574  rounds   94  (14s)
+  chosen on validation: leaves 63, min_leaf 1500
+  replaying the live forecaster on 103 test tokens…
+         online_only · all     n    702  hit 57.8%  stated 52.9%  band 86.8%  edge -0.2%
+         online_only · trading n    536  hit 51.5%  stated 45.6%  band 85.5%  edge -0.2%
+  global_plus_online · all     n    702  hit 69.0%  stated 67.6%  band 80.3%  edge +2.1%
+  global_plus_online · trading n    536  hit 65.9%  stated 64.4%  band 76.7%  edge +2.1%
+  test log loss 1.3198; verdict {'install': True, 'checks': {'edge_all': True, 'edge_trading': True, 'calibration': True, 'info_at_open': True}}

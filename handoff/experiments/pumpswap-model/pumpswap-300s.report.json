@@ -84,23 +84,23 @@
       3.0,
       4.0
     ],
-    "temperature": 1.0564158347619816,
-    "tail_low": 5.746373698486327,
-    "tail_high": 1.2903666608053714,
+    "temperature": 0.9675153067028412,
+    "tail_low": 6.083659519912122,
+    "tail_high": 2.3264675502847028,
     "nowcast": true,
-    "best_iteration": 98,
-    "num_leaves": 15,
-    "min_data_in_leaf": 400,
-    "train_rows": 26508,
-    "valid_rows": 5028,
-    "tokens": 323,
+    "best_iteration": 94,
+    "num_leaves": 63,
+    "min_data_in_leaf": 1500,
+    "train_rows": 57846,
+    "valid_rows": 6930,
+    "tokens": 689,
     "simulated": false,
-    "trained_at": "2026-10-09T14:59:01Z",
-    "train_seconds": 24.6,
+    "trained_at": "2026-10-10T00:40:38Z",
+    "train_seconds": 14.3,
     "median_shrink": [
       [
         0.0,
-        0.2
+        0.30000000000000004
       ],
       [
         0.2,
@@ -123,9 +123,9 @@
         0.0
       ]
     ],
-    "model_bytes": 4031854
+    "model_bytes": 4989593
   },
-  "test_rows": 2424,
+  "test_rows": 4212,
   "data_capture": {
     "tokens_measured": 0,
     "median": null,
@@ -135,220 +135,220 @@
   "test_by_fraction": [
     {
       "f": 0.0,
-      "rows": 404,
-      "hit_rate": 0.6881188118811881,
-      "avg_confidence": 0.6736325955268547,
-      "band_coverage": 0.8217821782178217,
-      "band_stated": 0.8184743903232181,
-      "band_width_pct": 103.12533514821997,
-      "mae_pct": 33.71569308395266,
-      "naive_mae_pct": 33.36703507894997,
-      "edge": -0.010449175486456186,
-      "log_loss": 1.459255679973793,
-      "info_gain_bits": 0.9647255412628425
+      "rows": 702,
+      "hit_rate": 0.6951566951566952,
+      "avg_confidence": 0.6889983563541353,
+      "band_coverage": 0.7834757834757835,
+      "band_stated": 0.8161301783974321,
+      "band_width_pct": 141.29946255569016,
+      "mae_pct": 40.3224108803603,
+      "naive_mae_pct": 40.908870872006474,
+      "edge": 0.014335765792242494,
+      "log_loss": 1.5771478632720277,
+      "info_gain_bits": 1.184071704835657
     },
     {
       "f": 0.2,
-      "rows": 404,
-      "hit_rate": 0.7871287128712872,
-      "avg_confidence": 0.739171766219609,
-      "band_coverage": 0.8267326732673267,
-      "band_stated": 0.8242992092693195,
-      "band_width_pct": 81.33140406542685,
-      "mae_pct": 26.45702808959154,
-      "naive_mae_pct": 26.407287089357734,
-      "edge": -0.0018836088715017407,
-      "log_loss": 1.3583071644431526,
-      "info_gain_bits": 0.9501490601461218
+      "rows": 702,
+      "hit_rate": 0.7549857549857549,
+      "avg_confidence": 0.7698115860218435,
+      "band_coverage": 0.7792022792022792,
+      "band_stated": 0.8216967383620429,
+      "band_width_pct": 107.77882878798954,
+      "mae_pct": 33.199380944743524,
+      "naive_mae_pct": 33.46757145575157,
+      "edge": 0.008013444039781215,
+      "log_loss": 1.5333021757077672,
+      "info_gain_bits": 1.1274681196926397
     },
     {
       "f": 0.4,
-      "rows": 404,
-      "hit_rate": 0.8391089108910891,
-      "avg_confidence": 0.8014057670185156,
-      "band_coverage": 0.844059405940594,
-      "band_stated": 0.83000045214147,
-      "band_width_pct": 63.26363837394252,
-      "mae_pct": 21.28657792489844,
-      "naive_mae_pct": 21.276870264912485,
-      "edge": -0.0004562541325434655,
-      "log_loss": 1.267162687581223,
-      "info_gain_bits": 0.9561377842345398
+      "rows": 702,
+      "hit_rate": 0.8176638176638177,
+      "avg_confidence": 0.8209058982410186,
+      "band_coverage": 0.7934472934472935,
+      "band_stated": 0.8280398917482599,
+      "band_width_pct": 84.93238158366955,
+      "mae_pct": 26.683694373993976,
+      "naive_mae_pct": 26.717155755634174,
+      "edge": 0.0012524305336335528,
+      "log_loss": 1.4255840950710321,
+      "info_gain_bits": 1.1612251890191716
     },
     {
       "f": 0.6,
-      "rows": 404,
-      "hit_rate": 0.905940594059406,
-      "avg_confidence": 0.8591589772928959,
-      "band_coverage": 0.8539603960396039,
-      "band_stated": 0.842523181502797,
-      "band_width_pct": 41.38254673207247,
-      "mae_pct": 15.374805116893633,
-      "naive_mae_pct": 15.374805116893633,
+      "rows": 702,
+      "hit_rate": 0.8760683760683761,
+      "avg_confidence": 0.8770217012702447,
+      "band_coverage": 0.8048433048433048,
+      "band_stated": 0.84244209032285,
+      "band_width_pct": 54.62616240679154,
+      "mae_pct": 18.578298728225885,
+      "naive_mae_pct": 18.578298728225885,
       "edge": 0.0,
-      "log_loss": 1.1041092311184861,
-      "info_gain_bits": 0.9143606803193521
+      "log_loss": 1.3336760415936244,
+      "info_gain_bits": 1.0971384586369868
     },
     {
       "f": 0.8,
-      "rows": 404,
-      "hit_rate": 0.9504950495049505,
-      "avg_confidence": 0.9132520303031606,
-      "band_coverage": 0.8985148514851485,
-      "band_stated": 0.8573498635720533,
-      "band_width_pct": 16.26571897429156,
-      "mae_pct": 7.019491535399173,
-      "naive_mae_pct": 7.0194915353991725,
+      "rows": 702,
+      "hit_rate": 0.9444444444444444,
+      "avg_confidence": 0.9238969483963199,
+      "band_coverage": 0.8390313390313391,
+      "band_stated": 0.8568521505174025,
+      "band_width_pct": 26.518881586844213,
+      "mae_pct": 8.762910676925657,
+      "naive_mae_pct": 8.762910676925657,
       "edge": -2.220446049250313e-16,
-      "log_loss": 0.8748353502260219,
-      "info_gain_bits": 0.9186459691725177
+      "log_loss": 1.165713455746392,
+      "info_gain_bits": 1.0284669462399125
     },
     {
       "f": 0.95,
-      "rows": 404,
-      "hit_rate": 0.9801980198019802,
-      "avg_confidence": 0.9543078876429986,
-      "band_coverage": 0.943069306930693,
-      "band_stated": 0.8915978767385534,
-      "band_width_pct": 5.898076548478746,
-      "mae_pct": 2.223464606851514,
-      "naive_mae_pct": 2.223464606851512,
-      "edge": -8.881784197001252e-16,
-      "log_loss": 0.6391667467591267,
-      "info_gain_bits": 0.7951185891624393
+      "rows": 702,
+      "hit_rate": 0.9786324786324786,
+      "avg_confidence": 0.9648243958674839,
+      "band_coverage": 0.9017094017094017,
+      "band_stated": 0.8842140555467047,
+      "band_width_pct": 10.157954726773578,
+      "mae_pct": 3.715273378526344,
+      "naive_mae_pct": 3.715273378526344,
+      "edge": 0.0,
+      "log_loss": 0.8832196393202658,
+      "info_gain_bits": 0.9638521183442821
     }
   ],
   "live_at_open": {
-    "tokens": 48,
+    "tokens": 103,
     "online_only": {
       "all": {
-        "n": 404,
-        "hit_rate": 0.6114,
-        "avg_confidence": 0.5606,
-        "band_coverage": 0.8787,
-        "band_stated": 0.8035,
-        "mae_pct": 33.5163,
-        "naive_mae_pct": 33.367,
-        "edge": -0.0045
+        "n": 702,
+        "hit_rate": 0.5783,
+        "avg_confidence": 0.5286,
+        "band_coverage": 0.8675,
+        "band_stated": 0.8014,
+        "mae_pct": 40.9988,
+        "naive_mae_pct": 40.9089,
+        "edge": -0.0022
       },
       "trading": {
-        "n": 266,
-        "hit_rate": 0.4962,
-        "avg_confidence": 0.4538,
-        "band_coverage": 0.8722,
-        "band_stated": 0.7969,
-        "mae_pct": 48.8602,
-        "naive_mae_pct": 48.6335,
-        "edge": -0.0047
+        "n": 536,
+        "hit_rate": 0.5149,
+        "avg_confidence": 0.4559,
+        "band_coverage": 0.8545,
+        "band_stated": 0.7984,
+        "mae_pct": 53.0706,
+        "naive_mae_pct": 52.9528,
+        "edge": -0.0022
       }
     },
     "global_plus_online": {
       "all": {
-        "n": 404,
-        "hit_rate": 0.6906,
-        "avg_confidence": 0.6671,
-        "band_coverage": 0.8342,
-        "band_stated": 0.8211,
-        "mae_pct": 33.6628,
-        "naive_mae_pct": 33.367,
-        "edge": -0.0089
+        "n": 702,
+        "hit_rate": 0.6895,
+        "avg_confidence": 0.6762,
+        "band_coverage": 0.8034,
+        "band_stated": 0.8223,
+        "mae_pct": 40.0458,
+        "naive_mae_pct": 40.9089,
+        "edge": 0.0211
       },
       "trading": {
-        "n": 266,
-        "hit_rate": 0.6241,
-        "avg_confidence": 0.6326,
-        "band_coverage": 0.7932,
-        "band_stated": 0.8073,
-        "mae_pct": 49.0811,
-        "naive_mae_pct": 48.6335,
-        "edge": -0.0092
+        "n": 536,
+        "hit_rate": 0.6586,
+        "avg_confidence": 0.6439,
+        "band_coverage": 0.7668,
+        "band_stated": 0.8116,
+        "mae_pct": 51.8224,
+        "naive_mae_pct": 52.9528,
+        "edge": 0.0213
       }
     }
   },
   "feature_importance": {
-    "curve_progress": 0.1339,
-    "p_idle": 0.082,
-    "range": 0.0745,
-    "log_price": 0.0666,
-    "log_volume": 0.0489,
-    "f": 0.0486,
-    "log_trades": 0.0298,
-    "drawdown": 0.0239,
-    "log_traders": 0.0225,
-    "trades_per_wallet": 0.022,
-    "rise": 0.0203,
-    "wash_share": 0.0199,
-    "top10_share": 0.0189,
-    "p_range": 0.0187,
-    "log_sigma": 0.0184,
-    "lower_wick": 0.0176,
-    "r3": 0.0171,
-    "r2": 0.0156,
-    "trade_trend": 0.0156,
-    "p_trades": 0.0145
+    "log_price": 0.1463,
+    "p_idle": 0.1128,
+    "range": 0.0861,
+    "curve_progress": 0.0803,
+    "log_volume": 0.071,
+    "f": 0.0527,
+    "drawdown": 0.0366,
+    "log_trades": 0.0274,
+    "p_range": 0.0188,
+    "rise": 0.0173,
+    "trades_per_wallet": 0.017,
+    "top10_share": 0.0163,
+    "lower_wick": 0.0158,
+    "log_sigma": 0.0155,
+    "log_traders": 0.0132,
+    "volume_z": 0.0127,
+    "r2": 0.0126,
+    "flow5": 0.0126,
+    "wash_share": 0.0125,
+    "trade_trend": 0.0121
   },
-  "test_log_loss": 1.1171394766836338,
+  "test_log_loss": 1.3197738784518516,
   "sweep": [
     {
-      "valid": 0.9943107835521406,
+      "valid": 1.1662957942077021,
       "num_leaves": 15,
       "min_leaf": 100,
-      "rounds": 91
+      "rounds": 118
     },
     {
-      "valid": 0.9935073590026556,
+      "valid": 1.164269296576589,
       "num_leaves": 15,
       "min_leaf": 400,
-      "rounds": 98
+      "rounds": 107
     },
     {
-      "valid": 0.9937701270286633,
+      "valid": 1.158500724371169,
       "num_leaves": 15,
       "min_leaf": 1500,
-      "rounds": 119
+      "rounds": 122
     },
     {
-      "valid": 1.0035290297765085,
+      "valid": 1.1711063561030035,
       "num_leaves": 31,
       "min_leaf": 100,
-      "rounds": 71
+      "rounds": 89
     },
     {
-      "valid": 0.9985681094693483,
+      "valid": 1.1669365571956947,
       "num_leaves": 31,
       "min_leaf": 400,
-      "rounds": 77
+      "rounds": 86
     },
     {
-      "valid": 0.9951533644412875,
+      "valid": 1.158280481420872,
       "num_leaves": 31,
       "min_leaf": 1500,
-      "rounds": 106
+      "rounds": 92
     },
     {
-      "valid": 1.0086878931634935,
+      "valid": 1.1771920276761139,
       "num_leaves": 63,
       "min_leaf": 100,
-      "rounds": 64
+      "rounds": 70
     },
     {
-      "valid": 0.995192632279568,
+      "valid": 1.1709012243701222,
       "num_leaves": 63,
       "min_leaf": 400,
-      "rounds": 69
+      "rounds": 66
     },
     {
-      "valid": 0.9951533644412875,
+      "valid": 1.1573548799650273,
       "num_leaves": 63,
       "min_leaf": 1500,
-      "rounds": 106
+      "rounds": 94
     }
   ],
   "verdict": {
-    "install": false,
+    "install": true,
     "checks": {
-      "edge_all": false,
-      "edge_trading": false,
+      "edge_all": true,
+      "edge_trading": true,
       "calibration": true,
       "info_at_open": true
     }

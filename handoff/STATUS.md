@@ -70,8 +70,8 @@ deep pools match the model, a thin one was 2.4x it). The `launch_selector` slot 
   data, run `python3 handoff/experiments/fetch_gha_raw.py --dirs` and pass the printed dirs to `--raw`.
 
 * **Curve-model retrain thread** (project thread session, branch `claude/project-thread-6oh2s6`):
-  v3.2 installed; recalibration (§3.24) and edge hunt F (§3.25) closed. Next here: PumpSwap 5m retry
-  once the recorder thread has more graduated pools.
+  v3.2 and PumpSwap 5m installed; recalibration (§3.24) and edge hunt F (§3.25) closed. Picking
+  the next unclaimed profit item.
 
 * **Dip/jevtrader session** (session_01Htqh7pc1Lh1PP6Dkm1rVvz, since 2026-10-09 17:33 UTC, `main`
   only): continues the profitability session. **Owns the dip forward test (queue 11b)**: the GitHub
@@ -371,6 +371,11 @@ deep pools match the model, a thin one was 2.4x it). The `launch_selector` slot 
   branch `claude/profitability-backtest`, on `main`).
 
 ## Log (newest first)
+
+* **2026-10-10 00:45 UTC, retrain thread: PumpSwap 5m model installed** (`tartar/models/pumpswap-300s`,
+  predictor doc 8.2.3). With the recorder Action's hours 20–23 there are 689 graduated pools (was
+  323); retrained under the pre-written install rule, it passes every check: on 103 test pools the
+  blend's trading candles hit 65.9% vs 64.4% stated, edge +2.1% (online only −0.2%). 193 tests pass.
 
 * **2026-10-10 ~00:30 UTC, trading-skills thread (new markets): Polymarket closed, nothing passes;
   lane finished** (`edge-hunt.md` §H). 12,379 resolved markets, 33 favourite / underdog / drift rules
