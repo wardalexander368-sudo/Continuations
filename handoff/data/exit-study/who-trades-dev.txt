@@ -1,0 +1,171 @@
+15068 dev launches; choose < 1791548471, check after
+
+F1/F2 dip X 20 d 0.5: 2289 signals, conc median 0.98, done 0.46, smart 0.34
+  TP 0.3 hold  180 all              choose  -5.76% [ -8.21,  -3.25] n= 1327 med  -3.94% win 45.8%  |  check  -5.84% [ -8.45,  -3.07] n=  956 med  -4.40% win 38.1%
+  TP 0.3 hold  180 conc>med         choose  -6.16% [ -9.93,  -2.14] n=  664 med +12.45% win 53.5%  |  check  -3.56% [ -8.83,  +1.79] n=  378 med  +7.34% win 53.2%
+  TP 0.3 hold  180 conc<=med        choose  -5.37% [ -8.18,  -2.44] n=  663 med  -9.42% win 38.2%  |  check  -7.33% [ -9.92,  -4.77] n=  578 med  -5.37% win 28.2%
+  TP 0.3 hold  180 conc>med & done  choose -10.45% [-19.99,  -0.83] n=  107 med  -2.79% win 47.7%  |  check  -5.08% [-18.58,  +9.42] n=   60 med  -2.84% win 45.0%
+  TP 0.3 hold  180 done             choose  -8.39% [-11.38,  -5.26] n=  550 med -11.44% win 34.2%  |  check  -8.29% [-11.09,  -5.70] n=  498 med  -5.79% win 26.3%
+  TP 0.3 hold  180 not done         choose  -3.90% [ -7.66,  -0.28] n=  777 med +12.24% win 54.1%  |  check  -3.18% [ -7.78,  +1.77] n=  458 med  +2.51% win 50.9%
+  TP 0.3 hold  180 smart bought     choose  -7.63% [-11.07,  -4.38] n=  427 med -11.79% win 37.2%  |  check  -8.98% [-12.42,  -5.22] n=  341 med  -8.28% win 35.5%
+  TP 0.3 hold  180 no smart         choose  -4.88% [ -8.20,  -1.70] n=  900 med  -0.54% win 49.9%  |  check  -4.10% [ -7.81,  -0.40] n=  615 med  -3.89% win 39.5%
+  TP 0.3 hold  600 all              choose  -5.98% [ -8.59,  -3.40] n= 1314 med  -3.42% win 47.1%  |  check  -6.81% [ -9.49,  -4.12] n=  940 med  -4.62% win 38.3%
+  TP 0.3 hold  600 conc>med         choose  -6.63% [-10.41,  -2.77] n=  660 med +12.76% win 53.6%  |  check  -4.40% [ -9.79,  +0.99] n=  368 med  +7.31% win 52.7%
+  TP 0.3 hold  600 conc<=med        choose  -5.32% [ -8.63,  -2.12] n=  654 med  -9.35% win 40.5%  |  check  -8.35% [-11.09,  -5.68] n=  572 med  -5.67% win 29.0%
+  TP 0.3 hold  600 conc>med & done  choose -11.23% [-21.06,  -1.27] n=  104 med  -2.79% win 47.1%  |  check  -5.80% [-20.25,  +9.14] n=   57 med  -3.63% win 45.6%
+  TP 0.3 hold  600 done             choose  -8.20% [-11.33,  -4.90] n=  540 med -11.04% win 36.9%  |  check  -9.38% [-12.17,  -6.40] n=  491 med  -5.99% win 27.1%
+  TP 0.3 hold  600 not done         choose  -4.43% [ -8.14,  -0.78] n=  774 med +12.79% win 54.3%  |  check  -3.99% [ -8.76,  +0.83] n=  449 med  +1.96% win 50.6%
+  TP 0.3 hold  600 smart bought     choose  -7.48% [-11.10,  -3.59] n=  421 med -12.77% win 40.1%  |  check -10.39% [-14.02,  -6.67] n=  337 med -11.03% win 35.9%
+  TP 0.3 hold  600 no smart         choose  -5.27% [ -8.74,  -1.90] n=  893 med  +1.00% win 50.4%  |  check  -4.80% [ -8.56,  -1.06] n=  603 med  -4.07% win 39.6%
+  TP 1.0 hold  180 all              choose  -6.03% [ -9.82,  -2.17] n= 1327 med -26.82% win 31.3%  |  check  -8.57% [-12.41,  -4.74] n=  956 med -12.47% win 25.7%
+  TP 1.0 hold  180 conc>med         choose  -8.37% [-14.79,  -1.78] n=  664 med -60.72% win 35.4%  |  check  -8.70% [-16.22,  -1.03] n=  378 med -41.64% win 35.4%
+  TP 1.0 hold  180 conc<=med        choose  -3.70% [ -8.28,  +1.21] n=  663 med -20.11% win 27.1%  |  check  -8.49% [-11.96,  -4.76] n=  578 med  -9.30% win 19.4%
+  TP 1.0 hold  180 conc>med & done  choose -10.29% [-25.19,  +5.07] n=  107 med -62.85% win 33.6%  |  check  -3.43% [-21.97, +15.37] n=   60 med -17.43% win 30.0%
+  TP 1.0 hold  180 done             choose  -9.30% [-13.59,  -4.78] n=  550 med -19.67% win 24.0%  |  check  -9.12% [-13.02,  -5.30] n=  498 med  -9.75% win 18.1%
+  TP 1.0 hold  180 not done         choose  -3.72% [ -9.80,  +2.01] n=  777 med -49.41% win 36.4%  |  check  -7.98% [-14.81,  -1.30] n=  458 med -27.41% win 34.1%
+  TP 1.0 hold  180 smart bought     choose  -9.40% [-14.04,  -4.67] n=  427 med -22.76% win 26.0%  |  check -12.46% [-17.27,  -7.27] n=  341 med -20.64% win 23.8%
+  TP 1.0 hold  180 no smart         choose  -4.44% [ -9.57,  +1.11] n=  900 med -36.05% win 33.8%  |  check  -6.42% [-11.51,  -1.26] n=  615 med  -7.41% win 26.8%
+  TP 1.0 hold  600 all              choose  -6.71% [-10.71,  -2.59] n= 1314 med -32.30% win 30.7%  |  check  -9.87% [-13.89,  -6.03] n=  940 med -19.71% win 24.5%
+  TP 1.0 hold  600 conc>med         choose  -8.59% [-14.89,  -2.21] n=  660 med -63.16% win 35.6%  |  check  -8.94% [-16.76,  -1.03] n=  368 med -44.13% win 34.8%
+  TP 1.0 hold  600 conc<=med        choose  -4.81% [ -9.73,  +0.11] n=  654 med -25.98% win 25.8%  |  check -10.47% [-14.47,  -6.44] n=  572 med -12.85% win 17.8%
+  TP 1.0 hold  600 conc>med & done  choose -12.03% [-28.49,  +4.14] n=  104 med -70.84% win 32.7%  |  check  -2.43% [-22.86, +17.96] n=   57 med -18.67% win 31.6%
+  TP 1.0 hold  600 done             choose -10.38% [-15.08,  -5.42] n=  540 med -25.69% win 22.6%  |  check -10.19% [-14.26,  -6.03] n=  491 med -12.91% win 16.7%
+  TP 1.0 hold  600 not done         choose  -4.15% [-10.22,  +1.71] n=  774 med -51.63% win 36.4%  |  check  -9.52% [-16.45,  -2.51] n=  449 med -34.44% win 33.0%
+  TP 1.0 hold  600 smart bought     choose -10.35% [-15.10,  -4.99] n=  421 med -28.93% win 23.8%  |  check -14.88% [-20.12,  -9.46] n=  337 med -27.69% win 20.8%
+  TP 1.0 hold  600 no smart         choose  -5.00% [-10.44,  +0.35] n=  893 med -40.89% win 34.0%  |  check  -7.07% [-12.38,  -1.52] n=  603 med  -9.74% win 26.5%
+
+F1/F2 dip X 20 d 0.7: 1784 signals, conc median 0.96, done 0.51, smart 0.37
+  TP 0.3 hold  180 all              choose  -1.88% [ -4.68,  +0.86] n= 1066 med  -2.88% win 46.5%  |  check  -2.79% [ -5.97,  +0.30] n=  715 med  -4.22% win 36.6%
+  TP 0.3 hold  180 conc>med         choose  +1.37% [ -3.20,  +5.76] n=  532 med +15.34% win 55.8%  |  check  +0.78% [ -5.18,  +6.85] n=  291 med  +7.74% win 52.9%
+  TP 0.3 hold  180 conc<=med        choose  -5.12% [ -8.60,  -1.78] n=  534 med  -5.72% win 37.3%  |  check  -5.23% [ -8.19,  -2.21] n=  424 med  -4.75% win 25.5%
+  TP 0.3 hold  180 conc>med & done  choose  +1.91% [ -5.84,  +9.83] n=  179 med +16.02% win 57.5%  |  check  -1.15% [-11.20,  +8.62] n=   95 med  +3.05% win 50.5%
+  TP 0.3 hold  180 done             choose  -2.74% [ -6.11,  +0.60] n=  502 med  -5.00% win 38.4%  |  check  -4.16% [ -7.11,  -1.11] n=  409 med  -4.56% win 26.9%
+  TP 0.3 hold  180 not done         choose  -1.11% [ -5.52,  +3.26] n=  564 med  +7.84% win 53.7%  |  check  -0.95% [ -6.81,  +5.19] n=  306 med  -1.76% win 49.7%
+  TP 0.3 hold  180 smart bought     choose  -5.43% [ -9.10,  -1.64] n=  363 med  -6.02% win 35.0%  |  check  -3.40% [ -7.63,  +0.87] n=  301 med  -5.80% win 32.6%
+  TP 0.3 hold  180 no smart         choose  -0.04% [ -3.91,  +3.83] n=  703 med  +3.92% win 52.5%  |  check  -2.34% [ -6.88,  +2.12] n=  414 med  -3.89% win 39.6%
+  TP 0.3 hold  600 all              choose  -2.02% [ -4.88,  +0.85] n= 1056 med  -3.06% win 46.6%  |  check  -3.47% [ -6.62,  -0.23] n=  700 med  -4.37% win 37.0%
+  TP 0.3 hold  600 conc>med         choose  +0.85% [ -3.62,  +5.38] n=  529 med +15.36% win 56.0%  |  check  +0.56% [ -5.78,  +6.73] n=  283 med  +7.74% win 53.0%
+  TP 0.3 hold  600 conc<=med        choose  -4.90% [ -8.50,  -1.46] n=  527 med  -6.76% win 37.2%  |  check  -6.20% [ -9.19,  -3.31] n=  417 med  -5.14% win 26.1%
+  TP 0.3 hold  600 conc>med & done  choose  +1.69% [ -6.36,  +9.50] n=  177 med +16.02% win 57.6%  |  check  -1.57% [-12.01,  +9.13] n=   90 med  +0.41% win 50.0%
+  TP 0.3 hold  600 done             choose  -2.66% [ -6.30,  +0.91] n=  495 med  -6.50% win 38.2%  |  check  -4.72% [ -7.74,  -1.60] n=  398 med  -4.96% win 27.1%
+  TP 0.3 hold  600 not done         choose  -1.46% [ -5.83,  +2.80] n=  561 med  +8.59% win 54.0%  |  check  -1.82% [ -7.78,  +4.20] n=  302 med  -0.55% win 50.0%
+  TP 0.3 hold  600 smart bought     choose  -5.54% [ -9.53,  -1.72] n=  358 med  -7.16% win 34.6%  |  check  -4.38% [ -8.56,  -0.14] n=  297 med  -6.42% win 33.0%
+  TP 0.3 hold  600 no smart         choose  -0.22% [ -3.91,  +3.61] n=  698 med  +4.82% win 52.7%  |  check  -2.79% [ -7.37,  +1.60] n=  403 med  -3.98% win 40.0%
+  TP 1.0 hold  180 all              choose  -3.37% [ -7.71,  +1.04] n= 1066 med -16.76% win 31.7%  |  check  -1.39% [ -5.93,  +3.40] n=  715 med  -6.51% win 27.1%
+  TP 1.0 hold  180 conc>med         choose  -1.78% [ -8.99,  +5.39] n=  532 med -48.36% win 37.0%  |  check  +3.67% [ -5.59, +12.98] n=  291 med -26.95% win 39.9%
+  TP 1.0 hold  180 conc<=med        choose  -4.96% [-10.32,  +0.68] n=  534 med -11.59% win 26.4%  |  check  -4.87% [ -8.91,  -0.55] n=  424 med  -5.97% win 18.4%
+  TP 1.0 hold  180 conc>med & done  choose  -2.44% [-14.81, +10.70] n=  179 med -56.98% win 36.9%  |  check  +8.42% [ -8.29, +24.53] n=   95 med -16.93% win 41.1%
+  TP 1.0 hold  180 done             choose  -4.78% [-10.03,  +0.36] n=  502 med -11.41% win 26.5%  |  check  -2.66% [ -7.15,  +1.62] n=  409 med  -5.84% win 20.0%
+  TP 1.0 hold  180 not done         choose  -2.11% [ -8.52,  +4.75] n=  564 med -48.26% win 36.3%  |  check  +0.31% [ -8.58,  +9.39] n=  306 med -19.80% win 36.6%
+  TP 1.0 hold  180 smart bought     choose  -8.40% [-13.73,  -3.38] n=  363 med -11.57% win 24.2%  |  check  -2.64% [ -8.44,  +3.49] n=  301 med  -8.38% win 24.3%
+  TP 1.0 hold  180 no smart         choose  -0.78% [ -7.09,  +5.27] n=  703 med -29.99% win 35.6%  |  check  -0.49% [ -7.39,  +6.28] n=  414 med  -5.04% win 29.2%
+  TP 1.0 hold  600 all              choose  -3.43% [ -7.98,  +1.17] n= 1056 med -20.44% win 30.9%  |  check  -2.58% [ -7.39,  +2.14] n=  700 med  -7.26% win 26.3%
+  TP 1.0 hold  600 conc>med         choose  -2.15% [ -9.05,  +4.94] n=  529 med -49.81% win 37.2%  |  check  +2.25% [ -7.44, +11.56] n=  283 med -30.96% win 39.6%
+  TP 1.0 hold  600 conc<=med        choose  -4.72% [-10.34,  +0.87] n=  527 med -14.70% win 24.5%  |  check  -5.85% [-10.28,  -1.47] n=  417 med  -6.65% win 17.3%
+  TP 1.0 hold  600 conc>med & done  choose  -2.94% [-15.05, +10.10] n=  177 med -60.49% win 36.7%  |  check  +6.70% [ -9.89, +23.11] n=   90 med -18.27% win 40.0%
+  TP 1.0 hold  600 done             choose  -4.36% [ -9.91,  +1.56] n=  495 med -14.44% win 24.4%  |  check  -3.75% [ -8.22,  +1.20] n=  398 med  -6.47% win 18.8%
+  TP 1.0 hold  600 not done         choose  -2.61% [ -9.42,  +4.42] n=  561 med -49.19% win 36.5%  |  check  -1.03% [ -9.51,  +7.71] n=  302 med -27.63% win 36.1%
+  TP 1.0 hold  600 smart bought     choose  -8.60% [-14.22,  -3.09] n=  358 med -15.52% win 21.2%  |  check  -3.52% [ -9.45,  +2.92] n=  297 med -10.66% win 23.2%
+  TP 1.0 hold  600 no smart         choose  -0.78% [ -6.94,  +5.31] n=  698 med -32.72% win 35.8%  |  check  -1.89% [ -8.36,  +4.94] n=  403 med  -5.20% win 28.5%
+
+F1/F2 dip X 40 d 0.5: 1036 signals, conc median 1.00, done 0.30, smart 0.28
+  TP 0.3 hold  180 all              choose  -4.53% [ -8.45,  -0.70] n=  637 med  +3.92% win 51.2%  |  check  -4.40% [ -9.13,  +0.13] n=  395 med  -2.84% win 46.3%
+  TP 0.3 hold  180 conc>med         choose no trades  |  check no trades
+  TP 0.3 hold  180 conc<=med        choose  -4.53% [ -8.45,  -0.70] n=  637 med  +3.92% win 51.2%  |  check  -4.40% [ -9.13,  +0.13] n=  395 med  -2.84% win 46.3%
+  TP 0.3 hold  180 conc>med & done  choose no trades  |  check no trades
+  TP 0.3 hold  180 done             choose  -8.17% [-14.18,  -2.41] n=  169 med -10.16% win 36.7%  |  check  -8.77% [-14.44,  -3.14] n=  142 med  -4.83% win 35.2%
+  TP 0.3 hold  180 not done         choose  -3.21% [ -8.11,  +1.63] n=  468 med +15.35% win 56.4%  |  check  -1.95% [ -8.16,  +4.51] n=  253 med  +4.98% win 52.6%
+  TP 0.3 hold  180 smart bought     choose -10.15% [-16.38,  -4.23] n=  146 med  -7.69% win 42.5%  |  check -11.84% [-18.03,  -5.64] n=  138 med  -6.92% win 40.6%
+  TP 0.3 hold  180 no smart         choose  -2.86% [ -7.77,  +1.86] n=  491 med +14.15% win 53.8%  |  check  -0.41% [ -6.64,  +5.62] n=  257 med  -1.77% win 49.4%
+  TP 0.3 hold  600 all              choose  -4.68% [ -8.77,  -0.71] n=  631 med +12.24% win 52.6%  |  check  -4.94% [ -9.62,  -0.19] n=  391 med  -2.87% win 47.1%
+  TP 0.3 hold  600 conc>med         choose no trades  |  check no trades
+  TP 0.3 hold  600 conc<=med        choose  -4.68% [ -8.77,  -0.71] n=  631 med +12.24% win 52.6%  |  check  -4.94% [ -9.62,  -0.19] n=  391 med  -2.87% win 47.1%
+  TP 0.3 hold  600 conc>med & done  choose no trades  |  check no trades
+  TP 0.3 hold  600 done             choose  -7.16% [-13.64,  -0.44] n=  165 med  -9.30% win 41.2%  |  check  -9.24% [-15.35,  -3.13] n=  142 med  -4.83% win 36.6%
+  TP 0.3 hold  600 not done         choose  -3.80% [ -8.66,  +1.07] n=  466 med +17.25% win 56.7%  |  check  -2.48% [ -8.74,  +3.95] n=  249 med  +7.35% win 53.0%
+  TP 0.3 hold  600 smart bought     choose  -8.98% [-15.67,  -2.16] n=  143 med  -5.76% win 47.6%  |  check -13.05% [-19.63,  -6.41] n=  136 med  -6.92% win 41.9%
+  TP 0.3 hold  600 no smart         choose  -3.42% [ -8.07,  +1.26] n=  488 med +14.74% win 54.1%  |  check  -0.61% [ -6.74,  +5.21] n=  255 med  -0.20% win 49.8%
+  TP 1.0 hold  180 all              choose  -2.86% [ -9.45,  +3.70] n=  637 med -35.34% win 35.6%  |  check  -7.37% [-14.27,  -0.72] n=  395 med -11.02% win 32.2%
+  TP 1.0 hold  180 conc>med         choose no trades  |  check no trades
+  TP 1.0 hold  180 conc<=med        choose  -2.86% [ -9.45,  +3.70] n=  637 med -35.34% win 35.6%  |  check  -7.37% [-14.27,  -0.72] n=  395 med -11.02% win 32.2%
+  TP 1.0 hold  180 conc>med & done  choose no trades  |  check no trades
+  TP 1.0 hold  180 done             choose -11.61% [-20.18,  -2.87] n=  169 med -19.64% win 24.9%  |  check -12.68% [-20.52,  -4.80] n=  142 med  -8.87% win 23.9%
+  TP 1.0 hold  180 not done         choose  +0.31% [ -7.59,  +8.60] n=  468 med -57.48% win 39.5%  |  check  -4.40% [-13.85,  +5.08] n=  253 med -26.84% win 36.8%
+  TP 1.0 hold  180 smart bought     choose  -9.21% [-18.48,  +0.37] n=  146 med -21.48% win 30.1%  |  check -17.02% [-25.35,  -8.55] n=  138 med -22.91% win 26.8%
+  TP 1.0 hold  180 no smart         choose  -0.97% [ -8.95,  +7.29] n=  491 med -49.37% win 37.3%  |  check  -2.19% [-11.35,  +6.33] n=  257 med  -5.84% win 35.0%
+  TP 1.0 hold  600 all              choose  -3.18% [-10.01,  +3.61] n=  631 med -48.13% win 35.8%  |  check  -9.14% [-15.84,  -2.55] n=  391 med -23.90% win 30.7%
+  TP 1.0 hold  600 conc>med         choose no trades  |  check no trades
+  TP 1.0 hold  600 conc<=med        choose  -3.18% [-10.01,  +3.61] n=  631 med -48.13% win 35.8%  |  check  -9.14% [-15.84,  -2.55] n=  391 med -23.90% win 30.7%
+  TP 1.0 hold  600 conc>med & done  choose no trades  |  check no trades
+  TP 1.0 hold  600 done             choose -11.82% [-21.36,  -1.92] n=  165 med -30.36% win 25.5%  |  check -15.22% [-23.96,  -6.57] n=  142 med -16.93% win 20.4%
+  TP 1.0 hold  600 not done         choose  -0.12% [ -8.27,  +8.30] n=  466 med -64.42% win 39.5%  |  check  -5.67% [-14.75,  +3.78] n=  249 med -40.06% win 36.5%
+  TP 1.0 hold  600 smart bought     choose  -8.73% [-19.15,  +2.13] n=  143 med -36.81% win 31.5%  |  check -22.29% [-31.15, -12.38] n=  136 med -41.59% win 22.8%
+  TP 1.0 hold  600 no smart         choose  -1.55% [ -9.62,  +6.33] n=  488 med -56.66% win 37.1%  |  check  -2.13% [-11.18,  +6.96] n=  255 med  -6.17% win 34.9%
+
+F1/F2 dip X 40 d 0.7: 909 signals, conc median 0.96, done 0.36, smart 0.35
+  TP 0.3 hold  180 all              choose  -0.51% [ -4.25,  +3.57] n=  565 med  +2.21% win 51.9%  |  check  -1.61% [ -6.52,  +3.04] n=  342 med  -4.22% win 43.0%
+  TP 0.3 hold  180 conc>med         choose  +4.17% [ -2.03, +10.32] n=  282 med +21.06% win 59.9%  |  check  +3.51% [ -5.32, +12.53] n=  140 med +11.95% win 53.6%
+  TP 0.3 hold  180 conc<=med        choose  -5.17% [-10.35,  -0.02] n=  283 med  -5.52% win 43.8%  |  check  -5.15% [-10.42,  +0.27] n=  202 med  -5.02% win 35.6%
+  TP 0.3 hold  180 conc>med & done  choose  -1.25% [-16.80, +15.41] n=   44 med +10.43% win 59.1%  |  check  +5.27% [-14.85, +24.77] n=   24 med  +8.46% win 54.2%
+  TP 0.3 hold  180 done             choose  -4.20% [-10.21,  +1.70] n=  179 med  -7.79% win 41.3%  |  check  -4.70% [ -9.58,  +0.59] n=  145 med  -5.00% win 31.7%
+  TP 0.3 hold  180 not done         choose  +1.20% [ -4.07,  +6.88] n=  386 med +17.17% win 56.7%  |  check  +0.67% [ -6.82,  +8.32] n=  197 med  +6.40% win 51.3%
+  TP 0.3 hold  180 smart bought     choose  -4.96% [-10.95,  +1.11] n=  164 med  -5.84% win 43.9%  |  check  -1.94% [ -8.05,  +4.73] n=  156 med  -5.87% win 39.7%
+  TP 0.3 hold  180 no smart         choose  +1.31% [ -3.40,  +6.48] n=  401 med +10.84% win 55.1%  |  check  -1.32% [ -8.20,  +5.53] n=  186 med  -3.10% win 45.7%
+  TP 0.3 hold  600 all              choose  -0.62% [ -4.80,  +3.63] n=  560 med  +4.82% win 52.1%  |  check  -2.14% [ -6.96,  +2.77] n=  338 med  -4.24% win 43.8%
+  TP 0.3 hold  600 conc>med         choose  +3.77% [ -2.59, +10.06] n=  282 med +23.40% win 60.3%  |  check  +3.36% [ -5.29, +12.33] n=  139 med +12.22% win 54.0%
+  TP 0.3 hold  600 conc<=med        choose  -5.07% [-10.36,  +0.40] n=  278 med  -6.32% win 43.9%  |  check  -5.98% [-11.10,  -0.47] n=  199 med  -5.25% win 36.7%
+  TP 0.3 hold  600 conc>med & done  choose  -1.32% [-16.89, +15.33] n=   44 med +10.43% win 59.1%  |  check  +5.29% [-14.87, +24.81] n=   24 med  +8.46% win 54.2%
+  TP 0.3 hold  600 done             choose  -3.68% [ -9.97,  +2.84] n=  176 med  -9.17% win 42.0%  |  check  -5.18% [ -9.97,  -0.10] n=  144 med  -5.19% win 32.6%
+  TP 0.3 hold  600 not done         choose  +0.78% [ -4.43,  +6.45] n=  384 med +17.17% win 56.8%  |  check  +0.12% [ -7.16,  +7.54] n=  194 med  +6.58% win 52.1%
+  TP 0.3 hold  600 smart bought     choose  -4.74% [-11.61,  +1.74] n=  162 med  -6.32% win 44.4%  |  check  -3.10% [ -9.48,  +3.65] n=  154 med  -5.87% win 40.9%
+  TP 0.3 hold  600 no smart         choose  +1.05% [ -4.04,  +6.11] n=  398 med +12.40% win 55.3%  |  check  -1.34% [ -8.74,  +6.19] n=  184 med  -3.10% win 46.2%
+  TP 1.0 hold  180 all              choose  -2.04% [ -7.91,  +4.62] n=  565 med -27.33% win 35.0%  |  check  +2.36% [ -5.26,  +9.87] n=  342 med -11.66% win 31.3%
+  TP 1.0 hold  180 conc>med         choose  -0.11% [ -9.80,  +9.79] n=  282 med -47.62% win 38.7%  |  check +10.08% [ -4.00, +23.76] n=  140 med -28.05% win 40.7%
+  TP 1.0 hold  180 conc<=med        choose  -3.96% [-12.38,  +4.74] n=  283 med -19.01% win 31.4%  |  check  -2.99% [-10.63,  +5.04] n=  202 med -10.79% win 24.8%
+  TP 1.0 hold  180 conc>med & done  choose  -5.99% [-30.37, +21.34] n=   44 med -66.45% win 34.1%  |  check +18.05% [-12.83, +49.38] n=   24 med  -5.89% win 45.8%
+  TP 1.0 hold  180 done             choose  -7.32% [-15.86,  +1.64] n=  179 med -15.82% win 27.9%  |  check  -4.31% [-11.73,  +3.62] n=  145 med -10.22% win 20.0%
+  TP 1.0 hold  180 not done         choose  +0.41% [ -7.69,  +9.11] n=  386 med -48.13% win 38.3%  |  check  +7.28% [ -4.51, +19.29] n=  197 med -19.87% win 39.6%
+  TP 1.0 hold  180 smart bought     choose  -8.68% [-17.53,  +0.28] n=  164 med -20.93% win 29.9%  |  check  -0.74% [-10.22,  +9.18] n=  156 med -16.56% win 26.3%
+  TP 1.0 hold  180 no smart         choose  +0.68% [ -7.14,  +9.21] n=  401 med -30.43% win 37.2%  |  check  +4.96% [ -5.95, +16.33] n=  186 med  -4.97% win 35.5%
+  TP 1.0 hold  600 all              choose  -2.25% [ -8.88,  +4.64] n=  560 med -34.47% win 34.3%  |  check  +1.77% [ -5.91,  +9.38] n=  338 med -13.54% win 31.7%
+  TP 1.0 hold  600 conc>med         choose  -0.01% [-10.18,  +9.95] n=  282 med -49.15% win 39.4%  |  check +10.26% [ -4.45, +25.58] n=  139 med -13.56% win 41.7%
+  TP 1.0 hold  600 conc<=med        choose  -4.53% [-13.24,  +4.63] n=  278 med -29.43% win 29.1%  |  check  -4.15% [-11.98,  +4.27] n=  199 med -13.52% win 24.6%
+  TP 1.0 hold  600 conc>med & done  choose  -6.05% [-30.49, +21.31] n=   44 med -66.45% win 34.1%  |  check +18.07% [-12.81, +49.41] n=   24 med  -6.06% win 45.8%
+  TP 1.0 hold  600 done             choose  -8.38% [-17.83,  +1.64] n=  176 med -24.28% win 25.0%  |  check  -4.92% [-12.89,  +3.16] n=  144 med -11.17% win 20.8%
+  TP 1.0 hold  600 not done         choose  +0.56% [ -8.11,  +9.47] n=  384 med -49.15% win 38.5%  |  check  +6.74% [ -5.05, +18.25] n=  194 med -27.16% win 39.7%
+  TP 1.0 hold  600 smart bought     choose -10.26% [-19.83,  -0.43] n=  162 med -34.87% win 26.5%  |  check  -0.74% [-10.48,  +9.40] n=  154 med -20.99% win 27.3%
+  TP 1.0 hold  600 no smart         choose  +1.01% [ -7.09,  +9.51] n=  398 med -33.33% win 37.4%  |  check  +3.88% [ -7.75, +15.35] n=  184 med  -5.06% win 35.3%
+
+F3 bundle <= 0.05 of peak, >= 3 other buyers in 30 s: 2371 signals
+  TP 0.3 hold  180 choose  -7.54% [ -9.33,  -5.83] n= 1503 med  -7.39% win 32.7%  |  check  -7.69% [ -9.98,  -5.22] n=  858 med  -5.17% win 32.1%
+  TP 0.3 hold  600 choose  -8.13% [ -9.94,  -6.18] n= 1485 med  -9.76% win 33.1%  |  check  -9.30% [-11.80,  -6.59] n=  848 med  -7.82% win 31.6%
+  TP 1.0 hold  180 choose  -7.97% [-10.61,  -5.39] n= 1503 med -13.16% win 24.7%  |  check -10.22% [-13.39,  -6.87] n=  858 med -11.13% win 23.2%
+  TP 1.0 hold  600 choose  -9.31% [-12.10,  -6.44] n= 1485 med -17.07% win 21.8%  |  check -13.50% [-16.88,  -9.98] n=  848 med -17.64% win 19.2%
+
+F3 bundle <= 0.05 of peak, >= 10 other buyers in 30 s: 1447 signals
+  TP 0.3 hold  180 choose -10.70% [-13.13,  -8.37] n=  879 med -11.39% win 36.6%  |  check -11.49% [-14.50,  -8.52] n=  562 med  -8.48% win 32.2%
+  TP 0.3 hold  600 choose -11.28% [-13.84,  -8.86] n=  870 med -13.91% win 38.2%  |  check -13.40% [-16.65, -10.32] n=  557 med -12.53% win 31.6%
+  TP 1.0 hold  180 choose -10.01% [-13.67,  -6.51] n=  879 med -21.19% win 28.4%  |  check -13.48% [-17.42,  -9.47] n=  562 med -17.37% win 24.6%
+  TP 1.0 hold  600 choose -12.26% [-16.05,  -8.39] n=  870 med -27.63% win 25.3%  |  check -17.08% [-21.52, -12.89] n=  557 med -27.50% win 19.7%
+
+F3 bundle <= 0.2 of peak, >= 3 other buyers in 30 s: 2571 signals
+  TP 0.3 hold  180 choose  -7.02% [ -8.70,  -5.37] n= 1619 med  -7.08% win 34.1%  |  check  -6.99% [ -9.29,  -4.75] n=  941 med  -4.96% win 34.8%
+  TP 0.3 hold  600 choose  -7.67% [ -9.43,  -5.80] n= 1600 med  -9.08% win 34.4%  |  check  -8.84% [-11.30,  -6.55] n=  931 med  -7.48% win 34.4%
+  TP 1.0 hold  180 choose  -7.62% [-10.08,  -5.08] n= 1619 med -13.16% win 25.9%  |  check  -9.26% [-12.53,  -5.94] n=  941 med -12.03% win 24.3%
+  TP 1.0 hold  600 choose  -9.23% [-11.78,  -6.62] n= 1600 med -17.63% win 22.4%  |  check -13.07% [-16.44,  -9.61] n=  931 med -20.33% win 20.2%
+
+F3 bundle <= 0.2 of peak, >= 10 other buyers in 30 s: 1596 signals
+  TP 0.3 hold  180 choose -10.09% [-12.40,  -7.84] n=  959 med -11.39% win 37.5%  |  check -11.06% [-13.91,  -8.07] n=  631 med  -8.13% win 35.0%
+  TP 0.3 hold  600 choose -11.00% [-13.43,  -8.57] n=  949 med -13.87% win 39.0%  |  check -13.22% [-16.15, -10.31] n=  626 med -12.43% win 34.7%
+  TP 1.0 hold  180 choose -10.24% [-13.39,  -7.05] n=  959 med -21.53% win 28.9%  |  check -12.30% [-16.36,  -8.13] n=  631 med -18.13% win 25.7%
+  TP 1.0 hold  600 choose -12.95% [-16.34,  -9.41] n=  949 med -28.02% win 25.3%  |  check -16.24% [-20.49, -11.90] n=  626 med -29.45% win 21.4%
+
+best 8 on 'choose' (n >= 100), with their 'check':
+  F1/2 X40 d0.7 TP0.3 180s conc>med            choose  +4.17% [ -2.03, +10.32] n=  282 med +21.06% win 59.9%  |  check  +3.51% [ -5.32, +12.53] n=  140 med +11.95% win 53.6%
+  F1/2 X40 d0.7 TP0.3 600s conc>med            choose  +3.77% [ -2.59, +10.06] n=  282 med +23.40% win 60.3%  |  check  +3.36% [ -5.29, +12.33] n=  139 med +12.22% win 54.0%
+  F1/2 X20 d0.7 TP0.3 180s conc>med & done     choose  +1.91% [ -5.84,  +9.83] n=  179 med +16.02% win 57.5%  |  check  -1.15% [-11.20,  +8.62] n=   95 med  +3.05% win 50.5%
+  F1/2 X20 d0.7 TP0.3 600s conc>med & done     choose  +1.69% [ -6.36,  +9.50] n=  177 med +16.02% win 57.6%  |  check  -1.57% [-12.01,  +9.13] n=   90 med  +0.41% win 50.0%
+  F1/2 X20 d0.7 TP0.3 180s conc>med            choose  +1.37% [ -3.20,  +5.76] n=  532 med +15.34% win 55.8%  |  check  +0.78% [ -5.18,  +6.85] n=  291 med  +7.74% win 52.9%
+  F1/2 X40 d0.7 TP0.3 180s no smart            choose  +1.31% [ -3.40,  +6.48] n=  401 med +10.84% win 55.1%  |  check  -1.32% [ -8.20,  +5.53] n=  186 med  -3.10% win 45.7%
+  F1/2 X40 d0.7 TP0.3 180s not done            choose  +1.20% [ -4.07,  +6.88] n=  386 med +17.17% win 56.7%  |  check  +0.67% [ -6.82,  +8.32] n=  197 med  +6.40% win 51.3%
+  F1/2 X40 d0.7 TP0.3 600s no smart            choose  +1.05% [ -4.04,  +6.11] n=  398 med +12.40% win 55.3%  |  check  -1.34% [ -8.74,  +6.19] n=  184 med  -3.10% win 46.2%

@@ -1,0 +1,124 @@
+264 graduated SOL pools; validation = first 158 by graduation time, test = last 106
+costs: 1.0 SOL per entry, PumpSwap fee by market-cap tier, 0.0002 SOL/tx, 1.0 s latency
+
+VALIDATION (every rule; best per family marked *):
+ * grad   {"delay": 5}               hold   60s   156 trades  mean -24.30% [-31.23, -16.90]  median  -1.05%  win 32.1%  halves -23.75% / -24.86%
+   grad   {"delay": 5}               hold  300s   153 trades  mean -29.90% [-37.92, -20.48]  median -37.51%  win 40.5%  halves -35.26% / -24.61%
+   grad   {"delay": 5}               hold  900s   148 trades  mean -36.62% [-49.32, -20.62]  median -95.02%  win 28.4%  halves -38.33% / -34.90%
+   grad   {"delay": 5}               hold 3600s   123 trades  mean -61.33% [-74.52, -47.86]  median -96.36%  win 13.8%  halves -46.40% / -76.01%
+   grad   {"delay": 30}              hold   60s   156 trades  mean -27.88% [-34.48, -20.81]  median  -2.00%  win 31.4%  halves -27.88% / -27.88%
+   grad   {"delay": 30}              hold  300s   153 trades  mean -33.01% [-41.69, -25.27]  median -45.22%  win 41.2%  halves -34.98% / -31.07%
+   grad   {"delay": 30}              hold  900s   146 trades  mean -40.58% [-53.28, -28.09]  median -94.64%  win 29.5%  halves -41.06% / -40.09%
+   grad   {"delay": 30}              hold 3600s   123 trades  mean -65.87% [-76.32, -53.56]  median -96.96%  win 13.0%  halves -48.58% / -82.88%
+   grad   {"delay": 60}              hold   60s   155 trades  mean -33.22% [-38.59, -27.69]  median  -5.76%  win 30.3%  halves -35.04% / -31.42%
+   grad   {"delay": 60}              hold  300s   153 trades  mean -38.71% [-47.17, -30.72]  median -51.33%  win 35.3%  halves -43.57% / -33.92%
+   grad   {"delay": 60}              hold  900s   146 trades  mean -40.30% [-50.75, -27.74]  median -93.56%  win 29.5%  halves -45.84% / -34.77%
+   grad   {"delay": 60}              hold 3600s   123 trades  mean -66.78% [-78.21, -54.46]  median -97.07%  win 13.8%  halves -50.33% / -82.96%
+   grad   {"delay": 300}             hold   60s   153 trades  mean -38.04% [-44.74, -31.17]  median -18.53%  win 22.2%  halves -39.91% / -36.19%
+   grad   {"delay": 300}             hold  300s   150 trades  mean -37.99% [-48.20, -26.44]  median -64.36%  win 24.0%  halves -39.87% / -36.11%
+   grad   {"delay": 300}             hold  900s   144 trades  mean -38.95% [-51.69, -23.11]  median -85.10%  win 21.5%  halves -42.06% / -35.85%
+   grad   {"delay": 300}             hold 3600s   120 trades  mean -66.86% [-76.77, -55.64]  median -97.33%  win 14.2%  halves -52.33% / -81.39%
+   mom    {"at": 60, "k": 0.2}       hold   60s    26 trades  mean -31.22% [-44.82, -17.14]  median -16.83%  win 30.8%  halves -32.68% / -29.77%
+   mom    {"at": 60, "k": 0.2}       hold  300s    24 trades  mean -33.73% [-53.83, -10.96]  median -27.30%  win 25.0%  halves -43.67% / -23.78%
+   mom    {"at": 60, "k": 0.2}       hold  900s    22 trades  mean -18.34% [-58.75, +28.28]  median -95.27%  win 31.8%  halves -6.17% / -30.50%
+   mom    {"at": 60, "k": 0.2}       hold 3600s    19 trades  mean -66.96% [-92.85, -38.98]  median -96.24%  win 10.5%  halves -62.39% / -71.08%
+   mom    {"at": 60, "k": 0.5}       hold   60s    13 trades  mean -33.09% [-52.52, -14.48]  median -12.36%  win 30.8%  halves -21.37% / -43.13%
+   mom    {"at": 60, "k": 0.5}       hold  300s    12 trades  mean -42.40% [-69.97, -13.51]  median -59.88%  win 25.0%  halves -29.54% / -55.27%
+   mom    {"at": 60, "k": 0.5}       hold  900s    11 trades  mean +10.84% [-57.75, +96.46]  median -97.32%  win 45.5%  halves +67.62% / -36.47%
+   mom    {"at": 60, "k": 0.5}       hold 3600s     9 trades  mean -68.73% [-98.96,  -9.35]  median -98.26%  win 11.1%  halves -31.18% / -98.76%
+   mom    {"at": 60, "k": 1.0}       hold   60s     7 trades  mean -46.48% [-73.55, -18.80]  median -21.29%  win 14.3%  halves -36.64% / -53.86%
+   mom    {"at": 60, "k": 1.0}       hold  300s     7 trades  mean -64.28% [-87.64, -39.10]  median -94.58%  win  0.0%  halves -68.66% / -60.99%
+   mom    {"at": 60, "k": 1.0}       hold  900s     6 trades  mean -45.27% [-99.61,  +9.08]  median -99.01%  win 33.3%  halves -36.72% / -53.81%
+   mom    {"at": 60, "k": 1.0}       hold 3600s     6 trades  mean -99.08% [-99.70, -98.48]  median -99.16%  win  0.0%  halves -99.39% / -98.76%
+   mom    {"at": 300, "k": 0.2}      hold   60s    32 trades  mean -16.11% [-26.74,  -5.19]  median -13.07%  win 31.2%  halves -15.19% / -17.03%
+   mom    {"at": 300, "k": 0.2}      hold  300s    31 trades  mean -26.17% [-44.38,  -5.32]  median -34.15%  win 32.3%  halves -10.67% / -40.70%
+   mom    {"at": 300, "k": 0.2}      hold  900s    29 trades  mean  +5.89% [-28.72, +54.95]  median -78.79%  win 34.5%  halves +36.79% / -22.96%
+   mom    {"at": 300, "k": 0.2}      hold 3600s    27 trades  mean -46.93% [-76.69,  -8.04]  median -96.79%  win 18.5%  halves -0.36% / -90.18%
+   mom    {"at": 300, "k": 0.5}      hold   60s    17 trades  mean -10.80% [-25.98,  +4.49]  median -14.54%  win 23.5%  halves +2.59% / -22.71%
+   mom    {"at": 300, "k": 0.5}      hold  300s    17 trades  mean -28.22% [-52.52,  -1.03]  median -36.11%  win 23.5%  halves +4.08% / -56.94%
+   mom    {"at": 300, "k": 0.5}      hold  900s    16 trades  mean +38.54% [-40.20, +125.96]  median -56.40%  win 37.5%  halves +94.58% / -17.51%
+   mom    {"at": 300, "k": 0.5}      hold 3600s    15 trades  mean -44.10% [-88.14,  +8.94]  median -96.79%  win 20.0%  halves +14.19% / -95.11%
+   mom    {"at": 300, "k": 1.0}      hold   60s     7 trades  mean -23.18% [-43.50,  -3.27]  median -14.54%  win 14.3%  halves -0.20% / -40.42%
+   mom    {"at": 300, "k": 1.0}      hold  300s     7 trades  mean -19.27% [-46.69,  +9.51]  median -34.15%  win 42.9%  halves -17.81% / -20.37%
+   mom    {"at": 300, "k": 1.0}      hold  900s     7 trades  mean +28.82% [-31.95, +85.17]  median +28.66%  win 57.1%  halves +68.53% / -0.96%
+   mom    {"at": 300, "k": 1.0}      hold 3600s     6 trades  mean -61.86% [-94.21,  -7.40]  median -87.16%  win 16.7%  halves -32.77% / -90.96%
+   mom    {"at": 900, "k": 0.2}      hold   60s    29 trades  mean  -2.13% [ -5.90,  +1.99]  median  -0.80%  win 41.4%  halves -0.97% / -3.21%
+   mom    {"at": 900, "k": 0.2}      hold  300s    29 trades  mean +12.74% [ -0.26, +27.74]  median +11.50%  win 72.4%  halves +25.57% / +0.76%
+   mom    {"at": 900, "k": 0.2}      hold  900s    27 trades  mean  +1.20% [-21.04, +22.92]  median  +5.69%  win 55.6%  halves +18.16% / -14.55%
+   mom    {"at": 900, "k": 0.2}      hold 3600s    24 trades  mean -69.58% [-90.98, -40.42]  median -98.76%  win  8.3%  halves -66.62% / -72.54%
+   mom    {"at": 900, "k": 0.5}      hold   60s    23 trades  mean  -1.40% [ -6.18,  +3.47]  median  -0.43%  win 47.8%  halves +0.80% / -3.42%
+ * mom    {"at": 900, "k": 0.5}      hold  300s    23 trades  mean +17.45% [ +0.43, +33.70]  median +17.83%  win 78.3%  halves +36.92% / -0.39%
+   mom    {"at": 900, "k": 0.5}      hold  900s    21 trades  mean  +3.66% [-19.01, +22.85]  median +18.03%  win 52.4%  halves +8.28% / -0.53%
+   mom    {"at": 900, "k": 0.5}      hold 3600s    19 trades  mean -67.30% [-94.78, -28.91]  median -98.77%  win 10.5%  halves -67.40% / -67.21%
+   mom    {"at": 900, "k": 1.0}      hold   60s    13 trades  mean  -4.47% [-10.04,  +1.59]  median  -6.26%  win 30.8%  halves -1.24% / -7.25%
+   mom    {"at": 900, "k": 1.0}      hold  300s    13 trades  mean  +8.07% [-16.98, +29.36]  median +11.95%  win 69.2%  halves +34.53% / -14.61%
+   mom    {"at": 900, "k": 1.0}      hold  900s    13 trades  mean  -7.75% [-35.94, +25.36]  median -14.89%  win 46.2%  halves +12.43% / -25.05%
+   mom    {"at": 900, "k": 1.0}      hold 3600s    11 trades  mean -92.30% [-98.22, -84.08]  median -98.75%  win  0.0%  halves -85.85% / -97.67%
+   dip    {"at": 60, "k": 0.2}       hold   60s    51 trades  mean -72.31% [-81.67, -63.07]  median -96.34%  win 11.8%  halves -66.68% / -77.72%
+   dip    {"at": 60, "k": 0.2}       hold  300s    51 trades  mean -76.82% [-87.50, -65.84]  median -96.84%  win  7.8%  halves -82.29% / -71.56%
+   dip    {"at": 60, "k": 0.2}       hold  900s    50 trades  mean -73.56% [-90.60, -55.83]  median -97.72%  win  4.0%  halves -90.74% / -56.39%
+   dip    {"at": 60, "k": 0.2}       hold 3600s    40 trades  mean -84.51% [-92.67, -74.18]  median -98.24%  win  5.0%  halves -76.65% / -92.37%
+   dip    {"at": 60, "k": 0.4}       hold   60s    40 trades  mean -81.43% [-88.76, -71.50]  median -97.60%  win 10.0%  halves -70.76% / -92.10%
+   dip    {"at": 60, "k": 0.4}       hold  300s    40 trades  mean -89.03% [-95.39, -78.28]  median -97.95%  win  2.5%  halves -90.09% / -87.97%
+   dip    {"at": 60, "k": 0.4}       hold  900s    39 trades  mean -81.38% [-96.26, -55.06]  median -98.10%  win  2.6%  halves -91.93% / -71.36%
+   dip    {"at": 60, "k": 0.4}       hold 3600s    31 trades  mean -91.50% [-97.21, -82.48]  median -98.86%  win  3.2%  halves -85.03% / -97.57%
+   dip    {"at": 60, "k": 0.6}       hold   60s    37 trades  mean -81.89% [-90.39, -72.71]  median -97.75%  win 10.8%  halves -71.30% / -91.93%
+   dip    {"at": 60, "k": 0.6}       hold  300s    37 trades  mean -89.30% [-96.14, -81.12]  median -98.00%  win  2.7%  halves -91.30% / -87.41%
+   dip    {"at": 60, "k": 0.6}       hold  900s    36 trades  mean -80.83% [-96.83, -52.15]  median -98.36%  win  2.8%  halves -93.00% / -68.66%
+   dip    {"at": 60, "k": 0.6}       hold 3600s    29 trades  mean -95.76% [-97.83, -93.47]  median -98.86%  win  0.0%  halves -93.95% / -97.46%
+   dip    {"at": 300, "k": 0.2}      hold   60s    82 trades  mean -61.79% [-71.08, -49.39]  median -92.70%  win 12.2%  halves -60.11% / -63.47%
+   dip    {"at": 300, "k": 0.2}      hold  300s    80 trades  mean -61.37% [-76.80, -43.60]  median -96.34%  win  8.8%  halves -57.44% / -65.30%
+   dip    {"at": 300, "k": 0.2}      hold  900s    77 trades  mean -70.40% [-81.81, -55.17]  median -96.89%  win  5.2%  halves -76.30% / -64.65%
+   dip    {"at": 300, "k": 0.2}      hold 3600s    60 trades  mean -81.11% [-87.41, -73.16]  median -97.45%  win  6.7%  halves -72.33% / -89.89%
+   dip    {"at": 300, "k": 0.4}      hold   60s    71 trades  mean -65.83% [-77.59, -52.51]  median -95.74%  win  9.9%  halves -64.72% / -66.92%
+   dip    {"at": 300, "k": 0.4}      hold  300s    70 trades  mean -65.08% [-81.01, -42.39]  median -96.75%  win  7.1%  halves -57.60% / -72.56%
+   dip    {"at": 300, "k": 0.4}      hold  900s    67 trades  mean -77.65% [-87.43, -65.70]  median -97.09%  win  3.0%  halves -81.42% / -73.99%
+   dip    {"at": 300, "k": 0.4}      hold 3600s    52 trades  mean -82.18% [-89.31, -72.75]  median -97.46%  win  5.8%  halves -71.17% / -93.19%
+   dip    {"at": 300, "k": 0.6}      hold   60s    63 trades  mean -71.21% [-81.25, -59.89]  median -96.19%  win  6.3%  halves -61.03% / -81.07%
+   dip    {"at": 300, "k": 0.6}      hold  300s    62 trades  mean -71.34% [-85.96, -50.01]  median -96.98%  win  4.8%  halves -55.69% / -86.98%
+   dip    {"at": 300, "k": 0.6}      hold  900s    59 trades  mean -88.16% [-92.54, -83.18]  median -97.46%  win  0.0%  halves -79.47% / -96.57%
+   dip    {"at": 300, "k": 0.6}      hold 3600s    47 trades  mean -85.95% [-92.13, -76.94]  median -97.60%  win  2.1%  halves -74.08% / -97.33%
+ * dip    {"at": 900, "k": 0.2}      hold   60s   102 trades  mean -46.49% [-53.66, -39.22]  median -12.24%  win  3.9%  halves -46.13% / -46.86%
+   dip    {"at": 900, "k": 0.2}      hold  300s   102 trades  mean -48.67% [-56.17, -42.22]  median -22.36%  win  6.9%  halves -46.56% / -50.79%
+   dip    {"at": 900, "k": 0.2}      hold  900s    98 trades  mean -48.75% [-56.19, -41.78]  median -30.35%  win  5.1%  halves -44.35% / -53.15%
+   dip    {"at": 900, "k": 0.2}      hold 3600s    81 trades  mean -48.04% [-59.60, -35.35]  median -60.65%  win  7.4%  halves -39.65% / -56.21%
+   dip    {"at": 900, "k": 0.4}      hold   60s    98 trades  mean -47.07% [-53.19, -39.74]  median -12.24%  win  4.1%  halves -45.87% / -48.28%
+   dip    {"at": 900, "k": 0.4}      hold  300s    98 trades  mean -49.54% [-56.55, -41.87]  median -22.36%  win  5.1%  halves -45.85% / -53.22%
+   dip    {"at": 900, "k": 0.4}      hold  900s    94 trades  mean -49.87% [-56.64, -41.63]  median -34.57%  win  4.3%  halves -43.78% / -55.95%
+   dip    {"at": 900, "k": 0.4}      hold 3600s    77 trades  mean -49.01% [-59.06, -37.99]  median -61.63%  win  5.2%  halves -41.13% / -56.68%
+   dip    {"at": 900, "k": 0.6}      hold   60s    88 trades  mean -50.53% [-58.10, -42.54]  median -12.91%  win  1.1%  halves -47.65% / -53.41%
+   dip    {"at": 900, "k": 0.6}      hold  300s    88 trades  mean -51.33% [-58.82, -44.13]  median -21.11%  win  3.4%  halves -46.68% / -55.99%
+   dip    {"at": 900, "k": 0.6}      hold  900s    85 trades  mean -51.78% [-60.26, -44.41]  median -33.11%  win  1.2%  halves -46.31% / -57.11%
+   dip    {"at": 900, "k": 0.6}      hold 3600s    68 trades  mean -46.91% [-59.33, -31.11]  median -43.79%  win  4.4%  halves -34.23% / -59.59%
+   active {"at": 900, "n": 10}       hold   60s    84 trades  mean -12.06% [-16.14,  -7.89]  median  -9.68%  win 21.4%  halves -13.65% / -10.46%
+   active {"at": 900, "n": 10}       hold  300s    82 trades  mean -10.95% [-18.02,  -2.70]  median -11.54%  win 32.9%  halves -7.50% / -14.40%
+   active {"at": 900, "n": 10}       hold  900s    75 trades  mean -13.82% [-22.65,  -2.39]  median -12.24%  win 34.7%  halves -12.50% / -15.11%
+   active {"at": 900, "n": 10}       hold 3600s    70 trades  mean -39.08% [-52.28, -23.95]  median -50.41%  win 21.4%  halves -24.48% / -53.68%
+   active {"at": 900, "n": 50}       hold   60s    72 trades  mean  -8.85% [-12.77,  -5.26]  median  -6.52%  win 25.0%  halves -11.73% / -5.97%
+   active {"at": 900, "n": 50}       hold  300s    70 trades  mean  -7.20% [-15.54,  +1.70]  median  -5.36%  win 35.7%  halves -4.03% / -10.38%
+   active {"at": 900, "n": 50}       hold  900s    64 trades  mean  -9.61% [-19.74,  +1.25]  median -12.20%  win 39.1%  halves -9.01% / -10.20%
+   active {"at": 900, "n": 50}       hold 3600s    59 trades  mean -45.78% [-57.87, -34.49]  median -61.63%  win 22.0%  halves -35.10% / -56.10%
+   active {"at": 1800, "n": 10}      hold   60s    50 trades  mean  -7.98% [-13.28,  -3.67]  median  -1.86%  win 28.0%  halves -10.25% / -5.72%
+   active {"at": 1800, "n": 10}      hold  300s    49 trades  mean -10.43% [-18.81,  -1.37]  median  -0.44%  win 40.8%  halves -8.32% / -12.45%
+   active {"at": 1800, "n": 10}      hold  900s    49 trades  mean -20.57% [-35.00,  -7.36]  median -12.18%  win 32.7%  halves -18.34% / -22.70%
+   active {"at": 1800, "n": 10}      hold 3600s    46 trades  mean -42.02% [-53.06, -27.51]  median -42.22%  win 21.7%  halves -36.54% / -47.50%
+ * active {"at": 1800, "n": 50}      hold   60s    44 trades  mean  -5.82% [-10.60,  -1.25]  median  -1.26%  win 31.8%  halves -6.39% / -5.25%
+   active {"at": 1800, "n": 50}      hold  300s    43 trades  mean  -7.07% [-18.20,  +2.96]  median  -0.28%  win 46.5%  halves +0.71% / -14.49%
+   active {"at": 1800, "n": 50}      hold  900s    43 trades  mean -18.26% [-33.39,  -4.00]  median  -6.34%  win 37.2%  halves -7.25% / -28.77%
+   active {"at": 1800, "n": 50}      hold 3600s    40 trades  mean -42.68% [-59.49, -29.88]  median -51.19%  win 25.0%  halves -36.96% / -48.39%
+   active {"at": 3600, "n": 10}      hold   60s    33 trades  mean  -8.53% [-15.94,  -2.66]  median  -7.62%  win  9.1%  halves -5.84% / -11.06%
+   active {"at": 3600, "n": 10}      hold  300s    33 trades  mean -12.07% [-20.85,  -3.34]  median  -6.00%  win 27.3%  halves -6.65% / -17.17%
+   active {"at": 3600, "n": 10}      hold  900s    32 trades  mean -21.85% [-32.80, -13.42]  median -12.18%  win 28.1%  halves -24.44% / -19.25%
+   active {"at": 3600, "n": 10}      hold 3600s    26 trades  mean -28.06% [-43.16, -10.20]  median -25.12%  win 38.5%  halves -32.73% / -23.39%
+   active {"at": 3600, "n": 50}      hold   60s    22 trades  mean  -8.53% [-18.23,  +0.96]  median  -1.78%  win 13.6%  halves -5.64% / -11.43%
+   active {"at": 3600, "n": 50}      hold  300s    22 trades  mean -10.73% [-23.36,  +0.56]  median  -0.48%  win 40.9%  halves -5.16% / -16.29%
+   active {"at": 3600, "n": 50}      hold  900s    21 trades  mean -24.20% [-37.98, -10.94]  median  -8.35%  win 42.9%  halves -32.84% / -16.34%
+   active {"at": 3600, "n": 50}      hold 3600s    18 trades  mean -37.72% [-54.07, -22.55]  median -29.19%  win 38.9%  halves -26.56% / -48.88%
+
+TEST (the rule chosen on validation, reported once):
+  grad   {"delay": 5}               hold   60s   106 trades  mean -24.94% [-32.55, -17.17]  median  -0.77%  win 24.5%  halves -24.95% / -24.93%  bound -35.01%  no edge
+  mom    {"at": 900, "k": 0.5}      hold  300s    14 trades  mean -27.54% [-50.91,  -5.76]  median  +1.64%  win 50.0%  halves -20.83% / -34.25%  bound -59.19%  no edge
+  dip    {"at": 900, "k": 0.2}      hold   60s    58 trades  mean -36.68% [-45.96, -27.79]  median -12.22%  win 10.3%  halves -43.72% / -29.65%  bound -49.50%  no edge
+  active {"at": 1800, "n": 50}      hold   60s    27 trades  mean  -4.91% [-11.39,  +0.31]  median  -0.62%  win 29.6%  halves -6.59% / -3.36%  bound -14.67%  no edge
+
+reference, every pool (all, not selected): grad 30 s, hold 5 min   257 trades  mean -30.25% [-36.33, -24.03]  median -24.04%  win 43.6%  halves -31.90% / -28.61%

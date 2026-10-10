@@ -1,0 +1,66 @@
+{
+ "checked_at": 1791600953.7596831,
+ "status": "red",
+ "items": [
+  {
+   "check": "Action autotrade.yml",
+   "level": "green",
+   "detail": "the agent, every 5 min"
+  },
+  {
+   "check": "Action recorder.yml",
+   "level": "green",
+   "detail": "raw recorder, back-to-back ~6 h runs"
+  },
+  {
+   "check": "Action paper-tests.yml",
+   "level": "red",
+   "detail": "latest run failure (https://github.com/StaticPush7217/TARTAR/actions/runs/38017646298) [JLP check-ins every 4 h, dip cohort daily]"
+  },
+  {
+   "check": "Action pumpflow-paper.yml",
+   "level": "green",
+   "detail": "pumpflow snapshots, hourly"
+  },
+  {
+   "check": "Action perps-ctx.yml",
+   "level": "green",
+   "detail": "Hyperliquid OI/funding snapshots, every 4 h"
+  },
+  {
+   "check": "Action pumpflow-live.yml",
+   "level": "green",
+   "detail": "pump.fun curve volume from the recorder, daily"
+  },
+  {
+   "check": "Recorder hours",
+   "level": "green",
+   "detail": "all 4 hours through 20261010-00 UTC uploaded"
+  },
+  {
+   "check": "Input: JLP snapshots",
+   "level": "green",
+   "detail": "newest 1.9 h old"
+  },
+  {
+   "check": "Input: dip cohorts",
+   "level": "green",
+   "detail": "newest 24.5 h old"
+  },
+  {
+   "check": "Input: pumpflow snapshots",
+   "level": "green",
+   "detail": "newest 0.4 h old"
+  },
+  {
+   "check": "Input: HL OI/funding snapshots",
+   "level": "green",
+   "detail": "newest 1.8 h old"
+  },
+  {
+   "check": "Agent",
+   "level": "green",
+   "detail": "no halts, no orphans, no closed twins yet"
+  }
+ ]
+}

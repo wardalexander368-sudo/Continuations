@@ -1,0 +1,434 @@
+{
+  "registered_at": "2026-10-09T02:04:13Z",
+  "hypothesis": "Short-term mean reversion in established Solana memecoins: buying after a >5% drop over 1 hour and holding 4 hours beats random entries in the same pools, net of costs.",
+  "rule": {
+    "family": "dip",
+    "lookback_bars": 12,
+    "drop": 0.05,
+    "hold_bars": 48,
+    "bar_seconds": 300,
+    "entry": "next bar open",
+    "exit": "close of bar t+48",
+    "one_position_per_pool": true
+  },
+  "costs": {
+    "fee_per_side": 0.005,
+    "size_usd": 200,
+    "network_usd_per_tx": 0.05,
+    "impact": "size / (liquidity_usd / 2) per side, liquidity as registered"
+  },
+  "universe": {
+    "selection": "GeckoTerminal solana pools by 24h volume, pages 1-10; base not SOL/stable/LST; quote SOL or USDC; liquidity >= $100k; 24h volume >= $100k; age >= 2 days; as of registered_at",
+    "pools": [
+      {
+        "pool": "HktfL7iwGKT5QHjywQkcDnZXScoh811k7akrMZJkCcEF",
+        "name": "WETH / SOL",
+        "dex": "orca",
+        "liquidity_usd": 7119573.6011,
+        "volume24_usd": 19979094.8377999,
+        "age_days": 1191.48
+      },
+      {
+        "pool": "BofA2ViUSudPBTUms2KRuG6AHNeMawjNfwqTJDgx5BKW",
+        "name": "PUMP / SOL",
+        "dex": "orca",
+        "liquidity_usd": 1912117.9156,
+        "volume24_usd": 18775998.87039,
+        "age_days": 388.44
+      },
+      {
+        "pool": "2uF4Xh61rDwxnG9woyxsVQP7zuA6kLFpb3NvnRQeoiSd",
+        "name": "PUMP / USDC",
+        "dex": "pumpswap",
+        "liquidity_usd": 26087102.6271,
+        "volume24_usd": 18163918.6352143,
+        "age_days": 451.38
+      },
+      {
+        "pool": "HxA6SKW5qA4o12fjVgTpXdq2YnZ5Zv1s7SB4FFomsyLM",
+        "name": "cbBTC / USDC",
+        "dex": "orca",
+        "liquidity_usd": 5190424.6644,
+        "volume24_usd": 16412952.4106509,
+        "age_days": 700.22
+      },
+      {
+        "pool": "2AXXcN6oN9bBT5owwmTH53C7QHUXvhLeu718Kqt8rvY2",
+        "name": "RAY / SOL 0.05%",
+        "dex": "raydium-clmm",
+        "liquidity_usd": 4248322.007,
+        "volume24_usd": 13883188.522769,
+        "age_days": 974.0
+      },
+      {
+        "pool": "45ssPkUQs1ssbeDqxD2mZrMdJYAXF7GyQyhS5xDXuWC5",
+        "name": "PUMP / SOL",
+        "dex": "raydium-clmm",
+        "liquidity_usd": 914656.6317,
+        "volume24_usd": 13331090.8556904,
+        "age_days": 451.37
+      },
+      {
+        "pool": "Hxw77h9fEx598afiiZunwHaX3vYu9UskDk9EpPNZp1mG",
+        "name": "ORCA / SOL",
+        "dex": "orca",
+        "liquidity_usd": 1643196.1023,
+        "volume24_usd": 13312100.5879323,
+        "age_days": 1008.22
+      },
+      {
+        "pool": "CeaZcxBNLpJWtxzt58qQmfMBtJY8pQLvursXTJYGQpbN",
+        "name": "cbBTC / SOL",
+        "dex": "orca",
+        "liquidity_usd": 9419783.3722,
+        "volume24_usd": 9867660.43534891,
+        "age_days": 700.36
+      },
+      {
+        "pool": "zxTpi4BtaWX3mgdAPoezkMD1hxx8CdeCfrqXMWvSCLX",
+        "name": "STONK / SOL",
+        "dex": "meteora",
+        "liquidity_usd": 2245276.3756,
+        "volume24_usd": 9050355.51497547,
+        "age_days": 57.63
+      },
+      {
+        "pool": "2TAgfogn8JRwwTnsGKUa6WUT5Xdv1iMEzfEDMor68X9C",
+        "name": "ZEC / SOL",
+        "dex": "orca",
+        "liquidity_usd": 3187480.3396,
+        "volume24_usd": 8346133.84115762,
+        "age_days": 354.94
+      },
+      {
+        "pool": "B5EwJVDuAauzUEEdwvbuXzbFFgEYnUqqS37TUM1c4PQA",
+        "name": "WBTC / SOL",
+        "dex": "orca",
+        "liquidity_usd": 1940439.1514,
+        "volume24_usd": 7526532.06772711,
+        "age_days": 1060.4
+      },
+      {
+        "pool": "GTHKH8s82ZR8GTSFZ1dUu6wfdxhy59wpMShxzG5zjiPm",
+        "name": "ZEC / USDC",
+        "dex": "orca",
+        "liquidity_usd": 2955403.8652,
+        "volume24_usd": 7450064.11458707,
+        "age_days": 350.05
+      },
+      {
+        "pool": "C1MgLojNLWBKADvu9BHdtgzz1oZX4dZ5zGdGcgvvW8Wz",
+        "name": "JUP / SOL",
+        "dex": "orca",
+        "liquidity_usd": 779552.781,
+        "volume24_usd": 6704745.69446886,
+        "age_days": 981.89
+      },
+      {
+        "pool": "6oQ9wVex4mKZti2GsGCfD8FWTMMC9PLQkztRU5cd6MK8",
+        "name": "HYPE / SOL",
+        "dex": "meteora",
+        "liquidity_usd": 608609.808,
+        "volume24_usd": 6563310.88736698,
+        "age_days": 347.49
+      },
+      {
+        "pool": "C8Gr6AUuq9hEdSYJzoEpNcdjpojPZwqG5MtQbeouNNwg",
+        "name": "JUP / SOL",
+        "dex": "meteora",
+        "liquidity_usd": 2155648.81,
+        "volume24_usd": 6381710.69394149,
+        "age_days": 933.95
+      },
+      {
+        "pool": "3C5YE97HADPDxZehYq9Cis8AXr9aNyrUsczKzE1nDbW9",
+        "name": "TRUMP / USDC",
+        "dex": "meteora",
+        "liquidity_usd": 11617932.5077,
+        "volume24_usd": 6203526.81465689,
+        "age_days": 628.8
+      },
+      {
+        "pool": "AsSyvUnbfaZJPRrNh3kUuvZTeHKoMVWEoHz86f4Q5D9x",
+        "name": "MET / SOL",
+        "dex": "meteora",
+        "liquidity_usd": 1957810.0995,
+        "volume24_usd": 5963864.11186063,
+        "age_days": 352.07
+      },
+      {
+        "pool": "FjuBy7jjf9DXj9d3R7cHpvcnoFW2iQxf7F7P3vqx4Jza",
+        "name": "SPCX / USDC",
+        "dex": "raydium-clmm",
+        "liquidity_usd": 598397.6496,
+        "volume24_usd": 5831171.00652567,
+        "age_days": 118.42
+      },
+      {
+        "pool": "3NBq9zynLPDQQDvYf8xiMbWywQfKZD7m7fyprY524efq",
+        "name": "TWEETCRAFT / SOL",
+        "dex": "pumpswap",
+        "liquidity_usd": 155527.8455,
+        "volume24_usd": 5654189.5044126,
+        "age_days": 2.23
+      },
+      {
+        "pool": "77xSiQHXyH43U9RJr3FSupVzzuhh9WwweG6k3cce9sjR",
+        "name": "wNEAR / USDC",
+        "dex": "orca",
+        "liquidity_usd": 1150008.0138,
+        "volume24_usd": 5215103.86079713,
+        "age_days": 26.51
+      },
+      {
+        "pool": "6qz7THwQvcjF3HyDGLuKaLBUk6EyJKeZXZMWLAeiwfjd",
+        "name": "BP / USDC",
+        "dex": "meteora",
+        "liquidity_usd": 5898422.083,
+        "volume24_usd": 5154567.74584161,
+        "age_days": 199.56
+      },
+      {
+        "pool": "DSUvc5qf5LJHHV5e2tD184ixotSnCnwj7i4jJa4Xsrmt",
+        "name": "BOME / SOL",
+        "dex": "raydium",
+        "liquidity_usd": 17524336.3448,
+        "volume24_usd": 5077874.82328683,
+        "age_days": 938.77
+      },
+      {
+        "pool": "CsioJDbZethDNdy6M6HV5ECeowF8zm7BFvTBcb7FZeCt",
+        "name": "SPCX / USDC",
+        "dex": "zerofi",
+        "liquidity_usd": 791197.3156,
+        "volume24_usd": 4796000.43364473,
+        "age_days": 118.51
+      },
+      {
+        "pool": "4pCZCVEiYyT4efNdXUdL2tJF8VGMgiMXrZWq6FiNXhRw",
+        "name": "SPYx / USDC",
+        "dex": "raydium-clmm",
+        "liquidity_usd": 583505.8578,
+        "volume24_usd": 4791540.493318,
+        "age_days": 204.47
+      },
+      {
+        "pool": "HnhpJPJgBG2KwniMTNW8cVBHvk1hFog3RC3kjnyc23tD",
+        "name": "CARDS / USDC",
+        "dex": "raydium-clmm",
+        "liquidity_usd": 4016895.3499,
+        "volume24_usd": 4556745.58256899,
+        "age_days": 405.3
+      },
+      {
+        "pool": "7ubS3GccjhQY99AYNKXjNJqnXjaokEdfdV915xnCb96r",
+        "name": "cbBTC / USDC",
+        "dex": "meteora",
+        "liquidity_usd": 1302327.7866,
+        "volume24_usd": 4084579.66246746,
+        "age_days": 700.14
+      },
+      {
+        "pool": "3wijQvPKm6jHQrAkfPpok5o8WjCWPm1DGG17NmeW8q1w",
+        "name": "CASH / USDC",
+        "dex": "orca",
+        "liquidity_usd": 6968757.4189,
+        "volume24_usd": 4003800.30485707,
+        "age_days": 391.88
+      },
+      {
+        "pool": "iAMtZieUtpLwB3dzWw8Fo3H3FPkMFy3ej52URusseR1",
+        "name": "WETH / USDC",
+        "dex": "humidifi",
+        "liquidity_usd": 100978.0687,
+        "volume24_usd": 3936232.64386085,
+        "age_days": 255.78
+      },
+      {
+        "pool": "FhdW3Y6Ea6hXKbkGkt5YSAVtDNd5qJ8USevMaPyEr45S",
+        "name": "wNEAR / USDC",
+        "dex": "meteora",
+        "liquidity_usd": 1592379.3777,
+        "volume24_usd": 3892622.98817903,
+        "age_days": 295.35
+      },
+      {
+        "pool": "49iMatQtoyabsYAQc8GafVq6aeBFVDxSRH44oiatyyw6",
+        "name": "NVDAx / USDC",
+        "dex": "raydium-clmm",
+        "liquidity_usd": 3168328.7245,
+        "volume24_usd": 3873038.29766368,
+        "age_days": 464.01
+      },
+      {
+        "pool": "9SMp4yLKGtW9TnLimfVPkDARsyNSfJw43WMke4r7KoZj",
+        "name": "PUMP / USDC",
+        "dex": "meteora",
+        "liquidity_usd": 2080572.4826,
+        "volume24_usd": 3827965.54465928,
+        "age_days": 451.53
+      },
+      {
+        "pool": "5hbf9JP8k5zdrZp9pokPypFQoBse5mGCmW6nqodurGcd",
+        "name": "MET / USDC",
+        "dex": "meteora",
+        "liquidity_usd": 597858.5902,
+        "volume24_usd": 3770649.32305439,
+        "age_days": 352.07
+      },
+      {
+        "pool": "867dKvaCcyRrUDP66bqNXbujXfjaxsNB9wTpc4CmBdAD",
+        "name": "MISTAKE / SOL",
+        "dex": "pumpswap",
+        "liquidity_usd": 206252.0252,
+        "volume24_usd": 3767537.54048307,
+        "age_days": 27.99
+      },
+      {
+        "pool": "HDhWhQCBrSh9xNWmNtsTi86eWj3yCoEiaRodjgNydo1b",
+        "name": "cbBTC / SOL",
+        "dex": "meteora",
+        "liquidity_usd": 351002.0645,
+        "volume24_usd": 3735866.19979545,
+        "age_days": 251.71
+      },
+      {
+        "pool": "2QDGj5BWMSNyEfmyDFx7eEvWWm4KujUPJ38Xdkntvxtd",
+        "name": "PUMP / SOL",
+        "dex": "meteora",
+        "liquidity_usd": 561550.8338,
+        "volume24_usd": 3524078.50651103,
+        "age_days": 453.32
+      },
+      {
+        "pool": "AeQAcZb73pUe7BF7NyZEDKV9xnS78ckrhpbYu8uLDHds",
+        "name": "DARK / SOL",
+        "dex": "meteora",
+        "liquidity_usd": 298464.9151,
+        "volume24_usd": 3433591.90305145,
+        "age_days": 2.16
+      },
+      {
+        "pool": "3ndjN1nJVUKGrJBc1hhVpER6kWTZKHdyDrPyCJyX3CXK",
+        "name": "KMNO / USDC",
+        "dex": "orca",
+        "liquidity_usd": 1902186.1833,
+        "volume24_usd": 3356508.84600678,
+        "age_days": 728.7
+      },
+      {
+        "pool": "6CcaffJkS4tCaNEgcgVeiEJ6YXiqFfMTwqW4SKtwpfpS",
+        "name": "ZEC / USDC",
+        "dex": "zerofi",
+        "liquidity_usd": 452253.175,
+        "volume24_usd": 3351702.8908983,
+        "age_days": 25.35
+      },
+      {
+        "pool": "GYqHjuDzTiw7i52Xv1qohDE6eJr6eSZpsrBVikGZyaFV",
+        "name": "CRCLx / USDC",
+        "dex": "raydium-clmm",
+        "liquidity_usd": 2350207.7636,
+        "volume24_usd": 3071184.60521847,
+        "age_days": 239.58
+      },
+      {
+        "pool": "G4G5SzkbLFMhoSgHiQNeyJFt75sSDsL1rD8LVyT5xZbU",
+        "name": "STONK / USDC",
+        "dex": "raydium-clmm",
+        "liquidity_usd": 642344.8148,
+        "volume24_usd": 3068269.39152864,
+        "age_days": 30.71
+      },
+      {
+        "pool": "ASAxmEaTT1HFe3mVC3zbKDE4tuB28W7732XQrEMBM5W2",
+        "name": "SPCXx / USDC",
+        "dex": "orca",
+        "liquidity_usd": 283183.4988,
+        "volume24_usd": 2934525.40361213,
+        "age_days": 16.34
+      },
+      {
+        "pool": "FtiotJckV2ZG4S1YgJDJLiXKKDAnKWXgQxo7vxsjPwPe",
+        "name": "HOOKED / SOL",
+        "dex": "meteora",
+        "liquidity_usd": 637202.7704,
+        "volume24_usd": 2902872.45944483,
+        "age_days": 10.19
+      },
+      {
+        "pool": "6R4r93V5fcMzc13CL2enEepDSYcr4Qx3ptZBDwudTXCo",
+        "name": "NVDAx / USDC",
+        "dex": "orca",
+        "liquidity_usd": 642465.9305,
+        "volume24_usd": 2873099.00713494,
+        "age_days": 463.42
+      },
+      {
+        "pool": "ApoSSiAFFxLYtRoDxCQsm8aagxeaqDARSG3F8ksNneze",
+        "name": "ZEC / USDC",
+        "dex": "zerofi",
+        "liquidity_usd": 452445.0233,
+        "volume24_usd": 2733154.82616221,
+        "age_days": 114.26
+      },
+      {
+        "pool": "5KqohoeGjTjyHAFJJywK4J7fkFuK82PfMyuseGgLKZu2",
+        "name": "USDG / SOL",
+        "dex": "orca",
+        "liquidity_usd": 4404358.5973,
+        "volume24_usd": 2721266.08237794,
+        "age_days": 329.97
+      },
+      {
+        "pool": "6UmmUiYoBjSrhakAobJw8BvkmJtDVxaeBtbt7rxWo1mg",
+        "name": "RAY / USDC",
+        "dex": "raydium",
+        "liquidity_usd": 7431231.6013,
+        "volume24_usd": 2682501.60219436,
+        "age_days": 1624.68
+      },
+      {
+        "pool": "HyKbc1vUxNL9xJC2Q44qdGiuKC1Ey95KNdokfHivrFnZ",
+        "name": "PUMP / USDC",
+        "dex": "humidifi",
+        "liquidity_usd": 132459.2523,
+        "volume24_usd": 2587495.11043093,
+        "age_days": 255.79
+      },
+      {
+        "pool": "DdMA1cHcHEqYfttc1z1sJEY978CcU1pyjNuTWTNmdvzU",
+        "name": "PENGU / USDC",
+        "dex": "meteora",
+        "liquidity_usd": 3791716.9541,
+        "volume24_usd": 2440860.28172836,
+        "age_days": 316.33
+      },
+      {
+        "pool": "8uwFMFCUDi61rgT1e6bUuDEfaUcN6roSoL7qHkp2NtHk",
+        "name": "SI / SOL",
+        "dex": "meteora",
+        "liquidity_usd": 387127.1012,
+        "volume24_usd": 2414958.7063702,
+        "age_days": 9.3
+      },
+      {
+        "pool": "8aDaBQkTrS6HVMjyc6EZebgdiaXhLYGriDWKWWp1NpFF",
+        "name": "TSLAx / USDC",
+        "dex": "raydium-clmm",
+        "liquidity_usd": 2347329.3577,
+        "volume24_usd": 2379612.80747122,
+        "age_days": 239.6
+      }
+    ]
+  },
+  "evaluation": {
+    "period": "from registered_at to the evaluation date (at least 7 days later); only bars after registered_at",
+    "data": "5-minute OHLCV (USD) from GeckoTerminal for every registered pool, including pools that lost liquidity or died (their history stays available)",
+    "primary": "mean of (trade net return - mean net return of entering the same pool at every bar of the period with the same hold), over all trades; 90% CI by pool bootstrap",
+    "success": "primary excess > 0 with the 90% CI above 0, AND mean net return per trade > 0",
+    "script": "handoff/experiments/established_rules.py (fixed config) on data fetched after the period"
+  },
+  "in_sample_result": "first 45 pools, test period 2026-10-04..10-09: excess +2.13% [+0.26, +4.28], mean net +3.48% [-0.43, +8.40], 139 trades; without the top 3 pools +0.28%. Selected by today's liquidity: likely inflated by survivorship.",
+  "status": "SUPERSEDED at 2026-10-09T02:19:26Z, before any out-of-sample data existed, by established-dip-v2: the volume-ranked universe was mostly majors, wrapped assets, DeFi tokens, tokenized stocks and duplicate pools, not memecoins. Kept for the record; not to be scored as the primary test."
+}

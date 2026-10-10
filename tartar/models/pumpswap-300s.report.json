@@ -1,0 +1,356 @@
+{
+  "model": {
+    "domain": "pumpswap",
+    "timeframe": 300,
+    "features": [
+      "r1",
+      "r2",
+      "r3",
+      "r1_raw",
+      "mom5",
+      "mom15",
+      "log_sigma",
+      "vol_ratio",
+      "clv",
+      "body",
+      "range",
+      "upper_wick",
+      "lower_wick",
+      "ema_dev",
+      "ema_trend",
+      "drawdown",
+      "rise",
+      "log_volume",
+      "volume_z",
+      "log_trades",
+      "trade_trend",
+      "flat_streak",
+      "idle",
+      "count_imb",
+      "flow_imb",
+      "flow5",
+      "whale_share",
+      "log_traders",
+      "new_trader_share",
+      "cum_traders",
+      "trader_growth",
+      "creator_known",
+      "creator_sell",
+      "creator_sold",
+      "creator_left",
+      "age",
+      "n_candles",
+      "curve_progress",
+      "log_price",
+      "f",
+      "x0",
+      "p_trades",
+      "p_activity",
+      "p_flow_imb",
+      "p_range",
+      "p_new_traders",
+      "p_creator_sell",
+      "p_idle",
+      "top10_share",
+      "log_holders",
+      "creator_share",
+      "sniper_share",
+      "wash_share",
+      "trades_per_wallet",
+      "nonstandard_curve"
+    ],
+    "edges": [
+      -4.0,
+      -3.0,
+      -2.5,
+      -2.0,
+      -1.6,
+      -1.3,
+      -1.0,
+      -0.75,
+      -0.5,
+      -0.3,
+      -0.15,
+      0.0,
+      0.15,
+      0.3,
+      0.5,
+      0.75,
+      1.0,
+      1.3,
+      1.6,
+      2.0,
+      2.5,
+      3.0,
+      4.0
+    ],
+    "temperature": 0.9675153067028412,
+    "tail_low": 6.083659519912122,
+    "tail_high": 2.3264675502847028,
+    "nowcast": true,
+    "best_iteration": 94,
+    "num_leaves": 63,
+    "min_data_in_leaf": 1500,
+    "train_rows": 57846,
+    "valid_rows": 6930,
+    "tokens": 689,
+    "simulated": false,
+    "trained_at": "2026-10-10T00:40:38Z",
+    "train_seconds": 14.3,
+    "median_shrink": [
+      [
+        0.0,
+        0.30000000000000004
+      ],
+      [
+        0.2,
+        0.1
+      ],
+      [
+        0.4,
+        0.1
+      ],
+      [
+        0.6,
+        0.0
+      ],
+      [
+        0.8,
+        0.0
+      ],
+      [
+        0.95,
+        0.0
+      ]
+    ],
+    "model_bytes": 4989593
+  },
+  "test_rows": 4212,
+  "data_capture": {
+    "tokens_measured": 0,
+    "median": null,
+    "mean": null,
+    "note": "share of recorded trades whose predecessor was also recorded (1.0 = complete stream)"
+  },
+  "test_by_fraction": [
+    {
+      "f": 0.0,
+      "rows": 702,
+      "hit_rate": 0.6951566951566952,
+      "avg_confidence": 0.6889983563541353,
+      "band_coverage": 0.7834757834757835,
+      "band_stated": 0.8161301783974321,
+      "band_width_pct": 141.29946255569016,
+      "mae_pct": 40.3224108803603,
+      "naive_mae_pct": 40.908870872006474,
+      "edge": 0.014335765792242494,
+      "log_loss": 1.5771478632720277,
+      "info_gain_bits": 1.184071704835657
+    },
+    {
+      "f": 0.2,
+      "rows": 702,
+      "hit_rate": 0.7549857549857549,
+      "avg_confidence": 0.7698115860218435,
+      "band_coverage": 0.7792022792022792,
+      "band_stated": 0.8216967383620429,
+      "band_width_pct": 107.77882878798954,
+      "mae_pct": 33.199380944743524,
+      "naive_mae_pct": 33.46757145575157,
+      "edge": 0.008013444039781215,
+      "log_loss": 1.5333021757077672,
+      "info_gain_bits": 1.1274681196926397
+    },
+    {
+      "f": 0.4,
+      "rows": 702,
+      "hit_rate": 0.8176638176638177,
+      "avg_confidence": 0.8209058982410186,
+      "band_coverage": 0.7934472934472935,
+      "band_stated": 0.8280398917482599,
+      "band_width_pct": 84.93238158366955,
+      "mae_pct": 26.683694373993976,
+      "naive_mae_pct": 26.717155755634174,
+      "edge": 0.0012524305336335528,
+      "log_loss": 1.4255840950710321,
+      "info_gain_bits": 1.1612251890191716
+    },
+    {
+      "f": 0.6,
+      "rows": 702,
+      "hit_rate": 0.8760683760683761,
+      "avg_confidence": 0.8770217012702447,
+      "band_coverage": 0.8048433048433048,
+      "band_stated": 0.84244209032285,
+      "band_width_pct": 54.62616240679154,
+      "mae_pct": 18.578298728225885,
+      "naive_mae_pct": 18.578298728225885,
+      "edge": 0.0,
+      "log_loss": 1.3336760415936244,
+      "info_gain_bits": 1.0971384586369868
+    },
+    {
+      "f": 0.8,
+      "rows": 702,
+      "hit_rate": 0.9444444444444444,
+      "avg_confidence": 0.9238969483963199,
+      "band_coverage": 0.8390313390313391,
+      "band_stated": 0.8568521505174025,
+      "band_width_pct": 26.518881586844213,
+      "mae_pct": 8.762910676925657,
+      "naive_mae_pct": 8.762910676925657,
+      "edge": -2.220446049250313e-16,
+      "log_loss": 1.165713455746392,
+      "info_gain_bits": 1.0284669462399125
+    },
+    {
+      "f": 0.95,
+      "rows": 702,
+      "hit_rate": 0.9786324786324786,
+      "avg_confidence": 0.9648243958674839,
+      "band_coverage": 0.9017094017094017,
+      "band_stated": 0.8842140555467047,
+      "band_width_pct": 10.157954726773578,
+      "mae_pct": 3.715273378526344,
+      "naive_mae_pct": 3.715273378526344,
+      "edge": 0.0,
+      "log_loss": 0.8832196393202658,
+      "info_gain_bits": 0.9638521183442821
+    }
+  ],
+  "live_at_open": {
+    "tokens": 103,
+    "online_only": {
+      "all": {
+        "n": 702,
+        "hit_rate": 0.5783,
+        "avg_confidence": 0.5286,
+        "band_coverage": 0.8675,
+        "band_stated": 0.8014,
+        "mae_pct": 40.9988,
+        "naive_mae_pct": 40.9089,
+        "edge": -0.0022
+      },
+      "trading": {
+        "n": 536,
+        "hit_rate": 0.5149,
+        "avg_confidence": 0.4559,
+        "band_coverage": 0.8545,
+        "band_stated": 0.7984,
+        "mae_pct": 53.0706,
+        "naive_mae_pct": 52.9528,
+        "edge": -0.0022
+      }
+    },
+    "global_plus_online": {
+      "all": {
+        "n": 702,
+        "hit_rate": 0.6895,
+        "avg_confidence": 0.6762,
+        "band_coverage": 0.8034,
+        "band_stated": 0.8223,
+        "mae_pct": 40.0458,
+        "naive_mae_pct": 40.9089,
+        "edge": 0.0211
+      },
+      "trading": {
+        "n": 536,
+        "hit_rate": 0.6586,
+        "avg_confidence": 0.6439,
+        "band_coverage": 0.7668,
+        "band_stated": 0.8116,
+        "mae_pct": 51.8224,
+        "naive_mae_pct": 52.9528,
+        "edge": 0.0213
+      }
+    }
+  },
+  "feature_importance": {
+    "log_price": 0.1463,
+    "p_idle": 0.1128,
+    "range": 0.0861,
+    "curve_progress": 0.0803,
+    "log_volume": 0.071,
+    "f": 0.0527,
+    "drawdown": 0.0366,
+    "log_trades": 0.0274,
+    "p_range": 0.0188,
+    "rise": 0.0173,
+    "trades_per_wallet": 0.017,
+    "top10_share": 0.0163,
+    "lower_wick": 0.0158,
+    "log_sigma": 0.0155,
+    "log_traders": 0.0132,
+    "volume_z": 0.0127,
+    "r2": 0.0126,
+    "flow5": 0.0126,
+    "wash_share": 0.0125,
+    "trade_trend": 0.0121
+  },
+  "test_log_loss": 1.3197738784518516,
+  "sweep": [
+    {
+      "valid": 1.1662957942077021,
+      "num_leaves": 15,
+      "min_leaf": 100,
+      "rounds": 118
+    },
+    {
+      "valid": 1.164269296576589,
+      "num_leaves": 15,
+      "min_leaf": 400,
+      "rounds": 107
+    },
+    {
+      "valid": 1.158500724371169,
+      "num_leaves": 15,
+      "min_leaf": 1500,
+      "rounds": 122
+    },
+    {
+      "valid": 1.1711063561030035,
+      "num_leaves": 31,
+      "min_leaf": 100,
+      "rounds": 89
+    },
+    {
+      "valid": 1.1669365571956947,
+      "num_leaves": 31,
+      "min_leaf": 400,
+      "rounds": 86
+    },
+    {
+      "valid": 1.158280481420872,
+      "num_leaves": 31,
+      "min_leaf": 1500,
+      "rounds": 92
+    },
+    {
+      "valid": 1.1771920276761139,
+      "num_leaves": 63,
+      "min_leaf": 100,
+      "rounds": 70
+    },
+    {
+      "valid": 1.1709012243701222,
+      "num_leaves": 63,
+      "min_leaf": 400,
+      "rounds": 66
+    },
+    {
+      "valid": 1.1573548799650273,
+      "num_leaves": 63,
+      "min_leaf": 1500,
+      "rounds": 94
+    }
+  ],
+  "verdict": {
+    "install": true,
+    "checks": {
+      "edge_all": true,
+      "edge_trading": true,
+      "calibration": true,
+      "info_at_open": true
+    }
+  }
+}

@@ -1,0 +1,69 @@
+22363 launches; dev 15068, test 7295; fee 0.0125, size 0.1, latency 1.0
+
+== every launch: dev 14937, test 7245
+  oracle exit (hindsight, 30 min)   dev +41.29% [+38.66, +44.17] n=13633 med  -3.44% win 33.4%
+  baseline hold    60s            dev  -5.63% [ -6.71,  -4.51] n=14908 med  -3.55% win 12.3%
+  baseline hold   180s            dev  -8.39% [ -9.70,  -7.04] n=14826 med  -4.16% win  9.9%
+  baseline hold   600s            dev -10.38% [-11.84,  -8.90] n=14566 med  -5.91% win  7.7%
+  baseline hold  1800s            dev -11.21% [-12.78,  -9.61] n=13633 med  -6.54% win  6.9%
+  top 5 rules on dev:
+    hold 60s, TP +30%, trail 10%, dev-sell, dump>10% dev  -4.38% [ -4.66,  -4.12] n=14908 med  -3.52% win 13.7%
+    hold 60s, TP +30%, trail 10%, dump>10%        dev  -4.41% [ -4.69,  -4.14] n=14908 med  -3.52% win 13.7%
+    hold 60s, TP +30%, trail 10%, dev-sell, dump>25% dev  -4.45% [ -4.72,  -4.16] n=14908 med  -3.52% win 14.0%
+    hold 60s, TP +30%, trail 20%, dev-sell, dump>10% dev  -4.45% [ -4.73,  -4.17] n=14908 med  -3.52% win 14.1%
+    hold 60s, TP +30%, trail 10%, dev-sell        dev  -4.46% [ -4.73,  -4.19] n=14908 med  -3.52% win 14.2%
+  TEST, best dev rule (hold 60s, TP +30%, trail 10%, dev-sell, dump>10%):  -4.63% [ -5.03,  -4.23] n= 7193 med  -3.52% win 14.0%
+  TEST, baseline hold 180s:  -5.01% [ -7.75,  -1.64] n= 7074 med  -3.64% win 11.3%
+  TEST, baseline hold 600s:  -7.13% [-10.28,  -3.67] n= 6719 med  -4.99% win  8.8%
+  TEST oracle: +44.10% [+38.83, +50.31] n= 5662 med  -3.45% win 32.5%
+
+== live skip flags: dev 4817, test 2652
+  oracle exit (hindsight, 30 min)   dev +21.33% [+17.49, +25.85] n= 4312 med  -3.52% win 15.5%
+  baseline hold    60s            dev  -3.54% [ -5.27,  -1.70] n= 4810 med  -3.52% win  5.1%
+  baseline hold   180s            dev  -5.59% [ -7.27,  -3.79] n= 4769 med  -3.52% win  4.6%
+  baseline hold   600s            dev  -6.80% [ -8.34,  -5.22] n= 4663 med  -3.53% win  3.9%
+  baseline hold  1800s            dev  -7.31% [ -8.71,  -5.83] n= 4312 med  -3.58% win  3.7%
+  top 5 rules on dev:
+    hold 60s, TP +100%                            dev  -3.19% [ -3.98,  -2.38] n= 4810 med  -3.52% win  7.4%
+    hold 180s, TP +100%                           dev  -3.21% [ -4.05,  -2.36] n= 4769 med  -3.52% win  7.7%
+    hold 180s, TP +100%, dev-sell                 dev  -3.38% [ -4.16,  -2.60] n= 4769 med  -3.52% win  7.5%
+    hold 60s, TP +100%, dev-sell                  dev  -3.41% [ -4.15,  -2.66] n= 4810 med  -3.52% win  7.2%
+    hold 60s, dump>25%                            dev  -3.44% [ -4.64,  -2.09] n= 4810 med  -3.52% win  6.0%
+  TEST, best dev rule (hold 60s, TP +100%):  -3.70% [ -4.86,  -2.55] n= 2635 med  -3.52% win  7.0%
+  TEST, baseline hold 180s:  -6.77% [ -8.44,  -4.87] n= 2588 med  -3.52% win  4.8%
+  TEST, baseline hold 600s:  -8.46% [-10.08,  -6.81] n= 2455 med  -3.52% win  3.9%
+  TEST oracle: +15.59% [+11.87, +19.76] n= 2088 med  -3.52% win 13.6%
+
+== P(rug) < 0.1: dev 11056, test 5553
+  oracle exit (hindsight, 30 min)   dev +12.73% [+11.66, +13.86] n= 9994 med  -3.49% win 21.0%
+  baseline hold    60s            dev  -4.93% [ -5.34,  -4.51] n=11034 med  -3.52% win  8.8%
+  baseline hold   180s            dev  -6.11% [ -6.70,  -5.41] n=10965 med  -3.65% win  6.7%
+  baseline hold   600s            dev  -8.11% [ -8.79,  -7.38] n=10750 med  -4.16% win  4.3%
+  baseline hold  1800s            dev  -8.76% [ -9.52,  -7.92] n= 9994 med  -4.57% win  3.2%
+  top 5 rules on dev:
+    hold 60s, TP +30%, trail 10%, dev-sell, dump>10% dev  -4.25% [ -4.44,  -4.04] n=11034 med  -3.52% win  8.1%
+    hold 60s, TP +30%, trail 10%, dump>10%        dev  -4.26% [ -4.46,  -4.06] n=11034 med  -3.52% win  8.2%
+    hold 60s, TP +100%, trail 10%, dump>10%       dev  -4.27% [ -4.49,  -4.05] n=11034 med  -3.52% win  8.0%
+    hold 60s, TP +100%, trail 10%, dev-sell, dump>10% dev  -4.28% [ -4.50,  -4.06] n=11034 med  -3.52% win  7.9%
+    hold 60s, trail 10%, dev-sell, dump>10%       dev  -4.31% [ -4.52,  -4.08] n=11034 med  -3.52% win  7.9%
+  TEST, best dev rule (hold 60s, TP +30%, trail 10%, dev-sell, dump>10%):  -4.59% [ -4.86,  -4.32] n= 5514 med  -3.52% win  8.6%
+  TEST, baseline hold 180s:  -6.31% [ -7.04,  -5.52] n= 5427 med  -3.52% win  7.5%
+  TEST, baseline hold 600s:  -8.24% [ -9.16,  -7.32] n= 5163 med  -4.07% win  4.8%
+  TEST oracle: +14.17% [+12.40, +15.98] n= 4369 med  -3.50% win 20.9%
+
+== flags + P(rug) < 0.1: dev 4136, test 2302
+  oracle exit (hindsight, 30 min)   dev  +2.21% [ +0.95,  +3.55] n= 3689 med  -3.52% win  7.9%
+  baseline hold    60s            dev  -3.67% [ -4.05,  -3.25] n= 4131 med  -3.52% win  2.9%
+  baseline hold   180s            dev  -3.44% [ -4.17,  -2.60] n= 4091 med  -3.52% win  2.9%
+  baseline hold   600s            dev  -4.03% [ -4.88,  -3.11] n= 3995 med  -3.52% win  2.2%
+  baseline hold  1800s            dev  -4.42% [ -5.25,  -3.45] n= 3689 med  -3.52% win  1.9%
+  top 5 rules on dev:
+    hold 180s, dump>25%                           dev  -3.44% [ -4.15,  -2.56] n= 4091 med  -3.52% win  3.1%
+    hold 180s                                     dev  -3.44% [ -4.19,  -2.59] n= 4091 med  -3.52% win  2.9%
+    hold 60s, TP +100%                            dev  -3.48% [ -3.82,  -3.12] n= 4131 med  -3.52% win  3.1%
+    hold 60s, TP +100%, dump>25%                  dev  -3.55% [ -3.85,  -3.23] n= 4131 med  -3.52% win  3.2%
+    hold 60s, TP +100%, trail 50%                 dev  -3.59% [ -3.92,  -3.27] n= 4131 med  -3.52% win  3.0%
+  TEST, best dev rule (hold 180s, dump>25%):  -3.77% [ -4.35,  -3.05] n= 2246 med  -3.52% win  3.1%
+  TEST, baseline hold 180s:  -3.85% [ -4.45,  -3.16] n= 2246 med  -3.52% win  3.1%
+  TEST, baseline hold 600s:  -4.15% [ -5.00,  -3.22] n= 2130 med  -3.52% win  2.3%
+  TEST oracle:  +1.84% [ +0.36,  +3.47] n= 1828 med  -3.52% win  6.5%

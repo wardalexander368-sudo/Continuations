@@ -1,0 +1,27 @@
+{
+  "version": 1,
+  "mode": "paper",
+  "scorer": "rules",
+  "screen_seconds": 20.0,
+  "min_buyers": 0,
+  "skip_levels": [],
+  "skip_flags": [
+    "concentrated",
+    "sniped",
+    "dev_bag"
+  ],
+  "threshold": 0.5,
+  "hold_seconds": 180.0,
+  "take_profit": null,
+  "stop_loss": null,
+  "size_sol": 0.1,
+  "fee": 0.0125,
+  "network_sol": 0.0002,
+  "exec_latency": 1.0,
+  "scorer_timeout": 2.0,
+  "max_open": 10,
+  "max_entries_per_hour": 60,
+  "daily_loss_limit_sol": 1.0,
+  "shadow_jev": true,
+  "note": "2026-10-08 Jev session: rules scorer with Jev in shadow (user choice). Offline eval (profitability.md 3.7) found no Jev edge; shadow tests it on fresh launches. Other fields at defaults."
+}

@@ -1,0 +1,36 @@
+{
+  "features": [
+    "buyers",
+    "trades",
+    "buy_sol",
+    "sell_sol",
+    "rise_pct",
+    "raised_sol",
+    "creator_sold_share",
+    "creator_launches",
+    "creator_rugs",
+    "drawdown_pct",
+    "top10_share",
+    "holders",
+    "creator_share",
+    "sniper_share",
+    "wash_share",
+    "trades_per_wallet",
+    "nonstandard_curve",
+    "risk_rank"
+  ],
+  "screen": 20.0,
+  "horizon": 1800.0,
+  "rug_ratio": 0.2,
+  "best_iteration": 72,
+  "platt": [
+    1.006960952671403,
+    0.08956792012999484
+  ],
+  "launches": 12342,
+  "trained_at": "2026-10-09T13:35:53+00:00",
+  "first_launch": 1791468383.4857643,
+  "last_launch": 1791548998.5470326,
+  "test_auc": 0.9352302235733738,
+  "test_log_loss": 0.17874451146018552
+}

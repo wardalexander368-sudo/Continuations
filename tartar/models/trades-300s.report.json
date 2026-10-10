@@ -1,0 +1,120 @@
+{
+ "note": "v3.2, trained by handoff/experiments/predictor_v32.py (predictor doc 8.2.2e); test = latest 15% of launches, unseen by v3.1 and v3.2",
+ "chosen_old_recorder_weight": 0,
+ "tokens": 13833,
+ "rows": 257700,
+ "installed v3.1": {
+  "valid_ll": 1.0057,
+  "test_ll": 1.1184,
+  "open hit/stated": [
+   0.716,
+   0.714
+  ],
+  "edge_open": 0.0606,
+  "live all/trading": [
+   0.0742,
+   0.0768
+  ],
+  "trading hit/stated": [
+   0.6854,
+   0.7031
+  ],
+  "temperature": 1.016,
+  "iters": 80
+ },
+ "old rows x1": {
+  "valid_ll": 0.9728,
+  "test_ll": 1.0865,
+  "open hit/stated": [
+   0.693,
+   0.699
+  ],
+  "edge_open": 0.086,
+  "live all/trading": [
+   0.1101,
+   0.1127
+  ],
+  "trading hit/stated": [
+   0.6787,
+   0.6927
+  ],
+  "temperature": 1.045,
+  "iters": 126
+ },
+ "old rows x0.5": {
+  "valid_ll": 0.9681,
+  "test_ll": 1.0816,
+  "open hit/stated": [
+   0.707,
+   0.705
+  ],
+  "edge_open": 0.0784,
+  "live all/trading": [
+   0.1022,
+   0.1046
+  ],
+  "trading hit/stated": [
+   0.6921,
+   0.6977
+  ],
+  "temperature": 1.011,
+  "iters": 103
+ },
+ "old rows x0.25": {
+  "valid_ll": 0.9629,
+  "test_ll": 1.0793,
+  "open hit/stated": [
+   0.717,
+   0.709
+  ],
+  "edge_open": 0.0785,
+  "live all/trading": [
+   0.1127,
+   0.1156
+  ],
+  "trading hit/stated": [
+   0.6933,
+   0.7023
+  ],
+  "temperature": 1.009,
+  "iters": 113
+ },
+ "old rows x0.1": {
+  "valid_ll": 0.9605,
+  "test_ll": 1.0773,
+  "open hit/stated": [
+   0.724,
+   0.718
+  ],
+  "edge_open": 0.0683,
+  "live all/trading": [
+   0.0842,
+   0.0865
+  ],
+  "trading hit/stated": [
+   0.6978,
+   0.7073
+  ],
+  "temperature": 0.988,
+  "iters": 102
+ },
+ "old rows x0": {
+  "valid_ll": 0.9589,
+  "test_ll": 1.0779,
+  "open hit/stated": [
+   0.725,
+   0.727
+  ],
+  "edge_open": 0.0733,
+  "live all/trading": [
+   0.0933,
+   0.0975
+  ],
+  "trading hit/stated": [
+   0.6831,
+   0.7115
+  ],
+  "temperature": 0.968,
+  "iters": 91
+ }
+}

@@ -1,0 +1,42 @@
+{
+ "title": "Predictor v3.1 candle signals + P(rug) at candle opens, held to the candle close",
+ "registered_at_unix": 1791570966,
+ "registered_at": "2026-10-09T18:36:06Z",
+ "models_at_commit": "c48cfb95c7eb202cf0dda6200919fd945525ff7e",
+ "model_sha256": {
+  "trades-300s.txt": "b46ee0924db615e13bff5317515f0360ada410f331876fcce900e6e3dc40e6f2",
+  "trades-300s.json": "9def39b889aa4e115cf29e6f831115fd009768dfc884d13b695c7efcc5694532",
+  "trades-60s.txt": "4ab8985d92eaf708a29e74f1e39627d72d1882ce8f9a6b20d55aac2b0abacc16",
+  "trades-60s.json": "f84e4e36216b27ebc62161fa1f4c3135b70d04094758e8c04fa60b2ffac1f291",
+  "rug-20s.txt": "1839bb30a541b69c3bcf09305d9da984659053fca7a520c15836c2f0461f11ab",
+  "rug-20s.json": "65483abe5464cca53a659a1ef6f77b38fd68e6dd0b98ea2e4711c73782009981"
+ },
+ "data": "launches created at or after registered_at_unix, recorded by `tartar record --track-minutes 120` (chain source, SOLANA_COMMITMENT=processed) into data/raw-pred, archived by hour to handoff/data/raw-pred",
+ "min_age_s": 20.0,
+ "costs": {
+  "size_sol": 0.1,
+  "fee_per_side": 0.0125,
+  "network_sol": 0.0002,
+  "latency_s": 1.0
+ },
+ "rules": [
+  {
+   "name": "5m p_clear>0.362, P(rug)<0.1",
+   "role": "primary",
+   "timeframe_s": 300,
+   "signal": "p_clear",
+   "threshold": 0.362,
+   "max_p_rug": 0.1
+  },
+  {
+   "name": "1m p_up>0.47, P(rug)<0.1",
+   "role": "secondary",
+   "timeframe_s": 60,
+   "signal": "p_up",
+   "threshold": 0.47,
+   "max_p_rug": 0.1
+  }
+ ],
+ "success": "primary rule: at least 100 trades AND the 90% bootstrap interval (resampling tokens) of mean net return per trade lies entirely above 0. Otherwise NOT CONFIRMED. The secondary rule is reported, never a success criterion.",
+ "stop": "evaluate once, when the primary rule has >= 100 trades on fresh launches or on 2026-10-12, whichever comes first; before that, look only at the trade count (`evaluate --count-only`)"
+}
