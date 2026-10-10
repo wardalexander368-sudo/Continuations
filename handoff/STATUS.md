@@ -32,6 +32,14 @@ next. Topic documents hold the detail:
 
 ## Active
 
+* **Funding-spike shorts on Hyperliquid perps, edge hunt F2 (curve-model retrain thread)** (since
+  2026-10-10 05:15 UTC, branch `claude/project-thread-6oh2s6`). **Paper only, no keys.** Round 2's held item:
+  per coin, short the perp after its funding spikes far above its own history (crowded longs), hedged
+  against the equal-weight market, hold days to weeks. Design written in `preregistration/funding-spike/`
+  before any number is read; D's universe, splits (train 2023-07..2025-03, val 2025-04..12, test 2026),
+  20 bps/side, 1-day lag, funding charged. Not D2 (cross-section, closed) or spot carry (E thread). A dry
+  paper strategy only if validation and test both clear. Writes `experiments/edge-hunt/fundspike/`.
+
 * **Token-unlock shorts on Hyperliquid perps (second TARTAR session)** (since 2026-10-10 05:05 UTC, branch
   `claude/project-thread-kytb6q`). **Paper only, no keys.** Reopens edge-hunt F4, which was dropped as "no free
   data". DefiLlama's free `defillama-datasets.llama.fi/emissions/<slug>` serves the unlock schedules. Plan:
