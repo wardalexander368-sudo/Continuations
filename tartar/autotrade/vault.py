@@ -17,9 +17,13 @@ each close with the comparison against its paper twin.
   ``vaultTransfer`` L1 action signed with the agent key (``hl_exchange.HyperliquidExchange``), amounts in
   micro-USDC as in the official SDK. Every send re-checks the gate; deposits also stop on any kill switch,
   withdrawals don't. Equity and lockup are read back from ``vaultDetails`` with ``user`` =
-  ``HYPERLIQUID_ACCOUNT`` (``followerState``). **Never used on mainnet.** Whether Hyperliquid accepts a
-  vault transfer signed by an API wallet (rather than the account's own key) is unverified; if it doesn't,
-  the deposit fails as a failed leg and the strategy stays on paper.
+  ``HYPERLIQUID_ACCOUNT`` (``followerState``). **Never used on mainnet.** API wallet: ``vaultTransfer`` is an L1
+  action (signed like an order, ``sign_l1_action`` in the official SDK), not one of the user-signed actions
+  that move funds out of the account (``usdSend``, ``withdraw3``, ``spotSend``, ``usdClassTransfer``,
+  ``sendAsset``), so the agent key signs it for the account and no main key is needed; checked from the
+  SDK and docs, not yet with funds (a failed first deposit is a failed leg, nothing else). The USDC must
+  sit in the account's perp balance: the agent can't move spot USDC there (``usdClassTransfer`` is
+  user-signed), and the deposit is refused before sending when ``withdrawable`` is short.
 
 Restart safety: each deposit and withdrawal is written to ``vault_pending.json`` before it is sent. A
 deposit or withdrawal left there by a run that died is never repeated blind: the broker compares the
@@ -212,6 +216,15 @@ class LiveVaultExecutor:
     def held(self, vault: str) -> float | None:
         return float(self.follower(vault).get("vaultEquity") or 0.0)
 
+    def free_usd(self) -> float:
+        """USDC the account could move out of its perp balance now (``clearinghouseState.withdrawable``)."""
+        import httpx
+
+        http = self.info.http or httpx.Client(timeout=30)
+        r = http.post(self.info.url, json={"type": "clearinghouseState", "user": self.account})
+        r.raise_for_status()
+        return float((r.json() or {}).get("withdrawable") or 0.0)
+
     def _transfer(self, vault: str, deposit: bool, usd: float) -> dict:
         return self.ex.post({"type": "vaultTransfer", "vaultAddress": vault, "isDeposit": deposit, "usd": micro_usd(usd)})
 
@@ -221,6 +234,9 @@ class LiveVaultExecutor:
             self.guard("open")
             d = self.info.details(vault)
             why = deposit_problem(d, usd, self.cfg)
+            free = self.free_usd()
+            if not why and free < usd:  # deposits come from the perp balance; the agent can't move spot USDC there
+                why = f"only ${free:.2f} withdrawable in the account's perp balance < ${usd:.2f}"
             if why:
                 return VaultFill("live", "deposit", vault, False, at=at, error=why)
             m = mark_of(d)

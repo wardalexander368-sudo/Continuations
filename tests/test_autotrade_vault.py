@@ -147,6 +147,10 @@ def test_live_sender_signs_vault_transfers_only_past_the_gate(tmp_path):
             raise LiveNotAllowed("live kill switch: HALT_LIVE")
 
     live = LiveVaultExecutor(ex, "0xacc", info=info, guard=guard, clock=lambda: T0)
+    live.free_usd = lambda: 150.0
+    f = live.deposit(HLP, 200)
+    assert not f.ok and "perp balance" in f.error and ex.sent == []  # short of free USDC: nothing sent
+    live.free_usd = lambda: 500.0
     f = live.deposit(HLP, 200)
     assert f.ok and ex.sent == [{"type": "vaultTransfer", "vaultAddress": HLP, "isDeposit": True, "usd": 200_000_000}]
     assert f.lockup_until == T0 + 4 * DAY and live.held(HLP) == 200

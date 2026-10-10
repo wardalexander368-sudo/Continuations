@@ -21,7 +21,7 @@ promotes it** (status `promoted` in `autotrade/REPORT.md`). None is promoted as 
 | `launch_selector` | Solana token buys/sells in SOL | Same as `dip` (disabled until its thread registers a rule). |
 | `xs_momentum`, `vol_momentum`, `pumpflow` | Hyperliquid perps (USD) | Secrets `HYPERLIQUID_AGENT_KEY` (an API/agent wallet the account approved: it can trade, not withdraw) and `HYPERLIQUID_ACCOUNT` (the account address), USDC deposited in that account: `live.perps.budget_usd` **$60** of notional at current limits, plus margin headroom. |
 | `jlp_hedged` (basket) | JLP bought with USDC on Jupiter + SOL/ETH/BTC shorts on Hyperliquid | **Both** sets above. Also **USDC in the Solana wallet** for the JLP leg (`twin_basket_usd` **$200**) and a little SOL for fees: roughly **$330** of capital in all at the $200 size (JLP $200, shorts' margin at 3x, a buffer). The basket trades only when both venues work; a failed or short hedge unwinds it. |
-| `hlp_hold` | USDC deposited in Hyperliquid's HLP vault (`vaultTransfer`), held across the paper intervals, withdrawn at the end | The Hyperliquid secrets above (same account, `HYPERLIQUID_AGENT_KEY` + `HYPERLIQUID_ACCOUNT`) and **$200 of USDC** in that account on top of the perps' margin. Deposits lock for 4 days. Whether Hyperliquid accepts a vault deposit signed by an API wallet is unverified (see *Vault twins*). |
+| `hlp_hold` | USDC deposited in Hyperliquid's HLP vault (`vaultTransfer`), held across the paper intervals, withdrawn at the end | The Hyperliquid secrets above (same account, `HYPERLIQUID_AGENT_KEY` + `HYPERLIQUID_ACCOUNT`) and **$200 of USDC in that account's perp balance** (not spot) on top of the perps' margin. No main key: the API wallet signs vault deposits and withdrawals (see *Vault twins*). Deposits lock for 4 days. |
 
 **Always available:** `autotrade/HALT_LIVE` (commit it, or run `python -m tartar.autotrade halt-live "reason"`)
 stops live entries within 5 minutes and exits still run. The `TARTAR_LIVE_KILL` variable applies only
@@ -306,10 +306,18 @@ with its paper interval in `fills.jsonl` and in REPORT.md's *Vault twin interval
   `hl_exchange.HyperliquidExchange`, behind the same gate as the perps (mode `live`, approval, both
   Hyperliquid secrets). Deposits stop on any kill switch; withdrawals don't. **Never used on mainnet.**
   Signature checked 2026-10-10 on testnet with a throwaway key: the exchange answered "User or API Wallet
-  <our address> does not exist", i.e. it recovered exactly our signer. Unverified: whether an API wallet
-  may move funds into a vault (it can trade but not withdraw from the account). If it may not, the first
-  deposit fails as a failed leg and the strategy stays paper; the fix would then be a deposit signed by the
-  account itself, which is the user's call.
+  <our address> does not exist", i.e. it recovered exactly our signer. **API wallet, settled 2026-10-10
+  from the official SDK (0.24.0) and docs:** `vaultTransfer` is an L1 action, signed exactly like an order
+  (`sign_l1_action`), and the exchange attributes an approved agent's L1 actions to its account. The
+  actions an agent cannot sign are the user-signed ones that move funds out of the account or between
+  its balances (`usdSend`, `withdraw3`, `spotSend`, `usdClassTransfer`, `sendAsset`, `approveAgent`).
+  A vault withdrawal returns USDC to the same account's perp balance, so it is not one of them. So the
+  agent key is enough and the user's main key is never needed. Not proven with funds: a funded testnet
+  account needs a mainnet deposit first. If the first real deposit were refused, it is a failed leg and
+  nothing moves. **The USDC must be in the perp balance:** the agent can't move spot USDC there
+  (`usdClassTransfer` is user-signed). A live deposit reads `clearinghouseState.withdrawable` first and
+  is refused before sending when it is short. The deposit also comes out of the same margin the perp
+  twins use, so fund both.
 * **Limits (config `live.vault`, defaults `vault.VAULT_DEFAULTS`):** $200 per twin and in all vault twins,
   $10 minimum, signal up to 3 days old; an interval losing over 10% halts the strategy's live entries, as do
   3 intervals in a row more than 1 point worse than paper. `HALT`, `HALT_LIVE`, `TARTAR_LIVE_KILL` stop deposits.

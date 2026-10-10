@@ -396,6 +396,12 @@ deep pools match the model, a thin one was 2.4x it). The `launch_selector` slot 
 
 ## Log (newest first)
 
+* **2026-10-10 05:00 UTC, curve-model retrain thread: HLP API-wallet question settled.** `vaultTransfer`
+  is an L1 action (official SDK `sign_l1_action`, like orders), not a user-signed funds-out action, so
+  the Hyperliquid agent key deposits and withdraws; no main key. Not proven with funds (a testnet
+  account needs a mainnet deposit). The live sender now refuses a deposit when the account's perp
+  `withdrawable` is short; checklist says the USDC must sit in the perp balance (`autotrade.md`).
+
 * **2026-10-10 ~04:50 UTC, second TARTAR session: Hyperliquid OI study closed, null** (claim cleared).
   Design was pre-registered first (`preregistration/oi-study/SPEC.md`). History came from OKX daily OI,
   because Hyperliquid keeps none. 16 rules ran at 20 bps/side + funding with a 1-day lag. No family had
