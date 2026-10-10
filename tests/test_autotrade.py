@@ -389,3 +389,17 @@ def test_dip_entry_delay_prices_inside_next_bar_and_replay_counts(tmp_path):
     s2 = DipStrategy("dip", {"prereg": str(prereg), "_fetch": lambda ctx, pool: None, "replay": str(tmp_path / "rep.json"),
                              "rule_overrides": {"hold_bars": 24}})
     assert s2.replay_rows() == []  # variants don't borrow the registered rule's replay
+
+
+def test_dip_schedule_entry_waits_for_the_next_hourly_run(tmp_path):
+    prereg = write_dip_prereg(tmp_path)
+    s = DipStrategy("dip", {"prereg": str(prereg), "_fetch": lambda ctx, pool: None,
+                            "execution": {"entry": "schedule", "run_minute": 6, "run_lag_s": 60, "version": "v"}})
+    t0 = 1_800_000_000 - 1_800_000_000 % 3600  # an hour boundary
+    t = np.arange(t0, t0 + 3600 * 2, 300.0)
+    o = np.arange(len(t), dtype=float)
+    c = o + 0.5
+    i = 3  # bar 00:15-00:20 -> next run 01:07, inside bar 01:05 (index 13), 2 of its 5 minutes
+    assert s.entry(t, o, c, i) == (t0 + 3600 + 420, pytest.approx(13 + 0.5 * 0.4))
+    assert s.entry(t[:13], o[:13], c[:13], i) is None  # not in the data yet
+    assert "next hourly run, :07:00" in s.describe()["execution"]["entry"]

@@ -38,11 +38,12 @@
       "prereg": "handoff/preregistration/dip-rolling",
       "size_usd": 200,
       "execution": {
-        "entry": "delay",
-        "entry_delay_s": 60,
+        "entry": "schedule",
+        "run_minute": 5,
+        "run_lag_s": 120,
         "route_fee_per_side": 0.01,
-        "version": "2026-10-10-fast-watcher",
-        "note": "paper fills at real-trading costs: entry 60 s into bar t+1 (the watcher's latency was cut from 4-5 min to ~3 s; 60 s is a margin), priced between that bar's open and close, plus PumpPortal Lightning's 1%/side. The rule itself is unchanged."
+        "version": "2026-10-10-hourly",
+        "note": "paper fills as a real twin would get them now that the agent runs hourly (cron :05, AJ 2026-10-10): entry at the first run after the signal bar closes (:07, allowing ~2 min to start and scan), priced inside the 5-minute bar holding that moment, plus PumpPortal Lightning's 1%/side. Exit and the rule are unchanged. On the 90 replay trades, entering 30 min after the signal changed gross by ~0 (-3.94% vs -3.98%)."
       },
       "replay": "handoff/data/dip-cost/replay-oos-2026-10-10.json"
     },

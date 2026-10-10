@@ -189,6 +189,21 @@ account stop and small live legs are for. At 35% the account stop would have fir
   not the excess-over-random test. On the live ledger: 116 trades (74 replay), mean net −6.3%
   [−10.3, −2.4], so the dip rule reaches its 200-trade verdict sooner.
 
+### Hourly schedule (2026-10-10 ~21:20 UTC, AJ's choice on the Actions-terms check)
+
+The agent now runs once an hour (cron `5 * * * *`). Paper books don't depend on the cadence (every
+strategy books each bar or candle completed since its cursor, at that bar's time and price), with one
+deliberate change: the dip rule's paper entry now models what a twin run by this schedule would get
+(`execution.entry: schedule`, `run_minute: 5`, `run_lag_s: 120`): the first run at :07 that can see the
+signal bar (bars appear ~60 s after closing), priced inside the 5-minute bar holding that moment, so
+0-60 min after the signal (about 30 on average). The entry is booked one run later, once that bar is
+complete. Cost of the change, measured on the 90 replay trades (bars from GeckoTerminal): mean gross
+−3.98% entering at bar t+1's open, −4.13% at +5 min, −3.76% at +15, −3.94% at +30, −2.21% at +60. So
+waiting costs nothing measurable; the rule loses money at any delay. Others: perps weekly books and
+wick_bounce book from candles (unchanged); the weekly loss stop and the drawdown stop are checked hourly
+instead of every 5 minutes. A live dip twin would be refused by its 30-minute signal-age limit, which is
+moot: the dip rule is closed for real money.
+
 ## Wick bounce (`wick_bounce`, from 2026-10-12)
 
 The trading-skills thread's pre-registered rule (`handoff/preregistration/wick-bounce/SPEC.md`): on 20

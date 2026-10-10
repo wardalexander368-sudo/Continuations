@@ -58,7 +58,11 @@ class DipStrategy:
         self._last_call = 0.0
         self.fetch = cfg.get("_fetch") or self._fetch  # tests inject a fake fetcher
         ex = cfg.get("execution") or {}
-        self.late_entry = ex.get("entry") in ("next_bar_close", "delay")
+        self.late_entry = ex.get("entry") in ("next_bar_close", "delay", "schedule")
+        # "schedule": entry at the agent's next scheduled run after the signal bar closes (hourly Action at
+        # minute ``run_minute``, plus ``run_lag_s`` to fetch and act), priced inside the bar holding that moment
+        self.schedule = (float(ex.get("run_minute", 6)) * 60 + float(ex.get("run_lag_s", 60))) % 3600 \
+            if ex.get("entry") == "schedule" else None
         # entry this many seconds into bar t+1, priced between its open and close (300 = its close)
         self.entry_delay = float(ex.get("entry_delay_s", 300.0 if ex.get("entry") == "next_bar_close" else 0.0))
         self.replay = None if cfg.get("rule_overrides") else cfg.get("replay")  # registered rule only
@@ -163,17 +167,18 @@ class DipStrategy:
             start = int(np.searchsorted(t, st["cursor"], side="right"))
             last_i = st["cursor"]
             for i in range(max(start, L), len(t) - 1):
+                if c[i] / c[i - L] - 1 < -drop and t[i] > st["busy_until"] and self.entry(t, o, c, i) is None:
+                    break  # the entry moment isn't in the data yet: look again next run
                 last_i = float(t[i])
                 if t[i] <= st["busy_until"]:
                     continue
                 if c[i] / c[i - L] - 1 < -drop:
                     exit_t = float(t[i] + H * bar)
                     key = f"{pid}:{int(t[i])}"
-                    at, px = (float(t[i + 1] + self.entry_delay), self.delayed_px(o[i + 1], c[i + 1])) if self.late_entry \
-                        else (float(t[i + 1]), float(o[i + 1]))
+                    at, px = self.entry(t, o, c, i)
                     intents.append(Intent("open", self.name, at, px,
                                           f"close fell {100 * (1 - c[i] / c[i - L]):.1f}% over {L} bars"
-                                          + (f" (entry {self.entry_delay:.0f} s into bar t+1: real-trading latency)" if self.late_entry else ""),
+                                          + (f" (entry {(at - t[i + 1]) / 60:.0f} min after the signal bar: {self.entry_desc()})" if self.late_entry else ""),
                                           asset=pid, side=1, notional_usd=self.size, cost=cost,
                                           meta={"pool": pid, "label": p["name"], "signal_t": float(t[i]), "exit_t": exit_t,
                                                 "key": key, "liquidity_usd": p["liquidity_usd"],
@@ -186,11 +191,33 @@ class DipStrategy:
                     if idx < len(t) and t[idx] == exit_t:  # the whole hold is already in the data
                         intents.append(Intent("close", self.name, float(exit_t + bar), float(c[idx]), "hold elapsed",
                                               cost=cost, meta={"key": key, "baseline": self.baseline(t, o, c, st["first_bar"], exit_t, cost)}))
-            if len(t) - 1 > max(start, L):
+            if len(t) - 1 > max(start, L) and last_i > st["cursor"]:
                 st["cursor"] = last_i
         if pools and failures == len(pools):
             raise RuntimeError(f"no pool data this run ({failures} fetch failures)")
         return intents
+
+    def entry(self, t, o, c, i: int) -> tuple[float, float] | None:
+        """(time, price) of the entry for a signal at bar i, or None if that moment isn't in the data yet."""
+        bar = self.rule["bar_seconds"]
+        t1 = float(t[i] + bar)  # the signal bar's close
+        if not self.late_entry:
+            return (t1, float(o[i + 1])) if i + 1 < len(t) else None
+        # a run sees a bar ~60 s after it closes (GeckoTerminal's publishing lag), so a bar closing just before
+        # the run's check waits for the next run; the entry bar is complete one run later, when it is booked
+        at = t1 + (60 + (self.schedule - t1 - 60) % 3600 if self.schedule is not None else self.entry_delay)
+        k = i + 1 + int((at - t1) // bar)
+        if self.schedule is None and k > i + 1:  # "delay" / "next_bar_close": capped at bar t+1's close
+            k = i + 1
+        if k >= len(t):
+            return None
+        f = min(max((at - float(t[k])) / bar, 0.0), 1.0)
+        return at, float(o[k] + (c[k] - o[k]) * f)
+
+    def entry_desc(self) -> str:
+        if self.schedule is not None:
+            return f"the next hourly run, :{int(self.schedule // 60):02d}:{int(self.schedule % 60):02d}"
+        return f"{self.entry_delay:.0f} s into bar t+1"
 
     def delayed_px(self, o: float, c: float) -> float:
         """Price ``entry_delay`` seconds into a bar, interpolated between its open and close."""
@@ -200,9 +227,9 @@ class DipStrategy:
     def describe(self) -> dict:
         return {"rule": self.rule, "costs": self.costs, "size_usd": self.size, "shadow": self.shadow,
                 "family_size": self.family_size, "costs_version": self.costs_version,
-                "execution": {"entry": f"{self.entry_delay:.0f} s into bar t+1" if self.late_entry else "next_bar_open",
+                "execution": {"entry": self.entry_desc() if self.late_entry else "next_bar_open",
                               "route_fee_per_side": self.route_fee},
-                "change_note": (f"paper execution at real-trading costs: entry {self.entry_delay:.0f} s into bar t+1 (signal latency), "
+                "change_note": (f"paper execution at real-trading costs: entry at {self.entry_desc()} (signal latency), "
                                 f"+{100 * self.route_fee:g}%/side route fee; rule unchanged "
                                 "(handoff/data/real-fills/dip-report-2026-10-10.txt)") if self.costs_version else "",
                 "success": "at >= 200 trades or 21 days: excess over random entries > 0 with its CI above 0 "
@@ -265,8 +292,10 @@ class DipStrategy:
         i = np.arange(lo, hi - H - 1)
         if not len(i):
             return float("nan")
-        f = min(max(self.entry_delay / self.rule["bar_seconds"], 0.0), 1.0) if self.late_entry else 0.0
-        gross = c[i + H] / (o[i + 1] + (c[i + 1] - o[i + 1]) * f)  # same execution as the agent's entries
+        ent = [self.entry(t, o, c, int(j)) for j in i]  # same execution as the agent's entries
+        gross = np.array([c[j + H] / e[1] for j, e in zip(i, ent) if e is not None])
+        if not len(gross):
+            return float("nan")
         return float(np.mean(gross * (1 - cost.fee) ** 2 * (1 - cost.impact) ** 2 - 1 - 2 * cost.fixed_usd / self.size))
 
     def marks(self, ctx: Context) -> dict[str, tuple[float, float]]:

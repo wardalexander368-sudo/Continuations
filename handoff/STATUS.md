@@ -560,6 +560,11 @@ deep pools match the model, a thin one was 2.4x it). The `launch_selector` slot 
 
 ## Log (newest first)
 
+* **2026-10-10 ~21:30 UTC, handoff session (`autotrade/`): dip paper entry adapted to the hourly agent**
+  (`autotrade.md`, "Hourly schedule"). Entry = the next :07 run that can see the signal (0-60 min late);
+  on the 90 replay trades waiting 30 min changed gross by ~0 (−3.94% vs −3.98%). Other strategies book
+  from candles and are unaffected.
+
 * **2026-10-10 ~21:40 UTC, handoff session (`autotrade/`): dip delay cut, dip replay in the retire
   check, perps book vol target, wick bounce wired in** (`autotrade.md`). Dip paper entry is 60 s into
   bar t+1 (was +5 min); the real-money thread's 90-trade replay now counts toward the dip verdict
