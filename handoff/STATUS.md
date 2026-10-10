@@ -32,6 +32,14 @@ next. Topic documents hold the detail:
 
 ## Active
 
+* **Hyperliquid order sender** (edge hunt E thread session, since 2026-10-10 01:25 UTC, branch
+  `claude/project-thread-9op3pf`). Live sender for perp twins and the hedged-JLP basket's shorts,
+  behind the live gate (mode `live` + `live_approved_on` = `TARTAR_LIVE_APPROVED` +
+  `HYPERLIQUID_AGENT_KEY` + `HYPERLIQUID_ACCOUNT`). Tested on Hyperliquid **testnet** only, with a
+  throwaway key generated in CI. No mainnet keys, no mode change, no mainnet orders. The gate moves
+  into `tartar/autotrade/gate.py` for the Solana spot sender to share. Touches `perps.py`, `broker.py`,
+  a new `hl_exchange.py`, a CI workflow.
+
 * **Real-order sender thread** (project thread session, since 2026-10-10 01:25 UTC, branch
   `claude/project-thread-kytb6q`). **No keys, no real transactions, mode stays dry_live.** Harden
   the Solana spot senders in `tartar/autotrade/execution.py` (Jupiter, Lightning) behind the existing
@@ -82,10 +90,6 @@ deep pools match the model, a thin one was 2.4x it). The `launch_selector` slot 
   power on launches created 10-10 01:00 .. 10-19 01:00 UTC from the recorder Action's hours; no
   session needed to collect; this thread scores it once after 10-19 02:00 UTC
   (`who_trades_forward.py`; `--count-only` is a progress check). Paper only.
-  **Since 01:25 UTC:** edge hunt round I (pump.fun / PumpSwap, data since round F): I1 revival
-  entries (a token quiet for minutes, 30-110 min after launch, that gets a burst of new buyers),
-  I2 PumpSwap pools after their first hour with the new PumpSwap models. Dev / pre-register / test
-  as in F. Paper only. Not touching the order senders.
 
 * **Dip/jevtrader session** (session_01Htqh7pc1Lh1PP6Dkm1rVvz, since 2026-10-09 17:33 UTC, `main`
   only): continues the profitability session. **Owns the dip forward test (queue 11b)**: the GitHub
@@ -385,6 +389,11 @@ deep pools match the model, a thin one was 2.4x it). The `launch_selector` slot 
   branch `claude/profitability-backtest`, on `main`).
 
 ## Log (newest first)
+
+* **2026-10-10 ~01:45 UTC, retrain thread: edge hunt round I (pump.fun on new data) closed** (`edge-hunt.md` I).
+  I1 revival entries: unobservable at a useful rate (the recorder drops tokens after 10 idle min;
+  72 signals in 15k dev launches). I2 PumpSwap pools 1-3 h after graduation (547 unseen pools): best
+  +2.8% on 26 → −2.8% on check. Nothing pre-registered; F1's forward test (to 10-19) is the open line.
 
 * **2026-10-10 ~01:15 UTC, edge hunt E thread: pumpflow (E1) does not survive DefiLlama's delay;
   agent copy disabled, registered test left running as expected-fail.** Audit finding answered.

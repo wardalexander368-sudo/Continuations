@@ -391,6 +391,32 @@ before the test launches (created ≥ 16:00) are scored once. Paper only, Jupite
 creator and one other wallet) was pre-registered and scored once: **+1.12% [−6.30, +8.49] on 175
 test trades at curve fees, −4.69% via Lightning: not confirmed** (profitability §3.25). F is closed.
 
+## I. Pump.fun round 2 on the new recorder data (2026-10-10 ~01:30 UTC, retrain thread): closed
+
+Coordinator's brief under the user's "continue working": another pump.fun / PumpSwap round on the
+data added since F. Untested angles after §3.9-3.25 and F (one judge, three lenses):
+
+* **I1, revival entries** (`revival.py`; econ 2, test 3, fit 5): 30-110 min after launch, a token
+  that was quiet for 5/10 min and then gets >= 3/6 new buyers within 60 s. **Not observable at any
+  useful rate:** the recorder stops following a token after 10 min without trades (`--idle-minutes`
+  default), so a 10-min-quiet revival is never seen, and 5-min ones are rare (72 signals in 15,068
+  dev launches; with an earlier 20-SOL peak, 20). Every variant with >= 2 trades loses on dev.
+  Seeing revivals would need a recorder that keeps idle tokens (`--idle-minutes 120`), which costs
+  RPC load for tokens that are almost all dead. Dropped. Output `data/exit-study/revival-dev.txt`.
+* **I2, PumpSwap pools after their first hour** (`pumpswap_late.py`; econ 2, test 3, fit 5): §3.16's
+  families (momentum, dip, active) at 60/90/120/180 min after graduation, on the 547 pools graduating
+  after 12:00 UTC 10-09 that §3.16 never saw (incl. the recorder Action's run), 0.02 SOL, PumpSwap fee
+  tiers. Few pools are still trading by then (active >= 50 swaps in 5 min at 90 min: 26 pools in the
+  choosing 60%). Best on choosing: +2.8% [−2.1, +8.0] (26) → check −2.8% (8); everything else ≤ 0.
+  Closed. Output `data/exit-study/pumpswap-late.txt`.
+* Dropped without data work: quote-paired (USDC etc.) curves (V2 curves charge ~3.45%/side incl. a
+  2.5% creator fee in samples, §queue 9), the PumpSwap models' candle calls as a trading rule (§3.20's
+  result on curves, the same structure, fees 1.20-1.25%/side), graduation and copy-trading variants
+  (§3.10, §3.15).
+
+**Nothing pre-registered from I.** The one pump.fun line still open is F1's powered forward test
+(`preregistration/who-trades-forward/`, scored after 2026-10-19).
+
 ## What looks worth doing when the hunt resumes
 
 1. Pre-register and start the **hedged-JLP 90-day paper forward test** (A1). It needs only an
