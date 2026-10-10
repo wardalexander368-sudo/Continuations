@@ -12,7 +12,7 @@ from .broker import LiveBroker, LiveNotAllowed, PaperBroker, make_broker
 from .core import Context, Intent
 from .ledger import Ledger
 from .risk import Risk
-from .safety import holder_id, lease_blocker, reconcile, record_wallet
+from .safety import holder_id, lease_blocker, reconcile, reconcile_perps, record_wallet
 
 ROOT = Path("autotrade")
 
@@ -102,6 +102,16 @@ def run_once(root: Path = ROOT, now: float | None = None, strategies: dict | Non
                     wallet.halt("live", f"reconcile failed: {type(exc).__name__}: {exc}"[:300])
             if rec.get("claims") or rec.get("orphans") or rec.get("sold_unrecorded"):
                 summary["reconcile"] = {k: len(rec[k]) for k in ("claims", "orphans", "sold_unrecorded")}
+            try:
+                prec = reconcile_perps(wallet, now)
+            except Exception as exc:  # noqa: BLE001 - can't verify the perp account: perp entries stop
+                prec = {}
+                st = wallet.live_state()
+                if not st.get("perps_halted"):
+                    st["perps_halted"] = f"perp reconcile failed: {type(exc).__name__}: {exc}"[:300]
+                    ledger.change({"t": now, "kind": "halt", "scope": "live:perps", "reason": st["perps_halted"]})
+            if prec.get("inflight") or prec.get("mismatch") or prec.get("orphans"):
+                summary["perp_reconcile"] = {k: len(prec[k]) for k in ("inflight", "mismatch", "orphans")}
 
     for name, strat in strategies.items():
         rec = ledger.strategy(name)

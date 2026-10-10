@@ -15,6 +15,11 @@ Routes:
   ``HYPERLIQUID_ACCOUNT`` (USDC deposited there); see ``hl_exchange.py``. Without the approval or
   either key ``select_perp_route`` returns None and perp strategies stay on paper.
 
+Restarts (``safety.py``): every order carries a client order id (``cloid``) derived from what it is for
+(the entry, or the position it closes), so a retry after a crash asks the venue for that id first and
+adopts its fill instead of trading twice; each run checks the account's positions and open orders
+against the book before trading. The dry route keeps a simulated account in ``dry_perp_account.json``.
+
 Kept legs: a weekly rebalance that keeps a leg closes and reopens it on paper at no cost. The twin does
 the same without trading: it is marked at the book's mid, handed over, and picked up by the reopen.
 """
@@ -45,6 +50,13 @@ PERP_DEFAULTS = {
     "network": "mainnet",         # live orders: "mainnet", or "testnet" (CI test only)
     "slippage": 0.01,             # live IOC limit this far through the mid
 }
+
+
+def cloid(text: str) -> str:
+    """A Hyperliquid client order id (16 bytes, hex) that is the same every time for the same ``text``."""
+    import hashlib
+
+    return "0x" + hashlib.sha256(text.encode()).hexdigest()[:32]
 
 
 def is_perp(meta: dict) -> bool:
@@ -153,6 +165,53 @@ class DryPerpExecutor:
     def __init__(self, info: HyperliquidInfo | None = None, taker_fee: float = PERP_DEFAULTS["taker_fee"], clock=time.time):
         self.info = info or HyperliquidInfo()
         self.taker_fee, self.clock = taker_fee, clock
+        self.path = None
+
+    # the simulated account (written through on every fill, like the venue would be)
+    def attach(self, path, seed: dict[str, float] | None = None) -> None:
+        from pathlib import Path
+
+        self.path = Path(path)
+        if not self.path.exists():
+            self._save({"positions": {c: v for c, v in (seed or {}).items() if abs(v) > 1e-12}, "orders": {}})
+
+    def _load(self) -> dict:
+        import json
+
+        if self.path and self.path.exists():
+            return json.loads(self.path.read_text())
+        return {"positions": {}, "orders": {}}
+
+    def _save(self, acct: dict) -> None:
+        import json
+
+        if self.path:
+            acct["note"] = "simulated Hyperliquid account of the dry perp route (no real funds)"
+            tmp = self.path.with_suffix(".tmp")
+            tmp.write_text(json.dumps(acct, indent=1, sort_keys=True))
+            tmp.replace(self.path)
+
+    def _book(self, f: PerpFill, cloid_: str | None) -> PerpFill:
+        if f.ok and self.path:
+            acct = self._load()
+            pos = round(acct["positions"].get(f.coin, 0.0) + f.side * f.sz, 10)
+            if abs(pos) > 1e-12:
+                acct["positions"][f.coin] = pos
+            else:
+                acct["positions"].pop(f.coin, None)
+            if cloid_:
+                acct["orders"][cloid_] = f.to_dict()
+            self._save(acct)
+        return f
+
+    def account(self) -> dict:
+        """{"positions": {coin: signed size}, "open_orders": [...]}."""
+        return {"positions": dict(self._load()["positions"]), "open_orders": []}
+
+    def find(self, cloid_: str) -> PerpFill | None:
+        """The fill of an earlier order with this client order id, if there was one."""
+        row = self._load()["orders"].get(cloid_)
+        return PerpFill(**row) if row else None
 
     def _take(self, leg: str, coin: str, side: int, sz: float | None = None, usd: float | None = None) -> PerpFill:
         try:
@@ -174,12 +233,12 @@ class DryPerpExecutor:
         except Exception as exc:  # noqa: BLE001 - a failed quote is a failed leg, logged by the broker
             return PerpFill("dry", leg, coin, side, False, at=self.clock(), dry=True, error=f"{type(exc).__name__}: {exc}"[:200])
 
-    def open(self, coin: str, side: int, usd: float) -> PerpFill:
-        return self._take("open", coin, side, usd=usd)
+    def open(self, coin: str, side: int, usd: float, cloid: str | None = None) -> PerpFill:
+        return self._book(self._take("open", coin, side, usd=usd), cloid)
 
-    def close(self, coin: str, side: int, sz: float) -> PerpFill:
+    def close(self, coin: str, side: int, sz: float, cloid: str | None = None) -> PerpFill:
         """Close a position of ``side`` (so trade the other way)."""
-        return self._take("close", coin, -side, sz=sz)
+        return self._book(self._take("close", coin, -side, sz=sz), cloid)
 
     def mid(self, coin: str) -> float:
         bids, asks = self.info.book(coin)

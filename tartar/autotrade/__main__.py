@@ -1,4 +1,4 @@
-"""python -m tartar.autotrade run | status | halt REASON | resume [STRATEGY] | halt-live REASON | resume-live [STRATEGY]
+"""python -m tartar.autotrade run | status | halt REASON | resume [STRATEGY] | halt-live REASON | resume-live [STRATEGY|perps]
        | preflight | health | release-lease | search | dry-swap MINT [--sol 0.01] [--route lightning] | dry-perp COIN [--usd 12] [--side -1]   [--root autotrade]
 
 halt-live stops new live twins (paper and exits keep running); preflight checks the live path without
@@ -90,11 +90,14 @@ def main(argv=None) -> int:
         ledger.change({"t": now, "kind": "halt", "scope": "live", "reason": a.arg or "live halted by hand"})
     elif a.cmd == "resume-live":
         live = ledger.state.setdefault("live", {})
-        if a.arg:
+        if a.arg == "perps":
+            live["perps_halted"] = None
+        elif a.arg:
             live.setdefault("strategies", {}).setdefault(a.arg, {}).update({"halted": None, "divergence_run": 0})
         else:
             (root / "HALT_LIVE").unlink(missing_ok=True)
             live["halted"] = None
+            live["perps_halted"] = None
         ledger.change({"t": now, "kind": "resume", "scope": f"live:{a.arg or 'all'}", "reason": "resumed by hand"})
     elif a.cmd == "halt":
         (root / "HALT").write_text(a.arg or "halted by hand")

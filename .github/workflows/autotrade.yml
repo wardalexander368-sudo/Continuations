@@ -35,7 +35,7 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
-      - run: pip install "httpx>=0.25" "numpy>=1.24" "solders>=0.21"
+      - run: pip install "httpx>=0.25" "numpy>=1.24" "solders>=0.21" "eth-account>=0.10" "msgpack>=1.0"
       - name: Run the agent every 5 minutes for ~5.75 h
         # Live twins only when config mode is "live" AND TARTAR_LIVE_APPROVED equals config live_approved_on AND a
         # route key is set (handoff/autotrade.md, "Going live"). Unset secrets arrive empty, which keeps it off.

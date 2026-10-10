@@ -276,9 +276,19 @@ Built 2026-10-10: `strategies/jlp_hedged.py`, `usd_spot.py`, basket sizing in `b
   pending sell explains them. A SOL drop since the last run that the book can't explain counts
   against the live daily loss cap and halts live entries. If the wallet can't be read, live entries
   halt and paper continues.
-* The dry route's wallet is simulated in `autotrade/dry_wallet.json`, so this runs end to end in
-  `dry_live`. Tests in `tests/test_restart_safety.py` kill a run before and after a buy and a sell
-  lands. Perp and USD-spot twins are dry-only and not covered yet.
+* **Perp and basket legs (Hyperliquid).** Every order carries a client order id fixed by what it is
+  for: the entry (strategy, key, coin, side, signal time), or the position it closes. Before sending,
+  the broker looks that id up on the venue. If an earlier order with it filled, that fill is adopted
+  and nothing is sent; if the lookup fails, nothing is sent. Each run first compares the account's
+  positions and open orders with the book: open twins, kept legs being handed over, perp orphans,
+  plus orders a dead run filled that are waiting to be re-adopted (1 h, then orphan). Any difference,
+  or an unreadable account, stops perp entries (`live.perps_halted`). Closes still run, reduce-only.
+  `resume-live perps` clears the halt.
+* The dry routes simulate the wallet (`autotrade/dry_wallet.json`) and the Hyperliquid account
+  (`autotrade/dry_perp_account.json`), seeded from the twins already in the book, so all of this
+  runs end to end in `dry_live`. `tests/test_restart_safety.py` and
+  `tests/test_perp_restart_safety.py` kill runs before and after a buy, sell, perp open and perp close
+  lands. The basket's JLP leg (USD spot) is dry-only and not covered yet.
 
 ### Kill switches
 

@@ -106,8 +106,10 @@ class HyperliquidExchange:
         r.raise_for_status()
         return r.json()
 
-    def ioc(self, asset: int, is_buy: bool, px: float, sz: float, reduce_only: bool) -> dict:
+    def ioc(self, asset: int, is_buy: bool, px: float, sz: float, reduce_only: bool, cloid: str | None = None) -> dict:
         order = {"a": asset, "b": is_buy, "p": float_to_wire(px), "s": float_to_wire(sz), "r": reduce_only, "t": {"limit": {"tif": "Ioc"}}}
+        if cloid:
+            order["c"] = cloid  # client order id, last as in the official SDK's wire order
         return self.post({"type": "order", "orders": [order], "grouping": "na"})
 
 
@@ -133,7 +135,7 @@ class LivePerpExecutor:
 
     def __init__(self, exchange: HyperliquidExchange, account: str, info: HyperliquidInfo | None = None,
                  taker_fee: float = PERP_DEFAULTS["taker_fee"], slippage: float = 0.01, guard=None, clock=time.time):
-        self.ex, self.account = exchange, account
+        self.ex, self.account_addr = exchange, account
         self.info = info or HyperliquidInfo(url=exchange.url + "/info")
         self.taker_fee, self.slippage, self.clock = taker_fee, slippage, clock
         self.guard = guard or (lambda leg: None)
@@ -150,7 +152,7 @@ class LivePerpExecutor:
 
     def _fee(self, oid, notional: float) -> float:
         try:
-            fills = self.info.post({"type": "userFills", "user": self.account}) or []
+            fills = self.info.post({"type": "userFills", "user": self.account_addr}) or []
             fees = [float(f["fee"]) for f in fills if f.get("oid") == oid]
             if fees:
                 return sum(fees)
@@ -158,7 +160,29 @@ class LivePerpExecutor:
             pass
         return notional * self.taker_fee
 
-    def _send(self, leg: str, coin: str, side: int, sz: float | None = None, usd: float | None = None) -> PerpFill:
+    def account(self) -> dict:
+        """{"positions": {coin: signed size}, "open_orders": [...]} for the trading account."""
+        st = self.info.post({"type": "clearinghouseState", "user": self.account_addr}) or {}
+        pos = {a["position"]["coin"]: float(a["position"]["szi"]) for a in st.get("assetPositions", []) if float(a["position"]["szi"])}
+        return {"positions": pos, "open_orders": self.info.post({"type": "openOrders", "user": self.account_addr}) or []}
+
+    def find(self, cloid_: str) -> PerpFill | None:
+        """The fill of an earlier order with this client order id, or None if the venue never saw one."""
+        res = self.info.post({"type": "orderStatus", "user": self.account_addr, "oid": cloid_}) or {}
+        if res.get("status") != "order":
+            return None
+        o, status = res["order"]["order"], res["order"].get("status")
+        got = float(o.get("origSz", 0)) - float(o.get("sz", 0))
+        if got <= 0:
+            return None  # cancelled unfilled (an IOC that missed): nothing to adopt, a resend is safe
+        fills = [f for f in (self.info.post({"type": "userFills", "user": self.account_addr}) or []) if f.get("oid") == o.get("oid")]
+        px = (sum(float(f["px"]) * float(f["sz"]) for f in fills) / sum(float(f["sz"]) for f in fills)) if fills else float(o.get("limitPx", 0))
+        side = 1 if o.get("side") == "B" else -1
+        return PerpFill("live", "found", o["coin"], side, True, px=px, sz=got, notional_usd=px * got,
+                        fee_usd=sum(float(f["fee"]) for f in fills) if fills else px * got * self.taker_fee, at=self.clock(),
+                        extra={"oid": o.get("oid"), "cloid": cloid_, "status": status, "found": True, "network": self.ex.network})
+
+    def _send(self, leg: str, coin: str, side: int, sz: float | None = None, usd: float | None = None, cloid: str | None = None) -> PerpFill:
         """``side`` is the direction of this order (+1 buy, -1 sell)."""
         at = self.clock()
         try:
@@ -174,7 +198,7 @@ class LivePerpExecutor:
                 return PerpFill("live", leg, coin, side, False, mid=mid, at=at,
                                 error=f"${sz * mid:.2f} after rounding is under Hyperliquid's ${MIN_ORDER_USD:.0f} minimum")
             px = round_px(mid * (1 + side * self.slippage), d)
-            resp = self.ex.ioc(self.asset(coin), side > 0, px, sz, reduce_only=leg == "close")
+            resp = self.ex.ioc(self.asset(coin), side > 0, px, sz, reduce_only=leg == "close", **({"cloid": cloid} if cloid else {}))
             filled, err = parse_order(resp)
             if err:
                 return PerpFill("live", leg, coin, side, False, mid=mid, at=at, error=err, extra={"limit_px": px, "sz_sent": sz})
@@ -186,12 +210,12 @@ class LivePerpExecutor:
         except Exception as exc:  # noqa: BLE001 - a failed send is a failed leg, logged by the broker
             return PerpFill("live", leg, coin, side, False, at=at, error=f"{type(exc).__name__}: {exc}"[:300])
 
-    def open(self, coin: str, side: int, usd: float) -> PerpFill:
-        return self._send("open", coin, side, usd=usd)
+    def open(self, coin: str, side: int, usd: float, cloid: str | None = None) -> PerpFill:
+        return self._send("open", coin, side, usd=usd, cloid=cloid)
 
-    def close(self, coin: str, side: int, sz: float) -> PerpFill:
+    def close(self, coin: str, side: int, sz: float, cloid: str | None = None) -> PerpFill:
         """Close a position of ``side`` (so trade the other way), reduce-only."""
-        return self._send("close", coin, -side, sz=sz)
+        return self._send("close", coin, -side, sz=sz, cloid=cloid)
 
     def funding_usd(self, coin: str, side: int, notional_usd: float, t0: float, t1: float) -> float:
         return -side * notional_usd * self.info.funding_rate_sum(coin, t0, t1)

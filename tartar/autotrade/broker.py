@@ -26,10 +26,29 @@ from .core import CostModel, Intent, Position, Trade
 from .execution import DryExecutor, make_executor, select_route
 from .gate import LiveNotAllowed, approval_reason, kill_reason, require_live  # LiveNotAllowed is re-exported for the runner
 from .safety import Pending, buy_order_id
-from .perps import PERP_DEFAULTS, is_perp, make_perp_executor, perp_keys, select_perp_route
+from .perps import PERP_DEFAULTS, cloid, is_perp, make_perp_executor, perp_keys, select_perp_route
 from .usd_spot import is_usd_spot, make_usd_spot_executor
 
 
+
+
+def perp_open_cloid(intent: Intent, coin: str) -> str:
+    return cloid(f"perp_open|{intent.strategy}|{intent.meta.get('key') or ''}|{coin}|{intent.side}|{intent.at:.0f}")
+
+
+def perp_close_cloid(position_id: str) -> str:
+    return cloid(f"perp_close|{position_id}")
+
+
+def perp_twins_held(ledger, live_state: dict, route: str) -> list[dict]:
+    """Every perp leg the book says the account holds on ``route``: open twins, handed-over kept legs, and
+    unresolved perp orphans."""
+    out = [p.meta["live"] for p in (ledger.positions if ledger else []) if p.meta.get("live") and is_perp(p.meta["live"])
+           and p.meta["live"].get("route") == route]
+    out += [h for h in live_state.get("perp_handover", []) if h.get("route") == route]
+    out += [o for o in live_state.get("orphans", []) if o.get("venue") == "hyperliquid" and o.get("route") == route
+            and o.get("sz") and not o.get("resolved")]
+    return out
 
 
 class PaperBroker:
@@ -336,7 +355,33 @@ class LiveBroker(PaperBroker):
     def perp_exec(self):
         if self._perp_exec is None:
             self._perp_exec = make_perp_executor(self.perp_route, self.pcfg, self.env, self.config, self.root)
+            if self.root and callable(getattr(self._perp_exec, "attach", None)):  # the dry route's simulated account
+                seed: dict[str, float] = {}
+                for t in perp_twins_held(self.ledger, self.live_state(), "dry"):
+                    seed[t["coin"]] = seed.get(t["coin"], 0.0) + t["side"] * t["sz"]
+                self._perp_exec.attach(self.root / "dry_perp_account.json", seed)
         return self._perp_exec
+
+    def perp_order(self, leg: str, oid: str, coin: str, side: int, strategy: str, position: str, **kw):
+        """Send a perp leg idempotently: an earlier order with this client order id is adopted, not repeated."""
+        ex = self.perp_exec()
+        find = getattr(ex, "find", None)
+        if callable(find):
+            try:
+                prior = find(oid)
+            except Exception as exc:  # noqa: BLE001 - can't tell whether it went out: don't send blind
+                from .perps import PerpFill
+
+                return PerpFill(self.perp_route, leg, coin, side, False, error=f"order lookup failed: {exc}"[:300]), False
+            if prior is not None and prior.ok:
+                self.live_state().get("perp_inflight", {}).pop(oid, None)
+                prior.leg = leg
+                prior.extra = {**prior.extra, "adopted": oid}
+                return prior, True
+        self.pending.add(oid, {"leg": f"perp_{leg}", "venue": "hyperliquid", "strategy": strategy, "position": position, "coin": coin,
+                               "side": side, "at": self.now, "route": self.perp_route, **kw})
+        f = ex.open(coin, side, kw["usd"], cloid=oid) if leg == "open" else ex.close(coin, side, kw["sz"], cloid=oid)
+        return f, False
 
     def perp_entry_block(self, intent: Intent, positions: list[Position]) -> tuple[str | None, float]:
         """(why not, USD notional)."""
@@ -349,7 +394,7 @@ class LiveBroker(PaperBroker):
             return "basket leg: the basket's USD spot leg has no live route (usd_spot.py), so its hedges stay on paper", 0.0
         if not (self.entries or (self.perp_route == "dry" and self.pcfg["dry_all"])):
             return "strategy not promoted", 0.0
-        why = self.kill_reason(intent.strategy)
+        why = self.kill_reason(intent.strategy) or self.live_state().get("perps_halted")
         if why:
             return why, 0.0
         age = self.now - intent.at
@@ -392,8 +437,10 @@ class LiveBroker(PaperBroker):
             if not intent.meta.get("shadow"):
                 self.log({"event": "skip", "venue": "hyperliquid", "strategy": intent.strategy, "position": pos.id, "reason": why, "at": intent.at})
             return pos, row
-        f = self.perp_exec().open(coin, side, usd)
-        rec = {"event": "perp_open", "strategy": intent.strategy, "position": pos.id, "coin": coin, "fill": f.to_dict(),
+        oid = perp_open_cloid(intent, coin)
+        f, adopted = self.perp_order("open", oid, coin, side, intent.strategy, pos.id, usd=usd)
+        rec = {"event": "perp_open_adopted" if adopted else "perp_open", "strategy": intent.strategy, "position": pos.id, "coin": coin,
+               "cloid": oid, "fill": f.to_dict(),
                "paper_price_usd": intent.price, "paper_at": intent.at,
                "paper_side_cost_pct": 100 * intent.cost.side_cost(intent.notional_usd) / intent.notional_usd}
         if f.ok:
@@ -408,6 +455,7 @@ class LiveBroker(PaperBroker):
             self.ledger.journal({"event": "live_error", "strategy": intent.strategy, "position": pos.id, "leg": "perp_open",
                                  "error": f.error, "at": self.now})
         self.log(rec)
+        self.pending.done(oid)
         return pos, row
 
     def _close_perp(self, pos: Position, intent: Intent) -> tuple[Trade, dict]:
@@ -434,8 +482,10 @@ class LiveBroker(PaperBroker):
                 px_out, fee_out = intent.price * twin["px_in"] / twin["paper_price_in"], 0.0
             event = "perp_roll_out"
         else:
-            f = ex.close(coin, side, twin["sz"])
+            oid = perp_close_cloid(pos.id)
+            f, adopted = self.perp_order("close", oid, coin, side, pos.strategy, pos.id, sz=twin["sz"])
             if not f.ok:
+                self.pending.done(oid)
                 self.live_state()["orphans"].append({"position": pos.id, "strategy": pos.strategy, **twin, "error": f.error, "at": self.now})
                 self.ledger.journal({"event": "live_error", "strategy": pos.strategy, "position": pos.id, "leg": "perp_close",
                                      "error": f.error, "at": self.now})
@@ -443,7 +493,8 @@ class LiveBroker(PaperBroker):
                 self.halt(pos.strategy, f"perp close failed ({f.error}); twin kept in live.orphans")
                 row["live"] = {"failed": f.error}
                 return trade, row
-            px_out, fee_out, event = f.px, f.fee_usd, "perp_close"
+            px_out, fee_out, event = f.px, f.fee_usd, "perp_close_adopted" if adopted else "perp_close"
+            self.pending.done(oid)
         try:
             funding = ex.funding_usd(coin, side, twin["notional_in"], twin["opened_at"], self.now)
             ferr = None

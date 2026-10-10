@@ -79,6 +79,8 @@ class FakeInfo:
             return {"universe": [{"name": "BTC", "szDecimals": 5}, {"name": "SOL", "szDecimals": 2}]}
         if body["type"] == "userFills":
             return [{"oid": 7, "fee": "0.0049"}]
+        if body["type"] == "orderStatus":  # the broker looks each client order id up before sending (safety.py)
+            return {"status": "unknownOid"}
         raise AssertionError(body)
 
     def book(self, coin):
@@ -97,7 +99,7 @@ class FakeExchange:
     def __init__(self, resp):
         self.resp, self.sent = resp, []
 
-    def ioc(self, asset, is_buy, px, sz, reduce_only):
+    def ioc(self, asset, is_buy, px, sz, reduce_only, cloid=None):
         self.sent.append((asset, is_buy, px, sz, reduce_only))
         return self.resp
 

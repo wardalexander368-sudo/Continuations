@@ -23,8 +23,12 @@ trading has to stay correct when a job dies mid-order or two writers meet. Four 
    loss cap and halts live entries.
 
 Covers the SOL spot twins (Jupiter / Lightning, and their quote-only dry twin, whose wallet is
-simulated in ``autotrade/dry_wallet.json`` so this can be tested end to end). Perp and USD-spot twins
-are dry-only today; they need the same treatment before they go live.
+simulated in ``autotrade/dry_wallet.json`` so this can be tested end to end) and, in ``reconcile_perps``,
+the Hyperliquid perp twins (basket shorts included): each perp order carries a client order id
+(``perps.cloid``) fixed by what it is for, a retry looks that id up and adopts its fill, and the
+account's positions and open orders must equal the book's legs (plus orders a dead run filled) or perp
+entries stop (``live.perps_halted``; closes still run, reduce-only). The dry perp route simulates the
+account in ``autotrade/dry_perp_account.json``. USD-spot twins (the basket's JLP leg) are dry-only.
 """
 
 from __future__ import annotations
@@ -120,9 +124,10 @@ class Pending:
         if rows.pop(order_id, None) is not None:
             self._write(rows)
 
-    def clear(self) -> None:
+    def clear(self, perps: bool = False) -> None:
+        """Drop the spot entries (or, with ``perps``, the Hyperliquid ones) once a reconcile has settled them."""
         if self.path and self.path.exists():
-            self._write({})
+            self._write({k: r for k, r in self.load().items() if (r.get("venue") == "hyperliquid") != perps})
 
 
 def buy_order_id(intent) -> str:
@@ -144,7 +149,7 @@ def reconcile(broker, now: float) -> dict:
         return {"at": now, "skipped": "executor cannot read holdings"}
     st.setdefault("unclaimed", {})
     pending = Pending(root)
-    pend = pending.load()
+    pend = {k: r for k, r in pending.load().items() if r.get("venue") != "hyperliquid"}
     report: dict = {"at": now, "claims": [], "orphans": [], "sold_unrecorded": [], "halts": []}
 
     open_twins = {p.id: p for p in ledger.positions if p.meta.get("live") and _is_sol_spot(p.meta["live"])}
@@ -259,3 +264,65 @@ def _is_sol_spot(twin: dict) -> bool:
     from .usd_spot import is_usd_spot
 
     return "mint" in twin and "sol_in" in twin and not is_perp(twin) and not is_usd_spot(twin)
+
+
+PERP_TOL = 1e-9
+INFLIGHT_TTL_S = 3600
+
+
+def reconcile_perps(broker, now: float) -> dict:
+    """Hyperliquid's real positions and open orders against the book, before any perp order."""
+    from .broker import perp_twins_held
+
+    report: dict = {"at": now, "inflight": [], "mismatch": [], "orphans": []}
+    if broker.perp_route is None:
+        return {**report, "skipped": "no perp route"}
+    ex = broker.perp_exec()
+    if not callable(getattr(ex, "account", None)):
+        return {**report, "skipped": "executor cannot read the account"}
+    st = broker.live_state()
+    inflight = st.setdefault("perp_inflight", {})
+    pending = Pending(broker.root)
+    for oid, r in pending.load().items():
+        if r.get("venue") != "hyperliquid" or oid in inflight:
+            continue
+        f = ex.find(oid)
+        if f is not None and f.ok:  # it filled before the run died: count it until the retry adopts it
+            inflight[oid] = {"coin": f.coin, "signed_sz": f.side * f.sz, "leg": r["leg"], "strategy": r["strategy"],
+                             "position": r["position"], "px": f.px, "at": now}
+            report["inflight"].append(oid)
+    for oid, r in list(inflight.items()):
+        if now - r["at"] > INFLIGHT_TTL_S:
+            o = {"venue": "hyperliquid", "route": broker.perp_route, "coin": r["coin"], "side": 1 if r["signed_sz"] > 0 else -1,
+                 "sz": abs(r["signed_sz"]), "strategy": r["strategy"], "cloid": oid, "at": now,
+                 "error": f"{r['leg']} {oid} filled in a run that died and was never re-adopted"}
+            st["orphans"].append(o)
+            del inflight[oid]
+            report["orphans"].append(o)
+    want: dict[str, float] = {}
+    for t in perp_twins_held(broker.ledger, st, broker.perp_route):
+        want[t["coin"]] = want.get(t["coin"], 0.0) + t["side"] * t["sz"]
+    for r in inflight.values():
+        want[r["coin"]] = want.get(r["coin"], 0.0) + r["signed_sz"]
+    acct = ex.account()
+    have = acct["positions"]
+    for coin in sorted(set(want) | set(have)):
+        a, b = float(have.get(coin, 0.0)), float(want.get(coin, 0.0))
+        if abs(a - b) > PERP_TOL * max(1.0, abs(b)):
+            report["mismatch"].append({"coin": coin, "account": a, "book": b})
+    if acct.get("open_orders"):
+        report["mismatch"].append({"open_orders": len(acct["open_orders"])})
+    pending.clear(perps=True)
+    reason = None
+    if report["mismatch"]:
+        reason = "perp reconcile: account differs from the book: " + "; ".join(
+            f"{m['coin']} account {m['account']:g} vs book {m['book']:g}" if "coin" in m else f"{m['open_orders']} open orders"
+            for m in report["mismatch"])
+    elif report["orphans"]:
+        reason = "perp reconcile: " + report["orphans"][0]["error"]
+    if reason and not st.get("perps_halted"):
+        st["perps_halted"] = reason[:400]
+        broker.ledger.change({"t": now, "kind": "halt", "scope": "live:perps", "reason": reason[:400]})
+    if report["inflight"] or report["mismatch"] or report["orphans"]:
+        broker.ledger.journal({"event": "perp_reconcile", **report})
+    return report
