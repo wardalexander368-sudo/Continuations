@@ -290,6 +290,8 @@ def report() -> None:
     fin = [g["lag_s"] for _, g in both if g.get("final", True)]
     print(f"bar close readable after bar end: fast median {statistics.median(fl):.1f} s (max {max(fl):.1f}); "
           f"Gecko final median {statistics.median(fin):.0f} s (max {max(fin):.0f}; {len(both) - len(fin)} not final by the deadline)")
+    fp = [g["first_lag_s"] for _, g in both if g.get("first_lag_s") is not None]
+    print(f"Gecko first poll after bar end (one request per pool, 2.2 s apart): median {statistics.median(fp):.0f} s, max {max(fp):.0f} s")
     stale = [g for _, g in both if g.get("first_close") and g.get("close_usd") and g.get("final", True)]
     if stale:
         print(f"Gecko's first poll after bar end already had the final close for {sum(abs(g['first_close'] / g['close_usd'] - 1) < 1e-9 for g in stale)} of {len(stale)} pool-bars"
@@ -305,12 +307,14 @@ def report() -> None:
     for f, g in both:
         if not (f["signal"] and g["signal"]):
             continue
+        moved = float("nan")
         if f.get("px_sol") and g.get("px_sol_at_final"):
-            gains.append(100 * (g["px_sol_at_final"] / f["px_sol"] - 1))  # >0: fast entry was cheaper
+            moved = 100 * (g["px_sol_at_final"] / f["px_sol"] - 1)  # >0: fast entry was cheaper
+            gains.append(moved)
         if g.get("next_open") and f.get("close_usd"):
             gains_open.append(100 * (g["next_open"] / f["close_usd"] - 1))
         print(f"  {g['name']:<20} {iso(g['bar'])} fast {100 * f['ret']:+.1f}% at +{f['lag_s']:.1f} s, Gecko "
-              f"{100 * g['ret']:+.1f}% final at +{g['lag_s']:.0f} s; price moved {gains[-1] if gains else float('nan'):+.2f}% in between")
+              f"{100 * g['ret']:+.1f}% final at +{g['lag_s']:.0f} s; price moved {moved:+.2f}% in between")
     if gains:
         print(f"price gained by the fast entry vs entering when Gecko's bar was final: median {statistics.median(gains):+.2f}%, "
               f"mean {statistics.mean(gains):+.2f}% (n={len(gains)}; >0 means cheaper)")

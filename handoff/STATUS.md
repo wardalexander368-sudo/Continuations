@@ -130,6 +130,24 @@ deep pools match the model, a thin one was 2.4x it). The `launch_selector` slot 
   recorder stopped after hour 18 (hour 19 is partial and only on local disk). **Item (b) done
   (19:10 UTC):** see the log entry. Nothing half-done.
 
+* **2026-10-10 18:05 UTC, "Real-money cost test, fresh key" thread: fast dip detector built and measured
+  (paper only, no SOL).** `handoff/experiments/fast_dip.py` reads every registered dip pool's price from
+  the free public RPC (one `getMultipleAccounts` on pools + vaults; quote = vault + the pool's signed
+  `virtual_quote_reserves`, without which boosted pools read up to 72% low) 0.4 s after each 5-minute
+  bar ends, and applies the registered rule against GeckoTerminal's close of bar i-12. 22 bars x 17
+  pools beside GeckoTerminal (`handoff/data/fast-dip/report-2026-10-10.txt`):
+  - fast close vs Gecko's close of the same bar: median +0.31%, mean |diff| 0.55%; signals agreed
+    99 times, fast only 2, Gecko only 6.
+  - **GeckoTerminal is not the bottleneck:** its first poll after bar end (median 27 s, only because
+    the scan walks 17 pools at 2.2 s) already had the final close for 315 of 330 pool-bars; the signal
+    flipped only twice.
+  - **Price gained by entering at the fast signal instead of when Gecko's bar was final (median 69 s
+    later): median −0.01%, mean +0.24% (n = 92).** Speed buys about nothing. The 4–5 min delay in the
+    two real fills came from the watcher itself (the first buy came right after it started; the
+    second waited behind two failed SharkTank buys), not from GeckoTerminal.
+  - **For the autotrade owner (Continue TARTAR handoff session):** no integration needed for speed. If
+    a live dip sender is ever built, poll Gecko right at bar end (or use `onchain_prices()` from this
+    module for one-call prices) and buy immediately; skip the hourly cadence for entries.
 * **REAL MONEY — dip-rule real fills DONE (02:23–06:31 UTC 2026-10-10). The wallet is held by the
   "Real-money cost test, fresh key" thread session (session_01C3taLfUKfeFUC2zXBZEhaR); no further
   trades planned.** AJ's go (02:18 UTC): "a couple real fills if an opportunity looks good". 2 round
