@@ -131,7 +131,10 @@ deep pools match the model, a thin one was 2.4x it). The `launch_selector` slot 
   (19:10 UTC):** see the log entry. Nothing half-done.
 
 * **2026-10-10 18:45 UTC, "Real-money cost test, fresh key" thread: DIP RULE DOES NOT CLEAR ITS COSTS
-  ON ANY ROUTE. Close the real-money dip lane; no case for the TARTAR_WALLET_KEY wallet from it.**
+  ON ANY ROUTE. Real-money dip lane CLOSED (coordinator agreed 18:20 UTC); no case for the
+  TARTAR_WALLET_KEY wallet from it. The wallet stays held by this thread; no SOL is to be spent.**
+  **For the autotrade owner: the dip rule's pre-registered retire check can use the 90-trade
+  out-of-sample replay (gross −3.94% per trade before fees, SE 2.57; file below).**
   (Paper only, no SOL.) The rule's gross is already negative before costs:
   - **Gross:** the registered rule replayed on GeckoTerminal SOL-quoted bars, only bars after each
     cohort registered, one position per pool (`handoff/experiments/dip_oos_replay.py`,
