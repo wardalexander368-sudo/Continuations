@@ -32,13 +32,6 @@ next. Topic documents hold the detail:
 
 ## Active
 
-* **Hedged-JLP liquidation stress test (second TARTAR session)** (since 2026-10-10 04:55 UTC, branch
-  `claude/project-thread-kytb6q`). **Paper only, no keys.** Strategy review rec. 2: replay the
-  registered hedged-JLP rule (`jlp_paper.replay`, unchanged) on hourly SOL/ETH/BTC history back to 2021,
-  to see if any past rally would have liquidated the short hedge, and how much margin cushion is left at the
-  4 h cadence and with missed check-ins. Doesn't touch the A1 forward test or its owner's files; writes
-  `handoff/experiments/jlp_stress.py` and a result note.
-
 * **JLP hedge liquidation stress test (edge hunt E thread)** (since 2026-10-10 04:50 UTC, branch
   `claude/project-thread-9op3pf`). STRATEGY-REVIEW item 2: replay the worst SOL/ETH/BTC spike windows
   through the registered hedged-JLP rules (3x shorts, 4-hourly check-ins, 5% drift) to see what would have
