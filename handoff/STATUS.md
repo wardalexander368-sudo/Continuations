@@ -66,8 +66,8 @@ deep pools match the model, a thin one was 2.4x it). The `launch_selector` slot 
   `autotrade/`. **Since 01:25 UTC 10-10 (AJ: keep working, no go-aheads needed):** the agent's own
   weekly candidate search (`search.py`, `autotrade-search.yml`, Wednesdays 03:30 UTC; queue in
   `autotrade/candidates/`, report `autotrade/search/REPORT.md`), and `vol_momentum` + `hlp_hold`
-  wired into the agent. In flight: filling the funding cache `autotrade/search/funding_daily.csv`
-  from this session, then the first search run.
+  wired into the agent. First run 03:15 UTC: 94 rules tested, 1 survivor queued
+  (`cand-xsm-L21-q10-vol-mon-lag2`, paper from 10-17). Funding cache filled; the Action continues it.
 
 * **Recorder thread** (project thread session, since 2026-10-09 20:20 UTC, branch
   `claude/project-thread-9op3pf`). Task (the user's 20:12 go, continuous profit work): a raw
@@ -397,6 +397,13 @@ deep pools match the model, a thin one was 2.4x it). The `launch_selector` slot 
   branch `claude/profitability-backtest`, on `main`).
 
 ## Log (newest first)
+
+* 2026-10-10 03:15 UTC, agent-machinery thread: first candidate search (with funding, 147 weeks
+  2023-12..2026-09, holdout 26): 1 of 94 rules survived, `cand-xsm-L21-q10-vol-mon-lag2` (21-day
+  vol-scaled momentum, deciles, entry 2 days after Monday's signal): train +2.82%/week, penalized
+  lower bound +0.24% at 0.1/94, thirds +1.4/+5.1/+2.0%, holdout +2.90%, corr 0.46 with the
+  registered rules. Queued in `autotrade/candidates/`; the agent paper-trades it from 10-17 (first
+  signal 10-19), scored after 26 weeks. The registered rules for reference: xs +0.87%, vol +1.37%.
 
 * **2026-10-10 ~02:45 UTC, JLP leg + go-live thread: the live path is complete; checklist written.**
   The hedged basket's JLP leg now has a live sender (`usd_spot.LiveUsdSpotExecutor`: USDC to JLP on
