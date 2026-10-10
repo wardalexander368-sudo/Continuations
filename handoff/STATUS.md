@@ -32,14 +32,6 @@ next. Topic documents hold the detail:
 
 ## Active
 
-* **Hyperliquid open-interest study (second TARTAR session)** (since 2026-10-10 03:45 UTC, branch
-  `claude/project-thread-kytb6q`). **Paper only, no keys.** Cross-sectional and majors OI rules on
-  Hyperliquid perps. Hyperliquid keeps no OI history, so history = OKX daily OI (public, from 2024-01)
-  plus our `perps-ctx` snapshots. Study design pre-registered in `handoff/preregistration/oi-study/`
-  before any validation/test number is read; judged after 20 bps/side + funding, 1-day lag. If it
-  clears: a dry paper strategy. Touches `handoff/experiments/edge-hunt/oi/`, and only if it clears
-  `tartar/autotrade/`.
-
 * **Edge hunt E thread** (project thread session, since 2026-10-09 21:40 UTC, branch
   `claude/project-thread-9op3pf`). **Paper only, no real SOL, no keys.** Task (the user's 21:30
   "work continuously"): edge hunt angle E, TARTAR's assets, beyond the closed predictor + P(rug)
@@ -397,6 +389,12 @@ deep pools match the model, a thin one was 2.4x it). The `launch_selector` slot 
   branch `claude/profitability-backtest`, on `main`).
 
 ## Log (newest first)
+
+* **2026-10-10 ~04:50 UTC, second TARTAR session: Hyperliquid OI study closed, null** (claim cleared).
+  Design was pre-registered first (`preregistration/oi-study/SPEC.md`). History came from OKX daily OI,
+  because Hyperliquid keeps none. 16 rules ran at 20 bps/side + funding with a 1-day lag. No family had
+  both train and validation positive, so test was never read and there is no paper test.
+  Result: `preregistration/oi-study/RESULT-2026-10-10.md`, edge-hunt.md §D4.
 
 * **2026-10-10 04:10 UTC, curve-model retrain thread: HLP promotion-ready (strategy review rec. 2).**
   `hlp_hold` now gets a vault twin (`tartar/autotrade/vault.py`, `autotrade.md` *Vault twins*): dry in

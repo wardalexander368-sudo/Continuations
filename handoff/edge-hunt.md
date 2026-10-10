@@ -179,6 +179,26 @@ public API keeps no history (only the current snapshot), and Binance's OI histor
 so nothing to test yet; the `perps-ctx` GitHub Action snapshots every perp's OI, funding, mark and
 volume every 4 hours from 2026-10-09 (`data/edge-hunt/hl-ctx/`), enough for an OI study in a few months.
 
+### D4. Open interest on Hyperliquid perps (2026-10-10, second TARTAR session): closed, nothing passes
+
+Hyperliquid keeps no OI history, so OKX's public daily OI (from 2024-01, 148 of our perps covered;
+`experiments/edge-hunt/oi/fetch_okx_oi.py`) stood in for each coin's positioning. The design was
+pre-registered before any number was computed (`preregistration/oi-study/SPEC.md`). It covers
+16 rules in 5 families:
+* OI change, both signs.
+* Momentum confirmed by OI.
+* Price-OI divergence.
+* OI stretch versus its 30-day mean.
+* OI spikes and flushes on BTC/ETH/SOL.
+
+The settings are D/VMOM's harness, a 1-day lag after the OI row and 20 bps/side, with funding
+charged on validation and test. **No family has both train and validation above zero, so test was
+never read.** The best train rule, price-OI divergence L=7, scored +0.86%/week on train and
+−1.69% on validation. Momentum confirmed by OI went the other way: train −1.30%, validation +1.16%.
+Output: `data/edge-hunt/oi/oi-rules-20bps-lag1-funding.txt`; harness: `experiments/edge-hunt/oi/oi_rules.py`.
+OI adds nothing tradable over the momentum tests already running. The `perps-ctx` snapshots keep
+going for anyone who wants intraday OI later.
+
 ### G. Following Hyperliquid vaults (2026-10-09, trading-skills thread): closed; HLP pre-registered
 
 Every Hyperliquid vault whose PnL ever reached $1k either way, **closed vaults included** (3,206 of

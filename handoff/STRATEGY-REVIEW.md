@@ -72,7 +72,7 @@ Likelihood of passing is my judgement from the recorded test CIs and decay. It i
    Let the 52-week tests run untouched; the first signal is Monday 2026-10-12. New perp research should be pre-registered as separate tests with their own placebo. Do not tune D or D3.
 2. **Yield carry: get JLP-hedged and HLP ready to promote the day they score.**
    JLP scores first (after 2027-01-08). The infrastructure is done. What's left for Alexander: about $330, the wallet key, a funded Hyperliquid account, and the OK. Before then, it's worth a liquidation stress test on the hedge (a SOL/ETH/BTC spike day replay).
-3. **Perp data research (OI and positioning)** once perps-ctx data covers enough weeks. This is the next new study worth starting.
+3. ~~Perp data research (OI and positioning)~~ **Done 2026-10-10, null** (edge-hunt.md §D4): 16 pre-registered OI rules on OKX OI history, none with train and validation both positive.
 4. **pump.fun: stop new entry research.**
    Keep only what is already running and free: who-trades F1 forward (scored 2026-10-19) and the E1 faster-source check. If F1 fails as expected, close pump.fun entry strategies on the board. Keep the recorders running only if their data feeds another test.
 5. **Drop:** CEX-dependent ideas (crash reversal), decayed carries (LST), copy-trading and vault following, Polymarket rules, listing fades.
