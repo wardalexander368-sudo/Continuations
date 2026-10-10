@@ -375,6 +375,16 @@ deep pools match the model, a thin one was 2.4x it). The `launch_selector` slot 
 
 ## Log (newest first)
 
+* **2026-10-10 ~01:15 UTC, edge hunt E thread: pumpflow (E1) does not survive DefiLlama's delay;
+  agent copy disabled, registered test left running as expected-fail.** Audit finding answered.
+  DefiLlama's newest day at 00:50 UTC 10-10 was 10-08, so entries come 25+ h after the day ends.
+  Re-scored (`experiments/edge-hunt/pumpflow/publish_lag.py`): timing part +0.75%/+0.82% at the day's
+  close, +0.05 to +0.12% (±0.6) at 25-28 h, below zero at 30-40 h. SPEC got a dated addendum; rule and
+  scorer untouched. Faster source: pump.fun-only revenue keeps the effect, and the recorder sees ~70-85%
+  of bonding-curve volume live. New daily Action `pumpflow-live.yml` writes `data/pumpflow-live/
+  curve-days.jsonl`; validation criteria fixed in edge-hunt.md §E1 (21 recorder days, ≥12/14 signs,
+  r ≥ 0.8) before a new forward test is registered, else E1 closes.
+
 * **2026-10-10 ~01:50 UTC, code audit thread: six fixes on main, two scorer corrections to note.**
   Tests in `tests/test_audit_2026_10_10.py`. **Scorer corrections (not rule changes; they align the
   code with the SPECs, landed before any signal):** (1) `xs_momentum_forward.py` summed each leg's

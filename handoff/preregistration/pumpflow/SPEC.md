@@ -60,3 +60,12 @@ Scripts and outputs: `handoff/experiments/edge-hunt/pumpflow/`, `handoff/data/ed
   alone is about 1.6–1.9 standard errors. **Prior expectation: a small edge or none**; a 90%
   interval of about ±0.8%/trade at 180 trades means only an effect at least as large as the
   backtest's can confirm.
+
+## Addendum 2026-10-10 (after registration; the rule, window and criteria are unchanged)
+DefiLlama publishes a day at least ~25 h after it ends (measured 2026-10-10 00:50 UTC: newest day
+10-08). Re-scoring the backtest at that lag (`handoff/experiments/edge-hunt/pumpflow/publish_lag.py`)
+puts the timing part at about +0.05% to +0.12% with intervals of about ±0.6%, against +0.75% /
++0.82% at the daily close. This test therefore measures a version with an expected edge of about
+zero and is expected to fail. It keeps running as registered because it costs nothing and records the
+public version honestly; the agent's paper copy is disabled. The same-day version (our recorder's
+bonding-curve volume) is being validated separately (edge-hunt.md §E1, "publish delay").

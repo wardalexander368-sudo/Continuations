@@ -46,7 +46,8 @@
     },
     "pumpflow": {
       "kind": "pumpflow",
-      "enabled": true,
+      "enabled": false,
+      "note": "disabled 2026-10-10: DefiLlama publishes a day 25+ h after it ends, and the backtest edge is gone at that lag (edge-hunt.md E1 'Publish delay'); the registered forward test (pumpflow-paper.yml) keeps recording",
       "prereg": "handoff/preregistration/pumpflow/SPEC.md",
       "size_usd": 200,
       "snapshots": "handoff/data/pumpflow-paper/snapshots.jsonl"

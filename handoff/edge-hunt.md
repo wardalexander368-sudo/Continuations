@@ -232,6 +232,38 @@ Hyperliquid's history. If it holds, the live version (our own decoder's revenue 
 00:00 UTC) is the next step. Scripts and outputs: `experiments/edge-hunt/pumpflow/`,
 `data/edge-hunt/pumpflow/`.
 
+**E1, publish delay: the public version has no edge; the live version needs our own feed (2026-10-10).**
+Raised by the code audit. **Measured:** at 2026-10-10 00:50 UTC DefiLlama's newest day for both
+pump.fun and PumpSwap was 10-08, so a day is published at least ~25 h after it ends (the pilot
+snapshot shows 10-08 was out by 10-09 21:38, so at most ~46 h; the hourly snapshots now record each
+day's first appearance, which will pin it down). **Re-scored** (`experiments/edge-hunt/pumpflow/
+publish_lag.py`, output `data/edge-hunt/pumpflow/publish-lag.txt`), entering L hours after day d ends,
+holding 24 h, 0.10%/side, funding pro-rated; timing part with 90% block-bootstrap interval:
+
+| Entry | Timing part |
+|---|---|
+| L = 0 (SPEC backtest, daily closes) | train +0.75% [+0.01, +1.48], test +0.82% [+0.03, +1.64] |
+| L = 4-8 h (hourly) | +0.65% [+0.03, +1.28] |
+| L = 24 h, daily closes | train +0.02% [−0.79, +0.74], test +0.20% [−0.45, +0.85] |
+| L = 25-28 h (hourly; earliest DefiLlama entry) | +0.05% to +0.12%, intervals about ±0.6 |
+| L = 30-40 h (hourly) | −0.06% to −0.36% |
+| L = 48 h, daily closes | train +0.50% [−0.17, +1.15], test +0.02% [−0.60, +0.65] |
+
+So at any lag DefiLlama allows, the expected result is about zero. The registered forward test
+keeps running unchanged (rule and scorer untouched; `preregistration/pumpflow/SPEC.md` has a dated
+addendum saying so) because it is free and is the honest record of the public version, but it is now
+**expected to fail**, and the agent's `pumpflow` strategy is disabled (no paper or dry book, no perp
+twin budget used). **Faster source:** pump.fun-only revenue keeps the effect (sign agrees with the
+total 96% of days; test timing +0.80%), and launchpad revenue is a fixed fee on bonding-curve volume,
+which TARTAR's recorder streams live. The recorder saw ~420-530 SOL of fees an hour on 10-09 21-23 UTC
+against DefiLlama's ~620 SOL/hour for 10-08, so roughly 70-85% coverage (it keeps each token 120 min).
+`experiments/edge-hunt/pumpflow/curve_flow.py` and the daily Action `pumpflow-live.yml` now write each
+day's curve volume to `data/pumpflow-live/curve-days.jsonl`. **Validation fixed now, before the data
+exists:** once 21 complete recorder days (all 24 hours) are in, compare the curve-volume surprise
+(log of day / mean of the 7 before) with DefiLlama's pump.fun-only surprise on the 14 days that have a
+base. Usable only if signs agree on at least 12 of 14 and the correlation is at least 0.8; then a new
+forward test (entry ~00:30 UTC d+1) gets its own pre-registration. Otherwise E1 is closed.
+
 **E1b. The same rule on 8 other buyback / revenue-share tokens: does not hold (2026-10-09).**
 Pre-registered before any of their data was read (`preregistration/revflow/SPEC.md`): HYPE, JUP,
 AAVE, DYDX, GMX, CAKE, SKY, BANANA on Hyperliquid. Equal-weight family −0.01%/day [−0.14, +0.13]

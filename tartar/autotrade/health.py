@@ -30,6 +30,7 @@ WORKFLOWS = {
     "paper-tests.yml": (5 * 3600, "JLP check-ins every 4 h, dip cohort daily"),
     "pumpflow-paper.yml": (2 * 3600, "pumpflow snapshots, hourly"),
     "perps-ctx.yml": (5 * 3600, "Hyperliquid OI/funding snapshots, every 4 h"),
+    "pumpflow-live.yml": (26 * 3600, "pump.fun curve volume from the recorder, daily"),
 }
 RECORDER_START = datetime(2026, 10, 9, 21, tzinfo=timezone.utc)  # first full hour of the recorder Action
 
