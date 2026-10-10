@@ -626,6 +626,15 @@ online-only on edge (all and trading candles), keep the trading-candle calibrati
 on `main`: `raw-clever` through hour 15 and `raw-v3` through hour 14, so more pools and a later
 test split than the other rows.
 
+**5m retry (2026-10-10 00:40 UTC, retrain thread): installed** (`pumpswap-300s`). Same script and
+install rule, `-t 5m`, on `raw-pumpswap`, `raw-eager`, `raw-clever`, `raw-clever2`, `raw-v3` and the
+recorder Action's run 37986175087 (hours 20–23, `fetch_gha_raw.py`): **689 pools / 69k rows** (was
+323 / 34k). Chosen on validation: 63 leaves, 1,500 rows per leaf (validation 1.1574). On 103 test
+pools' live replay: online only, trading candles 51.5% hit vs 45.6% stated, edge −0.2%; **global +
+online 65.9% vs 64.4%, edge +2.1%** (all candles 69.0% vs 67.6%, +2.1%). Every check passes (edge
+all / trading, calibration, information at the open). Log and summary:
+`handoff/experiments/pumpswap-model/run-5m-retry.log`, `summary-5m-retry.json`.
+
 * **What 1m buys is honest confidence, not sharper prices.** After graduation the online model
   alone is badly *under*confident (on trading candles it states 49% and is right 63% of the time;
   why was not studied). The blend states what it hits. Its point

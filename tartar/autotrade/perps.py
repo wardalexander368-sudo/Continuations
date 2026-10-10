@@ -1,5 +1,5 @@
 """Live twins on Hyperliquid perps: the route for strategies whose intents carry ``meta["venue"] == "hyperliquid"``
-(xs_momentum; pumpflow when it joins the agent).
+(xs_momentum, pumpflow, and the shorts of the hedged-JLP basket).
 
 The SOL twins in ``execution.py`` swap a Solana token; a perp twin opens a long or short on Hyperliquid at a
 USD notional instead. Same design: the paper book is unchanged, a promoted strategy's entries get a twin, the
@@ -33,7 +33,8 @@ MIN_ORDER_USD = 10.0
 PERP_DEFAULTS = {
     "max_leg_usd": 12.0,          # notional of one twin (Hyperliquid's minimum order is $10)
     "min_leg_usd": 10.0,
-    "budget_usd": 60.0,           # notional in open perp twins, all strategies together
+    "budget_usd": 60.0,           # notional in open perp twins, all strategies together (basket legs excluded)
+    "basket_budget_usd": 500.0,   # notional in open basket twins (hedged JLP: JLP leg + shorts), each leg sized by meta.twin_usd
     "daily_loss_cap_usd": 6.0,    # realized perp-twin loss in a UTC day; beyond it all live entries stop
     "max_trade_loss_pct": 0.25,   # one twin losing more halts that strategy's live entries
     "max_divergence_pct": 0.03,   # twin worse than paper by more than this ...

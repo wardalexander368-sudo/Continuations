@@ -159,7 +159,7 @@ def check_agent(root: Path, now: float | None = None) -> list[dict]:
         out.append({"check": "Agent: halts", "level": "red", "detail": "; ".join(halts)[:400]})
     path = root / "fills.jsonl"
     rows = [json.loads(x) for x in path.read_text().splitlines() if x.strip()] if path.exists() else []
-    closes = [r for r in rows if r.get("event") in ("sell", "perp_close", "perp_roll_out") and "compare" in r]
+    closes = [r for r in rows if r.get("event") in ("sell", "perp_close", "perp_roll_out", "usd_sell") and "compare" in r]
     by: dict[str, list[float]] = {}
     for r in closes:
         by.setdefault(r.get("strategy", "?"), []).append(r["compare"]["live_minus_paper"])

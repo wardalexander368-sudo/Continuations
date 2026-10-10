@@ -36,6 +36,7 @@ the repository owner.
 | `dip` | `handoff/preregistration/dip-rolling/SPEC.json`, every cohort pool, 5-minute bars from GeckoTerminal; registered costs, plus a secondary figure at measured pool fees | at 200 trades or 21 days: excess over random entries CI > 0 and mean > 0 |
 | `xs_momentum` | `handoff/preregistration/xs-momentum/SPEC.md`, Hyperliquid perps, booked each Wednesday for Tuesday's close; turnover costs + funding | at 52 weeks: mean weekly > 0 and block-bootstrap CI > 0 |
 | `pumpflow` | `handoff/preregistration/pumpflow/SPEC.md`: reads the pumpflow-paper Action's daily snapshots, long/short PUMP perp at each snapshot's mid, 0.10%/side on turnover + funding; dry perp twins | after 2027-04-08: ≥ 120 trades, block-bootstrap CI > 0, timing part > 0 |
+| `jlp_hedged` | `handoff/experiments/jlp_paper.py` (hedged JLP): reads the paper-tests Action's 4-hourly check-ins; long $200 JLP plus SOL/ETH/BTC perp shorts at JLP's deltas, shorts rebalanced when any is off by > 5% of the JLP leg (taker fee on the changed size) + funding; dry twins of all four legs | pending; `jlp_paper.py evaluate --final` after 2027-01-08 is the verdict |
 | `dip~drop=…~hold_bars=…` (8) | shadow variants of the dip rule (drop 3/5/8% × hold 2/4/8 h, minus the registered one) | same, with the CI widened for a family of 9 (Bonferroni); outside the risk caps |
 | `launch_selector` | disabled slot (`kind: external`) | config `eval` |
 
@@ -43,10 +44,9 @@ Each strategy trades forward from its first run, with no back-filled trades. The
 forward-test scorers (`established_prereg_eval.py`, `xs_momentum_forward.py`) stay the authority for
 the registered tests. The agent's verdicts score only its own paper book.
 
-The hedged-JLP forward test is not an agent strategy: it is a portfolio (JLP held on Solana plus three
-Hyperliquid shorts sized from the pool's delta, rebalanced on drift, with margin top-ups), not a signal
-rule, and a twin of it would need a JLP spot leg as well as the perp legs. Its own recorder and scorer
-(`jlp_paper.py`) stay the record.
+The hedged-JLP test runs in the agent as a basket (`strategies/jlp_hedged.py`, added 2026-10-10) so it
+gets dry twins like the signal rules, but its own recorder and scorer (`jlp_paper.py`) stay the record:
+the agent's book leaves out the registered test's margin top-ups and 3x margin accounting.
 
 ## Health (`health.yml`, hourly)
 
@@ -146,7 +146,7 @@ trade: exits follow the registered rule, so the per-trade limit acts after the c
 
 Built 2026-10-09 by the edge hunt E thread: `tartar/autotrade/perps.py`, hooks in `broker.py`, tests in
 `tests/test_autotrade_perps.py`. A strategy's intent with `meta["venue"] == "hyperliquid"` (xs_momentum's
-legs now; pumpflow when it joins the agent) gets a **perp twin** instead of a SOL twin: a long or short
+legs, pumpflow, the hedged-JLP shorts) gets a **perp twin** instead of a SOL twin: a long or short
 on Hyperliquid at a USD notional, with the same paper-book-unchanged design, kill switches and
 `fills.jsonl` comparison (`perp_open`, `perp_close`; `compare.live_net_return_usd` against
 `paper_net_return`, fees and funding broken out). REPORT.md shows them in their own table.
@@ -175,6 +175,32 @@ on Hyperliquid at a USD notional, with the same paper-book-unchanged design, kil
   4. and on our side a live executor: EIP-712 order signing (e.g. the `hyperliquid-python-sdk`),
      IOC limit orders priced through the book, fills read back from `userFills`. Not written yet.
   Eligibility to use Hyperliquid is the user's to check.
+
+### Basket twins: the hedged JLP (JLP on Jupiter + three Hyperliquid shorts)
+
+Built 2026-10-10: `strategies/jlp_hedged.py`, `usd_spot.py`, basket sizing in `broker.py`
+(`LiveBroker.usd_size`), tests in `tests/test_autotrade_jlp_hedged.py`. Every leg's intent carries
+`meta.basket = "jlp"` and `meta.twin_usd`, the twin size that keeps the legs in proportion
+(`twin_basket_usd` × each coin's share; $200 now, so about JLP $200, SOL short $88, BTC $25, ETH $15).
+
+* **JLP leg** (`venue: jupiter_usd`): a USD spot twin. Dry: Jupiter's USDC→JLP quote at entry and JLP→USDC
+  at exit, plus $0.003 network fee per leg (`usd_buy` / `usd_sell` in `fills.jsonl`, own table in
+  REPORT.md). A failed exit quote becomes an orphan and halts the strategy, as for SOL twins.
+* **Short legs** (`venue: hyperliquid`): ordinary perp twins (above), sized by `twin_usd` instead of
+  `max_leg_usd`. Each rebalance closes and reopens the three shorts.
+* **Limits:** basket legs count against `live.perps.basket_budget_usd` ($500), separate from the $60
+  single-leg perp budget, and a basket leg is skipped rather than shrunk if the budget can't fit its
+  full size. The perp daily loss cap, per-twin loss and divergence halts, `HALT`, `HALT_LIVE` and
+  `TARTAR_LIVE_KILL` all apply to every leg.
+* Checked 2026-10-10 against the live venues on a scratch root: all four dry legs filled (JLP $200 quote,
+  SOL $87.48, BTC $23.93, ETH $15.18 after Hyperliquid's size rounding).
+* **Going live would need, from the user:** `TARTAR_WALLET_KEY` with USDC in that Solana wallet for the
+  JLP leg (and a little SOL for fees); a Hyperliquid account with USDC margin plus `HYPERLIQUID_AGENT_KEY`
+  and `HYPERLIQUID_ACCOUNT` for the shorts (see Perp twins); roughly $330 of capital at the $200 twin
+  size (JLP $200 plus about $43 of margin at 3x, more for a buffer). **On our side, not built:** a live
+  USDC swap sender (Jupiter Swap API signed with the wallet key), the Hyperliquid order signer, and a
+  leg-failure rule (if one leg of an entry or rebalance fails, unwind the others or halt) since a live
+  basket with a missing hedge is directional. Mode `live` today skips both routes, so the basket stays on paper.
 
 ### Kill switches
 

@@ -51,6 +51,14 @@
       "size_usd": 200,
       "snapshots": "handoff/data/pumpflow-paper/snapshots.jsonl"
     },
+    "jlp_hedged": {
+      "kind": "jlp_hedged",
+      "enabled": true,
+      "prereg": "handoff/experiments/jlp_paper.py",
+      "size_usd": 200,
+      "twin_basket_usd": 200,
+      "snapshots": "handoff/data/jlp-paper/snapshots.jsonl"
+    },
     "launch_selector": {
       "kind": "external",
       "enabled": false,

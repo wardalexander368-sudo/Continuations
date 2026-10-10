@@ -25,6 +25,7 @@ from pathlib import Path
 from .core import CostModel, Intent, Position, Trade
 from .execution import make_executor, select_route
 from .perps import PERP_DEFAULTS, is_perp, make_perp_executor, perp_keys, select_perp_route
+from .usd_spot import is_usd_spot, make_usd_spot_executor
 
 
 class LiveNotAllowed(RuntimeError):
@@ -86,7 +87,7 @@ class LiveBroker(PaperBroker):
     """The paper fill plus a live twin. ``entries=False`` only runs exits of existing twins."""
 
     def __init__(self, config: dict, ledger=None, root=None, executor=None, env=None, entries: bool = True, now: float | None = None,
-                 perp_executor=None):
+                 perp_executor=None, usd_executor=None):
         env = os.environ if env is None else env
         mode = config.get("mode")
         self.cfg = {**LIVE_DEFAULTS, **config.get("live", {})}
@@ -110,6 +111,7 @@ class LiveBroker(PaperBroker):
         self.pcfg = {**PERP_DEFAULTS, **self.cfg.get("perps", {})}
         self.perp_route = select_perp_route(mode, env)
         self._perp_exec = perp_executor
+        self._usd_exec = usd_executor
 
     # state
     def live_state(self) -> dict:
@@ -169,7 +171,7 @@ class LiveBroker(PaperBroker):
         age = self.now - intent.at
         if age > self.cfg["max_signal_age_s"]:
             return f"signal {age:.0f} s old > {self.cfg['max_signal_age_s']:.0f} s", 0.0
-        twins = [p.meta["live"] for p in positions if p.meta.get("live") and not is_perp(p.meta["live"])]
+        twins = [p.meta["live"] for p in positions if p.meta.get("live") and not is_perp(p.meta["live"]) and not is_usd_spot(p.meta["live"])]
         if any(t["mint"] == mint for t in twins):
             return "a live twin already holds this mint", 0.0
         at_risk = sum(t["sol_in"] for t in twins)
@@ -186,6 +188,8 @@ class LiveBroker(PaperBroker):
     def open(self, intent: Intent, positions: list[Position] | None = None) -> tuple[Position, dict]:
         if is_perp(intent.meta):
             return self._open_perp(intent, positions or [])
+        if is_usd_spot(intent.meta):
+            return self._open_usd(intent, positions or [])
         pos, row = super().open(intent)
         pos.mode = row["mode"] = "paper"  # until a twin is bought
         why, size = self.entry_block(intent, positions or [])
@@ -224,6 +228,8 @@ class LiveBroker(PaperBroker):
         twin = pos.meta.get("live")
         if twin and is_perp(twin):
             return self._close_perp(pos, intent)
+        if twin and is_usd_spot(twin):
+            return self._close_usd(pos, intent)
         trade, row = super().close(pos, intent)
         trade.mode = pos.mode
         if not twin:
@@ -297,12 +303,22 @@ class LiveBroker(PaperBroker):
         age = self.now - intent.at
         if age > self.pcfg["max_signal_age_s"]:
             return f"signal {age:.0f} s old > {self.pcfg['max_signal_age_s']:.0f} s", 0.0
-        at_risk = sum(p.meta["live"]["notional_in"] for p in positions if p.meta.get("live") and is_perp(p.meta["live"]))
-        at_risk += sum(h["notional_in"] for h in self.live_state().get("perp_handover", []))
-        size = min(self.pcfg["max_leg_usd"], self.pcfg["budget_usd"] - at_risk)
+        return self.usd_size(intent, positions, self.pcfg["min_leg_usd"])
+
+    def usd_size(self, intent: Intent, positions: list[Position], min_usd: float) -> tuple[str | None, float]:
+        """USD twin size. Basket legs (``meta.basket``) take ``meta.twin_usd`` so the legs stay in proportion, under
+        ``basket_budget_usd``; other perp twins take ``max_leg_usd`` under ``budget_usd``."""
+        basket = intent.meta.get("basket")
+        usd_twins = [p.meta["live"] for p in positions if p.meta.get("live") and (is_perp(p.meta["live"]) or is_usd_spot(p.meta["live"]))]
+        usd_twins += self.live_state().get("perp_handover", [])
+        at_risk = sum(t["notional_in"] for t in usd_twins if bool(t.get("basket")) == bool(basket))
+        budget = self.pcfg["basket_budget_usd"] if basket else self.pcfg["budget_usd"]
+        want = float(intent.meta.get("twin_usd", self.pcfg["max_leg_usd"])) if basket else self.pcfg["max_leg_usd"]
+        size = min(want, budget - at_risk)
         size *= self.ledger.strategy(intent.strategy).get("size_factor", 1.0) if self.ledger else 1.0
-        if size < self.pcfg["min_leg_usd"]:
-            return f"size ${size:.2f} < min ${self.pcfg['min_leg_usd']:.0f} (budget ${self.pcfg['budget_usd']:.0f}, at risk ${at_risk:.2f})", 0.0
+        if size < min_usd or (basket and size < want - 1e-9):
+            return (f"size ${size:.2f} < {'wanted $%.2f' % want if basket else 'min $%.0f' % min_usd} "
+                    f"(budget ${budget:.0f}, at risk ${at_risk:.2f})"), 0.0
         return None, round(size, 2)
 
     def _open_perp(self, intent: Intent, positions: list[Position]) -> tuple[Position, dict]:
@@ -332,7 +348,7 @@ class LiveBroker(PaperBroker):
             rec["vs_paper_price_bps"] = 1e4 * side * (f.px / intent.price - 1)
             pos.meta["live"] = {"venue": "hyperliquid", "coin": coin, "side": side, "route": self.perp_route, "sz": f.sz,
                                 "px_in": f.px, "notional_in": f.notional_usd, "fee_in": f.fee_usd, "opened_at": self.now,
-                                "paper_price_in": intent.price, "dry": f.dry}
+                                "paper_price_in": intent.price, "dry": f.dry, "basket": intent.meta.get("basket")}
             pos.mode = row["mode"] = self.mode
             row["live"] = {"venue": "hyperliquid", "sz": f.sz, "px_in": f.px, "notional_in": f.notional_usd}
         else:
@@ -409,6 +425,80 @@ class LiveBroker(PaperBroker):
         if srec["divergence_run"] >= self.pcfg["divergence_streak"] and not srec["halted"]:
             self.halt(pos.strategy, f"perp twins worse than paper by > {100 * self.pcfg['max_divergence_pct']:.0f} points "
                                     f"{srec['divergence_run']} closes in a row")
+        return trade, row
+
+
+    # USD spot (Jupiter USDC quotes; usd_spot.py)
+    def _open_usd(self, intent: Intent, positions: list[Position]) -> tuple[Position, dict]:
+        pos, row = PaperBroker.open(self, intent)
+        pos.mode = row["mode"] = "paper"
+        why = None
+        if intent.meta.get("shadow"):
+            why = "shadow variant"
+        elif self.perp_route != "dry":
+            why = "no USD spot route: live USDC swaps are not built (usd_spot.py)"
+        elif not (self.entries or self.pcfg["dry_all"]):
+            why = "strategy not promoted"
+        elif intent.side != 1:
+            why = "short side has no spot route"
+        else:
+            why = self.kill_reason(intent.strategy)
+            if not why and self.now - intent.at > self.pcfg["max_signal_age_s"]:
+                why = f"signal {self.now - intent.at:.0f} s old > {self.pcfg['max_signal_age_s']:.0f} s"
+        usd = 0.0
+        if not why:
+            why, usd = self.usd_size(intent, positions, 1.0)
+        if why:
+            row["live"] = {"skipped": why}
+            if not intent.meta.get("shadow"):
+                self.log({"event": "skip", "venue": "jupiter_usd", "strategy": intent.strategy, "position": pos.id, "reason": why, "at": intent.at})
+            return pos, row
+        if self._usd_exec is None:
+            self._usd_exec = make_usd_spot_executor("dry")
+        mint = intent.meta["mint"]
+        f = self._usd_exec.buy(mint, usd)
+        rec = {"event": "usd_buy", "strategy": intent.strategy, "position": pos.id, "asset": intent.asset, "fill": f.to_dict(),
+               "paper_price_usd": intent.price, "paper_at": intent.at}
+        if f.ok:
+            pos.meta["live"] = {"venue": "jupiter_usd", "mint": mint, "route": "dry", "usd_in": f.usd, "notional_in": usd,
+                                "token_raw": f.token_raw, "opened_at": self.now, "paper_price_in": intent.price, "dry": f.dry,
+                                "basket": intent.meta.get("basket")}
+            pos.mode = row["mode"] = self.mode
+            row["live"] = {"venue": "jupiter_usd", "usd_in": f.usd, "token_raw": f.token_raw}
+        else:
+            row["live"] = {"failed": f.error}
+            self.ledger.journal({"event": "live_error", "strategy": intent.strategy, "position": pos.id, "leg": "usd_buy",
+                                 "error": f.error, "at": self.now})
+        self.log(rec)
+        return pos, row
+
+    def _close_usd(self, pos: Position, intent: Intent) -> tuple[Trade, dict]:
+        twin = pos.meta["live"]
+        trade, row = PaperBroker.close(self, pos, intent)
+        trade.mode = pos.mode
+        if self.perp_route != "dry":
+            if twin.get("dry"):
+                row["live"] = {"dropped": "dry USD twin closed outside dry_live"}
+            return trade, row
+        if self._usd_exec is None:
+            self._usd_exec = make_usd_spot_executor("dry")
+        f = self._usd_exec.sell(twin["mint"], twin["token_raw"])
+        if not f.ok:
+            self.live_state()["orphans"].append({"position": pos.id, "strategy": pos.strategy, **twin, "error": f.error, "at": self.now})
+            self.ledger.journal({"event": "live_error", "strategy": pos.strategy, "position": pos.id, "leg": "usd_sell",
+                                 "error": f.error, "at": self.now})
+            self.halt(pos.strategy, f"USD spot sell failed ({f.error}); twin kept in live.orphans")
+            row["live"] = {"failed": f.error}
+            return trade, row
+        net = f.usd - twin["usd_in"]
+        ret = net / twin["notional_in"]
+        cmp = {"venue": "jupiter_usd", "live_net_return_usd": ret, "paper_net_return": trade.net_return,
+               "live_minus_paper": ret - trade.net_return, "net_usd": net, "notional_in": twin["notional_in"],
+               "usd_in": twin["usd_in"], "usd_out": f.usd, "route": "dry", "dry": True, "paper_exit_price": intent.price,
+               "hold_s": self.now - twin["opened_at"], "basket": twin.get("basket")}
+        trade.meta["live"] = cmp
+        row["live"] = cmp
+        self.log({"event": "usd_sell", "strategy": pos.strategy, "position": pos.id, "fill": f.to_dict(), "compare": cmp})
         return trade, row
 
 
