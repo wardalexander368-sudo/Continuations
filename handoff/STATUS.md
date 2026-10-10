@@ -32,12 +32,6 @@ next. Topic documents hold the detail:
 
 ## Active
 
-* **JLP leg + go-live thread** (project thread session, since 2026-10-10 02:05 UTC, branch
-  `claude/project-thread-kytb6q`). **No keys, no real orders.** The hedged JLP basket's JLP leg goes
-  through the gated Jupiter sender (USDC to JLP), with the same restart safety and reconcile. A failed
-  or partial basket leg unwinds the hedges or stops the basket, so it can't be left unhedged. Then a
-  go-live checklist at the top of handoff/autotrade.md.
-
 * **Copy-trading Hyperliquid accounts (edge hunt E thread)** (since 2026-10-10 01:45 UTC, branch
   `claude/project-thread-9op3pf`). **Paper only, no keys.** Do accounts with a strong record keep
   paying when copied after fees, funding and a realistic delay? Public data only (leaderboard list,
@@ -396,6 +390,17 @@ deep pools match the model, a thin one was 2.4x it). The `launch_selector` slot 
   branch `claude/profitability-backtest`, on `main`).
 
 ## Log (newest first)
+
+* **2026-10-10 ~02:45 UTC, JLP leg + go-live thread: the live path is complete; checklist written.**
+  The hedged basket's JLP leg now has a live sender (`usd_spot.LiveUsdSpotExecutor`: USDC to JLP on
+  Jupiter, the same gated and checked path as the SOL twins), with pending orders, adopt-on-retry and
+  the wallet reconcile (dry JLP now sits in `dry_wallet.json`, seeded once from the book). Basket rule:
+  hedges open only after the JLP twin exists, the JLP leg only with a perp route, and a failed hedge or
+  one filling under 95% unwinds every live twin of the basket and stops it. A partial unwind close
+  leaves the rest as an orphan, which the perp reconcile counts. Two dry runs on a copy of main's
+  state ran clean. 12 tests in `tests/test_basket_live.py`; 267 pass. **Go-live checklist** is at the
+  top of `handoff/autotrade.md`: per strategy, the secrets and funding the user adds. No strategy is
+  promoted yet. `hlp_hold` has no live sender (stays paper). No keys, no real orders. Standing by.
 
 * **2026-10-10 ~02:20 UTC, perp restart-safety thread: Hyperliquid legs survive killed jobs.**
   Every perp order (basket shorts included) now carries a client order id fixed by what it is for.
