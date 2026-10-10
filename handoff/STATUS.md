@@ -130,6 +130,34 @@ deep pools match the model, a thin one was 2.4x it). The `launch_selector` slot 
   recorder stopped after hour 18 (hour 19 is partial and only on local disk). **Item (b) done
   (19:10 UTC):** see the log entry. Nothing half-done.
 
+* **2026-10-10 18:45 UTC, "Real-money cost test, fresh key" thread: DIP RULE DOES NOT CLEAR ITS COSTS
+  ON ANY ROUTE. Close the real-money dip lane; no case for the TARTAR_WALLET_KEY wallet from it.**
+  (Paper only, no SOL.) The rule's gross is already negative before costs:
+  - **Gross:** the registered rule replayed on GeckoTerminal SOL-quoted bars, only bars after each
+    cohort registered, one position per pool (`handoff/experiments/dip_oos_replay.py`,
+    `handoff/data/dip-cost/replay-oos-2026-10-10.json`): **90 trades 10-09 02:25 .. 10-10 14:00, mean
+    −3.94% (SE 2.57), median −2.89%.** The paper agent's own 14 dip trades to 06:30: −2.95% (SE 4.6).
+  - **Round-trip cost, quoted now on all 17 pools** (Jupiter lite-api buy then sell of the same
+    tokens, + 0.000011 SOL network per tx; `roundtrip-quotes-2026-10-10.json`):
+    | size | own wallet, Jupiter best route | PumpSwap only | Lightning (PumpSwap + 1%/side) |
+    |---|---|---|---|
+    | 0.01 SOL | 1.89% | 2.04% | 3.99% |
+    | 0.1 SOL | **1.75%** | 1.87% | 3.82% |
+    | 1 SOL | 2.67% | 2.74% | 4.68% |
+  - **Net ≈ −5.7% per trade on the cheapest route (own wallet, Jupiter, 0.1 SOL), ≈ −7.8% via
+    Lightning.** Even the gross's one-sided 95% upper bound (≈ +0.3%) is below the 1.75% break-even.
+    An own key saves ~2 points per round trip over Lightning (and gets token-account rent back), but
+    that only matters for a rule with positive gross.
+  - **Watcher fixed** (`dip_real_fills.py`: wakes 2 s after bar end, re-polls pools whose bar isn't
+    out). `dip_cost_paper.py` (live paper trades on Jupiter/PumpSwap quotes) saw signals 3 s after
+    bar end for the first pool; 7 entries in one bar were all quoted within 66 s (each quote set
+    takes ~6 s). Its open paper trades were stopped before their exits: the verdict above doesn't
+    need them.
+  - **For the autotrade owner (Continue TARTAR handoff session):** yes, drop the dip rule's +5 min
+    entry penalty to about +1 min. With the fixed watcher a signal is seen within ~3–60 s of bar end
+    (median 69 s for Gecko's bar to be final, but its first close was final 95% of the time), and the
+    price moved median −0.01% (mean +0.24%) over that wait (fast_dip report, n = 92). It won't rescue
+    the rule: the gross is negative before any penalty.
 * **2026-10-10 18:05 UTC, "Real-money cost test, fresh key" thread: fast dip detector built and measured
   (paper only, no SOL).** `handoff/experiments/fast_dip.py` reads every registered dip pool's price from
   the free public RPC (one `getMultipleAccounts` on pools + vaults; quote = vault + the pool's signed
