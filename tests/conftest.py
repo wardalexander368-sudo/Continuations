@@ -11,6 +11,16 @@ WSOL = "So11111111111111111111111111111111111111112"
 PUMP_MINT = "7GCihgDB8fe6KNjn2MYtkzZcRjQy3t9GHdC8uHYmW2hr"[:40] + "pump"
 OTHER_MINT = "EKpQGSJtjMFqKZ9KQanSqYXRcF8fBopzLHYxdM65zcjm"
 
+# keys a session or runner may have set: tests must not depend on them (or ever see real ones)
+LIVE_ENV = ("PUMPPORTAL_API_KEY", "JUPITER_API_KEY", "TYPESAFE_API_KEY", "TARTAR_WALLET_KEY", "TARTAR_LIVE_APPROVED",
+            "TARTAR_LIVE_KILL", "HYPERLIQUID_AGENT_KEY", "HYPERLIQUID_ACCOUNT")
+
+
+@pytest.fixture(autouse=True)
+def _no_live_env(monkeypatch):
+    for k in LIVE_ENV:
+        monkeypatch.delenv(k, raising=False)
+
 
 def gecko_pool(address, base, quote=WSOL, reserve="1000", dex="raydium", symbol="MEME", name="Meme Coin"):
     return {

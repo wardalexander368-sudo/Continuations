@@ -106,7 +106,16 @@ def snapshot(args):
             hl[u["name"]] = {"mark": float(c["markPx"]), "oracle": float(c["oraclePx"]), "funding": float(c["funding"]),
                              "bid": float(book[0][0]["px"]), "ask": float(book[1][0]["px"])}
     jlp = jlp_state(info)
-    rec = {"t": utc(t), "ts": t, "jlp": jlp, "hl": hl, "quote": quote_bps(client, jlp["price"]), "raw_custodies": [
+    try:
+        quote = quote_bps(client, jlp["price"])
+    except (httpx.HTTPError, ValueError, KeyError) as exc:
+        # a Jupiter quote outage must not lose the check-in (delta, HL marks): carry the last quote, flagged
+        # (audit 2026-10-10: a 503 on 2026-10-10 20:49 UTC dropped a whole check-in)
+        last = json.loads(OUT.read_text().splitlines()[-1]) if OUT.exists() and OUT.read_text().strip() else None
+        if not last or "quote" not in last:
+            raise
+        quote = {**{k: last["quote"][k] for k in ("buy_bps", "sell_bps")}, "stale_from": last["t"], "error": f"{type(exc).__name__}: {exc}"[:120]}
+    rec = {"t": utc(t), "ts": t, "jlp": jlp, "hl": hl, "quote": quote, "raw_custodies": [
         {k: c[k] for k in ("symbol", "owned", "locked", "guaranteedUsd", "globalShortSizes", "globalShortAveragePrice",
                            "aumTokenAmount", "aumTokenAmountFormatted")} for c in info["custodies"]]}
     OUT.parent.mkdir(parents=True, exist_ok=True)

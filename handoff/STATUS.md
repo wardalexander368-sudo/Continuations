@@ -560,6 +560,14 @@ deep pools match the model, a thin one was 2.4x it). The `launch_selector` slot 
 
 ## Log (newest first)
 
+* **2026-10-10 ~23:30 UTC, system audit thread: full audit written** (`handoff/reviews/system-audit-2026-10-10.md`).
+  Suite on main is 281 pass / 0 fail with deps installed (the "43 failing" was a missing `solders` and env keys leaking
+  into tests: both fixed, plus a `tests.yml` workflow). Top recommendations for the `autotrade/` owner: live perps twins
+  would open ~5 longs and no shorts ($12 legs, $60 budget, longs first); the agent-wide $1,000 daily cap lets the dip
+  strategy halt the perps forward tests until a manual resume; wick-bounce needs an execution-realistic score (hourly runs
+  start 8-14 min late; 1 h late cost ~100 bp/trade on HL candles); `autotrade.yml` doesn't pass the Hyperliquid secrets.
+  Fixed here: JLP check-in survives a Jupiter quote outage; recorder/pumpflow-live crons removed from the files.
+
 * **2026-10-10 ~21:30 UTC, handoff session (`autotrade/`): dip paper entry adapted to the hourly agent**
   (`autotrade.md`, "Hourly schedule"). Entry = the next :07 run that can see the signal (0-60 min late);
   on the 90 replay trades waiting 30 min changed gross by ~0 (−3.94% vs −3.98%). Other strategies book

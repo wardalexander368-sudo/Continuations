@@ -1,0 +1,43 @@
+# The full offline test suite, on code changes only (bot data commits use GITHUB_TOKEN and don't trigger it).
+# Paper only: no secrets, nothing signed. Added by the 2026-10-10 system audit (handoff/reviews/system-audit-2026-10-10.md).
+name: tests
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "tartar/**"
+      - "tests/**"
+      - "pyproject.toml"
+  pull_request:
+    paths:
+      - "tartar/**"
+      - "tests/**"
+      - "pyproject.toml"
+  workflow_dispatch: {}
+
+permissions:
+  contents: read
+
+jobs:
+  pytest:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          sparse-checkout: |
+            /tartar/
+            /tests/
+            /pyproject.toml
+            /README.md
+            /autotrade/config.json
+            /handoff/experiments/
+            /handoff/preregistration/
+            /.github/
+          sparse-checkout-cone-mode: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install -e ".[dev,live]"
+      - run: python -m pytest -q
