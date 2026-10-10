@@ -1,0 +1,526 @@
+[
+ {
+  "mode": "equal",
+  "caps": "no cap",
+  "mean": 1.4692092232736245,
+  "median": 1.0039210570008932,
+  "worst": -22.083437746434836,
+  "maxdd": 37.82086751511178,
+  "ex_best5": 0.9417524646172678,
+  "sharpe_wk": 0.24424004683506917,
+  "cagr": 94.70162755370227,
+  "week_loss_fires": [
+   "2024-08-05",
+   "2024-11-18",
+   "2025-12-29"
+  ],
+  "dd_stop_fires": 1,
+  "dd_first": "2024-08-05",
+  "avg_weights": {
+   "xs_momentum": 0.25,
+   "vol_momentum": 0.25,
+   "cand": 0.25,
+   "hlp": 0.25
+  },
+  "last26": 1.5868671105892975
+ },
+ {
+  "mode": "equal",
+  "caps": "coin cap 5%",
+  "mean": 0.6244099647371724,
+  "median": 0.08039803883017489,
+  "worst": -10.262776965579707,
+  "maxdd": 25.99679122360784,
+  "ex_best5": 0.29345576430622156,
+  "sharpe_wk": 0.1784150649222662,
+  "cagr": 34.006837653186864,
+  "week_loss_fires": [],
+  "dd_stop_fires": 0,
+  "dd_first": null,
+  "avg_weights": {
+   "xs_momentum": 0.25,
+   "vol_momentum": 0.25,
+   "cand": 0.25,
+   "hlp": 0.25
+  },
+  "last26": 0.7357451391511598
+ },
+ {
+  "mode": "equal",
+  "caps": "coin cap 5% + winner >=8/side",
+  "mean": 0.5040582234854164,
+  "median": 0.11875237979620051,
+  "worst": -12.460895996527254,
+  "maxdd": 30.493586730795265,
+  "ex_best5": 0.15760197794667782,
+  "sharpe_wk": 0.12956347750902447,
+  "cagr": 24.967478293477008,
+  "week_loss_fires": [
+   "2024-11-18"
+  ],
+  "dd_stop_fires": 0,
+  "dd_first": null,
+  "avg_weights": {
+   "xs_momentum": 0.25,
+   "vol_momentum": 0.25,
+   "cand": 0.25,
+   "hlp": 0.25
+  },
+  "last26": 0.6841260528379077
+ },
+ {
+  "mode": "equal",
+  "caps": "coin cap 3% + winner >=8/side",
+  "mean": 0.24103804910962678,
+  "median": -0.05482644600290124,
+  "worst": -8.636588494460105,
+  "maxdd": 22.176899568410093,
+  "ex_best5": 0.0008636075012354096,
+  "sharpe_wk": 0.08628513932857255,
+  "cagr": 11.08752631394605,
+  "week_loss_fires": [],
+  "dd_stop_fires": 0,
+  "dd_first": null,
+  "avg_weights": {
+   "xs_momentum": 0.25,
+   "vol_momentum": 0.25,
+   "cand": 0.25,
+   "hlp": 0.25
+  },
+  "last26": 0.36477153479938684
+ },
+ {
+  "mode": "inv_vol",
+  "caps": "no cap",
+  "mean": 0.6711655183697819,
+  "median": 0.4472510411813636,
+  "worst": -7.635683944501531,
+  "maxdd": 14.698648083632172,
+  "ex_best5": 0.3967057109941984,
+  "sharpe_wk": 0.261748855447261,
+  "cagr": 39.30327602300538,
+  "week_loss_fires": [],
+  "dd_stop_fires": 0,
+  "dd_first": null,
+  "avg_weights": {
+   "xs_momentum": 0.077,
+   "vol_momentum": 0.091,
+   "cand": 0.077,
+   "hlp": 0.756
+  },
+  "last26": 0.3476152658367551
+ },
+ {
+  "mode": "inv_vol",
+  "caps": "coin cap 5%",
+  "mean": 0.562994510396595,
+  "median": 0.33413767708098285,
+  "worst": -6.321495572988087,
+  "maxdd": 13.543178521868926,
+  "ex_best5": 0.3259028273245182,
+  "sharpe_wk": 0.263181078820844,
+  "cagr": 32.37200740476949,
+  "week_loss_fires": [],
+  "dd_stop_fires": 0,
+  "dd_first": null,
+  "avg_weights": {
+   "xs_momentum": 0.077,
+   "vol_momentum": 0.091,
+   "cand": 0.077,
+   "hlp": 0.756
+  },
+  "last26": 0.3334881773339855
+ },
+ {
+  "mode": "inv_vol",
+  "caps": "coin cap 5% + winner >=8/side",
+  "mean": 0.4532315937904271,
+  "median": 0.3479537259797977,
+  "worst": -7.086083162175161,
+  "maxdd": 15.851292947119134,
+  "ex_best5": 0.2068949200417365,
+  "sharpe_wk": 0.1995731742260808,
+  "cagr": 24.875400817570046,
+  "week_loss_fires": [],
+  "dd_stop_fires": 0,
+  "dd_first": null,
+  "avg_weights": {
+   "xs_momentum": 0.077,
+   "vol_momentum": 0.091,
+   "cand": 0.083,
+   "hlp": 0.75
+  },
+  "last26": 0.3284343589899449
+ },
+ {
+  "mode": "inv_vol",
+  "caps": "coin cap 3% + winner >=8/side",
+  "mean": 0.4147943788682708,
+  "median": 0.33141180412406473,
+  "worst": -5.386994835705294,
+  "maxdd": 13.56205501269745,
+  "ex_best5": 0.21167746980118815,
+  "sharpe_wk": 0.21584914174896735,
+  "cagr": 22.86064996036179,
+  "week_loss_fires": [],
+  "dd_stop_fires": 0,
+  "dd_first": null,
+  "avg_weights": {
+   "xs_momentum": 0.077,
+   "vol_momentum": 0.091,
+   "cand": 0.083,
+   "hlp": 0.75
+  },
+  "last26": 0.2930413076444547
+ },
+ {
+  "mode": "vol_target",
+  "caps": "no cap",
+  "mean": 1.0615630437037549,
+  "median": 0.7718854503766112,
+  "worst": -20.78074023684185,
+  "maxdd": 25.67467035081735,
+  "ex_best5": 0.5666168425087078,
+  "sharpe_wk": 0.23428534549401867,
+  "cagr": 64.38146421066801,
+  "week_loss_fires": [
+   "2024-11-18"
+  ],
+  "dd_stop_fires": 0,
+  "dd_first": null,
+  "avg_weights": {
+   "xs_momentum": 0.17,
+   "vol_momentum": 0.17,
+   "cand": 0.17,
+   "hlp": 0.17
+  },
+  "last26": 1.643647223253441
+ },
+ {
+  "mode": "vol_target",
+  "caps": "coin cap 5%",
+  "mean": 0.5983810837185733,
+  "median": 0.06174720025535127,
+  "worst": -11.218141340722054,
+  "maxdd": 25.499912243358857,
+  "ex_best5": 0.2755605584511023,
+  "sharpe_wk": 0.1844677281641007,
+  "cagr": 32.798302112000144,
+  "week_loss_fires": [],
+  "dd_stop_fires": 0,
+  "dd_first": null,
+  "avg_weights": {
+   "xs_momentum": 0.216,
+   "vol_momentum": 0.216,
+   "cand": 0.216,
+   "hlp": 0.216
+  },
+  "last26": 0.7457994152301222
+ },
+ {
+  "mode": "vol_target",
+  "caps": "coin cap 5% + winner >=8/side",
+  "mean": 0.45877136585202744,
+  "median": 0.18325744187812476,
+  "worst": -12.43703724267248,
+  "maxdd": 27.94838933665249,
+  "ex_best5": 0.13373419884939575,
+  "sharpe_wk": 0.13428041317292644,
+  "cagr": 23.150122994854105,
+  "week_loss_fires": [
+   "2024-11-18"
+  ],
+  "dd_stop_fires": 0,
+  "dd_first": null,
+  "avg_weights": {
+   "xs_momentum": 0.205,
+   "vol_momentum": 0.205,
+   "cand": 0.205,
+   "hlp": 0.205
+  },
+  "last26": 0.7777379255074061
+ },
+ {
+  "mode": "vol_target",
+  "caps": "coin cap 3% + winner >=8/side",
+  "mean": 0.2247544906817187,
+  "median": -0.1080179028551778,
+  "worst": -8.703284454810532,
+  "maxdd": 22.93272176281259,
+  "ex_best5": -0.006508865877556048,
+  "sharpe_wk": 0.08383384626365378,
+  "cagr": 10.326415332585581,
+  "week_loss_fires": [],
+  "dd_stop_fires": 0,
+  "dd_first": null,
+  "avg_weights": {
+   "xs_momentum": 0.252,
+   "vol_momentum": 0.252,
+   "cand": 0.252,
+   "hlp": 0.252
+  },
+  "last26": 0.32627521577967017
+ },
+ {
+  "mode": "inv_vol_vt",
+  "caps": "no cap",
+  "mean": 0.7703569073157054,
+  "median": 0.5143945679941705,
+  "worst": -5.725275849624499,
+  "maxdd": 11.616834364182992,
+  "ex_best5": 0.49539846741812005,
+  "sharpe_wk": 0.3220988187289271,
+  "cagr": 46.93437909232543,
+  "week_loss_fires": [],
+  "dd_stop_fires": 0,
+  "dd_first": null,
+  "avg_weights": {
+   "xs_momentum": 0.079,
+   "vol_momentum": 0.092,
+   "cand": 0.074,
+   "hlp": 0.909
+  },
+  "last26": 0.47106754740529344
+ },
+ {
+  "mode": "inv_vol_vt",
+  "caps": "coin cap 5%",
+  "mean": 0.7002543740089519,
+  "median": 0.43142350247584127,
+  "worst": -5.725275849624499,
+  "maxdd": 11.616834364183005,
+  "ex_best5": 0.430692433389376,
+  "sharpe_wk": 0.3090325441051453,
+  "cagr": 41.92177757397815,
+  "week_loss_fires": [],
+  "dd_stop_fires": 0,
+  "dd_first": null,
+  "avg_weights": {
+   "xs_momentum": 0.083,
+   "vol_momentum": 0.096,
+   "cand": 0.078,
+   "hlp": 0.938
+  },
+  "last26": 0.438128690979172
+ },
+ {
+  "mode": "inv_vol_vt",
+  "caps": "coin cap 5% + winner >=8/side",
+  "mean": 0.5628953164035682,
+  "median": 0.420289268347144,
+  "worst": -5.447558789453275,
+  "maxdd": 12.718821293489857,
+  "ex_best5": 0.3098709780762639,
+  "sharpe_wk": 0.25004283018774215,
+  "cagr": 32.202160113389546,
+  "week_loss_fires": [],
+  "dd_stop_fires": 0,
+  "dd_first": null,
+  "avg_weights": {
+   "xs_momentum": 0.081,
+   "vol_momentum": 0.094,
+   "cand": 0.088,
+   "hlp": 0.927
+  },
+  "last26": 0.4016452780502355
+ },
+ {
+  "mode": "inv_vol_vt",
+  "caps": "coin cap 3% + winner >=8/side",
+  "mean": 0.5284365850422119,
+  "median": 0.33638586642631746,
+  "worst": -4.866798563695282,
+  "maxdd": 12.336857952570446,
+  "ex_best5": 0.3092035594727123,
+  "sharpe_wk": 0.2593835793918857,
+  "cagr": 30.155218056189568,
+  "week_loss_fires": [],
+  "dd_stop_fires": 0,
+  "dd_first": null,
+  "avg_weights": {
+   "xs_momentum": 0.084,
+   "vol_momentum": 0.098,
+   "cand": 0.091,
+   "hlp": 0.954
+  },
+  "last26": 0.33480476301868106
+ },
+ {
+  "mode": "mom_iv",
+  "caps": "no cap",
+  "mean": 1.4298163320933184,
+  "median": 1.3235283730877574,
+  "worst": -21.00842724038566,
+  "maxdd": 35.83748495790613,
+  "ex_best5": 0.9153889431930037,
+  "sharpe_wk": 0.2413682071360844,
+  "cagr": 91.3177746735701,
+  "week_loss_fires": [
+   "2024-08-05",
+   "2024-11-18",
+   "2025-12-29"
+  ],
+  "dd_stop_fires": 1,
+  "dd_first": "2024-08-05",
+  "avg_weights": {
+   "xs_momentum": 0.247,
+   "vol_momentum": 0.288,
+   "cand": 0.215,
+   "hlp": 0.25
+  },
+  "last26": 1.5438251627812267
+ },
+ {
+  "mode": "mom_iv",
+  "caps": "coin cap 5%",
+  "mean": 0.6406106821915235,
+  "median": 0.009650115680797126,
+  "worst": -10.671791639788164,
+  "maxdd": 26.22736926783079,
+  "ex_best5": 0.30647571281736424,
+  "sharpe_wk": 0.1827331735720195,
+  "cagr": 35.122425313504046,
+  "week_loss_fires": [],
+  "dd_stop_fires": 0,
+  "dd_first": null,
+  "avg_weights": {
+   "xs_momentum": 0.247,
+   "vol_momentum": 0.288,
+   "cand": 0.215,
+   "hlp": 0.25
+  },
+  "last26": 0.7485431984232634
+ },
+ {
+  "mode": "mom_iv",
+  "caps": "coin cap 5% + winner >=8/side",
+  "mean": 0.5558495578429273,
+  "median": 0.17176251642958212,
+  "worst": -12.548994176514917,
+  "maxdd": 29.715550874340344,
+  "ex_best5": 0.2074094425321975,
+  "sharpe_wk": 0.1434985752695418,
+  "cagr": 28.410092997419078,
+  "week_loss_fires": [
+   "2024-11-18"
+  ],
+  "dd_stop_fires": 0,
+  "dd_first": null,
+  "avg_weights": {
+   "xs_momentum": 0.231,
+   "vol_momentum": 0.271,
+   "cand": 0.248,
+   "hlp": 0.25
+  },
+  "last26": 0.700641873281766
+ },
+ {
+  "mode": "mom_iv",
+  "caps": "coin cap 3% + winner >=8/side",
+  "mean": 0.27929274797472514,
+  "median": -0.05362489968639764,
+  "worst": -8.651078486757006,
+  "maxdd": 22.045421862218607,
+  "ex_best5": 0.03978495010973242,
+  "sharpe_wk": 0.10149107591386325,
+  "cagr": 13.384355305477813,
+  "week_loss_fires": [],
+  "dd_stop_fires": 0,
+  "dd_first": null,
+  "avg_weights": {
+   "xs_momentum": 0.231,
+   "vol_momentum": 0.271,
+   "cand": 0.248,
+   "hlp": 0.25
+  },
+  "last26": 0.3727152448220079
+ },
+ {
+  "mode": "mom_iv_vt",
+  "caps": "no cap",
+  "mean": 1.0124120502345086,
+  "median": 0.8012551619867584,
+  "worst": -20.941876377454612,
+  "maxdd": 23.684120799894583,
+  "ex_best5": 0.5323771643793577,
+  "sharpe_wk": 0.22508532221662975,
+  "cagr": 60.35926607273918,
+  "week_loss_fires": [
+   "2024-11-18"
+  ],
+  "dd_stop_fires": 0,
+  "dd_first": null,
+  "avg_weights": {
+   "xs_momentum": 0.17,
+   "vol_momentum": 0.196,
+   "cand": 0.147,
+   "hlp": 0.171
+  },
+  "last26": 1.5735958166582904
+ },
+ {
+  "mode": "mom_iv_vt",
+  "caps": "coin cap 5%",
+  "mean": 0.6125417306698462,
+  "median": 0.06429375846750786,
+  "worst": -10.990905388053601,
+  "maxdd": 25.32004961660882,
+  "ex_best5": 0.28250571892927073,
+  "sharpe_wk": 0.18737481654192792,
+  "cagr": 33.72389284280848,
+  "week_loss_fires": [],
+  "dd_stop_fires": 0,
+  "dd_first": null,
+  "avg_weights": {
+   "xs_momentum": 0.216,
+   "vol_momentum": 0.247,
+   "cand": 0.184,
+   "hlp": 0.215
+  },
+  "last26": 0.7442544889211842
+ },
+ {
+  "mode": "mom_iv_vt",
+  "caps": "coin cap 5% + winner >=8/side",
+  "mean": 0.5035637893711559,
+  "median": 0.22601790475121272,
+  "worst": -12.375309953400787,
+  "maxdd": 27.112555506905345,
+  "ex_best5": 0.17411535867051336,
+  "sharpe_wk": 0.14715184686502625,
+  "cagr": 26.03272335826272,
+  "week_loss_fires": [
+   "2024-11-18"
+  ],
+  "dd_stop_fires": 0,
+  "dd_first": null,
+  "avg_weights": {
+   "xs_momentum": 0.19,
+   "vol_momentum": 0.219,
+   "cand": 0.204,
+   "hlp": 0.204
+  },
+  "last26": 0.7766255016470854
+ },
+ {
+  "mode": "mom_iv_vt",
+  "caps": "coin cap 3% + winner >=8/side",
+  "mean": 0.2638774689036045,
+  "median": -0.05802685820958527,
+  "worst": -8.718767081374674,
+  "maxdd": 22.730828048477225,
+  "ex_best5": 0.03039722698383879,
+  "sharpe_wk": 0.09917415387922175,
+  "cagr": 12.622483010630802,
+  "week_loss_fires": [],
+  "dd_stop_fires": 0,
+  "dd_first": null,
+  "avg_weights": {
+   "xs_momentum": 0.235,
+   "vol_momentum": 0.271,
+   "cand": 0.253,
+   "hlp": 0.253
+  },
+  "last26": 0.3470660947988817
+ }
+]

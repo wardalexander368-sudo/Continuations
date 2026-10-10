@@ -130,6 +130,34 @@ deep pools match the model, a thin one was 2.4x it). The `launch_selector` slot 
   recorder stopped after hour 18 (hour 19 is partial and only on local disk). **Item (b) done
   (19:10 UTC):** see the log entry. Nothing half-done.
 
+* **2026-10-10 20:00 UTC, "Real-money cost test, fresh key" thread: how to build the live perps book
+  (paper backtest). Recommendation for the autotrade owner: equal weights per strategy, then scale
+  the whole book to ~2%/week realised vol (trailing 13 weeks, scale 0.5–1.5x); no per-coin caps.**
+  `handoff/experiments/perps_book.py`, full table `handoff/data/perps-book/report-2026-10-10.txt`.
+  Sleeves: xs_momentum, vol_momentum, the search winner (legs, costs, funding as `search.backtest`) and
+  HLP (vault allTime history); a coin held by several sleeves is netted. 146 weeks 2023-12-18 .. 2026-09-28.
+  | book | mean/wk | worst week | max DD | without best 5 wks | weeks < −12% | 35% DD stop | last 26 wks |
+  |---|---|---|---|---|---|---|---|
+  | equal (now) | +1.47% | −22.1% | 37.8% | +0.94% | 3 | fires (2024-08) | +1.59% |
+  | **equal + vol target 2%/wk** | **+0.99%** | **−18.4%** | **23.6%** | **+0.54%** | **1 (2024-11-18)** | **never** | **+1.53%** |
+  | equal + vol target 2.5%/wk | +1.06% | −20.8% | 25.7% | +0.57% | 1 | never | +1.64% |
+  | equal + coin cap 5% of book | +0.62% | −10.3% | 26.0% | +0.29% | 0 | never | +0.74% |
+  | equal + cap 5% + winner ≥ 8 coins/side | +0.50% | −12.5% | 30.5% | +0.16% | 1 | never | +0.68% |
+  | risk parity (1/vol, 26 wks) | +0.67% | −7.6% | 14.7% | +0.40% | 0 | never | +0.35% |
+  | risk parity + vol target | +0.77% | −5.7% | 11.6% | +0.50% | 0 | never | +0.47% |
+  | momentum risk parity + 25% HLP | +1.43% | −21.0% | 35.8% | +0.92% | 3 | fires | +1.54% |
+  - **Why not risk parity:** it puts 75–95% of the book in HLP because HLP's measured vol is tiny
+    (worst week −0.8%), and its full-period return is HLP's old yield: **HLP made +0.03%/week over the
+    last 26 weeks** (+0.59 over the whole period). Its vol also hides tail risk (vault losses in
+    squeezes like JELLY). Treat HLP as ballast, not a return source.
+  - **Why no coin caps:** they cut return much more than risk (weekly Sharpe 0.24 → 0.18 at 5%, 0.09 at
+    3%); the edge sits in coins several sleeves agree on. The winner's ≥ 8 coins/side floor also
+    lowered return (+0.50 vs +0.62 with the cap alone).
+  - **What vol targeting buys:** max drawdown 38% → 24% and the 35% stop never fires, for about a
+    third less mean return; the risk-adjusted return is unchanged (0.23 vs 0.24 a week). It can't stop a
+    single bad week: 2024-11-18 (the post-election alt squeeze on the short legs) is −18% even scaled.
+  - Backtest means are optimistic (see the audit entry below: xs_momentum's concentration, the
+    winner's selection); expect less live.
 * **2026-10-10 19:30 UTC, "Real-money cost test, fresh key" thread: pre-live audit of the perps momentum
   strategies (paper only). No survivorship, lookahead, funding or fill bug found; the backtests are
   if anything conservative on costs. The real risks are concentration (xs_momentum) and selection
