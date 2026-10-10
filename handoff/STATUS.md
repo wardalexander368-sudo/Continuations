@@ -32,6 +32,12 @@ next. Topic documents hold the detail:
 
 ## Active
 
+* **JLP leg + go-live thread** (project thread session, since 2026-10-10 02:05 UTC, branch
+  `claude/project-thread-kytb6q`). **No keys, no real orders.** The hedged JLP basket's JLP leg goes
+  through the gated Jupiter sender (USDC to JLP), with the same restart safety and reconcile. A failed
+  or partial basket leg unwinds the hedges or stops the basket, so it can't be left unhedged. Then a
+  go-live checklist at the top of handoff/autotrade.md.
+
 * **Copy-trading Hyperliquid accounts (edge hunt E thread)** (since 2026-10-10 01:45 UTC, branch
   `claude/project-thread-9op3pf`). **Paper only, no keys.** Do accounts with a strong record keep
   paying when copied after fees, funding and a realistic delay? Public data only (leaderboard list,
