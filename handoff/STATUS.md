@@ -420,6 +420,15 @@ deep pools match the model, a thin one was 2.4x it). The `launch_selector` slot 
 
 ## Log (newest first)
 
+* 2026-10-10 16:25 UTC, agent-machinery thread: **perps risk controls in the agent** (`perp_risk.py`,
+  config `perp_risk`; scored by `handoff/experiments/perps_risk_controls.py`, table in
+  `handoff/autotrade.md`). A perps strategy whose week P&L drops below −12% of its side notional is
+  flattened until its next rebalance (logged `pause`); a registered perps book drawdown past 35% of its
+  side notional writes `HALT`. On 146 weeks the 12% stop kept the mean (candidate +2.92% vs +2.83%/wk,
+  vol +1.31 vs +1.42, xs +1.10 vs +1.03) and cut the worst week (−36/−24/−31% → −25/−22/−18%);
+  inverse-vol sizing cost return everywhere, so legs stay equal weight. Live twins exit with paper
+  legs, so these are the live defaults. Committed locally; pushed when GitHub access returns.
+
 * 2026-10-10 15:55 UTC, agent-machinery thread: **stress test of the search's candidate**
   `cand-xsm-L21-q10-vol-mon-lag2` (`handoff/experiments/candidate_stress.py`, output
   `autotrade/search/stress-cand-xsm-L21-q10-vol-mon-lag2.txt`; in-sample over all 146 weeks, so

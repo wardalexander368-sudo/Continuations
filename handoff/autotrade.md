@@ -170,7 +170,7 @@ daily closes, so a gap within a day can still overshoot), `handoff/experiments/p
 
 The chosen default (equal weight, weekly stop 12%) keeps the mean weekly return and cuts the worst week by a
 quarter to a third; it does not remove large drawdowns over several weeks (31-63% at 1x), which is what the
-account stop and small live legs are for. The account stop would have fired in each rule's history.
+account stop and small live legs are for. At 35% the account stop would have fired in the histories of `vol_momentum` and `xs_momentum` (drawdowns 58-63%), not the candidate's (31% with the weekly stop).
 
 ## Health (`health.yml`, hourly)
 
