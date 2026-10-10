@@ -59,9 +59,12 @@ the Log). Owner thread names are the project's thread titles.
 * **Collectors (no session needed):** `paper-tests.yml` (JLP every 4 h, dip cohort daily),
   `pumpflow-paper.yml`, `perps-ctx.yml` (OI/funding + HL 1h candles), `hl-book.yml`, `health.yml`,
   weekly `autotrade-search.yml`. `recorder.yml` and `pumpflow-live.yml` are off (manual runs only).
-* **No owner yet:** the pumpflow forward test's scoring (after 2027-04-08, `pumpflow_paper.py evaluate
-  --final`) and the F1 who-trades forward test (`preregistration/who-trades-forward/`; it has no new
-  pump.fun data since the recorder stopped 10-10 21:05 UTC). The coordinator assigns or closes them.
+* **F1 who-trades forward test: CLOSED** (2026-10-10 23:40 UTC, coordinator). It needs pump.fun data from the
+  recorder, which is off since the 2026-10-10 terms decision, and pump.fun launch trading is a closed lane. Reopen
+  only if a compliant collector is approved. No job or routine scores it.
+* **Pumpflow forward test (E1): still collecting, scoring unowned.** It does not depend on the disabled
+  `pumpflow-live`: `pumpflow-paper.yml` records DefiLlama's daily revenue plus the HL PUMP mid (one small commit a
+  day) and is running. Score after 2027-04-08 with `pumpflow_paper.py evaluate --final`; the coordinator assigns it.
 
 ### Recent results (moved here from the old Active list)
 
@@ -485,6 +488,10 @@ the Log). Owner thread names are the project's thread titles.
   branch `claude/profitability-backtest`, on `main`).
 
 ## Log (newest first)
+
+* **2026-10-10 ~23:40 UTC, system audit thread: F1 who-trades forward test closed** (no data since the recorder
+  stopped; no scoring job or routine existed). The pumpflow test stays open: its collector `pumpflow-paper.yml` is separate
+  from the disabled `pumpflow-live` and still records.
 
 * **2026-10-10 ~23:35 UTC, system audit thread: board cleaned** (coordinator's ask). *Protocol* rewritten to the
   bundle routine (threads hand bundles to the coordinator, who pushes `main`); nine stale *Active* claims replaced by the
