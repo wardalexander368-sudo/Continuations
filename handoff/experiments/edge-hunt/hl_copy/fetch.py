@@ -22,6 +22,7 @@ OUT = Path("handoff/data/edge-hunt/hl-copy")
 POOL_N, SEED = 1500, 20261010
 VLM_MIN, VLM_MAX = 5e6, 2e9  # all-time volume: active enough to judge, not a market maker
 FILLS_FROM = 1780272000000  # 2026-06-01 00:00 UTC
+A1_MS = 1787184000000  # 2026-08-20 00:00 UTC, end of period A
 
 c = httpx.Client(timeout=60)
 
@@ -79,6 +80,8 @@ def fills(addrs):
             part = post({"type": "userFillsByTime", "user": a, "startTime": s, "aggregateByTime": True}) or []
             out += part
             if len(part) < 2000:
+                break
+            if sum(1 for f in out if f["time"] < A1_MS) > 3000:  # unfollowable under the SPEC: no need for the rest
                 break
             s = part[-1]["time"] + 1
             time.sleep(6)
