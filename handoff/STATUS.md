@@ -39,14 +39,6 @@ next. Topic documents hold the detail:
   loss counter) surviving a job that dies mid-trade, and a wallet-vs-fill-log reconcile at startup
   before any trade. Tests kill a dry run mid-order.
 
-* **Hyperliquid order sender** (edge hunt E thread session, since 2026-10-10 01:25 UTC, branch
-  `claude/project-thread-9op3pf`). Live sender for perp twins and the hedged-JLP basket's shorts,
-  behind the live gate (mode `live` + `live_approved_on` = `TARTAR_LIVE_APPROVED` +
-  `HYPERLIQUID_AGENT_KEY` + `HYPERLIQUID_ACCOUNT`). Tested on Hyperliquid **testnet** only, with a
-  throwaway key generated in CI. No mainnet keys, no mode change, no mainnet orders. The gate moves
-  into `tartar/autotrade/gate.py` for the Solana spot sender to share. Touches `perps.py`, `broker.py`,
-  a new `hl_exchange.py`, a CI workflow.
-
 * **Edge hunt E thread** (project thread session, since 2026-10-09 21:40 UTC, branch
   `claude/project-thread-9op3pf`). **Paper only, no real SOL, no keys.** Task (the user's 21:30
   "work continuously"): edge hunt angle E, TARTAR's assets, beyond the closed predictor + P(rug)
@@ -393,6 +385,17 @@ deep pools match the model, a thin one was 2.4x it). The `launch_selector` slot 
   branch `claude/profitability-backtest`, on `main`).
 
 ## Log (newest first)
+
+* **2026-10-10 ~02:05 UTC, edge hunt E thread: live Hyperliquid sender built, testnet-checked, never
+  used on mainnet** (claim cleared). `tartar/autotrade/hl_exchange.py`: IOC taker orders signed with
+  Hyperliquid's L1 EIP-712 scheme, for perp twins. The live gate now lives in `tartar/autotrade/gate.py`
+  (mode `live`, `live_approved_on` == `TARTAR_LIVE_APPROVED`, keys, kill switches) and is re-checked
+  before every order; the Solana sender thread was told so it can share it. Opens stop on kill switches,
+  closes still flatten. Perp-only live no longer needs a Solana key; the hedged-JLP basket's shorts stay
+  on paper in live mode (its JLP leg has no live sender). CI `hl-testnet.yml` sends an order through the
+  whole agent path on **testnet** with a throwaway key: the exchange recovers exactly our signer
+  ("User or API Wallet <ours> does not exist"); a tampered signature recovers another address. Real
+  fills untested (no testnet funds without a mainnet deposit). Mode, config and keys unchanged.
 
 * **2026-10-10 ~02:00 UTC, real-order sender thread: Solana spot senders hardened, still gated.**
   The Jupiter and Lightning senders already existed (`execution.py`); this made them safe to switch

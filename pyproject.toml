@@ -18,6 +18,7 @@ dependencies = [
 
 [project.optional-dependencies]
 dev = ["pytest>=8", "pytest-asyncio>=0.23"]
+live = ["eth-account>=0.10", "msgpack>=1.0"]  # Hyperliquid order signing (tartar/autotrade/hl_exchange.py)
 
 [project.scripts]
 tartar = "tartar.cli:main"

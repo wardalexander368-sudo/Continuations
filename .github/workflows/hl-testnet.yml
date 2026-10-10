@@ -1,0 +1,36 @@
+# The live Hyperliquid sender (tartar/autotrade/hl_exchange.py) end to end on Hyperliquid TESTNET,
+# with a throwaway key generated inside the test and never stored. No secrets are used; nothing
+# touches mainnet. Runs when the sender, the gate or the broker change, and on demand.
+name: hl-testnet
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - tartar/autotrade/hl_exchange.py
+      - tartar/autotrade/gate.py
+      - tartar/autotrade/perps.py
+      - tartar/autotrade/broker.py
+      - tests/test_hl_testnet.py
+      - tests/test_autotrade_hl.py
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  testnet:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install -e ".[dev,live]"
+      - name: Offline sender tests
+        run: python -m pytest -q tests/test_autotrade_hl.py tests/test_autotrade_perps.py tests/test_autotrade_jlp_hedged.py
+      - name: Testnet end to end (throwaway key)
+        env:
+          HL_TESTNET: "1"
+        run: python -m pytest -q -s tests/test_hl_testnet.py

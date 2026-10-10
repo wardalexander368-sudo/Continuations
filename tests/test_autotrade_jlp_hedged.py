@@ -96,7 +96,7 @@ def test_opens_basket_rebalances_on_drift_and_closes_at_end(tmp_path):
 def test_basket_runs_as_dry_twins_in_the_agent(tmp_path, monkeypatch):
     info = FakeInfo()
     now = t("2026-10-10T01:00:00")
-    monkeypatch.setattr(broker_mod, "make_perp_executor", lambda route, cfg, env=None: DryPerpExecutor(info, clock=lambda: now))
+    monkeypatch.setattr(broker_mod, "make_perp_executor", lambda route, cfg, env=None, *a: DryPerpExecutor(info, clock=lambda: now))
     monkeypatch.setattr(broker_mod, "make_usd_spot_executor", lambda route: DryUsdSpotExecutor(FakeQuotes(), clock=lambda: now))
     monkeypatch.setattr(broker_mod, "make_executor", lambda route, cfg, env=None: None)
     monkeypatch.delenv("TARTAR_LIVE_KILL", raising=False)
@@ -117,7 +117,7 @@ def test_basket_runs_as_dry_twins_in_the_agent(tmp_path, monkeypatch):
     assert sorted(r["event"] for r in rows) == ["perp_open", "perp_open", "perp_open", "usd_buy"]
     # the end of the window closes every leg and compares each twin with its paper twin
     later = t("2027-01-09T00:00:00")
-    monkeypatch.setattr(broker_mod, "make_perp_executor", lambda route, cfg, env=None: DryPerpExecutor(info, clock=lambda: later))
+    monkeypatch.setattr(broker_mod, "make_perp_executor", lambda route, cfg, env=None, *a: DryPerpExecutor(info, clock=lambda: later))
     monkeypatch.setattr(broker_mod, "make_usd_spot_executor", lambda route: DryUsdSpotExecutor(FakeQuotes(), clock=lambda: later))
     run_once(root, now=later, strategies={"jlp_hedged": strat})
     led = Ledger(root)
