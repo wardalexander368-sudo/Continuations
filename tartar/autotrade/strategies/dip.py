@@ -23,6 +23,12 @@ bar t+1's close instead of its open (the real buys went out 228-296 s into bar t
 completes; ``route_fee_per_side`` adds the route's own fee (PumpPortal Lightning 1%) on both sides. The
 rule (signal, hold, exit at bar t+48's close) is unchanged. The random-entry baseline uses the same
 execution, and each trade keeps the registered-execution figure (``registered_net``) as a secondary.
+
+Fetch budget: the cohort grows every day and GeckoTerminal rate-limits (~2.2 s a request, long 429 backoffs),
+so one run spends at most ``fetch_budget_s`` (default 600 s, shared by the rule and its variants) on fetches.
+Pools it doesn't reach are skipped this run and fetched first next run; nothing is lost, because the cursor
+catches up on every completed bar (one request returns ~3.5 days of bars). This keeps the hourly job well
+inside its 30-minute timeout, where a killed job would commit nothing.
 """
 
 from __future__ import annotations
@@ -39,8 +45,13 @@ from ..core import Context, CostModel, Intent, Trade, Verdict, bootstrap_ci
 GECKO = "https://api.geckoterminal.com/api/v2/networks/solana"
 
 
+class BudgetSpent(Exception):
+    """This run's fetch budget is spent."""
+
+
 class DipStrategy:
     _cache: dict = {}  # (pool, 5-minute bucket) -> rows: variants share one fetch per run
+    _deadline: dict = {}  # run time -> wall-clock deadline for fetches: the rule and its variants share one budget
 
     def __init__(self, name: str, cfg: dict):
         self.name = name
@@ -68,6 +79,7 @@ class DipStrategy:
         self.replay = None if cfg.get("rule_overrides") else cfg.get("replay")  # registered rule only
         self.route_fee = float(ex.get("route_fee_per_side", 0.0))
         self.costs_version = ex.get("version")
+        self.fetch_budget = float(cfg.get("fetch_budget_s", 600))
 
     # data
     def pools(self) -> list[dict]:
@@ -86,6 +98,8 @@ class DipStrategy:
 
         http = ctx.http or httpx.Client(timeout=30, headers={"accept": "application/json"})
         for attempt in range(8):
+            if time.time() > DipStrategy._deadline.get(ctx.now, float("inf")):
+                raise BudgetSpent
             wait = 2.2 - (time.time() - self._last_call)
             if wait > 0:
                 time.sleep(wait)
@@ -130,17 +144,27 @@ class DipStrategy:
         for p in ctx.positions:
             open_by_pool.setdefault(p.meta.get("pool"), []).append(p)
         intents: list[Intent] = []
-        failures = 0
+        failures = skipped = 0
         pools = self.pools()
-        for p in pools:
+        if ctx.now not in DipStrategy._deadline:
+            DipStrategy._deadline = {ctx.now: time.time() + self.fetch_budget}
+        deadline = DipStrategy._deadline[ctx.now]
+        # pools fetched longest ago go first, so a spent budget never starves the same pools twice
+        for p in sorted(pools, key=lambda p: pools_state.get(p["pool"], {}).get("fetched_at", 0.0)):
             pid = p["pool"]
             st = pools_state.setdefault(pid, {})
             try:
                 ck = (pid, int(ctx.now // 300))
                 if ck not in DipStrategy._cache:
+                    if time.time() > deadline:
+                        raise BudgetSpent
                     DipStrategy._cache = {k: v for k, v in DipStrategy._cache.items() if k[1] == ck[1]}
                     DipStrategy._cache[ck] = self.fetch(ctx, pid)
                 rows = DipStrategy._cache[ck]
+                st["fetched_at"] = ctx.now
+            except BudgetSpent:  # out of fetch time this run: the cursor catches up next run
+                skipped += 1
+                continue
             except Exception:  # noqa: BLE001 - one pool's data error skips that pool this run
                 failures += 1
                 continue
@@ -193,6 +217,10 @@ class DipStrategy:
                                               cost=cost, meta={"key": key, "baseline": self.baseline(t, o, c, st["first_bar"], exit_t, cost)}))
             if len(t) - 1 > max(start, L) and last_i > st["cursor"]:
                 st["cursor"] = last_i
+        if skipped:
+            ctx.state["fetch_skipped"] = skipped  # shown in the journal state; 0 means every pool was read
+        else:
+            ctx.state.pop("fetch_skipped", None)
         if pools and failures == len(pools):
             raise RuntimeError(f"no pool data this run ({failures} fetch failures)")
         return intents

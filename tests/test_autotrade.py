@@ -191,6 +191,32 @@ def test_dip_trades_forward_only_and_holds_48_bars(tmp_path):
     assert "baseline" in trade.meta
 
 
+def test_dip_fetch_budget_skips_then_rotates(tmp_path, monkeypatch):
+    from tartar.autotrade.core import Context
+    from tartar.autotrade.strategies import dip as dipmod
+
+    prereg = write_dip_prereg(tmp_path)
+    (prereg / "cohort-1.json").write_text(json.dumps({"registered_at": "2026-10-01T00:00:00Z", "pools": [
+        {"pool": f"P{i}", "token": f"T{i}", "name": f"P{i} / SOL", "liquidity_usd": 1e5} for i in range(3)]}))
+    clock = [0.0]
+    monkeypatch.setattr(dipmod.time, "time", lambda: clock[0])
+    t0 = 1_800_000_000 - 1_800_000_000 % 300
+    fetched = []
+
+    def fetch(ctx, pool):  # each request takes 100 s of the budget
+        fetched.append(pool)
+        clock[0] += 100
+        return [[t0 + 300 * i, 1.0, 1.0, 1.0, 1.0, 1.0] for i in range(20)]
+
+    strat = DipStrategy("dip", {"prereg": str(prereg), "_fetch": fetch, "fetch_budget_s": 150})
+    state: dict = {}
+    strat.step(Context(t0 + 6000, [], state, {}, None))
+    assert fetched == ["P0", "P1"] and state["fetch_skipped"] == 1  # P2 skipped, not counted as a failure
+    fetched.clear()
+    strat.step(Context(t0 + 9600, [], state, {}, None))
+    assert fetched == ["P2", "P0"] and state["fetch_skipped"] == 1  # the starved pool goes first next run
+
+
 def test_dip_evaluate_pending_then_scored():
     strat = DipStrategy.__new__(DipStrategy)
     strat.rule = {"hold_bars": 48}
