@@ -129,7 +129,7 @@ def test_live_mode_needs_matching_approval_and_a_key(tmp_path, fake, monkeypatch
     monkeypatch.setenv("TARTAR_LIVE_APPROVED", "2026-10-10")
     run(root, [[opener("b", "M2")]], now=NOW + 1)
     assert not fake.buys  # still no route key
-    monkeypatch.setenv("TARTAR_WALLET_KEY", "x")
+    monkeypatch.setenv("PUMPPORTAL_API_KEY", "x")  # Jupiter is off under us_only
     run(root, [[opener("c", "M3")]], now=NOW + 2)
     assert fake.buys == [("M3", 0.01)]
     assert [p.mode for p in Ledger(root).positions] == ["paper", "paper", "live"]

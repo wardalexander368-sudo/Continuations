@@ -1,5 +1,7 @@
 {
   "mode": "dry_live",
+  "us_only": true,
+  "us_only_note": "AJ 2026-10-11: only venues a US person may use. In mode live, Hyperliquid (perps, HLP; terms bar US persons) and Jupiter (terms: no US wallets) get no route; their strategies keep paper-trading as research (AJ chose 'Keep as research'). Pump.fun / PumpPortal Lightning stay.",
   "live_approved_on": null,
   "live": {
     "route": "auto",

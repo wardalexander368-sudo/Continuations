@@ -347,6 +347,24 @@ Also skipped on the SOL route: shadow variants, assets without a Solana mint, sh
 a mint already held. Perp strategies have their own route (next section). Demoted strategies' twins are sized by `size_factor`. There is no stop-loss inside a
 trade: exits follow the registered rule, so the per-trade limit acts after the close.
 
+### US-only venues (AJ, 2026-10-11)
+
+AJ: "We only want US-expressible options in our project." Config `us_only` (default on) gives Hyperliquid
+(perps and the HLP vault: its terms bar US persons) and Jupiter (its terms say it does not interact with US
+wallets, 2024-09-21 version) no route in mode `live`; Lightning (PumpPortal) stays, and pump.fun's
+prohibited list doesn't name the US (terms of 2026-10-08). Hyperliquid testnet (CI, no money) is exempt.
+The Hyperliquid and Jupiter strategies keep paper-trading and scoring as research (AJ chose "Keep as
+research"): their results say which ideas are worth carrying to a US venue. Dry twins (`dry_live`) still
+simulate them; nothing is sent.
+
+First check of a US version of the momentum book (`handoff/experiments/us_momentum.py`, output
+`handoff/data/us-momentum-2026-10-11.txt`, 146 weeks): the long-short book makes +1.58%/wk gross, but its edge
+sits mostly in the short leg. Long top quintile only (spot, no shorting in the US): +1.01%/wk at 13% weekly vol,
+−0.44% without the best 5 weeks. Long top quintile hedged with a BTC short (Coinbase's US perp): +0.31%/wk
+gross, +0.05% after 20 bps per side on ~54% weekly turnover, −0.96% without the best 5 weeks. So the momentum
+edge doesn't carry over to what a US account can trade; the US perps list (BTC, ETH, SOL, XRP nano contracts)
+is too short for a cross-sectional book.
+
 ### Perp twins (Hyperliquid)
 
 **Weekly books (from 2026-10-10 late, audit 1a).** Twins of the weekly long-short books (`xs_momentum`,

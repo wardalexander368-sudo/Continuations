@@ -146,7 +146,7 @@ def test_promoted_only_when_dry_all_is_off(tmp_path, info):
 
 def test_live_mode_without_hyperliquid_keys_has_no_perp_route(tmp_path, info, monkeypatch):
     root = setup(tmp_path, mode="live", status="promoted")
-    cfg = {"mode": "live", "live_approved_on": "2026-10-10", "live": {}}
+    cfg = {"mode": "live", "live_approved_on": "2026-10-10", "live": {}, "us_only": False}
     monkeypatch.setattr(broker_mod, "select_route", lambda cfg, env=None: "jupiter")
     b = LiveBroker(cfg, ledger=Ledger(root), root=root, env={"TARTAR_LIVE_APPROVED": "2026-10-10"}, now=NOW)
     pos, row = b.open(opener())
@@ -197,3 +197,15 @@ def test_failed_book_leg_unwinds_the_weeks_other_twins(tmp_path, info):
     ev = [r["event"] for r in fills(root)]
     assert ev.count("book_unwind") == 2 and ev.count("perp_open") == 3
     assert not Ledger(root).state["live"]["orphans"]
+
+
+def test_us_only_blocks_hyperliquid_and_jupiter_in_live_mode(tmp_path, monkeypatch):
+    monkeypatch.setattr(broker_mod, "make_executor", lambda route, cfg, env=None: None)
+    monkeypatch.setattr(broker_mod, "approval_reason", lambda config, env: None)
+    monkeypatch.setattr(broker_mod, "select_perp_route", lambda mode, env=None, config=None: "live")
+    env = {"HYPERLIQUID_AGENT_KEY": "k", "HYPERLIQUID_ACCOUNT": "a", "TARTAR_WALLET_KEY": "w", "PUMPPORTAL_API_KEY": "p"}
+    b = LiveBroker({"mode": "live", "strategies": {}}, root=tmp_path, env=env)
+    assert b.perp_route is None and b.route == "lightning" and b.usd_route is None
+    assert b.us_blocked == ["Hyperliquid", "Jupiter"]
+    b = LiveBroker({"mode": "live", "strategies": {}, "us_only": False}, root=tmp_path, env=env)
+    assert b.perp_route == "live" and b.route == "jupiter"

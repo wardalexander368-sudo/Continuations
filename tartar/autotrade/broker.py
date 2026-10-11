@@ -140,6 +140,15 @@ class LiveBroker(PaperBroker):
             raise LiveNotAllowed(f"mode {mode!r} has no live twins")
         route = select_route(self.cfg, env)
         self.perp_route = select_perp_route(mode, env, config)
+        self.us_blocked: list[str] = []
+        if mode == "live" and config.get("us_only", True):  # AJ 2026-10-11: only venues a US person may use
+            testnet = (self.cfg.get("perps") or {}).get("network") == "testnet"  # CI's no-money test stays
+            if self.perp_route is not None and not testnet:  # Hyperliquid (perps, HLP vault): its terms bar US persons
+                self.perp_route = None
+                self.us_blocked.append("Hyperliquid")
+            if route == "jupiter":  # Jupiter's terms: it does not interact with US wallets
+                route = "lightning" if env.get("PUMPPORTAL_API_KEY") else None
+                self.us_blocked.append("Jupiter")
         if route is None and self.perp_route is None:
             raise LiveNotAllowed("no route key: set TARTAR_WALLET_KEY (Jupiter) or PUMPPORTAL_API_KEY (Lightning), "
                                  "or HYPERLIQUID_AGENT_KEY and HYPERLIQUID_ACCOUNT (perps)")

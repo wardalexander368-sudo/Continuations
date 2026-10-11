@@ -311,7 +311,7 @@ def test_live_broker_wires_the_gate_into_a_signing_executor(tmp_path, monkeypatc
     ex = jupiter(me, FakeChain())
     monkeypatch.setattr(broker_mod, "make_executor", lambda route, cfg, env=None: ex)
     env = {"TARTAR_WALLET_KEY": "k", "TARTAR_LIVE_APPROVED": "2026-10-10"}
-    cfg = {"mode": "live", "live_approved_on": "2026-10-10", "live": {}}
+    cfg = {"mode": "live", "live_approved_on": "2026-10-10", "live": {}, "us_only": False}
     LiveBroker(cfg, ledger=Ledger(tmp_path), root=tmp_path, env=env)
     ex.guard()  # open now
     (tmp_path / "HALT_LIVE").write_text("stop")
