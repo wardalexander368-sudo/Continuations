@@ -1,5 +1,18 @@
 # STATUS: read this first
 
+> **WHERE WE STAND (2026-10-11 ~04:30 UTC, gap-review thread; update this block, don't append to it).**
+> * **Rule:** only US-expressible strategies can go live (AJ, 10-11). Hyperliquid and Jupiter are paper research only.
+> * **Nothing is profitable yet on a venue a US person can use.** The only edge found so far, perps momentum, needs
+>   a short leg on many coins, and that exists only on Hyperliquid today.
+> * **US costs:** Coinbase's US entry fee has been 0.90% taker / 0.50% maker since 2026-09-16, not the 0.62% the
+>   studies used. Alpaca is about 0.39% a side on the 11 study coins (0.25% fee plus spread).
+> * **Watch:** the CFTC let Coinbase route US customers to Deribit's ~90 crypto perps (2026-05-29; institutional
+>   first, retail "later this year"). On today's Deribit coin list, vol-momentum backtests at +0.68%/wk (+1.19 over the last 52
+>   weeks) vs +1.42 on all of Hyperliquid (`data/deribit-universe/report-2026-10-11.txt`).
+> * **Paper tests running:** see *Active*. Every registered test is scored by a routine and/or the weekly
+>   `final-scores` Action (`experiments/final_scores.py`), which writes `RESULT-auto-<date>.md` when one is due.
+> * *Queue* and *Blockers* below are from the pump.fun phase (10-08/09) and are history, not current work.
+
 > **REPO MOVED (2026-10-10):** the project now lives in `wardalexander368-sudo/Continuations`
 > (PUBLIC: never commit keys). The old `StaticPush7217/TARTAR` is gone. `main` here holds the full
 > TARTAR history up to 69f93a1, restored from the backup bundle and rescanned for secrets (clean).
@@ -293,7 +306,7 @@ the Log). Owner thread names are the project's thread titles.
     and `PUMPPORTAL_API_KEY` is not set here. The wallet's only user is the clever session's
     successor.
 
-## Blockers (need the user)
+## Blockers (need the user) (history: 10-08/09, all resolved or closed)
 
 * ~~Jev usage policy~~: **decided by the user 2026-10-09 06:35 UTC: Jev stays off in TARTAR**
   and the live fast loop is retired (see *Rules*). The carve-out draft
@@ -310,7 +323,7 @@ the Log). Owner thread names are the project's thread titles.
   capture is median 100% / mean 97% on `raw-eager`, and faster data can't make launch buying
   profitable (§3.9). Don't ask again unless a study needs it.
 
-## Queue (ranked by expected effect on profit)
+## Queue (history: the pump.fun phase, 10-08/09; current work is under *Active*)
 
 1. ~~**Jev in the fast loop**~~ **closed 2026-10-09 06:35 UTC by the user's decision: Jev off,
    fast loop retired.** Jev showed no signal in three tests (§3.7 offline, §3.8 metadata, live

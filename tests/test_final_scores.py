@@ -10,7 +10,7 @@ spec.loader.exec_module(fs)
 
 
 def test_tests_point_at_real_files():
-    for name, d, first, grace, cmd in fs.TESTS:
+    for name, d, first, grace, cmd, *extra in fs.TESTS:
         assert (ROOT / "handoff/preregistration" / d / "SPEC.md").exists(), d
         assert (ROOT / cmd[0]).exists(), cmd[0]
         assert "--final" in cmd
