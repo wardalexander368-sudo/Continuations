@@ -3,9 +3,12 @@
 > **WHERE WE STAND (2026-10-11 ~04:00 UTC, gap-review thread; update this block, don't append to it).**
 > * **Rule:** only US-expressible strategies can go live (AJ, 10-11). Hyperliquid and Jupiter are paper research only.
 > * **Nothing is profitable yet on a venue a US person can use.** The only edge found so far, perps momentum, needs
->   a short leg on many coins, and that exists only on Hyperliquid today.
+>   a short leg on many coins. A US version on Coinbase's 23 US perps is pre-registered from 10-12
+>   (`preregistration/cde-vol-momentum/`, test +0.39%/wk [−1.05, +1.94]): the main US candidate.
 > * **US costs:** Coinbase's US entry fee has been 0.90% taker / 0.50% maker since 2026-09-16, not the 0.62% the
->   studies used. Alpaca is about 0.39% a side on the 11 study coins (0.25% fee plus spread).
+>   studies used. Alpaca is about 0.39% a side on the 11 study coins (0.25% fee plus spread). At Coinbase's
+>   taker fee neither registered US pattern passes its own study; both pass at Alpaca's cost or as Coinbase
+>   maker orders (`reviews/gap-review-2026-10-11.md` §A). No closed US-spot rule reopens at Alpaca's cost.
 > * **Watch:** the CFTC let Coinbase route US customers to Deribit's ~90 crypto perps (2026-05-29; institutional
 >   first, retail "later this year"). On today's Deribit coin list, vol-momentum backtests at +0.68%/wk (+1.19 over the last 52
 >   weeks) vs +1.42 on all of Hyperliquid (`data/deribit-universe/report-2026-10-11.txt`).
@@ -502,6 +505,14 @@ the Log). Owner thread names are the project's thread titles.
   branch `claude/profitability-backtest`, on `main`).
 
 ## Log (newest first)
+
+* **2026-10-11 ~04:15 UTC, gap-review thread: what we missed** (`handoff/reviews/gap-review-2026-10-11.md`,
+  paper only). (1) Coinbase US fees are 0.90% taker / 0.50% maker since 09-16, not 0.62%; Alpaca ~0.39%/side.
+  At Coinbase taker cost neither registered US pattern passes its own study; addendum with real-cost lines
+  registered before the 10-12 window. (2) Coinbase may route US customers to Deribit's ~90 crypto perps
+  (CFTC 05-29; retail pending): vol-momentum on that coin list +0.68%/wk (last 52 wks +1.19). (3) Four tests
+  had no final scorer: weekly `final-scores` Action added. (4) **For the autotrade owner:** the search only
+  explores HL momentum (can't go live). Board: "where we stand" block at top.
 
 * **2026-10-11 ~04:00 UTC, trading-skills thread (US-tradable lane): momentum on Coinbase US perps
   pre-registered** (`edge-hunt.md` §L). Coinbase's US perpetual-style futures cover 23 crypto coins,

@@ -2,7 +2,7 @@
 
     python3 handoff/experiments/final_scores.py [--today YYYY-MM-DD] [--dry]
 
-Why: four registered tests (vol-momentum, HLP hold, wick bounce, US patterns) had no scheduled final
+Why: several registered tests (vol-momentum, HLP hold, wick bounce, US patterns, Coinbase US-perp momentum) had no scheduled final
 scoring, and the others rely on Claude routines that wake one session up to a year from now. This is
 the free backstop. A test is scored here when its date has passed (plus a grace period when a
 routine is meant to score it first) and its directory holds no RESULT file yet. The output is
@@ -31,6 +31,7 @@ TESTS = [
      [f"{EXP}/edge-hunt/patterns/pattern_forward_costs.py", "{cache}", "--no-fetch"]),  # ADDENDUM-2026-10-11
     ("wick bounce (HL)", "wick-bounce", "2027-10-12", 0, [f"{EXP}/edge-hunt/perps/wick_forward.py", "--final"]),
     ("vol-scaled momentum", "vol-momentum", "2027-10-20", 0, [f"{EXP}/edge-hunt/perps/vmom_forward.py", "--final"]),
+    ("vol-momentum on Coinbase US perps", "cde-vol-momentum", "2027-10-19", 0, [f"{EXP}/edge-hunt/perps/cde_forward.py", "{cache}", "--final"]),
     ("cross-sectional momentum", "xs-momentum", "2027-10-21", 7, [f"{EXP}/xs_momentum_forward.py", "--final"]),
 ]
 
