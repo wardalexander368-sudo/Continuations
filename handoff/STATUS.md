@@ -511,6 +511,11 @@ the Log). Owner thread names are the project's thread titles.
 
 ## Log (newest first)
 
+* **2026-10-11 ~17:36 UTC, handoff session (`autotrade/`): spec pass 4 (US perps marks, capital note).**
+  `cde_vol_momentum` marked its legs at yesterday's daily close, so its 12% weekly loss limit could react up to a
+  day late; it now marks at Coinbase's last trade (ticker), falling back to the daily close. `handoff/autotrade.md`
+  gives the US book's worst-case capital at registered sizes (~$4.4k spot for the two pattern rules, $1k a side
+  for cde).
 * **2026-10-11 ~17:34 UTC, handoff session (`autotrade/`): spec pass 3 (lifecycle for weekly books), paper only.**
   The demote/retire rules judged momentum books per leg: a 25% drawdown of one leg's notional (a $60 loss on a
   $1,000-a-side book of $250 legs) would have demoted a promoted book on an ordinary bad week, and a 30-leg

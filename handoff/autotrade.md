@@ -408,6 +408,11 @@ Solana twin is ever attempted. The official scorer (`pattern_forward.py`) stays 
   2026-10-11); both pass at Alpaca (0.39%) and at Coinbase maker (0.50%). Going live on either rule needs
   the registered pass **and** a positive `mean_net_<venue>` line for the route actually used.
 
+* **US book capital at the registered sizes:** each spot rule holds at most one $200 position per coin, so at
+  most $2,200 each and $4,400 for both (capitulations cluster on market-wide crashes, so CAPIT can fill all 11 at
+  once); `cde_vol_momentum` runs $1,000 a side ($2,000 gross, plus Coinbase's margin). Spot cash of ~$4.5k covers
+  the worst case of the two spot rules; the paper caps (`max_gross_usd` 20,000, 400 open) never bind on them.
+
 #### What a live US spot route would need (scoped 2026-10-11, nothing built or sent)
 
 *Built 2026-10-11: the paper half of the Alpaca route.* `tartar/autotrade/alpaca.py` mirrors `us_capit` and

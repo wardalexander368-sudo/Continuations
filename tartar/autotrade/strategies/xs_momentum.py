@@ -128,6 +128,21 @@ class XSMomentum:
 
         return fetch(ctx.http or httpx.Client(timeout=30), coin, d0, d1)
 
+    def cb_ticker(self, ctx: Context, coin: str) -> float | None:
+        if self.cfg.get("_ticker"):
+            return self.cfg["_ticker"](ctx, coin)
+        if self.get:  # tests with injected candles and no ticker: use the daily close
+            return None
+        try:
+            import httpx
+
+            from ..cb_data import CB
+
+            r = (ctx.http or httpx.Client(timeout=15)).get(f"{CB}/products/{coin}-USD/ticker")
+            return float(r.json()["price"]) if r.status_code == 200 else None
+        except Exception:  # noqa: BLE001 - a failed ticker falls back to the daily close
+            return None
+
     def closes(self, ctx: Context, coins: list[str], d0: date, d1: date):
         days = [d0 + timedelta(days=i) for i in range((d1 - d0).days + 1)]
         ix = {d: i for i, d in enumerate(days)}
@@ -231,13 +246,16 @@ class XSMomentum:
     def marks(self, ctx: Context) -> dict[str, tuple[float, float]]:
         if not ctx.positions:
             return {}
-        if self.coinbase:  # the latest daily close (today's candle is still forming)
+        if self.coinbase:  # Coinbase's last trade (the weekly loss limit reacts to it); else the latest daily close
             d = datetime.fromtimestamp(ctx.now, timezone.utc).date()
             out = {}
-            for p in ctx.positions:
-                rows = self.cb_daily(ctx, p.asset, d - timedelta(days=3), d)
-                if rows:
-                    out[p.id] = (rows[max(rows)][0], ctx.now)
+            for coin in sorted({p.asset for p in ctx.positions}):
+                px = self.cb_ticker(ctx, coin)
+                if px is None:
+                    rows = self.cb_daily(ctx, coin, d - timedelta(days=3), d)
+                    px = rows[max(rows)][0] if rows else None
+                if px:
+                    out.update({p.id: (px, ctx.now) for p in ctx.positions if p.asset == coin})
             return out
         mids = self.post(ctx, {"type": "allMids"}) or {}
         return {p.id: (float(mids[p.asset]), ctx.now) for p in ctx.positions if p.asset in mids}

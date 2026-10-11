@@ -171,3 +171,14 @@ def test_coinbase_member_trades_the_us_perp_coins_on_paper(tmp_path):
     assert s["opened"] == 2 * (len(COINS) // 5) == len(pos)
     assert {p.asset for p in pos} <= set(COINS)
     assert all(p.meta["venue"] == "coinbase_perps" and p.mode == "paper" for p in pos)
+
+
+def test_coinbase_book_marks_at_the_ticker_and_falls_back_to_the_daily_close():
+    from tartar.autotrade.core import Context, Position
+    from tartar.autotrade.strategies.xs_momentum import XSMomentum
+
+    now = datetime(2026, 10, 14, 12, tzinfo=timezone.utc).timestamp()
+    daily = lambda ctx, coin, d0, d1: {"2026-10-13": (90.0, 5e6)}  # noqa: E731
+    pos = [Position("a", "c", "BTC", 1, 250, 100, 0, 0.5), Position("b", "c", "ETH", -1, 250, 100, 0, 0.5)]
+    s = XSMomentum("c", {"data": "coinbase", "_get": daily, "_ticker": lambda ctx, c: 101.0 if c == "BTC" else None})
+    assert s.marks(Context(now, pos, {}, {})) == {"a": (101.0, now), "b": (90.0, now)}
