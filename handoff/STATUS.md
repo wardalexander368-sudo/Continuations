@@ -511,6 +511,9 @@ the Log). Owner thread names are the project's thread titles.
 
 ## Log (newest first)
 
+* **2026-10-11 ~17:54 UTC, handoff session (`autotrade/`): book stops also pause that book's
+  shadow variants and search candidates** (by their legs' venue), so a candidate builds no paper record while its
+  book is stopped.
 * **2026-10-11 ~17:48 UTC, handoff session (`autotrade/`): spec pass 7 (book stops stay in their book).**
   A 35% perps-book drawdown used to write `HALT`, stopping every strategy: a research Hyperliquid drawdown would
   have frozen the registered US tests mid-window. Each book's stop now blocks only that book's new entries

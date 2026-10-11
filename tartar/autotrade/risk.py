@@ -62,6 +62,17 @@ class Risk:
         realized = self.ledger.state.get("daily_by_strategy", {}).get(day, {}).get(name, 0.0)
         return realized + sum(p.unrealized() for p in positions if p.strategy == name and not p.meta.get("shadow"))
 
+    def book_for(self, intent: Intent) -> str:
+        """The perps book an entry belongs to: registered members by config; shadow variants and search candidates
+        by their legs' venue, so they pause with their book too."""
+        from .perp_risk import BOOK_VENUE
+
+        if intent.strategy in self.book_of:
+            return self.book_of[intent.strategy]
+        if "week" in intent.meta and "leg_usd" in intent.meta:
+            return next((b for b, v in BOOK_VENUE.items() if v == intent.meta.get("venue")), "")
+        return ""
+
     def daily_block(self, name: str, now: float) -> str | None:
         st = self.ledger.state.get("strategies", {}).get(name, {}).get("daily_stop")
         if st and st["day"] == time.strftime("%Y-%m-%d", time.gmtime(now)):
@@ -95,7 +106,7 @@ class Risk:
     def allow_open(self, intent: Intent, positions: list[Position]) -> str | None:
         """None if allowed, else why not."""
         why = self.kill_reason() or self.daily_block(intent.strategy, time.time() if self.now is None else self.now) \
-            or (self.ledger.state.get("book_halts") or {}).get(self.book_of.get(intent.strategy, ""))
+            or (self.ledger.state.get("book_halts") or {}).get(self.book_for(intent))
         if why:
             return why
         lim = self.limits

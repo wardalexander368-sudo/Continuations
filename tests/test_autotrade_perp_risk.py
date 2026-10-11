@@ -70,6 +70,11 @@ def test_book_drawdown_stops_only_that_book(tmp_path):
     risk = Risk(cfg, root, led)
     assert "drawdown" in risk.allow_open(Intent("open", "xs", 0, 1, "", asset="A", side=1, notional_usd=10), [])
     assert risk.allow_open(Intent("open", "other", 0, 1, "", asset="A", side=1, notional_usd=10), []) is None
+    cand = Intent("open", "cand-xsm-L7-q3-raw-mon-lag1", 0, 1, "", asset="A", side=1, notional_usd=10,
+                  meta={"week": "w", "leg_usd": 500, "venue": "hyperliquid", "shadow": True})
+    assert "drawdown" in risk.allow_open(cand, [])  # candidates and variants pause with their book
+    cand.meta["venue"] = "coinbase_perps"
+    assert risk.allow_open(cand, []) is None
     from tartar.autotrade.__main__ import main
     main(["resume", "book:hl", "--root", str(root)])
     assert not Ledger(root).state["book_halts"].get("hl")
