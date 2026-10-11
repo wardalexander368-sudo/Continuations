@@ -1,0 +1,45 @@
+# Backstop for the pre-registered forward tests: once a week, run each test's registered final scorer
+# when it is due and no RESULT file exists yet (handoff/experiments/final_scores.py). Most weeks it
+# finds nothing due and commits nothing. Public data only: no wallet, no keys.
+name: final-scores
+
+on:
+  schedule:
+    - cron: "20 6 * * 1"  # Mondays 06:20 UTC
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: final-scores-main
+  cancel-in-progress: false
+
+jobs:
+  score:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120  # a due momentum scorer refetches a year of Hyperliquid history
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install "httpx>=0.25" "numpy>=1.24" "websockets>=13"
+      - run: |
+          set +e
+          python3 handoff/experiments/final_scores.py
+          code=$?
+          set -e
+          git add handoff/preregistration
+          if ! git diff --cached --quiet; then
+            git config user.name "tartar-paper-tests"
+            git config user.email "actions@users.noreply.github.com"
+            git commit -m "Final scores (final-scores action): $(git diff --cached --name-only | xargs -n1 dirname | xargs -n1 basename | paste -sd, -)"
+            for i in 1 2 3 4; do
+              git pull --rebase origin main && git push origin HEAD:main && break
+              sleep $((2 ** i))
+            done
+          fi
+          exit $code
