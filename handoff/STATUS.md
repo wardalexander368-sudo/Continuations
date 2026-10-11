@@ -511,6 +511,12 @@ the Log). Owner thread names are the project's thread titles.
 
 ## Log (newest first)
 
+* **2026-10-11 ~17:34 UTC, handoff session (`autotrade/`): spec pass 3 (lifecycle for weekly books), paper only.**
+  The demote/retire rules judged momentum books per leg: a 25% drawdown of one leg's notional (a $60 loss on a
+  $1,000-a-side book of $250 legs) would have demoted a promoted book on an ordinary bad week, and a 30-leg
+  rolling CI is really ~4 correlated weeks. Books (`week` + `leg_usd` trades) are now judged per week against the
+  side budget: 13-week rolling CI, 35% drawdown (as the account stop), retire after 26 demoted weeks. Per-trade
+  strategies are unchanged; registered verdicts are unchanged.
 * **2026-10-11 ~17:28 UTC, handoff session (`autotrade/`): spec pass 2 (US book risk), paper only.** The
   perps risk layer counted `cde_vol_momentum` (US) in the Hyperliquid book: its sizing followed HL's weekly vol and
   an HL drawdown could have halted on US losses (and vice versa), while the weekly 12% loss limit skipped Coinbase

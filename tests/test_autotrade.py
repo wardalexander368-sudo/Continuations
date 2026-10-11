@@ -461,3 +461,21 @@ def test_dip_schedule_entry_waits_for_the_next_hourly_run(tmp_path):
     assert s.entry(t, o, c, i) == (t0 + 3600 + 420, pytest.approx(13 + 0.5 * 0.4))
     assert s.entry(t[:13], o[:13], c[:13], i) is None  # not in the data yet
     assert "next hourly run, :07:00" in s.describe()["execution"]["entry"]
+
+
+def test_weekly_books_are_judged_per_week_against_the_side_budget():
+    from tartar.autotrade import lifecycle
+
+    def leg(i, week, pnl, at):
+        return Trade(str(i), "xs", "X", 1, 250, 1, at - 1, 1, at, 0, pnl, pnl / 250, meta={"week": week, "leg_usd": 1000.0})
+
+    # four legs of one week losing $25 each: -10% of the side budget, an ordinary bad week, but 40% of one leg
+    legs = [leg(f"{w}{k}", f"w{w}", (25 if w % 2 else -25), 100 * w + 10) for w in range(1, 7) for k in range(4)]
+    units = lifecycle.book_units(legs)
+    assert len(units) == 6 and units[1].net_return == pytest.approx(-0.10)
+    rec = {"since": 0}
+    assert lifecycle.decide("promoted", Verdict("pending", 6, {}, ""), legs, rec, {}) is None
+    assert lifecycle.drawdown_pct(legs) > 0.25  # what the per-leg rule would have seen
+    crash = legs + [leg(f"c{k}", "w7", -100, 710) for k in range(4)]  # -40% of the side in one week
+    new, why = lifecycle.decide("promoted", Verdict("pending", 7, {}, ""), crash, rec, {})
+    assert new == "demoted" and "side budget" in why

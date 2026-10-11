@@ -18,6 +18,13 @@ Rules (thresholds in config ``lifecycle``):
   promoted -> demoted   verdict "fail", or rolling window CI upper < 0, or drawdown > max_drawdown_pct
   demoted  -> promoted  verdict "pass" and rolling window CI lower > 0
   demoted  -> retired   verdict "fail", or demoted for more than retire_after_demoted_trades trades
+
+Weekly long-short books (trades carrying ``week`` and ``leg_usd``: the momentum strategies) are judged per
+week, not per leg: a week's return is its legs' P&L over the side budget ``leg_usd``. Legs of one week are one
+bet, so a per-leg rolling CI overstates the evidence, and a drawdown measured against one leg's notional
+(1/4 to 1/15 of the side) would demote a promoted book on an ordinary bad week. Book thresholds:
+``book_rolling_weeks`` (13), ``book_max_drawdown`` (0.35 of the side budget, as the account stop in
+perp_risk.py) and ``retire_after_demoted_weeks`` (26).
 """
 
 from __future__ import annotations
@@ -29,7 +36,28 @@ DEFAULTS = {
     "max_drawdown_pct": 0.25,  # of cumulative notional traded in the window's average position
     "demoted_size_factor": 0.5,
     "retire_after_demoted_trades": 60,
+    "book_rolling_weeks": 13,
+    "book_max_drawdown": 0.35,
+    "retire_after_demoted_weeks": 26,
 }
+
+
+class WeekUnit:
+    """One week of a long-short book as a pseudo-trade: return and P&L per unit of side budget."""
+
+    def __init__(self, week: str, ret: float, exit_at: float):
+        self.week, self.net_return, self.pnl_usd, self.exit_at, self.notional_usd = week, ret, ret, exit_at, 1.0
+
+
+def book_units(trades: list[Trade]) -> list[WeekUnit] | None:
+    """Weekly units if every trade is a weekly book leg, else None."""
+    if not trades or not all(t.meta.get("week") and t.meta.get("leg_usd") for t in trades):
+        return None
+    by: dict[str, list[Trade]] = {}
+    for t in trades:
+        by.setdefault(t.meta["week"], []).append(t)
+    return [WeekUnit(w, sum(t.pnl_usd / float(t.meta["leg_usd"]) for t in ts), max(t.exit_at for t in ts))
+            for w, ts in sorted(by.items())]
 
 
 def rolling(trades: list[Trade], k: int) -> dict:
@@ -57,7 +85,12 @@ def drawdown_pct(trades: list[Trade]) -> float:
 def decide(status: str, verdict: Verdict, trades: list[Trade], rec: dict, cfg: dict) -> tuple[str, str] | None:
     """(new status, reason) or None to keep the current one."""
     c = {**DEFAULTS, **cfg}
-    win = rolling(trades, c["rolling_window"])
+    units = book_units(trades)
+    if units is not None:  # a weekly book: judge weeks, with the book thresholds
+        trades = units
+        c = {**c, "rolling_window": c["book_rolling_weeks"], "max_drawdown_pct": c["book_max_drawdown"],
+             "retire_after_demoted_trades": c["retire_after_demoted_weeks"]}
+    what = "weeks" if units is not None else "trades"
     if status == "paper":
         if verdict.decision == "pass":
             return "promoted", f"registered criteria met: {verdict.reason}"
@@ -69,19 +102,20 @@ def decide(status: str, verdict: Verdict, trades: list[Trade], rec: dict, cfg: d
         since = [t for t in trades if t.exit_at >= rec.get("since", 0)]
         win_since = rolling(since, c["rolling_window"])
         if win_since.get("complete") and win_since["hi"] < 0:
-            return "demoted", f"last {win_since['n']} trades mean {100 * win_since['mean']:+.2f}% with 90% CI upper {100 * win_since['hi']:+.2f}% < 0"
+            return "demoted", f"last {win_since['n']} {what} mean {100 * win_since['mean']:+.2f}% with 90% CI upper {100 * win_since['hi']:+.2f}% < 0"
         dd = drawdown_pct(since)
         if dd > c["max_drawdown_pct"]:
-            return "demoted", f"drawdown {100 * dd:.1f}% of average position > {100 * c['max_drawdown_pct']:.0f}%"
+            return "demoted", (f"drawdown {100 * dd:.1f}% of {'the side budget' if units is not None else 'average position'} "
+                               f"> {100 * c['max_drawdown_pct']:.0f}%")
     elif status == "demoted":
         if verdict.decision == "fail":
             return "retired", f"registered criteria failed: {verdict.reason}"
         since = [t for t in trades if t.exit_at >= rec.get("since", 0)]
         win_since = rolling(since, c["rolling_window"])
         if verdict.decision == "pass" and win_since.get("complete") and win_since["lo"] > 0:
-            return "promoted", f"recovered: last {win_since['n']} trades mean {100 * win_since['mean']:+.2f}%, CI lower {100 * win_since['lo']:+.2f}% > 0"
+            return "promoted", f"recovered: last {win_since['n']} {what} mean {100 * win_since['mean']:+.2f}%, CI lower {100 * win_since['lo']:+.2f}% > 0"
         if len(since) > c["retire_after_demoted_trades"]:
-            return "retired", f"demoted for {len(since)} trades without recovering"
+            return "retired", f"demoted for {len(since)} {what} without recovering"
     return None
 
 
