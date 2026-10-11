@@ -1,6 +1,6 @@
 {
- "checked_at": 1791676587.8012152,
- "status": "red",
+ "checked_at": 1791680660.0885458,
+ "status": "green",
  "items": [
   {
    "check": "Action autotrade.yml",
@@ -9,8 +9,8 @@
   },
   {
    "check": "Action paper-tests.yml",
-   "level": "red",
-   "detail": "latest run failure (https://github.com/wardalexander368-sudo/Continuations/actions/runs/38085172068) [JLP check-ins every 4 h, dip cohort daily]"
+   "level": "green",
+   "detail": "JLP check-ins every 4 h, dip cohort daily"
   },
   {
    "check": "Action pumpflow-paper.yml",
@@ -24,23 +24,23 @@
   },
   {
    "check": "Input: JLP snapshots",
-   "level": "red",
-   "detail": "newest is 19.0 h old (max 9 h) in handoff/data/jlp-paper/snapshots.jsonl"
+   "level": "green",
+   "detail": "newest 0.1 h old"
   },
   {
    "check": "Input: dip cohorts",
    "level": "green",
-   "detail": "newest 20.9 h old"
+   "detail": "newest 22.1 h old"
   },
   {
    "check": "Input: pumpflow snapshots",
    "level": "green",
-   "detail": "newest 21.4 h old"
+   "detail": "newest 22.6 h old"
   },
   {
    "check": "Input: HL OI/funding snapshots",
    "level": "green",
-   "detail": "newest 2.9 h old"
+   "detail": "newest 4.1 h old"
   },
   {
    "check": "Agent",
