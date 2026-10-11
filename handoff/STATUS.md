@@ -512,6 +512,15 @@ the Log). Owner thread names are the project's thread titles.
   at $1,000 a leg and adds noise as large as the edge (test +0.12%/week at $1k a leg, +0.30% at $5k, vs
   +0.39% unrounded). A live version needs ~$1,000+ a leg (~$8k gross).
 
+* **2026-10-11 ~07:01 UTC, handoff session (`autotrade/`): the weekly search now hunts US-tradable rules**
+  (gap review finding). New family **cde**: the same 95-rule momentum grid on Coinbase's US-perp coins
+  (cde-vol-momentum's 23 coins, Coinbase daily history from 2021, $1M volume floor, 20 bp/side, no funding),
+  one shared Bonferroni M (189), cde survivors queue first and paper-trade via `xs_momentum` `data: coinbase`
+  (paper in every mode). Engine reproduces the registered cde study (train +0.51%/wk, val +1.08%). First run:
+  no survivor (best penalized bound −0.20%). US-spot live route set to Alpaca or Coinbase post-only (Coinbase
+  taker fails both rules' train); venue_costs now the addendum's lines (taker 0.91, maker 0.50, Alpaca 0.39).
+  The registered cde-vol-momentum rule also paper-trades in the agent as `cde_vol_momentum` ($1,000 a leg).
+
 * **2026-10-11 ~04:15 UTC, gap-review thread: what we missed** (`handoff/reviews/gap-review-2026-10-11.md`,
   paper only). (1) Coinbase US fees are 0.90% taker / 0.50% maker since 09-16, not 0.62%; Alpaca ~0.39%/side.
   At Coinbase taker cost neither registered US pattern passes its own study; addendum with real-cost lines

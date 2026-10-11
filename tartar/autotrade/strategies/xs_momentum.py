@@ -18,6 +18,11 @@ The same class runs other members of the family from config keys (defaults = the
 (0 = Monday), ``lag_days`` (signal close to entry close), ``start`` / ``end`` (first and last signal
 day), ``score_weeks`` and ``family_size`` (CI widened by Bonferroni). The candidate search
 (tartar/autotrade/search.py) registers and runs new members this way.
+
+``data: coinbase`` runs a member on Coinbase's US perps instead (the search's cde family,
+handoff/preregistration/cde-vol-momentum/SPEC.md): the 23 coins with "-CDE" perps, Coinbase's daily USD
+candles, universe 30-day median volume >= $1M with at least 10 eligible coins, funding not charged.
+Positions carry ``venue: coinbase_perps``, so the broker keeps them on paper in every mode.
 """
 
 from __future__ import annotations
@@ -34,6 +39,7 @@ from ..core import Context, CostModel, Intent, Trade, Verdict
 HL = "https://api.hyperliquid.xyz/info"
 START, END = date(2026, 10, 12), date(2027, 10, 11)
 LOOKBACK, MIN_HIST, MIN_VOL, QUANT, COST, BLOCK = 14, 60, 2e6, 5, 0.002, 4
+CB_MIN_VOL, CB_MIN_N = 1e6, 10  # the cde-vol-momentum registration's universe
 
 
 def ms(d: date) -> int:
@@ -74,6 +80,9 @@ class XSMomentum:
         self.end = date.fromisoformat(cfg["end"]) if cfg.get("end") else END
         self.score_weeks = int(cfg.get("score_weeks", 52))
         self.family_size = int(cfg.get("family_size", 1))
+        self.coinbase = cfg.get("data") == "coinbase"
+        self.min_vol, self.min_n = (CB_MIN_VOL, CB_MIN_N) if self.coinbase else (MIN_VOL, 15)
+        self.get = cfg.get("_get")  # tests inject Coinbase daily rows: (ctx, coin, d0, d1) -> {day: (close, usd_vol)}
         self.costs = cfg.get("costs") or {}  # {"model": "hl_sqrt", ...}: size- and liquidity-dependent; else flat COST
 
     def side_cost(self, notional: float, adv: float) -> float:
@@ -110,12 +119,27 @@ class XSMomentum:
             return None
         return d
 
+    def cb_daily(self, ctx: Context, coin: str, d0: date, d1: date) -> dict[str, tuple[float, float]]:
+        if self.get:
+            return self.get(ctx, coin, d0, d1)
+        import httpx
+
+        from ..cb_data import fetch
+
+        return fetch(ctx.http or httpx.Client(timeout=30), coin, d0, d1)
+
     def closes(self, ctx: Context, coins: list[str], d0: date, d1: date):
         days = [d0 + timedelta(days=i) for i in range((d1 - d0).days + 1)]
         ix = {d: i for i, d in enumerate(days)}
         C = np.full((len(days), len(coins)), np.nan)
         V = np.full_like(C, np.nan)
         for j, coin in enumerate(coins):
+            if self.coinbase:
+                for k, (px, vol) in self.cb_daily(ctx, coin, d0, d1).items():
+                    d = date.fromisoformat(k)
+                    if d in ix:
+                        C[ix[d], j], V[ix[d], j] = px, vol
+                continue
             for x in self.post(ctx, {"type": "candleSnapshot", "req": {"coin": coin, "interval": "1d", "startTime": ms(d0),
                                                                         "endTime": ms(d1 + timedelta(days=1))}}) or []:
                 d = datetime.fromtimestamp(x["t"] / 1000, timezone.utc).date()
@@ -127,6 +151,8 @@ class XSMomentum:
         return days, ix, C, V
 
     def funding(self, ctx: Context, coin: str, t0: float, t1: float) -> float:
+        if self.coinbase:
+            return 0.0  # not charged (registration): Coinbase's US perp funding is hourly and small
         out, s, end = {}, int(t0 * 1000), int(t1 * 1000) + 3600_000  # the exit hour's payment is stamped a few ms after it
         while s < end:
             part = self.post(ctx, {"type": "fundingHistory", "coin": coin, "startTime": s, "endTime": end})
@@ -144,7 +170,12 @@ class XSMomentum:
         d = self.due_tuesday(ctx.now, ctx.state.get("last_tuesday"))
         if d is None:
             return []
-        coins = [u["name"] for u in self.post(ctx, {"type": "meta"})["universe"]]
+        if self.coinbase:
+            from ..cb_data import COINS as CB_COINS
+
+            coins = list(CB_COINS)
+        else:
+            coins = [u["name"] for u in self.post(ctx, {"type": "meta"})["universe"]]
         held = {p.asset for p in ctx.positions}
         coins += sorted(held - set(coins))  # delisted coins we hold still need their last close
         days, ix, C, V = self.closes(ctx, coins, d - timedelta(days=MIN_HIST + self.lag + max(self.lookback, 30) + 2), d)
@@ -160,9 +191,9 @@ class XSMomentum:
                 warnings.simplefilter("ignore", RuntimeWarning)
                 medv = np.nanmedian(V[i - 29: i + 1], axis=0)
             sig = rank_signal(C, i, self.lookback, self.scaled)
-            ok = hist & (medv >= MIN_VOL) & ~np.isnan(C[i - self.lookback]) & ~np.isnan(C[ix[d]]) & np.isfinite(sig)
+            ok = hist & (medv >= self.min_vol) & ~np.isnan(C[i - self.lookback]) & ~np.isnan(C[ix[d]]) & np.isfinite(sig)
             ids = np.where(ok)[0]
-            if len(ids) >= 15:
+            if len(ids) >= self.min_n:
                 order = ids[np.argsort(sig[ids])]
                 q = len(order) // self.quant
                 new_w = {**{coins[j]: 1.0 for j in order[-q:]}, **{coins[j]: -1.0 for j in order[:q]}}
@@ -191,7 +222,8 @@ class XSMomentum:
                                   f"{'top' if side > 0 else 'bottom'} 1/{self.quant} (signal {week})",
                                   asset=coin, side=int(side), notional_usd=self.leg_usd / q,
                                   cost=CostModel(fee=0.0 if kept else self.side_cost(self.leg_usd / q, float(adv_now[col[coin]]))),
-                                  meta={"week": week, "leg_usd": self.leg_usd, "label": coin, "venue": "hyperliquid",
+                                  meta={"week": week, "leg_usd": self.leg_usd, "label": coin,
+                                        "venue": "coinbase_perps" if self.coinbase else "hyperliquid",
                                         "shadow": bool(self.cfg.get("shadow"))}))
         ctx.state["last_tuesday"] = d.isoformat()
         return intents
@@ -199,6 +231,14 @@ class XSMomentum:
     def marks(self, ctx: Context) -> dict[str, tuple[float, float]]:
         if not ctx.positions:
             return {}
+        if self.coinbase:  # the latest daily close (today's candle is still forming)
+            d = datetime.fromtimestamp(ctx.now, timezone.utc).date()
+            out = {}
+            for p in ctx.positions:
+                rows = self.cb_daily(ctx, p.asset, d - timedelta(days=3), d)
+                if rows:
+                    out[p.id] = (rows[max(rows)][0], ctx.now)
+            return out
         mids = self.post(ctx, {"type": "allMids"}) or {}
         return {p.id: (float(mids[p.asset]), ctx.now) for p in ctx.positions if p.asset in mids}
 

@@ -1,5 +1,6 @@
 # The agent's weekly candidate search (tartar/autotrade/search.py), without a Claude session. Paper only:
 # nothing is signed or sent. It backtests every member of the perps-momentum family on Hyperliquid's history
+# and on Coinbase's US-perp coins (the cde family; daily cache in autotrade/search/cde_daily/)
 # (walk-forward splits, Bonferroni penalty over every rule ever tested), queues survivors as draft
 # pre-registrations in autotrade/candidates/ (the agent paper-trades them after a 7-day wait), and commits
 # autotrade/search/ (REPORT.md, tested.jsonl, the funding cache) and autotrade/candidates/ to main.

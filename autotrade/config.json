@@ -122,16 +122,25 @@
       "note": "pre-registered by the trading-skills thread (edge-hunt J): 6-sigma hourly wicks on 20 HL perps, 4 h hold, 8.5 bps/side, entries 2026-10-12..2027-10-11; paper only. Signal matches wick_forward.py exactly (28/28 trades on 2026-03..09).",
       "exec_lag_s": 1200
     },
+    "cde_vol_momentum": {
+      "kind": "xs_momentum",
+      "enabled": true,
+      "data": "coinbase",
+      "scaled": true,
+      "leg_usd": 1000,
+      "prereg": "handoff/preregistration/cde-vol-momentum/SPEC.md",
+      "note": "US-tradable (Coinbase US perps, 23 coins): D3 vol-scaled 14-day momentum, quintiles, signal Monday, enter Tuesday close, 20 bp/side, funding not charged, signals 2026-10-12..2027-10-11. Paper in every mode (venue coinbase_perps). Official scorer: cde_forward.py. $1,000 a leg because whole Coinbase contracts need ~$1k+ a leg (cde addendum)."
+    },
     "us_capit": {
       "kind": "coinbase_pattern",
       "rule": "capit",
       "enabled": true,
       "size_usd": 200,
       "prereg": "handoff/preregistration/us-patterns/SPEC.md",
-      "note": "US spot (Coinbase), paper: CAPIT Z=4 H=24 from the trading-skills thread's edge-hunt K, entries 2026-10-12..2027-10-11, 0.62%/side, entry/exit 30 min after the hour. Official scorer: pattern_forward.py. cost_per_side is the registered 0.62%; venue_costs score the same fills at Coinbase's fees since 2026-09-16 (0.90% taker + ~2 bps spread) and at Alpaca (0.25% taker + spread, ~0.39%).",
+      "note": "US spot (Coinbase), paper: CAPIT Z=4 H=24 from the trading-skills thread's edge-hunt K, entries 2026-10-12..2027-10-11, 0.62%/side, entry/exit 30 min after the hour. Official scorer: pattern_forward.py. cost_per_side is the registered 0.62%; venue_costs score the same fills at the addendum's lines (us-patterns/ADDENDUM-2026-10-11-venue-costs.md): Coinbase taker 0.91%, Coinbase maker 0.50%, Alpaca 0.39%. Live route: Alpaca or Coinbase post-only, never Coinbase taker (the study's train fails there).",
       "cost_per_side": 0.0062,
       "venue_costs": {
-        "coinbase_now": 0.0092,
+        "coinbase_taker": 0.0091, "coinbase_maker": 0.005,
         "alpaca": 0.0039
       }
     },
@@ -141,10 +150,10 @@
       "enabled": true,
       "size_usd": 200,
       "prereg": "handoff/preregistration/us-patterns/SPEC.md",
-      "note": "US spot (Coinbase), paper: VOLSPIKE K=10 H=72 from the trading-skills thread's edge-hunt K, entries 2026-10-12..2027-10-11, 0.62%/side, entry/exit 30 min after the hour. Official scorer: pattern_forward.py. cost_per_side is the registered 0.62%; venue_costs score the same fills at Coinbase's fees since 2026-09-16 (0.90% taker + ~2 bps spread) and at Alpaca (0.25% taker + spread, ~0.39%).",
+      "note": "US spot (Coinbase), paper: VOLSPIKE K=10 H=72 from the trading-skills thread's edge-hunt K, entries 2026-10-12..2027-10-11, 0.62%/side, entry/exit 30 min after the hour. Official scorer: pattern_forward.py. cost_per_side is the registered 0.62%; venue_costs score the same fills at the addendum's lines (us-patterns/ADDENDUM-2026-10-11-venue-costs.md): Coinbase taker 0.91%, Coinbase maker 0.50%, Alpaca 0.39%. Live route: Alpaca or Coinbase post-only, never Coinbase taker (the study's train fails there).",
       "cost_per_side": 0.0062,
       "venue_costs": {
-        "coinbase_now": 0.0092,
+        "coinbase_taker": 0.0091, "coinbase_maker": 0.005,
         "alpaca": 0.0039
       }
     }

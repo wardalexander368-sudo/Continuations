@@ -23,6 +23,14 @@
    adds the file is the registration. The agent (runner.py) adds it as a paper strategy once the wait
    is over; from then on the normal lifecycle promotes, demotes or retires it.
 
+The same grid runs as a second family, **cde** (US-tradable, added 2026-10-11 under AJ's US-only rule): Coinbase's
+US perps ("-CDE") on the 23 coins of handoff/preregistration/cde-vol-momentum/SPEC.md, backtested on Coinbase's daily
+USD spot history from 2020 (cb_data.py, cached in ``autotrade/search/cde_daily/``) with that registration's universe
+(60 days of history, 30-day median volume >= $1M, at least 10 eligible coins), 20 bps per side and funding not
+charged (Coinbase's US perp funding is hourly and small). Its rules are named ``cand-cde-...``; they count in the same
+M (one Bonferroni penalty over both families), and "not a copy" compares them with the registered cde rule only.
+Cde survivors queue ahead of Hyperliquid ones (only they can ever go live). A cde survivor paper-trades through xs_momentum with ``data: coinbase`` (no Hyperliquid twin, paper in every mode).
+
 Every tested rule and its numbers go to ``autotrade/search/tested.jsonl``; ``autotrade/search/REPORT.md``
 shows the latest run. Paper only: nothing here trades.
 """
@@ -37,7 +45,7 @@ from pathlib import Path
 
 import numpy as np
 
-from .strategies.xs_momentum import MIN_HIST, MIN_VOL, rank_signal
+from .strategies.xs_momentum import CB_MIN_N, CB_MIN_VOL, MIN_HIST, MIN_VOL, rank_signal
 
 COST = 0.002
 FIRST_WEEK = date(2023, 7, 3)
@@ -52,24 +60,30 @@ REGISTERED = {  # rules already pre-registered elsewhere: compared against, neve
     "xs_momentum": {"lookback": 14, "quant": 5, "scaled": False, "signal_weekday": 0, "lag_days": 1},
     "vol_momentum": {"lookback": 14, "quant": 5, "scaled": True, "signal_weekday": 0, "lag_days": 1},
 }
+CDE_FIRST_WEEK = date(2020, 1, 6)
+CDE_REGISTERED = {  # handoff/preregistration/cde-vol-momentum/SPEC.md (D3 on Coinbase's US-perp coins)
+    "cde_vol_momentum": {"lookback": 14, "quant": 5, "scaled": True, "signal_weekday": 0, "lag_days": 1},
+}
 WD = {0: "mon", 1: "tue", 2: "wed", 3: "thu", 4: "fri", 5: "sat", 6: "sun"}
 
 
-def name_of(p: dict) -> str:
-    return f"cand-xsm-L{p['lookback']}-q{p['quant']}-{'vol' if p['scaled'] else 'raw'}-{WD[p['signal_weekday']]}-lag{p['lag_days']}"
+def name_of(p: dict, family: str = "hl") -> str:
+    return f"cand-{'cde' if family == 'cde' else 'xsm'}-L{p['lookback']}-q{p['quant']}-{'vol' if p['scaled'] else 'raw'}-{WD[p['signal_weekday']]}-lag{p['lag_days']}"
 
 
-def grid() -> list[dict]:
+def grid(registered: dict | None = None) -> list[dict]:
     keys = sorted(GRID)
     out = [dict(zip(keys, v)) for v in itertools.product(*(GRID[k] for k in keys))]
-    return [p for p in out if p not in REGISTERED.values()]
+    return [p for p in out if p not in (REGISTERED if registered is None else registered).values()]
 
 
 class Panel:
     """Daily closes, volumes and funding as aligned matrices, with the per-day pieces every rule shares."""
 
-    def __init__(self, days: list[date], coins: list[str], C: np.ndarray, V: np.ndarray, F: dict | None):
+    def __init__(self, days: list[date], coins: list[str], C: np.ndarray, V: np.ndarray, F: dict | None,
+                 min_vol: float = MIN_VOL, min_n: int = 15):
         self.days, self.coins, self.C, self.V = days, coins, C, V
+        self.min_vol, self.min_n = min_vol, min_n
         self.ix = {d: i for i, d in enumerate(days)}
         # forward-filled closes: a delisted coin exits at its last close
         self.Cf = C.copy()
@@ -98,7 +112,7 @@ class Panel:
             with warnings.catch_warnings():
                 warnings.simplefilter("ignore", RuntimeWarning)
                 medv = np.nanmedian(self.V[i - 29: i + 1], axis=0)
-            self._base[i] = hist & (medv >= MIN_VOL)
+            self._base[i] = hist & (medv >= self.min_vol)
         return self._base[i]
 
 
@@ -118,7 +132,7 @@ def backtest(P: Panel, p: dict, first: date = FIRST_WEEK, last: date | None = No
         sig = rank_signal(P.C, i, L, p["scaled"])
         ok = P.base_ok(i) & ~np.isnan(P.C[i - L]) & ~np.isnan(P.C[e]) & np.isfinite(sig)
         ids = np.where(ok)[0]
-        if len(ids) < 15:
+        if len(ids) < P.min_n:
             continue
         order = ids[np.argsort(sig[ids])]
         q = len(order) // Q
@@ -142,13 +156,15 @@ def block_means(n: int, B: int = 20000, block: int = 4, seed: int = 1) -> np.nda
     return idx
 
 
-def judge(series: dict[str, list[tuple[date, float]]], M: int, holdout_weeks: int = HOLDOUT_WEEKS) -> dict[str, dict]:
+def judge(series: dict[str, list[tuple[date, float]]], M: int, holdout_weeks: int = HOLDOUT_WEEKS,
+          registered: dict | None = None) -> dict[str, dict]:
     """Per rule: train / walk-forward / holdout numbers and pass flags (see the module doc)."""
+    regs = REGISTERED if registered is None else registered
     a = ALPHA / max(M, 1)
     def by_week(s):  # align rules with different signal days by the week of their signal
         return {d - timedelta(days=d.weekday()): v for d, v in s}
 
-    reg = {k: by_week(v) for k, v in series.items() if k in REGISTERED}
+    reg = {k: by_week(v) for k, v in series.items() if k in regs}
     out = {}
     idx_cache: dict[int, np.ndarray] = {}
     for name, s in series.items():
@@ -179,7 +195,7 @@ def judge(series: dict[str, list[tuple[date, float]]], M: int, holdout_weeks: in
             "holdout": bool(ho.mean() > 0 and ho.mean() >= 0.5 * tr.mean()),
             "not_a_copy": bool(all(abs(c) < CORR_MAX for c in corr.values())),
         }
-        st["survives"] = bool(name not in REGISTERED and all(st["checks"].values()))
+        st["survives"] = bool(name not in regs and all(st["checks"].values()))
         out[name] = st
     return out
 
@@ -197,18 +213,19 @@ def next_signal_day(after: date, weekday: int) -> date:
     return after + timedelta(days=(weekday - after.weekday()) % 7)
 
 
-def register(root: Path, name: str, p: dict, st: dict, now: float, family_size: int, run_id: str) -> dict:
+def register(root: Path, name: str, p: dict, st: dict, now: float, family_size: int, run_id: str, family: str = "hl") -> dict:
     reg_day = datetime.fromtimestamp(now, timezone.utc).date()
     starts = reg_day + timedelta(days=WAIT_DAYS)
     first = next_signal_day(starts, p["signal_weekday"])
     spec = {
-        "name": name, "kind": "xs_momentum", "family": "perps-momentum", "params": p,
+        "name": name, "kind": "xs_momentum", "family": "perps-momentum" + ("-cde" if family == "cde" else ""),
+        "params": {**p, "data": "coinbase"} if family == "cde" else p,
         "registered_at": datetime.fromtimestamp(now, timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
         "search_run": run_id, "starts_at": starts.isoformat(),
         "start": first.isoformat(), "end": (first + timedelta(days=7 * (SCORE_WEEKS - 1))).isoformat(),
         "score_weeks": SCORE_WEEKS, "family_size": family_size, "leg_usd": 500,
         "success": (f"after {SCORE_WEEKS} paper weeks: mean weekly long-short return net of 20 bps/side turnover "
-                    f"and funding > 0 AND the moving-block bootstrap CI (4-week blocks) lower bound > 0 at "
+                    f"{'(funding not charged)' if family == 'cde' else 'and funding'} > 0 AND the moving-block bootstrap CI (4-week blocks) lower bound > 0 at "
                     f"level 0.05/{family_size} (Bonferroni over every candidate queued so far)"),
         "backtest": st, "status": "queued",
         "note": "draft pre-registration written by the agent's candidate search; the commit adding this file is the registration",
@@ -232,81 +249,133 @@ def active_candidates(root: Path, now: float) -> dict[str, dict]:
     return out
 
 
-def run(root: Path, http=None, now: float | None = None, panel: Panel | None = None) -> dict:
-    now = time.time() if now is None else now
-    root = Path(root)
-    sdir = root / "search"
-    sdir.mkdir(parents=True, exist_ok=True)
-    today = datetime.fromtimestamp(now, timezone.utc).date()
-    if panel is None:
+def families(root: Path, http, today: date, panel: Panel | None, cde_panel: Panel | None) -> dict[str, dict]:
+    """Each family's panel, registered rules, first week and funding flag. A test passing ``panel`` gets the
+    cde family only if it also passes ``cde_panel``; a live run loads both (cde skipped if Coinbase fails)."""
+    out = {}
+    load = panel is None
+    if load:
         import httpx
 
         from . import hl_data
 
         http = http or httpx.Client(timeout=60)
         days, coins, C, V, _ = hl_data.load_daily(http, today)
-        F = hl_data.update_funding(http, sdir / "funding_daily.csv", coins, today)
+        F = hl_data.update_funding(http, root / "search" / "funding_daily.csv", coins, today)
         panel = Panel(days, coins, C, V, F)
+    out["hl"] = {"panel": panel, "registered": REGISTERED, "first": FIRST_WEEK, "funding": True}
+    if cde_panel is None and load:
+        try:
+            from . import cb_data
+
+            days, coins, C, V = cb_data.load_daily(http, today, root / "search" / "cde_daily")
+            cde_panel = Panel(days, coins, C, V, None, min_vol=CB_MIN_VOL, min_n=CB_MIN_N)
+        except Exception as e:  # noqa: BLE001 - Coinbase down must not stop the Hyperliquid search
+            out["cde_error"] = f"{type(e).__name__}: {e}"
+    if cde_panel is not None:
+        out["cde"] = {"panel": cde_panel, "registered": CDE_REGISTERED, "first": CDE_FIRST_WEEK, "funding": False}
+    return out
+
+
+def run(root: Path, http=None, now: float | None = None, panel: Panel | None = None, cde_panel: Panel | None = None) -> dict:
+    now = time.time() if now is None else now
+    root = Path(root)
+    sdir = root / "search"
+    sdir.mkdir(parents=True, exist_ok=True)
+    today = datetime.fromtimestamp(now, timezone.utc).date()
+    fams = families(root, http, today, panel, cde_panel)
+    err = fams.pop("cde_error", None)
     run_id = datetime.fromtimestamp(now, timezone.utc).strftime("%Y-%m-%d")
-    rules = {**{k: v for k, v in REGISTERED.items()}, **{name_of(p): p for p in grid()}}
-    series = {name: backtest(panel, p) for name, p in rules.items()}
+    registered = {k for f in fams.values() for k in f["registered"]}
+    rules, fam_of, series = {}, {}, {}
+    for fam, f in fams.items():
+        for name, p in {**f["registered"], **{name_of(p, fam): p for p in grid(f["registered"])}}.items():
+            rules[name], fam_of[name] = p, fam
+            series[name] = backtest(f["panel"], p, first=f["first"], funding=f["funding"])
     tested_path = sdir / "tested.jsonl"
     seen = set()
     if tested_path.exists():
         seen = {json.loads(line)["name"] for line in tested_path.read_text().splitlines() if line.strip()}
-    seen |= {n for n in rules if n not in REGISTERED}
-    M = len(seen)
-    verdicts = judge(series, M)
-    with tested_path.open("a") as f:
+    seen |= {n for n in rules if n not in registered}
+    M = len(seen)  # one Bonferroni penalty over every rule of every family ever tested
+    verdicts = {}
+    for fam, f in fams.items():
+        verdicts.update(judge({n: v for n, v in series.items() if fam_of[n] == fam}, M, registered=f["registered"]))
+    with tested_path.open("a") as fh:
         for name, st in verdicts.items():
-            if name not in REGISTERED:
-                f.write(json.dumps({"run": run_id, "name": name, "params": rules[name], **st}, sort_keys=True) + "\n")
+            if name not in registered:
+                fh.write(json.dumps({"run": run_id, "name": name, "family": fam_of[name], "params": rules[name], **st}, sort_keys=True) + "\n")
     q = queued(root)
     names_q = {c["name"] for c in q}
     active = [c for c in q if c.get("status") != "withdrawn" and date.fromisoformat(c["end"]) + timedelta(days=9) >= today]
     surv = sorted((n for n, st in verdicts.items() if st["survives"] and n not in names_q),
-                  key=lambda n: -verdicts[n]["train_lo_penalized"])
+                  key=lambda n: (fam_of[n] != "cde", -verdicts[n]["train_lo_penalized"]))  # US-tradable first (us_only)
     room = max(0, min(MAX_NEW, MAX_ACTIVE - len(active)))
-    new = [register(root, n, rules[n], verdicts[n], now, len(q) + k + 1, run_id) for k, n in enumerate(surv[:room])]
-    summary = {"run": run_id, "tested": len(verdicts) - len([n for n in verdicts if n in REGISTERED]), "M": M,
-               "survivors": surv, "queued": [c["name"] for c in new], "weeks": max((v["weeks"] for v in verdicts.values()), default=0)}
-    write_report(sdir / "REPORT.md", summary, verdicts, rules, q + new)
+    new = [register(root, n, rules[n], verdicts[n], now, len(q) + k + 1, run_id, fam_of[n]) for k, n in enumerate(surv[:room])]
+    by_fam = {fam: {"tested": sum(1 for n in verdicts if fam_of[n] == fam and n not in registered),
+                    "survivors": [n for n in surv if fam_of[n] == fam],
+                    "weeks": max((v["weeks"] for n, v in verdicts.items() if fam_of[n] == fam), default=0)} for fam in fams}
+    summary = {"run": run_id, "tested": sum(f["tested"] for f in by_fam.values()), "M": M,
+               "survivors": surv, "queued": [c["name"] for c in new], "families": by_fam,
+               "weeks": max((v["weeks"] for v in verdicts.values()), default=0)}
+    if err:
+        summary["cde_error"] = err
+    write_report(sdir / "REPORT.md", summary, verdicts, rules, q + new, fam_of, registered)
     (sdir / "last_run.json").write_text(json.dumps(summary, indent=1))
     return summary
 
 
-def write_report(path: Path, summary: dict, verdicts: dict, rules: dict, queue: list[dict]) -> None:
+FAMILY_TEXT = {
+    "hl": ("Hyperliquid perps momentum (research only: Hyperliquid bars US persons)",
+           "Hyperliquid's daily history, net of 20 bps per side of turnover and funding"),
+    "cde": ("Coinbase US perps momentum (US-tradable)",
+            "Coinbase's daily USD history for the 23 coins with US perps, net of 20 bps per side of turnover, funding not charged"),
+}
+
+
+def write_report(path: Path, summary: dict, verdicts: dict, rules: dict, queue: list[dict],
+                 fam_of: dict | None = None, registered: set | None = None) -> None:
     def pct(x):
         return f"{100 * x:+.2f}%"
 
-    fails = {k: 0 for k in ("penalized_train", "walk_forward", "holdout", "not_a_copy")}
-    for n, st in verdicts.items():
-        if n in REGISTERED:
-            continue
-        for k, ok in st["checks"].items():
-            fails[k] += 0 if ok else 1
-    any_v = next(iter(verdicts.values()), {})
+    fam_of = fam_of or {n: "hl" for n in verdicts}
+    registered = set(REGISTERED) if registered is None else registered
     lines = [f"# Candidate search ({summary['run']})", "",
-             f"The agent's weekly search over the perps-momentum family (tartar/autotrade/search.py). "
-             f"{summary['tested']} rules backtested on {summary['weeks']} weeks "
-             f"({any_v.get('first', '?')} .. {any_v.get('last', '?')}), the last {HOLDOUT_WEEKS} held out; penalty level "
-             f"{ALPHA}/{summary['M']} (every rule this search has ever tested). Weekly long-short returns, $1 per leg, net of 20 bps "
-             f"per side of turnover and funding.", "",
+             f"The agent's weekly search (tartar/autotrade/search.py): every member of the perps-momentum grid, per "
+             f"family, the last {HOLDOUT_WEEKS} weeks held out; penalty level {ALPHA}/{summary['M']} (every rule this "
+             f"search has ever tested, both families). Weekly long-short returns, $1 per leg.", "",
              f"**Survivors this run: {len(summary['survivors'])}** "
-             + (f"(queued: {', '.join(summary['queued'])})" if summary["queued"] else "(none queued)") + ".", "",
-             f"Rules failing each check: penalized train {fails['penalized_train']}, walk-forward thirds "
-             f"{fails['walk_forward']}, holdout {fails['holdout']}, copy of a registered rule {fails['not_a_copy']}.", "",
-             "| Rule | Train mean/wk | Penalized lower bound | Thirds | Holdout mean/wk | Corr. registered | Checks |",
-             "|---|---|---|---|---|---|---|"]
-    order = sorted(verdicts, key=lambda n: -verdicts[n]["train_lo_penalized"])
-    for n in [*[k for k in REGISTERED if k in verdicts], *[k for k in order if k not in REGISTERED][:15]]:
-        st = verdicts[n]
-        ch = "registered" if n in REGISTERED else ("**survives**" if st["survives"] else
+             + (f"(queued: {', '.join(summary['queued'])})" if summary["queued"] else "(none queued)") + "."]
+    if summary.get("cde_error"):
+        lines += ["", f"Coinbase family skipped this run: {summary['cde_error']}"]
+    for fam in sorted({fam_of[n] for n in verdicts}, key=lambda f: f != "cde"):
+        title, data = FAMILY_TEXT.get(fam, (fam, ""))
+        mine = {n: st for n, st in verdicts.items() if fam_of[n] == fam}
+        fails = {k: 0 for k in ("penalized_train", "walk_forward", "holdout", "not_a_copy")}
+        for n, st in mine.items():
+            if n in registered:
+                continue
+            for k, ok in st["checks"].items():
+                fails[k] += 0 if ok else 1
+        any_v = next(iter(mine.values()), {})
+        n_test = sum(1 for n in mine if n not in registered)
+        lines += ["", f"## {title}", "",
+                  f"{n_test} rules backtested on {any_v.get('weeks', 0)} weeks ({any_v.get('first', '?')} .. "
+                  f"{any_v.get('last', '?')}), {data}.", "",
+                  f"Rules failing each check: penalized train {fails['penalized_train']}, walk-forward thirds "
+                  f"{fails['walk_forward']}, holdout {fails['holdout']}, copy of a registered rule {fails['not_a_copy']}.", "",
+                  "| Rule | Train mean/wk | Penalized lower bound | Thirds | Holdout mean/wk | Corr. registered | Checks |",
+                  "|---|---|---|---|---|---|---|"]
+        order = sorted(mine, key=lambda n: -mine[n]["train_lo_penalized"])
+        for n in [*[k for k in order if k in registered], *[k for k in order if k not in registered][:15]]:
+            st = mine[n]
+            ch = "registered" if n in registered else ("**survives**" if st["survives"] else
                                                      "fails " + ", ".join(k for k, ok in st["checks"].items() if not ok))
-        corr = max((abs(c) for c in st["corr_registered"].values()), default=float("nan"))
-        lines.append(f"| {n} | {pct(st['train_mean'])} | {pct(st['train_lo_penalized'])} | "
-                     f"{' / '.join(pct(t) for t in st['thirds'])} | {pct(st['holdout_mean'])} | {corr:.2f} | {ch} |")
-    lines += ["", "(Top 15 by penalized lower bound, plus the two registered rules for reference.)", "", "## Candidates queue", ""]
+            corr = max((abs(c) for c in st["corr_registered"].values()), default=float("nan"))
+            lines.append(f"| {n} | {pct(st['train_mean'])} | {pct(st['train_lo_penalized'])} | "
+                         f"{' / '.join(pct(t) for t in st['thirds'])} | {pct(st['holdout_mean'])} | {corr:.2f} | {ch} |")
+        lines += ["", "(Top 15 by penalized lower bound, plus the registered rules for reference.)"]
+    lines += ["", "## Candidates queue", ""]
     if queue:
         lines += ["| Candidate | Registered | Paper from | Scored after | Status |", "|---|---|---|---|---|"]
         for c in queue:

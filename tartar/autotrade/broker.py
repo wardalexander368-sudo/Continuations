@@ -258,7 +258,7 @@ class LiveBroker(PaperBroker):
         return None, round(size, 6)
 
     def open(self, intent: Intent, positions: list[Position] | None = None) -> tuple[Position, dict]:
-        if intent.meta.get("venue") == "coinbase":  # US spot: paper until a Coinbase route exists (handoff/autotrade.md)
+        if intent.meta.get("venue") in ("coinbase", "coinbase_perps"):  # US venues: paper until a route exists (handoff/autotrade.md)
             pos, row = PaperBroker.open(self, intent)
             pos.mode = row["mode"] = "paper"
             row["live"] = {"skipped": "no Coinbase route yet (paper only)"}

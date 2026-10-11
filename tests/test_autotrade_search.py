@@ -125,3 +125,49 @@ def test_vault_hold_books_each_interval_and_stops_at_window_end(tmp_path):
     assert L.trades("hlp")[-1].meta.get("window_end")
     v = strat.evaluate(L.trades("hlp"), t0 + 43 * 86400, {})
     assert v.n == 2 and v.decision in ("pass", "fail")
+
+
+def test_cde_family_runs_alongside_with_one_penalty_and_queues_coinbase_candidates(tmp_path):
+    P = panel()
+    cde = panel(n_coins=23, seed=5)
+    cde = search.Panel(cde.days, cde.coins, cde.C, cde.V, None, min_vol=1e6, min_n=10)
+    now = datetime(2025, 7, 1, 12, tzinfo=timezone.utc).timestamp()
+    s = search.run(tmp_path, now=now, panel=P, cde_panel=cde)
+    assert s["families"]["hl"]["tested"] == 94 and s["families"]["cde"]["tested"] == 95
+    assert s["M"] == 189  # one Bonferroni penalty over both families
+    rows = [json.loads(x) for x in (tmp_path / "search" / "tested.jsonl").read_text().splitlines()]
+    assert {r["family"] for r in rows} == {"hl", "cde"}
+    assert all(r["name"].startswith("cand-cde-") for r in rows if r["family"] == "cde")
+    assert all(abs(r["alpha"] - 0.10 / 189) < 1e-12 for r in rows)
+    # "not a copy" is judged within the family: cde rules against the registered cde rule only
+    assert all(set(r["corr_registered"]) <= {"cde_vol_momentum"} for r in rows if r["family"] == "cde")
+    assert "Coinbase US perps momentum" in (tmp_path / "search" / "REPORT.md").read_text()
+    cde_q = [n for n in s["queued"] if n.startswith("cand-cde-")]
+    assert cde_q and s["queued"][0] == cde_q[0]  # US-tradable survivors queue first
+    spec = json.loads((tmp_path / "candidates" / f"{cde_q[0]}.json").read_text())
+    assert spec["params"]["data"] == "coinbase" and "funding not charged" in spec["success"]
+    act = search.active_candidates(tmp_path, now + 8 * 86400)
+    assert act[cde_q[0]]["data"] == "coinbase"
+
+
+def test_coinbase_member_trades_the_us_perp_coins_on_paper(tmp_path):
+    from tartar.autotrade.cb_data import COINS
+    from tartar.autotrade.strategies.xs_momentum import XSMomentum
+
+    P = panel(n_days=400, n_coins=len(COINS), seed=7)
+    rows = {c: {d.isoformat(): (float(P.C[i, j]), 5e6) for i, d in enumerate(P.days)} for j, c in enumerate(COINS)}
+
+    def get(ctx, coin, d0, d1):
+        return {k: v for k, v in rows[coin].items() if d0.isoformat() <= k <= d1.isoformat()}
+
+    tue = P.days[300] + timedelta(days=(1 - P.days[300].weekday()) % 7)
+    now = datetime(tue.year, tue.month, tue.day, tzinfo=timezone.utc).timestamp() + 86400 + 3600
+    cfg = {"kind": "xs_momentum", "data": "coinbase", "scaled": True, "leg_usd": 500,
+           "start": (tue - timedelta(days=8)).isoformat(), "end": (tue + timedelta(days=60)).isoformat()}
+    (tmp_path / "config.json").write_text(json.dumps({"mode": "dry_live", "strategies": {"cde": cfg}}))
+    strat = XSMomentum("cde", {**cfg, "_get": get})
+    s = run_once(tmp_path, now=now, strategies={"cde": strat})
+    pos = Ledger(tmp_path).positions
+    assert s["opened"] == 2 * (len(COINS) // 5) == len(pos)
+    assert {p.asset for p in pos} <= set(COINS)
+    assert all(p.meta["venue"] == "coinbase_perps" and p.mode == "paper" for p in pos)

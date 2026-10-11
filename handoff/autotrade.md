@@ -104,6 +104,24 @@ Wednesdays 03:30 UTC, `python -m tartar.autotrade search` (`tartar/autotrade/sea
    with the CI widened by Bonferroni over every candidate ever queued. To withdraw one, set its
    `status` to `withdrawn`.
 
+**`cde_vol_momentum` (paper strategy, from 2026-10-12).** The trading-skills thread's registered US-tradable
+rule (`handoff/preregistration/cde-vol-momentum/SPEC.md`) runs in the agent as `xs_momentum` with
+`data: coinbase`: D3 on Coinbase's 23 US-perp coins, $1,000 a leg (whole Coinbase contracts need ~$1k+ a
+leg, per its addendum), 20 bps per side, funding not charged, venue `coinbase_perps` so it stays paper in
+every mode. `cde_forward.py` stays the official scorer.
+
+**US family (cde, added 2026-10-11).** The same grid also runs on Coinbase's US perps ("-CDE"), the only
+family that can ever produce a go-live candidate under the US-only rule: the 23 coins of
+`handoff/preregistration/cde-vol-momentum/SPEC.md`, Coinbase's daily USD history (`cb_data.py`, cached in
+`autotrade/search/cde_daily/`), that registration's universe (30-day median volume >= $1M, at least 10
+coins), 20 bps per side, funding not charged. 95 rules (the registered `cde_vol_momentum` is the reference;
+the engine reproduces its study: train +0.51%/week over 126 weeks, validation +1.08%, test +0.36%). Both
+families share one M, so the penalty got stricter (M = 189 on 2026-10-11). "Not a copy" compares within
+the family. Cde survivors queue ahead of Hyperliquid ones and paper-trade through `xs_momentum` with
+`data: coinbase` (venue `coinbase_perps`, paper in every mode, no weekly stop or twin). First run on
+2026-10-11 data: no survivor; best `cand-cde-L14-q3-vol-thu-lag1` at +1.22%/week train but penalized
+bound −0.20%.
+
 `autotrade/search/REPORT.md` shows the latest run (top rules, why each failed); every tested rule and
 its numbers are appended to `autotrade/search/tested.jsonl`. Promoted candidates are still shadow (no
 twins); making one eligible for live twins is a deliberate config change.
@@ -380,10 +398,15 @@ Solana twin is ever attempted. The official scorer (`pattern_forward.py`) stays 
   (+5.67%/trade, 90% CI [−1.65, +11.18]), both at the registered 0.62% per side.
 * **Fees are configurable.** `cost_per_side` (default 0.0062, the registered cost) is what the paper book
   pays; `venue_costs` reports the same fills net at other venues' costs, in the verdict text and as
-  `mean_net_<venue>` stats. Configured: `coinbase_now` 0.92% per side (Coinbase raised its entry-tier US
-  fees on 2026-09-16 to 0.90% taker / 0.50% maker, plus ~2 bps spread on these pairs) and `alpaca` 0.39%
-  per side (0.25% taker plus spread). On VOLSPIKE's +1.32%/trade registered study edge that is about
-  +0.72% at Coinbase taker and +1.78% at Alpaca. The pass/fail verdict stays on the registered cost.
+  `mean_net_<venue>` stats. Configured at the us-patterns addendum's lines
+  (`handoff/preregistration/us-patterns/ADDENDUM-2026-10-11-venue-costs.md`): `coinbase_taker` 0.91% per
+  side (Coinbase's entry-tier fees since 2026-09-16 are 0.90% taker / 0.50% maker), `coinbase_maker`
+  0.50% (an upper bound: assumes every resting order fills) and `alpaca` 0.39% (0.25% taker plus a 14 bp
+  mean half spread). The pass/fail verdict stays on the registered cost.
+* **Live route: Alpaca, or Coinbase post-only; never Coinbase taker.** At 0.91% per side neither rule
+  passes its own study's train filter (train −0.26%/trade for CAPIT, −0.20% for VOLSPIKE; gap review
+  2026-10-11); both pass at Alpaca (0.39%) and at Coinbase maker (0.50%). Going live on either rule needs
+  the registered pass **and** a positive `mean_net_<venue>` line for the route actually used.
 
 #### What a live US spot route would need (scoped 2026-10-11, nothing built or sent)
 
@@ -395,7 +418,7 @@ order. Both are US venues, so both are compatible with `us_only`. Keys go only i
 IP-allowlisted: give it trade permission only, no transfers or withdrawals, on an account or portfolio
 holding just the trading budget.
 
-**Alpaca (cheaper; the better first route):**
+**Alpaca (cheaper; the recommended route):**
 
 * **Account and key:** an Alpaca account in AJ's name with crypto enabled; secrets `APCA_API_KEY_ID` and
   `APCA_API_SECRET_KEY` (sent as headers of the same names, no request signing).
@@ -422,7 +445,8 @@ holding just the trading budget.
   `post_only` to pay the maker fee. Fills and fees from `GET /orders/historical/{id}` and `/orders/historical/fills`.
 * **Minimums:** per product from `GET /api/v3/brokerage/products/{id}` (`quote_min_size`, `base_increment`).
 * **Fees, the real risk:** since 2026-09-16 the entry tier is 0.90% taker / 0.50% maker, so a taker round
-  trip costs ~1.84% against the registered 1.24%. Read the account's tier from
+  trip costs ~1.82% against the registered 1.24%, which fails both rules' train filter. A Coinbase route
+  must use `limit_limit_gtc` with `post_only` and count unfilled entries as missed trades. Read the account's tier from
   `GET /api/v3/brokerage/transaction_summary` before go-live; post-only limits (maker) only help if fills
   stay close to the 30-minute entry. No public sandbox for this API, so the dry executor would walk the
   public order book (`/products/{id}/book`) like the Hyperliquid one.
