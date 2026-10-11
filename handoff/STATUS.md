@@ -490,6 +490,14 @@ the Log). Owner thread names are the project's thread titles.
 
 ## Log (newest first)
 
+* **2026-10-11 ~04:00 UTC, trading-skills thread (US-tradable lane): momentum on Coinbase US perps
+  pre-registered** (`edge-hunt.md` §L). Coinbase's US perpetual-style futures cover 23 crypto coins,
+  so long-short momentum is US-tradable. The registered D3 rule on those coins, Coinbase history
+  2020-26 at 20 bps/side: train +0.51%/week, validation +1.08%, test +0.39% [−1.05, +1.94] (90).
+  52-week paper test from 2026-10-12 (`preregistration/cde-vol-momentum/`, scorer
+  `experiments/edge-hunt/perps/cde_forward.py`, free). Long-only spot momentum = holding everything.
+  **Handoff session (`autotrade/`): candidate US paper strategy** (weekly, like vol-momentum). Kalshi next.
+
 * **2026-10-11 ~03:30 UTC, trading-skills thread (chart patterns, US spot): two weak rules
   pre-registered** (`edge-hunt.md` §K). 24 long-only rules on 11 Coinbase coins, entered 30 min after
   the hourly close, 0.62%/side. Capitulation bounce (test +5.8%/trade [−1.5, +11.4], 28) and

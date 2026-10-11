@@ -225,6 +225,21 @@ commission) earned in every split (+1.33%/month [+0.18, +2.70] in test; 2025 +19
 falling as it grows), so holding it against a 5% cash hurdle is **pre-registered** for 180 days:
 `preregistration/hlp-hold/SPEC.md`, scorer `experiments/edge-hunt/vaults/hlp_forward.py`.
 
+### L. Momentum on Coinbase's US perps (2026-10-11, trading-skills thread): pre-registered (D3 on 23 coins)
+
+Coinbase Financial Markets lists CFTC-regulated perpetual-style futures for US customers on 23 crypto
+coins (public product list: BTC ETH SOL XRP ADA AVAX LINK LTC DOT DOGE BCH NEAR SUI HYPE BNB AAVE ONDO
+XLM ENA HBAR PEPE SHIB ZEC, plus PAXG and index perps; taker fee from 0.02%, hourly funding). That
+makes long-short rules US-tradable. The registered rules, unchanged:
+* On Coinbase daily history of those coins (`perps/xs_coinbase.py`, 2020-26, 20 bps/side, no funding):
+  D3 train +0.51%/week, validation +1.08%, **test +0.39% [−1.05, +1.94]** (90 weeks); D +0.84 / +0.45 /
+  +0.40. On HL data cut to the same coins (`perps/cde_momentum.py`, from 2023): D3 test +0.48%, D −0.81%.
+* Long-only top quintile on US spot (0.62%/side): no better than holding every coin (test −0.10% and
+  +0.12%/week vs −0.05%). Long-only momentum is just market exposure here.
+* **Registered:** D3 on the 23 Coinbase US-perp coins, 52 weeks from 2026-10-12, scored free from
+  Coinbase candles: `preregistration/cde-vol-momentum/SPEC.md`, scorer `perps/cde_forward.py`.
+  Weak: 4-coin legs, today's list (look-ahead), every CI spans zero, thin books on some coins.
+
 ### K. Chart patterns on US spot (2026-10-11, trading-skills thread): two weak rules pre-registered
 
 AJ asked what other chart-watching methods the agent could learn; venue must be US-usable (Coinbase
@@ -409,6 +424,8 @@ Round 2 has nothing registered; F2 (funding-spike shorts) stays on hold.
 * (added) **E1, pump.fun revenue surprise -> PUMP perp:** both halves positive after costs, each
   ~1.7 SE, beyond-trend part positive. **Forward test registered** (180 days, hourly Action).
   E1b: the same rule on 8 other buyback tokens is flat (family −0.01%/day), so lower the prior.
+* (added) **L, D3 on Coinbase US perps:** positive in all splits (test +0.39%/week, CI spans 0).
+  **Forward test registered** (52 weeks, free). The US route for the momentum edge.
 * (added) **K, US-spot chart patterns:** capitulation bounce and volume-spike follow-through
   passed all splits (CIs span 0), low prior. **Forward tests registered** (52 weeks, free).
 * (added) **J, wick bounce on perps:** all three splits positive (test +80 bp/trade, CI spans 0),
