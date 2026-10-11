@@ -1,21 +1,21 @@
 {
  "daily": {
   "2026-10-10": -567.5091373349622,
-  "2026-10-11": -387.0120141861641
+  "2026-10-11": -390.40854949924363
  },
  "daily_by_strategy": {
   "2026-10-11": {
-   "dip": -496.8273758848664
+   "dip": -500.22391119794594
   }
  },
  "halted": null,
  "last_run": {
-  "at": 1791728479.479978,
-  "closed": 25,
+  "at": 1791732049.4955595,
+  "closed": 30,
   "errors": {},
   "halted": null,
   "new_halts": [],
-  "opened": 38,
+  "opened": 47,
   "rejected": 0
  },
  "live": {
@@ -32,7 +32,7 @@
   },
   "unclaimed": {},
   "wallet_sol": {
-   "at": 1791728479.479978,
+   "at": 1791732049.4955595,
    "sol": 0.05
   }
  },
@@ -87,8 +87,8 @@
    "entry_cost_usd": 0.039316500000000004,
    "entry_price": 109.34,
    "id": "c3863a23fb2f",
-   "mark_at": 1791728479.479978,
-   "mark_price": 109.335,
+   "mark_at": 1791732049.4955595,
+   "mark_price": 109.815,
    "meta": {
     "basket": "jlp",
     "coin": "SOL",
@@ -122,8 +122,8 @@
    "entry_cost_usd": 0.006916499999999999,
    "entry_price": 2487.8,
    "id": "cc20dc16b623",
-   "mark_at": 1791728479.479978,
-   "mark_price": 2500.75,
+   "mark_at": 1791732049.4955595,
+   "mark_price": 2508.25,
    "meta": {
     "basket": "jlp",
     "coin": "ETH",
@@ -157,8 +157,8 @@
    "entry_cost_usd": 0.0110385,
    "entry_price": 82520.0,
    "id": "115f17939294",
-   "mark_at": 1791728479.479978,
-   "mark_price": 82990.5,
+   "mark_at": 1791732049.4955595,
+   "mark_price": 83120.5,
    "meta": {
     "basket": "jlp",
     "coin": "BTC",
@@ -187,205 +187,13 @@
    "strategy": "jlp_hedged"
   },
   {
-   "asset": "3NBq9zynLPDQQDvYf8xiMbWywQfKZD7m7fyprY524efq",
-   "entry_at": 1791703200.0,
-   "entry_cost_usd": 3.6057263294847637,
-   "entry_price": 0.0002696970112247077,
-   "id": "61a8f5a3da1d",
-   "mark_at": 1791728400.0,
-   "mark_price": 0.00025838990953476015,
-   "meta": {
-    "alt_cost": {
-     "fee": 0.019499999999999997,
-     "fixed_usd": 0.05,
-     "impact": 0.0027786316474238204
-    },
-    "exit_t": 1791731400.0,
-    "impact_assumed": 0.0027786316474238204,
-    "key": "3NBq9zynLPDQQDvYf8xiMbWywQfKZD7m7fyprY524efq:1791702600",
-    "label": "TWEETCRAFT / SOL",
-    "late_entry": true,
-    "liquidity_usd": 143955.749,
-    "mint": "HzYCHqAN2uoHGRnL9v2ChCfFQX3bvJuJd5zu2Hd5MZQy",
-    "pool": "3NBq9zynLPDQQDvYf8xiMbWywQfKZD7m7fyprY524efq",
-    "registered_entry_price": 0.0002655589272634275,
-    "route_fee": 0.01,
-    "shadow": true,
-    "signal_t": 1791702600.0
-   },
-   "mode": "paper",
-   "notional_usd": 200.0,
-   "side": 1,
-   "strategy": "dip~drop=0.03~hold_bars=96"
-  },
-  {
-   "asset": "6QyYdc6jgeKnfP1FWhiexMYq3JQ3sidSYoubjWUTo3rm",
-   "entry_at": 1791703200.0,
-   "entry_cost_usd": 3.292927010938591,
-   "entry_price": 0.0007561437236265249,
-   "id": "0c34d9087dc6",
-   "mark_at": 1791728400.0,
-   "mark_price": 0.0006008124325638796,
-   "meta": {
-    "alt_cost": {
-     "fee": 0.016,
-     "fixed_usd": 0.05,
-     "impact": 0.0012146350546929578
-    },
-    "exit_t": 1791728700.0,
-    "impact_assumed": 0.0012146350546929578,
-    "key": "6QyYdc6jgeKnfP1FWhiexMYq3JQ3sidSYoubjWUTo3rm:1791699900",
-    "label": "HeeHaw / SOL",
-    "late_entry": true,
-    "liquidity_usd": 329317.0228,
-    "mint": "EEpng77ZPn9FbgbT4xsRjwuxNCcMBYq3HTwEscyTpump",
-    "pool": "6QyYdc6jgeKnfP1FWhiexMYq3JQ3sidSYoubjWUTo3rm",
-    "registered_entry_price": 0.0007362395030809137,
-    "route_fee": 0.01,
-    "shadow": true,
-    "signal_t": 1791699900.0
-   },
-   "mode": "paper",
-   "notional_usd": 200.0,
-   "side": 1,
-   "strategy": "dip~drop=0.03~hold_bars=96"
-  },
-  {
-   "asset": "2B8tftZ5ww8TREMr3pgkgERLNjJyJxEAPWMENViGMsL4",
-   "entry_at": 1791703200.0,
-   "entry_cost_usd": 3.365495884712891,
-   "entry_price": 0.003420748000725525,
-   "id": "d8912a2943b4",
-   "mark_at": 1791728400.0,
-   "mark_price": 0.0036792566137149353,
-   "meta": {
-    "alt_cost": {
-     "fee": 0.017499999999999998,
-     "fixed_usd": 0.05,
-     "impact": 0.0015774794235644573
-    },
-    "exit_t": 1791729600.0,
-    "impact_assumed": 0.0015774794235644573,
-    "key": "2B8tftZ5ww8TREMr3pgkgERLNjJyJxEAPWMENViGMsL4:1791700800",
-    "label": "CRAWL / SOL",
-    "late_entry": true,
-    "liquidity_usd": 253569.0761,
-    "mint": "BXoHJddsWJLHtAopeiSbKUSELsu8hSFMs8baGMDkpump",
-    "pool": "2B8tftZ5ww8TREMr3pgkgERLNjJyJxEAPWMENViGMsL4",
-    "registered_entry_price": 0.0039145001708285575,
-    "route_fee": 0.01,
-    "shadow": true,
-    "signal_t": 1791700800.0
-   },
-   "mode": "paper",
-   "notional_usd": 200.0,
-   "side": 1,
-   "strategy": "dip~drop=0.03~hold_bars=96"
-  },
-  {
-   "asset": "3NBq9zynLPDQQDvYf8xiMbWywQfKZD7m7fyprY524efq",
-   "entry_at": 1791703200.0,
-   "entry_cost_usd": 3.6057263294847637,
-   "entry_price": 0.0002696970112247077,
-   "id": "dd23259fb8d1",
-   "mark_at": 1791728400.0,
-   "mark_price": 0.00025838990953476015,
-   "meta": {
-    "alt_cost": {
-     "fee": 0.019499999999999997,
-     "fixed_usd": 0.05,
-     "impact": 0.0027786316474238204
-    },
-    "exit_t": 1791731400.0,
-    "impact_assumed": 0.0027786316474238204,
-    "key": "3NBq9zynLPDQQDvYf8xiMbWywQfKZD7m7fyprY524efq:1791702600",
-    "label": "TWEETCRAFT / SOL",
-    "late_entry": true,
-    "liquidity_usd": 143955.749,
-    "mint": "HzYCHqAN2uoHGRnL9v2ChCfFQX3bvJuJd5zu2Hd5MZQy",
-    "pool": "3NBq9zynLPDQQDvYf8xiMbWywQfKZD7m7fyprY524efq",
-    "registered_entry_price": 0.0002655589272634275,
-    "route_fee": 0.01,
-    "shadow": true,
-    "signal_t": 1791702600.0
-   },
-   "mode": "paper",
-   "notional_usd": 200.0,
-   "side": 1,
-   "strategy": "dip~drop=0.05~hold_bars=96"
-  },
-  {
-   "asset": "6QyYdc6jgeKnfP1FWhiexMYq3JQ3sidSYoubjWUTo3rm",
-   "entry_at": 1791703200.0,
-   "entry_cost_usd": 3.292927010938591,
-   "entry_price": 0.0007561437236265249,
-   "id": "2b4b694c6d89",
-   "mark_at": 1791728400.0,
-   "mark_price": 0.0006008124325638796,
-   "meta": {
-    "alt_cost": {
-     "fee": 0.016,
-     "fixed_usd": 0.05,
-     "impact": 0.0012146350546929578
-    },
-    "exit_t": 1791728700.0,
-    "impact_assumed": 0.0012146350546929578,
-    "key": "6QyYdc6jgeKnfP1FWhiexMYq3JQ3sidSYoubjWUTo3rm:1791699900",
-    "label": "HeeHaw / SOL",
-    "late_entry": true,
-    "liquidity_usd": 329317.0228,
-    "mint": "EEpng77ZPn9FbgbT4xsRjwuxNCcMBYq3HTwEscyTpump",
-    "pool": "6QyYdc6jgeKnfP1FWhiexMYq3JQ3sidSYoubjWUTo3rm",
-    "registered_entry_price": 0.0007362395030809137,
-    "route_fee": 0.01,
-    "shadow": true,
-    "signal_t": 1791699900.0
-   },
-   "mode": "paper",
-   "notional_usd": 200.0,
-   "side": 1,
-   "strategy": "dip~drop=0.05~hold_bars=96"
-  },
-  {
-   "asset": "2B8tftZ5ww8TREMr3pgkgERLNjJyJxEAPWMENViGMsL4",
-   "entry_at": 1791703200.0,
-   "entry_cost_usd": 3.365495884712891,
-   "entry_price": 0.003420748000725525,
-   "id": "dc55ca4a59be",
-   "mark_at": 1791728400.0,
-   "mark_price": 0.0036792566137149353,
-   "meta": {
-    "alt_cost": {
-     "fee": 0.017499999999999998,
-     "fixed_usd": 0.05,
-     "impact": 0.0015774794235644573
-    },
-    "exit_t": 1791730500.0,
-    "impact_assumed": 0.0015774794235644573,
-    "key": "2B8tftZ5ww8TREMr3pgkgERLNjJyJxEAPWMENViGMsL4:1791701700",
-    "label": "CRAWL / SOL",
-    "late_entry": true,
-    "liquidity_usd": 253569.0761,
-    "mint": "BXoHJddsWJLHtAopeiSbKUSELsu8hSFMs8baGMDkpump",
-    "pool": "2B8tftZ5ww8TREMr3pgkgERLNjJyJxEAPWMENViGMsL4",
-    "registered_entry_price": 0.0038471718787135996,
-    "route_fee": 0.01,
-    "shadow": true,
-    "signal_t": 1791701700.0
-   },
-   "mode": "paper",
-   "notional_usd": 200.0,
-   "side": 1,
-   "strategy": "dip~drop=0.08~hold_bars=96"
-  },
-  {
    "asset": "65GHmCbyRME3XwKjTqDB7pMJw2gvj2LZryfWKczoAqFR",
    "entry_at": 1791706800.0,
    "entry_cost_usd": 5.48995885729175,
    "entry_price": 7.957667086398351e-06,
    "id": "c9cdfca0f984",
-   "mark_at": 1791727200.0,
-   "mark_price": 7.955124463836765e-06,
+   "mark_at": 1791731700.0,
+   "mark_price": 7.928847717119873e-06,
    "meta": {
     "alt_cost": {
      "fee": 0.022,
@@ -415,41 +223,9 @@
    "entry_at": 1791706800.0,
    "entry_cost_usd": 3.282086727604988,
    "entry_price": 0.003568948348064605,
-   "id": "3d25a4d7f80f",
-   "mark_at": 1791728400.0,
-   "mark_price": 0.00313831890035279,
-   "meta": {
-    "alt_cost": {
-     "fee": 0.016,
-     "fixed_usd": 0.05,
-     "impact": 0.0011604336380249415
-    },
-    "exit_t": 1791731700.0,
-    "impact_assumed": 0.0011604336380249415,
-    "key": "CyJwKnLiiY4fmiwqMCSWFSHxo7T9Ubshgs2uRAuJCrk5:1791702900",
-    "label": "Agency / SOL",
-    "late_entry": true,
-    "liquidity_usd": 344698.7289,
-    "mint": "7VertkgF9KLhxxJXHX6uaWuoYZTP9LdGj2bWmVXVpump",
-    "pool": "CyJwKnLiiY4fmiwqMCSWFSHxo7T9Ubshgs2uRAuJCrk5",
-    "registered_entry_price": 0.0035631248405035097,
-    "route_fee": 0.01,
-    "shadow": true,
-    "signal_t": 1791702900.0
-   },
-   "mode": "paper",
-   "notional_usd": 200.0,
-   "side": 1,
-   "strategy": "dip~drop=0.03~hold_bars=96"
-  },
-  {
-   "asset": "CyJwKnLiiY4fmiwqMCSWFSHxo7T9Ubshgs2uRAuJCrk5",
-   "entry_at": 1791706800.0,
-   "entry_cost_usd": 3.282086727604988,
-   "entry_price": 0.003568948348064605,
    "id": "a17a07bd48cd",
-   "mark_at": 1791728400.0,
-   "mark_price": 0.00313831890035279,
+   "mark_at": 1791732000.0,
+   "mark_price": 0.0029305895041778964,
    "meta": {
     "alt_cost": {
      "fee": 0.016,
@@ -480,8 +256,8 @@
    "entry_cost_usd": 3.662583072725498,
    "entry_price": 0.007236311939446717,
    "id": "520e5684a893",
-   "mark_at": 1791728400.0,
-   "mark_price": 0.009363828378303813,
+   "mark_at": 1791732000.0,
+   "mark_price": 0.010351971389629523,
    "meta": {
     "alt_cost": {
      "fee": 0.019499999999999997,
@@ -512,8 +288,8 @@
    "entry_cost_usd": 3.3739370613321755,
    "entry_price": 0.002404679041704056,
    "id": "b8357bab2bff",
-   "mark_at": 1791728400.0,
-   "mark_price": 0.0027417576530747133,
+   "mark_at": 1791732000.0,
+   "mark_price": 0.0025920332718732844,
    "meta": {
     "alt_cost": {
      "fee": 0.017499999999999998,
@@ -544,8 +320,8 @@
    "entry_cost_usd": 3.3584988294713747,
    "entry_price": 0.0017857948435438143,
    "id": "1412bc29d3b6",
-   "mark_at": 1791728400.0,
-   "mark_price": 0.001870687224210292,
+   "mark_at": 1791732000.0,
+   "mark_price": 0.001976413493045083,
    "meta": {
     "alt_cost": {
      "fee": 0.018999999999999996,
@@ -576,8 +352,8 @@
    "entry_cost_usd": 3.3739370613321755,
    "entry_price": 0.002404679041704056,
    "id": "c13971ff2c67",
-   "mark_at": 1791728400.0,
-   "mark_price": 0.0027417576530747133,
+   "mark_at": 1791732000.0,
+   "mark_price": 0.0025920332718732844,
    "meta": {
     "alt_cost": {
      "fee": 0.017499999999999998,
@@ -608,8 +384,8 @@
    "entry_cost_usd": 3.3584988294713747,
    "entry_price": 0.0017857948435438143,
    "id": "d522e744a82b",
-   "mark_at": 1791728400.0,
-   "mark_price": 0.001870687224210292,
+   "mark_at": 1791732000.0,
+   "mark_price": 0.001976413493045083,
    "meta": {
     "alt_cost": {
      "fee": 0.018999999999999996,
@@ -640,8 +416,8 @@
    "entry_cost_usd": 3.292927010938591,
    "entry_price": 0.0006962085978249522,
    "id": "1c28a15482d0",
-   "mark_at": 1791728400.0,
-   "mark_price": 0.0006008124325638796,
+   "mark_at": 1791732000.0,
+   "mark_price": 0.000628759916647915,
    "meta": {
     "alt_cost": {
      "fee": 0.016,
@@ -672,8 +448,8 @@
    "entry_cost_usd": 3.3584988294713747,
    "entry_price": 0.0017857948435438143,
    "id": "b0b6357e1b81",
-   "mark_at": 1791728400.0,
-   "mark_price": 0.001870687224210292,
+   "mark_at": 1791732000.0,
+   "mark_price": 0.001976413493045083,
    "meta": {
     "alt_cost": {
      "fee": 0.018999999999999996,
@@ -704,8 +480,8 @@
    "entry_cost_usd": 3.3739370613321755,
    "entry_price": 0.002284580279103441,
    "id": "bcd5f6906de1",
-   "mark_at": 1791728400.0,
-   "mark_price": 0.0027417576530747133,
+   "mark_at": 1791732000.0,
+   "mark_price": 0.0025920332718732844,
    "meta": {
     "alt_cost": {
      "fee": 0.017499999999999998,
@@ -731,245 +507,13 @@
    "strategy": "dip~drop=0.08~hold_bars=96"
   },
   {
-   "asset": "2B8tftZ5ww8TREMr3pgkgERLNjJyJxEAPWMENViGMsL4",
-   "entry_at": 1791717600.0,
-   "entry_cost_usd": 3.365495884712891,
-   "entry_price": 0.003824955908271682,
-   "id": "736df7fdcc56",
-   "mark_at": 1791728400.0,
-   "mark_price": 0.0036792566137149353,
-   "meta": {
-    "alt_cost": {
-     "fee": 0.017499999999999998,
-     "fixed_usd": 0.05,
-     "impact": 0.0015774794235644573
-    },
-    "exit_t": 1791731400.0,
-    "impact_assumed": 0.0015774794235644573,
-    "key": "2B8tftZ5ww8TREMr3pgkgERLNjJyJxEAPWMENViGMsL4:1791717000",
-    "label": "CRAWL / SOL",
-    "late_entry": true,
-    "liquidity_usd": 253569.0761,
-    "mint": "BXoHJddsWJLHtAopeiSbKUSELsu8hSFMs8baGMDkpump",
-    "pool": "2B8tftZ5ww8TREMr3pgkgERLNjJyJxEAPWMENViGMsL4",
-    "registered_entry_price": 0.0038518100974589365,
-    "route_fee": 0.01,
-    "shadow": false,
-    "signal_t": 1791717000.0
-   },
-   "mode": "paper",
-   "notional_usd": 200.0,
-   "side": 1,
-   "strategy": "dip"
-  },
-  {
-   "asset": "4R8CiMnJWDNoes3fQi1ccPFJygPXazaHaWpHrN3rZeNj",
-   "entry_at": 1791717600.0,
-   "entry_cost_usd": 3.2064003588451397,
-   "entry_price": 0.012204669076548897,
-   "id": "a3d47cb46ef8",
-   "mark_at": 1791728400.0,
-   "mark_price": 0.012429831118774739,
-   "meta": {
-    "alt_cost": {
-     "fee": 0.0133,
-     "fixed_usd": 0.05,
-     "impact": 0.0007820017942256987
-    },
-    "exit_t": 1791731100.0,
-    "impact_assumed": 0.0007820017942256987,
-    "key": "4R8CiMnJWDNoes3fQi1ccPFJygPXazaHaWpHrN3rZeNj:1791716700",
-    "label": "JEANPHIL / SOL",
-    "late_entry": true,
-    "liquidity_usd": 511507.7778,
-    "mint": "GTBxUiw6wJdmmkCGZgRHLyYxqu1vG4KtRpeox6yDpump",
-    "pool": "4R8CiMnJWDNoes3fQi1ccPFJygPXazaHaWpHrN3rZeNj",
-    "registered_entry_price": 0.012292684267809547,
-    "route_fee": 0.01,
-    "shadow": false,
-    "signal_t": 1791716700.0
-   },
-   "mode": "paper",
-   "notional_usd": 200.0,
-   "side": 1,
-   "strategy": "dip"
-  },
-  {
-   "asset": "Fe7bpDYCs74GqiCUF14HwgUMToPKV1d9mDYVX5BTohFr",
-   "entry_at": 1791717600.0,
-   "entry_cost_usd": 3.662583072725498,
-   "entry_price": 0.007942406400378625,
-   "id": "0a45175e9a07",
-   "mark_at": 1791728400.0,
-   "mark_price": 0.009363828378303813,
-   "meta": {
-    "alt_cost": {
-     "fee": 0.019499999999999997,
-     "fixed_usd": 0.05,
-     "impact": 0.0030629153636274934
-    },
-    "exit_t": 1791731400.0,
-    "impact_assumed": 0.0030629153636274934,
-    "key": "Fe7bpDYCs74GqiCUF14HwgUMToPKV1d9mDYVX5BTohFr:1791717000",
-    "label": "CLAUDIA / SOL",
-    "late_entry": true,
-    "liquidity_usd": 130594.5325,
-    "mint": "2j5SaS7xy776qCBpyPQbZjyQSAtKiFgrwjfErthnW2ZM",
-    "pool": "Fe7bpDYCs74GqiCUF14HwgUMToPKV1d9mDYVX5BTohFr",
-    "registered_entry_price": 0.007797647076210733,
-    "route_fee": 0.01,
-    "shadow": false,
-    "signal_t": 1791717000.0
-   },
-   "mode": "paper",
-   "notional_usd": 200.0,
-   "side": 1,
-   "strategy": "dip"
-  },
-  {
-   "asset": "GLL3CzybpSCLZdoACf8QUM5YrKVwyA65kQ2RcTsJxxzV",
-   "entry_at": 1791721200.0,
-   "entry_cost_usd": 3.354635533586855,
-   "entry_price": 0.004300753650836016,
-   "id": "3a4f89da3fed",
-   "mark_at": 1791728400.0,
-   "mark_price": 0.00460129247582362,
-   "meta": {
-    "alt_cost": {
-     "fee": 0.016499999999999997,
-     "fixed_usd": 0.05,
-     "impact": 0.0015231776679342772
-    },
-    "exit_t": 1791731700.0,
-    "impact_assumed": 0.0015231776679342772,
-    "jup_at": 1791721583.7258892,
-    "jup_impact_measured_pct": 0.17103408149145016,
-    "jup_out": "51750219445",
-    "jup_reported_impact_pct": 0.8455960969096682,
-    "jup_route": [
-     "Flux",
-     "Pump.fun Amm"
-    ],
-    "key": "GLL3CzybpSCLZdoACf8QUM5YrKVwyA65kQ2RcTsJxxzV:1791717300",
-    "label": "HOTBOT / SOL",
-    "late_entry": true,
-    "liquidity_usd": 262608.8922,
-    "mint": "8nnaeWCw8mUypcGAgbmSuzAT85uWx4UN12adDrMhXrGF",
-    "pool": "GLL3CzybpSCLZdoACf8QUM5YrKVwyA65kQ2RcTsJxxzV",
-    "registered_entry_price": 0.004892057260713072,
-    "route_fee": 0.01,
-    "shadow": false,
-    "signal_t": 1791717300.0
-   },
-   "mode": "paper",
-   "notional_usd": 200.0,
-   "side": 1,
-   "strategy": "dip"
-  },
-  {
-   "asset": "4R8CiMnJWDNoes3fQi1ccPFJygPXazaHaWpHrN3rZeNj",
-   "entry_at": 1791717600.0,
-   "entry_cost_usd": 3.2064003588451397,
-   "entry_price": 0.012204669076548897,
-   "id": "cf0a0d329113",
-   "mark_at": 1791728400.0,
-   "mark_price": 0.012429831118774739,
-   "meta": {
-    "alt_cost": {
-     "fee": 0.0133,
-     "fixed_usd": 0.05,
-     "impact": 0.0007820017942256987
-    },
-    "exit_t": 1791730500.0,
-    "impact_assumed": 0.0007820017942256987,
-    "key": "4R8CiMnJWDNoes3fQi1ccPFJygPXazaHaWpHrN3rZeNj:1791716100",
-    "label": "JEANPHIL / SOL",
-    "late_entry": true,
-    "liquidity_usd": 511507.7778,
-    "mint": "GTBxUiw6wJdmmkCGZgRHLyYxqu1vG4KtRpeox6yDpump",
-    "pool": "4R8CiMnJWDNoes3fQi1ccPFJygPXazaHaWpHrN3rZeNj",
-    "registered_entry_price": 0.011953202347526018,
-    "route_fee": 0.01,
-    "shadow": true,
-    "signal_t": 1791716100.0
-   },
-   "mode": "paper",
-   "notional_usd": 200.0,
-   "side": 1,
-   "strategy": "dip~drop=0.03~hold_bars=48"
-  },
-  {
-   "asset": "Fe7bpDYCs74GqiCUF14HwgUMToPKV1d9mDYVX5BTohFr",
-   "entry_at": 1791717600.0,
-   "entry_cost_usd": 3.662583072725498,
-   "entry_price": 0.007942406400378625,
-   "id": "c95af9b9c0df",
-   "mark_at": 1791728400.0,
-   "mark_price": 0.009363828378303813,
-   "meta": {
-    "alt_cost": {
-     "fee": 0.019499999999999997,
-     "fixed_usd": 0.05,
-     "impact": 0.0030629153636274934
-    },
-    "exit_t": 1791731400.0,
-    "impact_assumed": 0.0030629153636274934,
-    "key": "Fe7bpDYCs74GqiCUF14HwgUMToPKV1d9mDYVX5BTohFr:1791717000",
-    "label": "CLAUDIA / SOL",
-    "late_entry": true,
-    "liquidity_usd": 130594.5325,
-    "mint": "2j5SaS7xy776qCBpyPQbZjyQSAtKiFgrwjfErthnW2ZM",
-    "pool": "Fe7bpDYCs74GqiCUF14HwgUMToPKV1d9mDYVX5BTohFr",
-    "registered_entry_price": 0.007797647076210733,
-    "route_fee": 0.01,
-    "shadow": true,
-    "signal_t": 1791717000.0
-   },
-   "mode": "paper",
-   "notional_usd": 200.0,
-   "side": 1,
-   "strategy": "dip~drop=0.03~hold_bars=48"
-  },
-  {
-   "asset": "GLL3CzybpSCLZdoACf8QUM5YrKVwyA65kQ2RcTsJxxzV",
-   "entry_at": 1791721200.0,
-   "entry_cost_usd": 3.354635533586855,
-   "entry_price": 0.004300753650836016,
-   "id": "3cefe0cefd32",
-   "mark_at": 1791728400.0,
-   "mark_price": 0.00460129247582362,
-   "meta": {
-    "alt_cost": {
-     "fee": 0.016499999999999997,
-     "fixed_usd": 0.05,
-     "impact": 0.0015231776679342772
-    },
-    "exit_t": 1791731700.0,
-    "impact_assumed": 0.0015231776679342772,
-    "key": "GLL3CzybpSCLZdoACf8QUM5YrKVwyA65kQ2RcTsJxxzV:1791717300",
-    "label": "HOTBOT / SOL",
-    "late_entry": true,
-    "liquidity_usd": 262608.8922,
-    "mint": "8nnaeWCw8mUypcGAgbmSuzAT85uWx4UN12adDrMhXrGF",
-    "pool": "GLL3CzybpSCLZdoACf8QUM5YrKVwyA65kQ2RcTsJxxzV",
-    "registered_entry_price": 0.004892057260713072,
-    "route_fee": 0.01,
-    "shadow": true,
-    "signal_t": 1791717300.0
-   },
-   "mode": "paper",
-   "notional_usd": 200.0,
-   "side": 1,
-   "strategy": "dip~drop=0.03~hold_bars=48"
-  },
-  {
    "asset": "745ATaSSWxvry5qt1XVv9eXuG884hDvNJfvA2o82dNBi",
    "entry_at": 1791721200.0,
    "entry_cost_usd": 4.0567773191035945,
    "entry_price": 0.00040498876122379863,
    "id": "8ec2ac84c79c",
-   "mark_at": 1791728400.0,
-   "mark_price": 0.00037714933660021636,
+   "mark_at": 1791732000.0,
+   "mark_price": 0.00033420431394588416,
    "meta": {
     "alt_cost": {
      "fee": 0.019999999999999997,
@@ -1000,8 +544,8 @@
    "entry_cost_usd": 3.354635533586855,
    "entry_price": 0.004300753650836016,
    "id": "5172e0761c4c",
-   "mark_at": 1791728400.0,
-   "mark_price": 0.00460129247582362,
+   "mark_at": 1791732000.0,
+   "mark_price": 0.003906866400024266,
    "meta": {
     "alt_cost": {
      "fee": 0.016499999999999997,
@@ -1032,8 +576,8 @@
    "entry_cost_usd": 3.365495884712891,
    "entry_price": 0.003824955908271682,
    "id": "769c0b77bf96",
-   "mark_at": 1791728400.0,
-   "mark_price": 0.0036792566137149353,
+   "mark_at": 1791732000.0,
+   "mark_price": 0.0034380215068390957,
    "meta": {
     "alt_cost": {
      "fee": 0.017499999999999998,
@@ -1064,8 +608,8 @@
    "entry_cost_usd": 4.0567773191035945,
    "entry_price": 0.00040498876122379863,
    "id": "03e09f4b3d4a",
-   "mark_at": 1791728400.0,
-   "mark_price": 0.00037714933660021636,
+   "mark_at": 1791732000.0,
+   "mark_price": 0.00033420431394588416,
    "meta": {
     "alt_cost": {
      "fee": 0.019999999999999997,
@@ -1096,8 +640,8 @@
    "entry_cost_usd": 3.354635533586855,
    "entry_price": 0.004300753650836016,
    "id": "7ed57b362ef8",
-   "mark_at": 1791728400.0,
-   "mark_price": 0.00460129247582362,
+   "mark_at": 1791732000.0,
+   "mark_price": 0.003906866400024266,
    "meta": {
     "alt_cost": {
      "fee": 0.016499999999999997,
@@ -1128,8 +672,8 @@
    "entry_cost_usd": 3.2064003588451397,
    "entry_price": 0.012576200391908286,
    "id": "f7b22d678fc2",
-   "mark_at": 1791728400.0,
-   "mark_price": 0.012429831118774739,
+   "mark_at": 1791732000.0,
+   "mark_price": 0.01244126210853234,
    "meta": {
     "alt_cost": {
      "fee": 0.0133,
@@ -1160,8 +704,8 @@
    "entry_cost_usd": 3.354635533586855,
    "entry_price": 0.004300753650836016,
    "id": "1a07ca5a9d6a",
-   "mark_at": 1791728400.0,
-   "mark_price": 0.00460129247582362,
+   "mark_at": 1791732000.0,
+   "mark_price": 0.003906866400024266,
    "meta": {
     "alt_cost": {
      "fee": 0.016499999999999997,
@@ -1192,8 +736,8 @@
    "entry_cost_usd": 4.0567773191035945,
    "entry_price": 0.00040498876122379863,
    "id": "5d3e669ba4f9",
-   "mark_at": 1791728400.0,
-   "mark_price": 0.00037714933660021636,
+   "mark_at": 1791732000.0,
+   "mark_price": 0.00033420431394588416,
    "meta": {
     "alt_cost": {
      "fee": 0.019999999999999997,
@@ -1224,8 +768,8 @@
    "entry_cost_usd": 3.2064003588451397,
    "entry_price": 0.012576200391908286,
    "id": "cf3e3c0a1106",
-   "mark_at": 1791728400.0,
-   "mark_price": 0.012429831118774739,
+   "mark_at": 1791732000.0,
+   "mark_price": 0.01244126210853234,
    "meta": {
     "alt_cost": {
      "fee": 0.0133,
@@ -1256,8 +800,8 @@
    "entry_cost_usd": 3.354635533586855,
    "entry_price": 0.004300753650836016,
    "id": "396bc717333c",
-   "mark_at": 1791728400.0,
-   "mark_price": 0.00460129247582362,
+   "mark_at": 1791732000.0,
+   "mark_price": 0.003906866400024266,
    "meta": {
     "alt_cost": {
      "fee": 0.016499999999999997,
@@ -1288,8 +832,8 @@
    "entry_cost_usd": 3.6057263294847637,
    "entry_price": 0.0002658096957765312,
    "id": "36c7830a45c1",
-   "mark_at": 1791728400.0,
-   "mark_price": 0.00025838990953476015,
+   "mark_at": 1791732000.0,
+   "mark_price": 0.0002650391840690894,
    "meta": {
     "alt_cost": {
      "fee": 0.019499999999999997,
@@ -1322,8 +866,8 @@
    "entry_cost_usd": 3.429149081120116,
    "entry_price": 0.001972569240273558,
    "id": "8304bbbc93ca",
-   "mark_at": 1791728400.0,
-   "mark_price": 0.0019896823181096363,
+   "mark_at": 1791732000.0,
+   "mark_price": 0.0020045207752685617,
    "meta": {
     "alt_cost": {
      "fee": 0.018,
@@ -1356,8 +900,8 @@
    "entry_cost_usd": 5.35807588105279,
    "entry_price": 3.130873181031274e-05,
    "id": "b05595593794",
-   "mark_at": 1791728400.0,
-   "mark_price": 3.230466185122196e-05,
+   "mark_at": 1791732000.0,
+   "mark_price": 3.375653324718314e-05,
    "meta": {
     "alt_cost": {
      "fee": 0.022,
@@ -1390,8 +934,8 @@
    "entry_cost_usd": 4.0567773191035945,
    "entry_price": 0.0004250423256655856,
    "id": "218769f8b613",
-   "mark_at": 1791728400.0,
-   "mark_price": 0.00037714933660021636,
+   "mark_at": 1791732000.0,
+   "mark_price": 0.00033420431394588416,
    "meta": {
     "alt_cost": {
      "fee": 0.019999999999999997,
@@ -1423,169 +967,9 @@
    "entry_at": 1791724800.0,
    "entry_cost_usd": 3.282086727604988,
    "entry_price": 0.003215208637038583,
-   "id": "bd4c493611e9",
-   "mark_at": 1791728400.0,
-   "mark_price": 0.00313831890035279,
-   "meta": {
-    "alt_cost": {
-     "fee": 0.016,
-     "fixed_usd": 0.05,
-     "impact": 0.0011604336380249415
-    },
-    "exit_t": 1791729900.0,
-    "impact_assumed": 0.0011604336380249415,
-    "key": "CyJwKnLiiY4fmiwqMCSWFSHxo7T9Ubshgs2uRAuJCrk5:1791722700",
-    "label": "Agency / SOL",
-    "late_entry": true,
-    "liquidity_usd": 344698.7289,
-    "mint": "7VertkgF9KLhxxJXHX6uaWuoYZTP9LdGj2bWmVXVpump",
-    "pool": "CyJwKnLiiY4fmiwqMCSWFSHxo7T9Ubshgs2uRAuJCrk5",
-    "registered_entry_price": 0.0031563761494544326,
-    "route_fee": 0.01,
-    "shadow": true,
-    "signal_t": 1791722700.0
-   },
-   "mode": "paper",
-   "notional_usd": 200.0,
-   "side": 1,
-   "strategy": "dip~drop=0.03~hold_bars=24"
-  },
-  {
-   "asset": "A7nWJWGUjNyWbVNPA5RrvLoF37j3ovdh8DKdgxYefcdk",
-   "entry_at": 1791724800.0,
-   "entry_cost_usd": 5.35807588105279,
-   "entry_price": 3.130873181031274e-05,
-   "id": "16ad66f34d52",
-   "mark_at": 1791728400.0,
-   "mark_price": 3.230466185122196e-05,
-   "meta": {
-    "alt_cost": {
-     "fee": 0.022,
-     "fixed_usd": 0.05,
-     "impact": 0.01154037940526395
-    },
-    "exit_t": 1791730200.0,
-    "impact_assumed": 0.01154037940526395,
-    "key": "A7nWJWGUjNyWbVNPA5RrvLoF37j3ovdh8DKdgxYefcdk:1791723000",
-    "label": "SENTS / SOL",
-    "late_entry": true,
-    "liquidity_usd": 34660.9055,
-    "mint": "BLXhcFAtJpCM3HCbdzvr8F3JwGqdMGkAoLXuRmXLpump",
-    "pool": "A7nWJWGUjNyWbVNPA5RrvLoF37j3ovdh8DKdgxYefcdk",
-    "registered_entry_price": 3.164439331139711e-05,
-    "route_fee": 0.01,
-    "shadow": true,
-    "signal_t": 1791723000.0
-   },
-   "mode": "paper",
-   "notional_usd": 200.0,
-   "side": 1,
-   "strategy": "dip~drop=0.03~hold_bars=24"
-  },
-  {
-   "asset": "4R8CiMnJWDNoes3fQi1ccPFJygPXazaHaWpHrN3rZeNj",
-   "entry_at": 1791724800.0,
-   "entry_cost_usd": 3.2064003588451397,
-   "entry_price": 0.01182994349963228,
-   "id": "95637822d8c4",
-   "mark_at": 1791728400.0,
-   "mark_price": 0.012429831118774739,
-   "meta": {
-    "alt_cost": {
-     "fee": 0.0133,
-     "fixed_usd": 0.05,
-     "impact": 0.0007820017942256987
-    },
-    "exit_t": 1791731400.0,
-    "impact_assumed": 0.0007820017942256987,
-    "key": "4R8CiMnJWDNoes3fQi1ccPFJygPXazaHaWpHrN3rZeNj:1791724200",
-    "label": "JEANPHIL / SOL",
-    "late_entry": true,
-    "liquidity_usd": 511507.7778,
-    "mint": "GTBxUiw6wJdmmkCGZgRHLyYxqu1vG4KtRpeox6yDpump",
-    "pool": "4R8CiMnJWDNoes3fQi1ccPFJygPXazaHaWpHrN3rZeNj",
-    "registered_entry_price": 0.011725619070976478,
-    "route_fee": 0.01,
-    "shadow": true,
-    "signal_t": 1791724200.0
-   },
-   "mode": "paper",
-   "notional_usd": 200.0,
-   "side": 1,
-   "strategy": "dip~drop=0.03~hold_bars=24"
-  },
-  {
-   "asset": "9d6fbbtAGjM6eFHo4NpsPrDgnwhZNdetgewHmupZTVjV",
-   "entry_at": 1791724800.0,
-   "entry_cost_usd": 4.765401005529901,
-   "entry_price": 4.088831409686489e-05,
-   "id": "2498fe9b4b27",
-   "mark_at": 1791728400.0,
-   "mark_price": 5.408334760741447e-05,
-   "meta": {
-    "alt_cost": {
-     "fee": 0.0215,
-     "fixed_usd": 0.05,
-     "impact": 0.008577005027649508
-    },
-    "exit_t": 1791731400.0,
-    "impact_assumed": 0.008577005027649508,
-    "key": "9d6fbbtAGjM6eFHo4NpsPrDgnwhZNdetgewHmupZTVjV:1791724200",
-    "label": "QUBIT / SOL",
-    "late_entry": true,
-    "liquidity_usd": 46636.3257,
-    "mint": "ERkmk5rs8KKD9u2fxoDZUmwwuVc7rT3sSeowGTrQuBit",
-    "pool": "9d6fbbtAGjM6eFHo4NpsPrDgnwhZNdetgewHmupZTVjV",
-    "registered_entry_price": 4.136357169913622e-05,
-    "route_fee": 0.01,
-    "shadow": true,
-    "signal_t": 1791724200.0
-   },
-   "mode": "paper",
-   "notional_usd": 200.0,
-   "side": 1,
-   "strategy": "dip~drop=0.03~hold_bars=24"
-  },
-  {
-   "asset": "cb4GFRgEitfu5qtxfRMiqzsaVPwgbD3HEor4cs2jFpn",
-   "entry_at": 1791724800.0,
-   "entry_cost_usd": 3.5264294461109214,
-   "entry_price": 0.002057623452462943,
-   "id": "6377b962600e",
-   "mark_at": 1791728400.0,
-   "mark_price": 0.0019187832972626094,
-   "meta": {
-    "alt_cost": {
-     "fee": 0.0185,
-     "fixed_usd": 0.05,
-     "impact": 0.0023821472305546073
-    },
-    "exit_t": 1791729000.0,
-    "impact_assumed": 0.0023821472305546073,
-    "key": "cb4GFRgEitfu5qtxfRMiqzsaVPwgbD3HEor4cs2jFpn:1791721800",
-    "label": "QI / SOL",
-    "late_entry": true,
-    "liquidity_usd": 167915.7337,
-    "mint": "8TiMkgvsrat9tM2esko8zVTt99LZLpefUM4SnZaziXaQ",
-    "pool": "cb4GFRgEitfu5qtxfRMiqzsaVPwgbD3HEor4cs2jFpn",
-    "registered_entry_price": 0.0019856104541274787,
-    "route_fee": 0.01,
-    "shadow": true,
-    "signal_t": 1791721800.0
-   },
-   "mode": "paper",
-   "notional_usd": 200.0,
-   "side": 1,
-   "strategy": "dip~drop=0.03~hold_bars=24"
-  },
-  {
-   "asset": "CyJwKnLiiY4fmiwqMCSWFSHxo7T9Ubshgs2uRAuJCrk5",
-   "entry_at": 1791724800.0,
-   "entry_cost_usd": 3.282086727604988,
-   "entry_price": 0.003215208637038583,
    "id": "f9e0126f1d53",
-   "mark_at": 1791728400.0,
-   "mark_price": 0.00313831890035279,
+   "mark_at": 1791732000.0,
+   "mark_price": 0.0029305895041778964,
    "meta": {
     "alt_cost": {
      "fee": 0.016,
@@ -1616,8 +1000,8 @@
    "entry_cost_usd": 3.365495884712891,
    "entry_price": 0.003959020629457647,
    "id": "649b24fd2dd9",
-   "mark_at": 1791728400.0,
-   "mark_price": 0.0036792566137149353,
+   "mark_at": 1791732000.0,
+   "mark_price": 0.0034380215068390957,
    "meta": {
     "alt_cost": {
      "fee": 0.017499999999999998,
@@ -1648,8 +1032,8 @@
    "entry_cost_usd": 5.35807588105279,
    "entry_price": 3.130873181031274e-05,
    "id": "ad5dcfd39fa3",
-   "mark_at": 1791728400.0,
-   "mark_price": 3.230466185122196e-05,
+   "mark_at": 1791732000.0,
+   "mark_price": 3.375653324718314e-05,
    "meta": {
     "alt_cost": {
      "fee": 0.022,
@@ -1680,8 +1064,8 @@
    "entry_cost_usd": 4.0567773191035945,
    "entry_price": 0.0004250423256655856,
    "id": "93f73280b6e7",
-   "mark_at": 1791728400.0,
-   "mark_price": 0.00037714933660021636,
+   "mark_at": 1791732000.0,
+   "mark_price": 0.00033420431394588416,
    "meta": {
     "alt_cost": {
      "fee": 0.019999999999999997,
@@ -1712,8 +1096,8 @@
    "entry_cost_usd": 4.765401005529901,
    "entry_price": 4.088831409686489e-05,
    "id": "7afe2b41617b",
-   "mark_at": 1791728400.0,
-   "mark_price": 5.408334760741447e-05,
+   "mark_at": 1791732000.0,
+   "mark_price": 5.331409436982293e-05,
    "meta": {
     "alt_cost": {
      "fee": 0.0215,
@@ -1744,8 +1128,8 @@
    "entry_cost_usd": 3.429149081120116,
    "entry_price": 0.001972569240273558,
    "id": "4cdd4e72cd20",
-   "mark_at": 1791728400.0,
-   "mark_price": 0.0019896823181096363,
+   "mark_at": 1791732000.0,
+   "mark_price": 0.0020045207752685617,
    "meta": {
     "alt_cost": {
      "fee": 0.018,
@@ -1776,8 +1160,8 @@
    "entry_cost_usd": 5.35807588105279,
    "entry_price": 3.130873181031274e-05,
    "id": "b90fa0c04abb",
-   "mark_at": 1791728400.0,
-   "mark_price": 3.230466185122196e-05,
+   "mark_at": 1791732000.0,
+   "mark_price": 3.375653324718314e-05,
    "meta": {
     "alt_cost": {
      "fee": 0.022,
@@ -1808,8 +1192,8 @@
    "entry_cost_usd": 3.2064003588451397,
    "entry_price": 0.01182994349963228,
    "id": "e3da1ae3515a",
-   "mark_at": 1791728400.0,
-   "mark_price": 0.012429831118774739,
+   "mark_at": 1791732000.0,
+   "mark_price": 0.01244126210853234,
    "meta": {
     "alt_cost": {
      "fee": 0.0133,
@@ -1840,8 +1224,8 @@
    "entry_cost_usd": 4.765401005529901,
    "entry_price": 4.088831409686489e-05,
    "id": "8e5c0fda0d88",
-   "mark_at": 1791728400.0,
-   "mark_price": 5.408334760741447e-05,
+   "mark_at": 1791732000.0,
+   "mark_price": 5.331409436982293e-05,
    "meta": {
     "alt_cost": {
      "fee": 0.0215,
@@ -1867,205 +1251,13 @@
    "strategy": "dip~drop=0.03~hold_bars=96"
   },
   {
-   "asset": "867dKvaCcyRrUDP66bqNXbujXfjaxsNB9wTpc4CmBdAD",
-   "entry_at": 1791724800.0,
-   "entry_cost_usd": 3.429149081120116,
-   "entry_price": 0.001972569240273558,
-   "id": "a8a997482ee4",
-   "mark_at": 1791728400.0,
-   "mark_price": 0.0019896823181096363,
-   "meta": {
-    "alt_cost": {
-     "fee": 0.018,
-     "fixed_usd": 0.05,
-     "impact": 0.0018957454056005827
-    },
-    "exit_t": 1791730200.0,
-    "impact_assumed": 0.0018957454056005827,
-    "key": "867dKvaCcyRrUDP66bqNXbujXfjaxsNB9wTpc4CmBdAD:1791723000",
-    "label": "MISTAKE / SOL",
-    "late_entry": true,
-    "liquidity_usd": 210998.797,
-    "mint": "HKZDfZnkHZxd9agRDNPyDv4iT6LmAurJnpRtj9wpump",
-    "pool": "867dKvaCcyRrUDP66bqNXbujXfjaxsNB9wTpc4CmBdAD",
-    "registered_entry_price": 0.0018817223120775296,
-    "route_fee": 0.01,
-    "shadow": true,
-    "signal_t": 1791723000.0
-   },
-   "mode": "paper",
-   "notional_usd": 200.0,
-   "side": 1,
-   "strategy": "dip~drop=0.05~hold_bars=24"
-  },
-  {
-   "asset": "CyJwKnLiiY4fmiwqMCSWFSHxo7T9Ubshgs2uRAuJCrk5",
-   "entry_at": 1791724800.0,
-   "entry_cost_usd": 3.282086727604988,
-   "entry_price": 0.003215208637038583,
-   "id": "ec835fd313e9",
-   "mark_at": 1791728400.0,
-   "mark_price": 0.00313831890035279,
-   "meta": {
-    "alt_cost": {
-     "fee": 0.016,
-     "fixed_usd": 0.05,
-     "impact": 0.0011604336380249415
-    },
-    "exit_t": 1791729900.0,
-    "impact_assumed": 0.0011604336380249415,
-    "key": "CyJwKnLiiY4fmiwqMCSWFSHxo7T9Ubshgs2uRAuJCrk5:1791722700",
-    "label": "Agency / SOL",
-    "late_entry": true,
-    "liquidity_usd": 344698.7289,
-    "mint": "7VertkgF9KLhxxJXHX6uaWuoYZTP9LdGj2bWmVXVpump",
-    "pool": "CyJwKnLiiY4fmiwqMCSWFSHxo7T9Ubshgs2uRAuJCrk5",
-    "registered_entry_price": 0.0031563761494544326,
-    "route_fee": 0.01,
-    "shadow": true,
-    "signal_t": 1791722700.0
-   },
-   "mode": "paper",
-   "notional_usd": 200.0,
-   "side": 1,
-   "strategy": "dip~drop=0.05~hold_bars=24"
-  },
-  {
-   "asset": "A7nWJWGUjNyWbVNPA5RrvLoF37j3ovdh8DKdgxYefcdk",
-   "entry_at": 1791724800.0,
-   "entry_cost_usd": 5.35807588105279,
-   "entry_price": 3.130873181031274e-05,
-   "id": "c27e6f08381a",
-   "mark_at": 1791728400.0,
-   "mark_price": 3.230466185122196e-05,
-   "meta": {
-    "alt_cost": {
-     "fee": 0.022,
-     "fixed_usd": 0.05,
-     "impact": 0.01154037940526395
-    },
-    "exit_t": 1791731400.0,
-    "impact_assumed": 0.01154037940526395,
-    "key": "A7nWJWGUjNyWbVNPA5RrvLoF37j3ovdh8DKdgxYefcdk:1791724200",
-    "label": "SENTS / SOL",
-    "late_entry": true,
-    "liquidity_usd": 34660.9055,
-    "mint": "BLXhcFAtJpCM3HCbdzvr8F3JwGqdMGkAoLXuRmXLpump",
-    "pool": "A7nWJWGUjNyWbVNPA5RrvLoF37j3ovdh8DKdgxYefcdk",
-    "registered_entry_price": 3.090416378714534e-05,
-    "route_fee": 0.01,
-    "shadow": true,
-    "signal_t": 1791724200.0
-   },
-   "mode": "paper",
-   "notional_usd": 200.0,
-   "side": 1,
-   "strategy": "dip~drop=0.05~hold_bars=24"
-  },
-  {
-   "asset": "4R8CiMnJWDNoes3fQi1ccPFJygPXazaHaWpHrN3rZeNj",
-   "entry_at": 1791724800.0,
-   "entry_cost_usd": 3.2064003588451397,
-   "entry_price": 0.01182994349963228,
-   "id": "05c85699a105",
-   "mark_at": 1791728400.0,
-   "mark_price": 0.012429831118774739,
-   "meta": {
-    "alt_cost": {
-     "fee": 0.0133,
-     "fixed_usd": 0.05,
-     "impact": 0.0007820017942256987
-    },
-    "exit_t": 1791731400.0,
-    "impact_assumed": 0.0007820017942256987,
-    "key": "4R8CiMnJWDNoes3fQi1ccPFJygPXazaHaWpHrN3rZeNj:1791724200",
-    "label": "JEANPHIL / SOL",
-    "late_entry": true,
-    "liquidity_usd": 511507.7778,
-    "mint": "GTBxUiw6wJdmmkCGZgRHLyYxqu1vG4KtRpeox6yDpump",
-    "pool": "4R8CiMnJWDNoes3fQi1ccPFJygPXazaHaWpHrN3rZeNj",
-    "registered_entry_price": 0.011725619070976478,
-    "route_fee": 0.01,
-    "shadow": true,
-    "signal_t": 1791724200.0
-   },
-   "mode": "paper",
-   "notional_usd": 200.0,
-   "side": 1,
-   "strategy": "dip~drop=0.05~hold_bars=24"
-  },
-  {
-   "asset": "9d6fbbtAGjM6eFHo4NpsPrDgnwhZNdetgewHmupZTVjV",
-   "entry_at": 1791724800.0,
-   "entry_cost_usd": 4.765401005529901,
-   "entry_price": 4.088831409686489e-05,
-   "id": "fe00e86e6436",
-   "mark_at": 1791728400.0,
-   "mark_price": 5.408334760741447e-05,
-   "meta": {
-    "alt_cost": {
-     "fee": 0.0215,
-     "fixed_usd": 0.05,
-     "impact": 0.008577005027649508
-    },
-    "exit_t": 1791731400.0,
-    "impact_assumed": 0.008577005027649508,
-    "key": "9d6fbbtAGjM6eFHo4NpsPrDgnwhZNdetgewHmupZTVjV:1791724200",
-    "label": "QUBIT / SOL",
-    "late_entry": true,
-    "liquidity_usd": 46636.3257,
-    "mint": "ERkmk5rs8KKD9u2fxoDZUmwwuVc7rT3sSeowGTrQuBit",
-    "pool": "9d6fbbtAGjM6eFHo4NpsPrDgnwhZNdetgewHmupZTVjV",
-    "registered_entry_price": 4.136357169913622e-05,
-    "route_fee": 0.01,
-    "shadow": true,
-    "signal_t": 1791724200.0
-   },
-   "mode": "paper",
-   "notional_usd": 200.0,
-   "side": 1,
-   "strategy": "dip~drop=0.05~hold_bars=24"
-  },
-  {
-   "asset": "cb4GFRgEitfu5qtxfRMiqzsaVPwgbD3HEor4cs2jFpn",
-   "entry_at": 1791724800.0,
-   "entry_cost_usd": 3.5264294461109214,
-   "entry_price": 0.002057623452462943,
-   "id": "bc820c9f816f",
-   "mark_at": 1791728400.0,
-   "mark_price": 0.0019187832972626094,
-   "meta": {
-    "alt_cost": {
-     "fee": 0.0185,
-     "fixed_usd": 0.05,
-     "impact": 0.0023821472305546073
-    },
-    "exit_t": 1791730200.0,
-    "impact_assumed": 0.0023821472305546073,
-    "key": "cb4GFRgEitfu5qtxfRMiqzsaVPwgbD3HEor4cs2jFpn:1791723000",
-    "label": "QI / SOL",
-    "late_entry": true,
-    "liquidity_usd": 167915.7337,
-    "mint": "8TiMkgvsrat9tM2esko8zVTt99LZLpefUM4SnZaziXaQ",
-    "pool": "cb4GFRgEitfu5qtxfRMiqzsaVPwgbD3HEor4cs2jFpn",
-    "registered_entry_price": 0.0019312087832830313,
-    "route_fee": 0.01,
-    "shadow": true,
-    "signal_t": 1791723000.0
-   },
-   "mode": "paper",
-   "notional_usd": 200.0,
-   "side": 1,
-   "strategy": "dip~drop=0.05~hold_bars=24"
-  },
-  {
    "asset": "A7nWJWGUjNyWbVNPA5RrvLoF37j3ovdh8DKdgxYefcdk",
    "entry_at": 1791724800.0,
    "entry_cost_usd": 5.35807588105279,
    "entry_price": 3.130873181031274e-05,
    "id": "69790afc2cdf",
-   "mark_at": 1791728400.0,
-   "mark_price": 3.230466185122196e-05,
+   "mark_at": 1791732000.0,
+   "mark_price": 3.375653324718314e-05,
    "meta": {
     "alt_cost": {
      "fee": 0.022,
@@ -2096,8 +1288,8 @@
    "entry_cost_usd": 3.2064003588451397,
    "entry_price": 0.01182994349963228,
    "id": "007f6442267f",
-   "mark_at": 1791728400.0,
-   "mark_price": 0.012429831118774739,
+   "mark_at": 1791732000.0,
+   "mark_price": 0.01244126210853234,
    "meta": {
     "alt_cost": {
      "fee": 0.0133,
@@ -2128,8 +1320,8 @@
    "entry_cost_usd": 4.765401005529901,
    "entry_price": 4.088831409686489e-05,
    "id": "0f147ef9bd34",
-   "mark_at": 1791728400.0,
-   "mark_price": 5.408334760741447e-05,
+   "mark_at": 1791732000.0,
+   "mark_price": 5.331409436982293e-05,
    "meta": {
     "alt_cost": {
      "fee": 0.0215,
@@ -2155,173 +1347,13 @@
    "strategy": "dip~drop=0.05~hold_bars=96"
   },
   {
-   "asset": "3NBq9zynLPDQQDvYf8xiMbWywQfKZD7m7fyprY524efq",
-   "entry_at": 1791724800.0,
-   "entry_cost_usd": 3.6057263294847637,
-   "entry_price": 0.0002658096957765312,
-   "id": "9a3187a08944",
-   "mark_at": 1791728400.0,
-   "mark_price": 0.00025838990953476015,
-   "meta": {
-    "alt_cost": {
-     "fee": 0.019499999999999997,
-     "fixed_usd": 0.05,
-     "impact": 0.0027786316474238204
-    },
-    "exit_t": 1791729300.0,
-    "impact_assumed": 0.0027786316474238204,
-    "key": "3NBq9zynLPDQQDvYf8xiMbWywQfKZD7m7fyprY524efq:1791722100",
-    "label": "TWEETCRAFT / SOL",
-    "late_entry": true,
-    "liquidity_usd": 143955.749,
-    "mint": "HzYCHqAN2uoHGRnL9v2ChCfFQX3bvJuJd5zu2Hd5MZQy",
-    "pool": "3NBq9zynLPDQQDvYf8xiMbWywQfKZD7m7fyprY524efq",
-    "registered_entry_price": 0.0002658341614963652,
-    "route_fee": 0.01,
-    "shadow": true,
-    "signal_t": 1791722100.0
-   },
-   "mode": "paper",
-   "notional_usd": 200.0,
-   "side": 1,
-   "strategy": "dip~drop=0.08~hold_bars=24"
-  },
-  {
-   "asset": "CyJwKnLiiY4fmiwqMCSWFSHxo7T9Ubshgs2uRAuJCrk5",
-   "entry_at": 1791724800.0,
-   "entry_cost_usd": 3.282086727604988,
-   "entry_price": 0.003215208637038583,
-   "id": "d35d24ee3a21",
-   "mark_at": 1791728400.0,
-   "mark_price": 0.00313831890035279,
-   "meta": {
-    "alt_cost": {
-     "fee": 0.016,
-     "fixed_usd": 0.05,
-     "impact": 0.0011604336380249415
-    },
-    "exit_t": 1791730500.0,
-    "impact_assumed": 0.0011604336380249415,
-    "key": "CyJwKnLiiY4fmiwqMCSWFSHxo7T9Ubshgs2uRAuJCrk5:1791723300",
-    "label": "Agency / SOL",
-    "late_entry": true,
-    "liquidity_usd": 344698.7289,
-    "mint": "7VertkgF9KLhxxJXHX6uaWuoYZTP9LdGj2bWmVXVpump",
-    "pool": "CyJwKnLiiY4fmiwqMCSWFSHxo7T9Ubshgs2uRAuJCrk5",
-    "registered_entry_price": 0.0029877595936582597,
-    "route_fee": 0.01,
-    "shadow": true,
-    "signal_t": 1791723300.0
-   },
-   "mode": "paper",
-   "notional_usd": 200.0,
-   "side": 1,
-   "strategy": "dip~drop=0.08~hold_bars=24"
-  },
-  {
-   "asset": "A7nWJWGUjNyWbVNPA5RrvLoF37j3ovdh8DKdgxYefcdk",
-   "entry_at": 1791724800.0,
-   "entry_cost_usd": 5.35807588105279,
-   "entry_price": 3.130873181031274e-05,
-   "id": "4836803e3391",
-   "mark_at": 1791728400.0,
-   "mark_price": 3.230466185122196e-05,
-   "meta": {
-    "alt_cost": {
-     "fee": 0.022,
-     "fixed_usd": 0.05,
-     "impact": 0.01154037940526395
-    },
-    "exit_t": 1791729000.0,
-    "impact_assumed": 0.01154037940526395,
-    "key": "A7nWJWGUjNyWbVNPA5RrvLoF37j3ovdh8DKdgxYefcdk:1791721800",
-    "label": "SENTS / SOL",
-    "late_entry": true,
-    "liquidity_usd": 34660.9055,
-    "mint": "BLXhcFAtJpCM3HCbdzvr8F3JwGqdMGkAoLXuRmXLpump",
-    "pool": "A7nWJWGUjNyWbVNPA5RrvLoF37j3ovdh8DKdgxYefcdk",
-    "registered_entry_price": 3.32553447214873e-05,
-    "route_fee": 0.01,
-    "shadow": true,
-    "signal_t": 1791721800.0
-   },
-   "mode": "paper",
-   "notional_usd": 200.0,
-   "side": 1,
-   "strategy": "dip~drop=0.08~hold_bars=24"
-  },
-  {
-   "asset": "9d6fbbtAGjM6eFHo4NpsPrDgnwhZNdetgewHmupZTVjV",
-   "entry_at": 1791724800.0,
-   "entry_cost_usd": 4.765401005529901,
-   "entry_price": 4.088831409686489e-05,
-   "id": "c7a5680eb85b",
-   "mark_at": 1791728400.0,
-   "mark_price": 5.408334760741447e-05,
-   "meta": {
-    "alt_cost": {
-     "fee": 0.0215,
-     "fixed_usd": 0.05,
-     "impact": 0.008577005027649508
-    },
-    "exit_t": 1791731400.0,
-    "impact_assumed": 0.008577005027649508,
-    "key": "9d6fbbtAGjM6eFHo4NpsPrDgnwhZNdetgewHmupZTVjV:1791724200",
-    "label": "QUBIT / SOL",
-    "late_entry": true,
-    "liquidity_usd": 46636.3257,
-    "mint": "ERkmk5rs8KKD9u2fxoDZUmwwuVc7rT3sSeowGTrQuBit",
-    "pool": "9d6fbbtAGjM6eFHo4NpsPrDgnwhZNdetgewHmupZTVjV",
-    "registered_entry_price": 4.136357169913622e-05,
-    "route_fee": 0.01,
-    "shadow": true,
-    "signal_t": 1791724200.0
-   },
-   "mode": "paper",
-   "notional_usd": 200.0,
-   "side": 1,
-   "strategy": "dip~drop=0.08~hold_bars=24"
-  },
-  {
-   "asset": "cb4GFRgEitfu5qtxfRMiqzsaVPwgbD3HEor4cs2jFpn",
-   "entry_at": 1791724800.0,
-   "entry_cost_usd": 3.5264294461109214,
-   "entry_price": 0.002057623452462943,
-   "id": "cadf8eeb5e7a",
-   "mark_at": 1791728400.0,
-   "mark_price": 0.0019187832972626094,
-   "meta": {
-    "alt_cost": {
-     "fee": 0.0185,
-     "fixed_usd": 0.05,
-     "impact": 0.0023821472305546073
-    },
-    "exit_t": 1791730200.0,
-    "impact_assumed": 0.0023821472305546073,
-    "key": "cb4GFRgEitfu5qtxfRMiqzsaVPwgbD3HEor4cs2jFpn:1791723000",
-    "label": "QI / SOL",
-    "late_entry": true,
-    "liquidity_usd": 167915.7337,
-    "mint": "8TiMkgvsrat9tM2esko8zVTt99LZLpefUM4SnZaziXaQ",
-    "pool": "cb4GFRgEitfu5qtxfRMiqzsaVPwgbD3HEor4cs2jFpn",
-    "registered_entry_price": 0.0019312087832830313,
-    "route_fee": 0.01,
-    "shadow": true,
-    "signal_t": 1791723000.0
-   },
-   "mode": "paper",
-   "notional_usd": 200.0,
-   "side": 1,
-   "strategy": "dip~drop=0.08~hold_bars=24"
-  },
-  {
    "asset": "CyJwKnLiiY4fmiwqMCSWFSHxo7T9Ubshgs2uRAuJCrk5",
    "entry_at": 1791724800.0,
    "entry_cost_usd": 3.282086727604988,
    "entry_price": 0.003215208637038583,
    "id": "16dd8c8c4e9b",
-   "mark_at": 1791728400.0,
-   "mark_price": 0.00313831890035279,
+   "mark_at": 1791732000.0,
+   "mark_price": 0.0029305895041778964,
    "meta": {
     "alt_cost": {
      "fee": 0.016,
@@ -2352,8 +1384,8 @@
    "entry_cost_usd": 5.35807588105279,
    "entry_price": 3.130873181031274e-05,
    "id": "c7c5276d7da3",
-   "mark_at": 1791728400.0,
-   "mark_price": 3.230466185122196e-05,
+   "mark_at": 1791732000.0,
+   "mark_price": 3.375653324718314e-05,
    "meta": {
     "alt_cost": {
      "fee": 0.022,
@@ -2384,8 +1416,8 @@
    "entry_cost_usd": 3.6057263294847637,
    "entry_price": 0.0002658096957765312,
    "id": "4ca0f7c7f89a",
-   "mark_at": 1791728400.0,
-   "mark_price": 0.00025838990953476015,
+   "mark_at": 1791732000.0,
+   "mark_price": 0.0002650391840690894,
    "meta": {
     "alt_cost": {
      "fee": 0.019499999999999997,
@@ -2416,8 +1448,8 @@
    "entry_cost_usd": 3.282086727604988,
    "entry_price": 0.003215208637038583,
    "id": "bf1168d1427d",
-   "mark_at": 1791728400.0,
-   "mark_price": 0.00313831890035279,
+   "mark_at": 1791732000.0,
+   "mark_price": 0.0029305895041778964,
    "meta": {
     "alt_cost": {
      "fee": 0.016,
@@ -2448,8 +1480,8 @@
    "entry_cost_usd": 5.35807588105279,
    "entry_price": 3.130873181031274e-05,
    "id": "6cd3766c8035",
-   "mark_at": 1791728400.0,
-   "mark_price": 3.230466185122196e-05,
+   "mark_at": 1791732000.0,
+   "mark_price": 3.375653324718314e-05,
    "meta": {
     "alt_cost": {
      "fee": 0.022,
@@ -2480,8 +1512,8 @@
    "entry_cost_usd": 4.765401005529901,
    "entry_price": 4.088831409686489e-05,
    "id": "9663665449a8",
-   "mark_at": 1791728400.0,
-   "mark_price": 5.408334760741447e-05,
+   "mark_at": 1791732000.0,
+   "mark_price": 5.331409436982293e-05,
    "meta": {
     "alt_cost": {
      "fee": 0.0215,
@@ -2505,6 +1537,1544 @@
    "notional_usd": 200.0,
    "side": 1,
    "strategy": "dip~drop=0.08~hold_bars=96"
+  },
+  {
+   "asset": "6QyYdc6jgeKnfP1FWhiexMYq3JQ3sidSYoubjWUTo3rm",
+   "entry_at": 1791728400.0,
+   "entry_cost_usd": 3.292927010938591,
+   "entry_price": 0.0006008124325638796,
+   "id": "3f1b9976a569",
+   "mark_at": 1791732000.0,
+   "mark_price": 0.000628759916647915,
+   "meta": {
+    "alt_cost": {
+     "fee": 0.016,
+     "fixed_usd": 0.05,
+     "impact": 0.0012146350546929578
+    },
+    "exit_t": 1791741000.0,
+    "impact_assumed": 0.0012146350546929578,
+    "jup_at": 1791732049.4955595,
+    "jup_impact_measured_pct": 0.5934163582415386,
+    "jup_out": "319392040080",
+    "jup_reported_impact_pct": 1.0670865813114663,
+    "jup_route": [
+     "Flux",
+     "Meteora DLMM"
+    ],
+    "key": "6QyYdc6jgeKnfP1FWhiexMYq3JQ3sidSYoubjWUTo3rm:1791726600",
+    "label": "HeeHaw / SOL",
+    "late_entry": true,
+    "liquidity_usd": 329317.0228,
+    "mint": "EEpng77ZPn9FbgbT4xsRjwuxNCcMBYq3HTwEscyTpump",
+    "pool": "6QyYdc6jgeKnfP1FWhiexMYq3JQ3sidSYoubjWUTo3rm",
+    "registered_entry_price": 0.0006508958209071092,
+    "route_fee": 0.01,
+    "shadow": false,
+    "signal_t": 1791726600.0
+   },
+   "mode": "paper",
+   "notional_usd": 200.0,
+   "side": 1,
+   "strategy": "dip"
+  },
+  {
+   "asset": "4JAnKFddd5fFTk5PxDj3PpTWJuTEfSWQEjZJcgKQ9KwW",
+   "entry_at": 1791728400.0,
+   "entry_cost_usd": 3.3584988294713747,
+   "entry_price": 0.001870687224210292,
+   "id": "c790a58147e5",
+   "mark_at": 1791732000.0,
+   "mark_price": 0.001976413493045083,
+   "meta": {
+    "alt_cost": {
+     "fee": 0.018999999999999996,
+     "fixed_usd": 0.05,
+     "impact": 0.0015424941473568753
+    },
+    "exit_t": 1791741900.0,
+    "impact_assumed": 0.0015424941473568753,
+    "jup_at": 1791732049.4955595,
+    "jup_impact_measured_pct": 0.18480975916972397,
+    "jup_out": "98896352886",
+    "jup_reported_impact_pct": 1.9601289743058807,
+    "jup_route": [
+     "HumidiFi",
+     "Scorch",
+     "Pump.fun Amm"
+    ],
+    "key": "4JAnKFddd5fFTk5PxDj3PpTWJuTEfSWQEjZJcgKQ9KwW:1791727500",
+    "label": "e/acc / SOL",
+    "late_entry": true,
+    "liquidity_usd": 259320.2708,
+    "mint": "CbcyNo7m1amFWqEQm2m4PLv1UNvpcL3C1Ujm6AkzpKoU",
+    "pool": "4JAnKFddd5fFTk5PxDj3PpTWJuTEfSWQEjZJcgKQ9KwW",
+    "registered_entry_price": 0.0018952134006426935,
+    "route_fee": 0.01,
+    "shadow": false,
+    "signal_t": 1791727500.0
+   },
+   "mode": "paper",
+   "notional_usd": 200.0,
+   "side": 1,
+   "strategy": "dip"
+  },
+  {
+   "asset": "6qUUCwD9fyRafora8XVmdApQBxCkbUiZTMkcYD47rWsS",
+   "entry_at": 1791728400.0,
+   "entry_cost_usd": 3.630791854183998,
+   "entry_price": 0.0005378817608456895,
+   "id": "f2af15d3bb38",
+   "mark_at": 1791732000.0,
+   "mark_price": 0.000579102766585492,
+   "meta": {
+    "alt_cost": {
+     "fee": 0.019499999999999997,
+     "fixed_usd": 0.05,
+     "impact": 0.002903959270919992
+    },
+    "exit_t": 1791740700.0,
+    "impact_assumed": 0.002903959270919992,
+    "jup_at": 1791732049.4955595,
+    "jup_impact_measured_pct": 1.3312003486377955,
+    "jup_out": "344801403882",
+    "jup_reported_impact_pct": 1.890387993357214,
+    "jup_route": [
+     "ZeroFi",
+     "Whirlpool",
+     "Meteora DLMM"
+    ],
+    "key": "6qUUCwD9fyRafora8XVmdApQBxCkbUiZTMkcYD47rWsS:1791726300",
+    "label": "PQC / SOL",
+    "late_entry": true,
+    "liquidity_usd": 137742.9787,
+    "mint": "7K52aYQW9rWGjwZmQ7o2d1P6E7bji6hSMsqaLy5EcxLh",
+    "pool": "6qUUCwD9fyRafora8XVmdApQBxCkbUiZTMkcYD47rWsS",
+    "registered_entry_price": 0.0005723571523768505,
+    "route_fee": 0.01,
+    "shadow": false,
+    "signal_t": 1791726300.0
+   },
+   "mode": "paper",
+   "notional_usd": 200.0,
+   "side": 1,
+   "strategy": "dip"
+  },
+  {
+   "asset": "9d6fbbtAGjM6eFHo4NpsPrDgnwhZNdetgewHmupZTVjV",
+   "entry_at": 1791728400.0,
+   "entry_cost_usd": 4.765401005529901,
+   "entry_price": 5.408334760741447e-05,
+   "id": "9bf41d7adafd",
+   "mark_at": 1791732000.0,
+   "mark_price": 5.331409436982293e-05,
+   "meta": {
+    "alt_cost": {
+     "fee": 0.0215,
+     "fixed_usd": 0.05,
+     "impact": 0.008577005027649508
+    },
+    "exit_t": 1791738900.0,
+    "impact_assumed": 0.008577005027649508,
+    "jup_at": 1791732049.4955595,
+    "jup_impact_measured_pct": 1.7119446355196688,
+    "jup_out": "3923123474890",
+    "jup_reported_impact_pct": 3.8199724737962635,
+    "jup_route": [
+     "Flux",
+     "Pump.fun Amm"
+    ],
+    "key": "9d6fbbtAGjM6eFHo4NpsPrDgnwhZNdetgewHmupZTVjV:1791724500",
+    "label": "QUBIT / SOL",
+    "late_entry": true,
+    "liquidity_usd": 46636.3257,
+    "mint": "ERkmk5rs8KKD9u2fxoDZUmwwuVc7rT3sSeowGTrQuBit",
+    "pool": "9d6fbbtAGjM6eFHo4NpsPrDgnwhZNdetgewHmupZTVjV",
+    "registered_entry_price": 4.088831409686489e-05,
+    "route_fee": 0.01,
+    "shadow": false,
+    "signal_t": 1791724500.0
+   },
+   "mode": "paper",
+   "notional_usd": 200.0,
+   "side": 1,
+   "strategy": "dip"
+  },
+  {
+   "asset": "3NBq9zynLPDQQDvYf8xiMbWywQfKZD7m7fyprY524efq",
+   "entry_at": 1791728400.0,
+   "entry_cost_usd": 3.6057263294847637,
+   "entry_price": 0.00025838990953476015,
+   "id": "b8db3e81cbe8",
+   "mark_at": 1791732000.0,
+   "mark_price": 0.0002650391840690894,
+   "meta": {
+    "alt_cost": {
+     "fee": 0.019499999999999997,
+     "fixed_usd": 0.05,
+     "impact": 0.0027786316474238204
+    },
+    "exit_t": 1791732600.0,
+    "impact_assumed": 0.0027786316474238204,
+    "key": "3NBq9zynLPDQQDvYf8xiMbWywQfKZD7m7fyprY524efq:1791725400",
+    "label": "TWEETCRAFT / SOL",
+    "late_entry": true,
+    "liquidity_usd": 143955.749,
+    "mint": "HzYCHqAN2uoHGRnL9v2ChCfFQX3bvJuJd5zu2Hd5MZQy",
+    "pool": "3NBq9zynLPDQQDvYf8xiMbWywQfKZD7m7fyprY524efq",
+    "registered_entry_price": 0.0002610411825010508,
+    "route_fee": 0.01,
+    "shadow": true,
+    "signal_t": 1791725400.0
+   },
+   "mode": "paper",
+   "notional_usd": 200.0,
+   "side": 1,
+   "strategy": "dip~drop=0.03~hold_bars=24"
+  },
+  {
+   "asset": "867dKvaCcyRrUDP66bqNXbujXfjaxsNB9wTpc4CmBdAD",
+   "entry_at": 1791728400.0,
+   "entry_cost_usd": 3.429149081120116,
+   "entry_price": 0.0019896823181096363,
+   "id": "d33b4b455913",
+   "mark_at": 1791732000.0,
+   "mark_price": 0.0020045207752685617,
+   "meta": {
+    "alt_cost": {
+     "fee": 0.018,
+     "fixed_usd": 0.05,
+     "impact": 0.0018957454056005827
+    },
+    "exit_t": 1791732000.0,
+    "impact_assumed": 0.0018957454056005827,
+    "key": "867dKvaCcyRrUDP66bqNXbujXfjaxsNB9wTpc4CmBdAD:1791724800",
+    "label": "MISTAKE / SOL",
+    "late_entry": true,
+    "liquidity_usd": 210998.797,
+    "mint": "HKZDfZnkHZxd9agRDNPyDv4iT6LmAurJnpRtj9wpump",
+    "pool": "867dKvaCcyRrUDP66bqNXbujXfjaxsNB9wTpc4CmBdAD",
+    "registered_entry_price": 0.00190054032914101,
+    "route_fee": 0.01,
+    "shadow": true,
+    "signal_t": 1791724800.0
+   },
+   "mode": "paper",
+   "notional_usd": 200.0,
+   "side": 1,
+   "strategy": "dip~drop=0.03~hold_bars=24"
+  },
+  {
+   "asset": "65GHmCbyRME3XwKjTqDB7pMJw2gvj2LZryfWKczoAqFR",
+   "entry_at": 1791728400.0,
+   "entry_cost_usd": 5.48995885729175,
+   "entry_price": 7.955124463836765e-06,
+   "id": "38f1aeb3c3e7",
+   "mark_at": 1791731700.0,
+   "mark_price": 7.928847717119873e-06,
+   "meta": {
+    "alt_cost": {
+     "fee": 0.022,
+     "fixed_usd": 0.05,
+     "impact": 0.012199794286458752
+    },
+    "exit_t": 1791734100.0,
+    "impact_assumed": 0.012199794286458752,
+    "key": "65GHmCbyRME3XwKjTqDB7pMJw2gvj2LZryfWKczoAqFR:1791726900",
+    "label": "SharkTank / SOL",
+    "late_entry": true,
+    "liquidity_usd": 32787.4381,
+    "mint": "HaQdrXRUoxxk1qLFZJNrSyzWNjn16o1r1np5h6jipump",
+    "pool": "65GHmCbyRME3XwKjTqDB7pMJw2gvj2LZryfWKczoAqFR",
+    "registered_entry_price": 7.955124463836765e-06,
+    "route_fee": 0.01,
+    "shadow": true,
+    "signal_t": 1791726900.0
+   },
+   "mode": "paper",
+   "notional_usd": 200.0,
+   "side": 1,
+   "strategy": "dip~drop=0.03~hold_bars=24"
+  },
+  {
+   "asset": "8ewuF2o8ACro7fqWepZ3tKhkbBjndZU4Ldk9scRPw83d",
+   "entry_at": 1791728400.0,
+   "entry_cost_usd": 3.3739370613321755,
+   "entry_price": 0.0027417576530747133,
+   "id": "8d477834808d",
+   "mark_at": 1791732000.0,
+   "mark_price": 0.0025920332718732844,
+   "meta": {
+    "alt_cost": {
+     "fee": 0.017499999999999998,
+     "fixed_usd": 0.05,
+     "impact": 0.0016196853066608784
+    },
+    "exit_t": 1791735000.0,
+    "impact_assumed": 0.0016196853066608784,
+    "key": "8ewuF2o8ACro7fqWepZ3tKhkbBjndZU4Ldk9scRPw83d:1791727800",
+    "label": "swordcat / SOL",
+    "late_entry": true,
+    "liquidity_usd": 246961.5538,
+    "mint": "5tCju6YNxHq5zrA6tGndr6F7TK42mpUFmeE31cSFpump",
+    "pool": "8ewuF2o8ACro7fqWepZ3tKhkbBjndZU4Ldk9scRPw83d",
+    "registered_entry_price": 0.0026953232015283425,
+    "route_fee": 0.01,
+    "shadow": true,
+    "signal_t": 1791727800.0
+   },
+   "mode": "paper",
+   "notional_usd": 200.0,
+   "side": 1,
+   "strategy": "dip~drop=0.03~hold_bars=24"
+  },
+  {
+   "asset": "6QyYdc6jgeKnfP1FWhiexMYq3JQ3sidSYoubjWUTo3rm",
+   "entry_at": 1791728400.0,
+   "entry_cost_usd": 3.292927010938591,
+   "entry_price": 0.0006008124325638796,
+   "id": "5a0398757a96",
+   "mark_at": 1791732000.0,
+   "mark_price": 0.000628759916647915,
+   "meta": {
+    "alt_cost": {
+     "fee": 0.016,
+     "fixed_usd": 0.05,
+     "impact": 0.0012146350546929578
+    },
+    "exit_t": 1791733500.0,
+    "impact_assumed": 0.0012146350546929578,
+    "key": "6QyYdc6jgeKnfP1FWhiexMYq3JQ3sidSYoubjWUTo3rm:1791726300",
+    "label": "HeeHaw / SOL",
+    "late_entry": true,
+    "liquidity_usd": 329317.0228,
+    "mint": "EEpng77ZPn9FbgbT4xsRjwuxNCcMBYq3HTwEscyTpump",
+    "pool": "6QyYdc6jgeKnfP1FWhiexMYq3JQ3sidSYoubjWUTo3rm",
+    "registered_entry_price": 0.0006759723607150401,
+    "route_fee": 0.01,
+    "shadow": true,
+    "signal_t": 1791726300.0
+   },
+   "mode": "paper",
+   "notional_usd": 200.0,
+   "side": 1,
+   "strategy": "dip~drop=0.03~hold_bars=24"
+  },
+  {
+   "asset": "4JAnKFddd5fFTk5PxDj3PpTWJuTEfSWQEjZJcgKQ9KwW",
+   "entry_at": 1791728400.0,
+   "entry_cost_usd": 3.3584988294713747,
+   "entry_price": 0.001870687224210292,
+   "id": "80f12aa4f0a8",
+   "mark_at": 1791732000.0,
+   "mark_price": 0.001976413493045083,
+   "meta": {
+    "alt_cost": {
+     "fee": 0.018999999999999996,
+     "fixed_usd": 0.05,
+     "impact": 0.0015424941473568753
+    },
+    "exit_t": 1791734100.0,
+    "impact_assumed": 0.0015424941473568753,
+    "key": "4JAnKFddd5fFTk5PxDj3PpTWJuTEfSWQEjZJcgKQ9KwW:1791726900",
+    "label": "e/acc / SOL",
+    "late_entry": true,
+    "liquidity_usd": 259320.2708,
+    "mint": "CbcyNo7m1amFWqEQm2m4PLv1UNvpcL3C1Ujm6AkzpKoU",
+    "pool": "4JAnKFddd5fFTk5PxDj3PpTWJuTEfSWQEjZJcgKQ9KwW",
+    "registered_entry_price": 0.0019123835197308724,
+    "route_fee": 0.01,
+    "shadow": true,
+    "signal_t": 1791726900.0
+   },
+   "mode": "paper",
+   "notional_usd": 200.0,
+   "side": 1,
+   "strategy": "dip~drop=0.03~hold_bars=24"
+  },
+  {
+   "asset": "2B8tftZ5ww8TREMr3pgkgERLNjJyJxEAPWMENViGMsL4",
+   "entry_at": 1791728400.0,
+   "entry_cost_usd": 3.365495884712891,
+   "entry_price": 0.0036792566137149353,
+   "id": "96335188b18a",
+   "mark_at": 1791732000.0,
+   "mark_price": 0.0034380215068390957,
+   "meta": {
+    "alt_cost": {
+     "fee": 0.017499999999999998,
+     "fixed_usd": 0.05,
+     "impact": 0.0015774794235644573
+    },
+    "exit_t": 1791732000.0,
+    "impact_assumed": 0.0015774794235644573,
+    "key": "2B8tftZ5ww8TREMr3pgkgERLNjJyJxEAPWMENViGMsL4:1791724800",
+    "label": "CRAWL / SOL",
+    "late_entry": true,
+    "liquidity_usd": 253569.0761,
+    "mint": "BXoHJddsWJLHtAopeiSbKUSELsu8hSFMs8baGMDkpump",
+    "pool": "2B8tftZ5ww8TREMr3pgkgERLNjJyJxEAPWMENViGMsL4",
+    "registered_entry_price": 0.0038504606697260936,
+    "route_fee": 0.01,
+    "shadow": true,
+    "signal_t": 1791724800.0
+   },
+   "mode": "paper",
+   "notional_usd": 200.0,
+   "side": 1,
+   "strategy": "dip~drop=0.03~hold_bars=24"
+  },
+  {
+   "asset": "745ATaSSWxvry5qt1XVv9eXuG884hDvNJfvA2o82dNBi",
+   "entry_at": 1791728400.0,
+   "entry_cost_usd": 4.0567773191035945,
+   "entry_price": 0.00037714933660021636,
+   "id": "ac88163f3bc0",
+   "mark_at": 1791732000.0,
+   "mark_price": 0.00033420431394588416,
+   "meta": {
+    "alt_cost": {
+     "fee": 0.019999999999999997,
+     "fixed_usd": 0.05,
+     "impact": 0.005033886595517973
+    },
+    "exit_t": 1791733200.0,
+    "impact_assumed": 0.005033886595517973,
+    "key": "745ATaSSWxvry5qt1XVv9eXuG884hDvNJfvA2o82dNBi:1791726000",
+    "label": "Frank / SOL",
+    "late_entry": true,
+    "liquidity_usd": 79461.4643,
+    "mint": "HbPDWSqu8hpVMX6gMjwMDGe5rVgicWo3Qh3Jaojypump",
+    "pool": "745ATaSSWxvry5qt1XVv9eXuG884hDvNJfvA2o82dNBi",
+    "registered_entry_price": 0.00037299152967435584,
+    "route_fee": 0.01,
+    "shadow": true,
+    "signal_t": 1791726000.0
+   },
+   "mode": "paper",
+   "notional_usd": 200.0,
+   "side": 1,
+   "strategy": "dip~drop=0.03~hold_bars=24"
+  },
+  {
+   "asset": "6qUUCwD9fyRafora8XVmdApQBxCkbUiZTMkcYD47rWsS",
+   "entry_at": 1791728400.0,
+   "entry_cost_usd": 3.630791854183998,
+   "entry_price": 0.0005378817608456895,
+   "id": "4b0268c59151",
+   "mark_at": 1791732000.0,
+   "mark_price": 0.000579102766585492,
+   "meta": {
+    "alt_cost": {
+     "fee": 0.019499999999999997,
+     "fixed_usd": 0.05,
+     "impact": 0.002903959270919992
+    },
+    "exit_t": 1791734700.0,
+    "impact_assumed": 0.002903959270919992,
+    "key": "6qUUCwD9fyRafora8XVmdApQBxCkbUiZTMkcYD47rWsS:1791727500",
+    "label": "PQC / SOL",
+    "late_entry": true,
+    "liquidity_usd": 137742.9787,
+    "mint": "7K52aYQW9rWGjwZmQ7o2d1P6E7bji6hSMsqaLy5EcxLh",
+    "pool": "6qUUCwD9fyRafora8XVmdApQBxCkbUiZTMkcYD47rWsS",
+    "registered_entry_price": 0.0005392164937581187,
+    "route_fee": 0.01,
+    "shadow": true,
+    "signal_t": 1791727500.0
+   },
+   "mode": "paper",
+   "notional_usd": 200.0,
+   "side": 1,
+   "strategy": "dip~drop=0.03~hold_bars=24"
+  },
+  {
+   "asset": "Fe7bpDYCs74GqiCUF14HwgUMToPKV1d9mDYVX5BTohFr",
+   "entry_at": 1791728400.0,
+   "entry_cost_usd": 3.662583072725498,
+   "entry_price": 0.009363828378303813,
+   "id": "67f7278e81dc",
+   "mark_at": 1791732000.0,
+   "mark_price": 0.010351971389629523,
+   "meta": {
+    "alt_cost": {
+     "fee": 0.019499999999999997,
+     "fixed_usd": 0.05,
+     "impact": 0.0030629153636274934
+    },
+    "exit_t": 1791733200.0,
+    "impact_assumed": 0.0030629153636274934,
+    "key": "Fe7bpDYCs74GqiCUF14HwgUMToPKV1d9mDYVX5BTohFr:1791726000",
+    "label": "CLAUDIA / SOL",
+    "late_entry": true,
+    "liquidity_usd": 130594.5325,
+    "mint": "2j5SaS7xy776qCBpyPQbZjyQSAtKiFgrwjfErthnW2ZM",
+    "pool": "Fe7bpDYCs74GqiCUF14HwgUMToPKV1d9mDYVX5BTohFr",
+    "registered_entry_price": 0.009941011361779084,
+    "route_fee": 0.01,
+    "shadow": true,
+    "signal_t": 1791726000.0
+   },
+   "mode": "paper",
+   "notional_usd": 200.0,
+   "side": 1,
+   "strategy": "dip~drop=0.03~hold_bars=24"
+  },
+  {
+   "asset": "3NBq9zynLPDQQDvYf8xiMbWywQfKZD7m7fyprY524efq",
+   "entry_at": 1791728400.0,
+   "entry_cost_usd": 3.6057263294847637,
+   "entry_price": 0.00025838990953476015,
+   "id": "401798b28123",
+   "mark_at": 1791732000.0,
+   "mark_price": 0.0002650391840690894,
+   "meta": {
+    "alt_cost": {
+     "fee": 0.019499999999999997,
+     "fixed_usd": 0.05,
+     "impact": 0.0027786316474238204
+    },
+    "exit_t": 1791739500.0,
+    "impact_assumed": 0.0027786316474238204,
+    "key": "3NBq9zynLPDQQDvYf8xiMbWywQfKZD7m7fyprY524efq:1791725100",
+    "label": "TWEETCRAFT / SOL",
+    "late_entry": true,
+    "liquidity_usd": 143955.749,
+    "mint": "HzYCHqAN2uoHGRnL9v2ChCfFQX3bvJuJd5zu2Hd5MZQy",
+    "pool": "3NBq9zynLPDQQDvYf8xiMbWywQfKZD7m7fyprY524efq",
+    "registered_entry_price": 0.0002622256408730704,
+    "route_fee": 0.01,
+    "shadow": true,
+    "signal_t": 1791725100.0
+   },
+   "mode": "paper",
+   "notional_usd": 200.0,
+   "side": 1,
+   "strategy": "dip~drop=0.03~hold_bars=48"
+  },
+  {
+   "asset": "867dKvaCcyRrUDP66bqNXbujXfjaxsNB9wTpc4CmBdAD",
+   "entry_at": 1791728400.0,
+   "entry_cost_usd": 3.429149081120116,
+   "entry_price": 0.0019896823181096363,
+   "id": "54aa8a39d111",
+   "mark_at": 1791732000.0,
+   "mark_price": 0.0020045207752685617,
+   "meta": {
+    "alt_cost": {
+     "fee": 0.018,
+     "fixed_usd": 0.05,
+     "impact": 0.0018957454056005827
+    },
+    "exit_t": 1791739200.0,
+    "impact_assumed": 0.0018957454056005827,
+    "key": "867dKvaCcyRrUDP66bqNXbujXfjaxsNB9wTpc4CmBdAD:1791724800",
+    "label": "MISTAKE / SOL",
+    "late_entry": true,
+    "liquidity_usd": 210998.797,
+    "mint": "HKZDfZnkHZxd9agRDNPyDv4iT6LmAurJnpRtj9wpump",
+    "pool": "867dKvaCcyRrUDP66bqNXbujXfjaxsNB9wTpc4CmBdAD",
+    "registered_entry_price": 0.00190054032914101,
+    "route_fee": 0.01,
+    "shadow": true,
+    "signal_t": 1791724800.0
+   },
+   "mode": "paper",
+   "notional_usd": 200.0,
+   "side": 1,
+   "strategy": "dip~drop=0.03~hold_bars=48"
+  },
+  {
+   "asset": "65GHmCbyRME3XwKjTqDB7pMJw2gvj2LZryfWKczoAqFR",
+   "entry_at": 1791728400.0,
+   "entry_cost_usd": 5.48995885729175,
+   "entry_price": 7.955124463836765e-06,
+   "id": "46b0dbaa4714",
+   "mark_at": 1791731700.0,
+   "mark_price": 7.928847717119873e-06,
+   "meta": {
+    "alt_cost": {
+     "fee": 0.022,
+     "fixed_usd": 0.05,
+     "impact": 0.012199794286458752
+    },
+    "exit_t": 1791741300.0,
+    "impact_assumed": 0.012199794286458752,
+    "key": "65GHmCbyRME3XwKjTqDB7pMJw2gvj2LZryfWKczoAqFR:1791726900",
+    "label": "SharkTank / SOL",
+    "late_entry": true,
+    "liquidity_usd": 32787.4381,
+    "mint": "HaQdrXRUoxxk1qLFZJNrSyzWNjn16o1r1np5h6jipump",
+    "pool": "65GHmCbyRME3XwKjTqDB7pMJw2gvj2LZryfWKczoAqFR",
+    "registered_entry_price": 7.955124463836765e-06,
+    "route_fee": 0.01,
+    "shadow": true,
+    "signal_t": 1791726900.0
+   },
+   "mode": "paper",
+   "notional_usd": 200.0,
+   "side": 1,
+   "strategy": "dip~drop=0.03~hold_bars=48"
+  },
+  {
+   "asset": "8ewuF2o8ACro7fqWepZ3tKhkbBjndZU4Ldk9scRPw83d",
+   "entry_at": 1791728400.0,
+   "entry_cost_usd": 3.3739370613321755,
+   "entry_price": 0.0027417576530747133,
+   "id": "ff43ffb81e2b",
+   "mark_at": 1791732000.0,
+   "mark_price": 0.0025920332718732844,
+   "meta": {
+    "alt_cost": {
+     "fee": 0.017499999999999998,
+     "fixed_usd": 0.05,
+     "impact": 0.0016196853066608784
+    },
+    "exit_t": 1791742200.0,
+    "impact_assumed": 0.0016196853066608784,
+    "key": "8ewuF2o8ACro7fqWepZ3tKhkbBjndZU4Ldk9scRPw83d:1791727800",
+    "label": "swordcat / SOL",
+    "late_entry": true,
+    "liquidity_usd": 246961.5538,
+    "mint": "5tCju6YNxHq5zrA6tGndr6F7TK42mpUFmeE31cSFpump",
+    "pool": "8ewuF2o8ACro7fqWepZ3tKhkbBjndZU4Ldk9scRPw83d",
+    "registered_entry_price": 0.0026953232015283425,
+    "route_fee": 0.01,
+    "shadow": true,
+    "signal_t": 1791727800.0
+   },
+   "mode": "paper",
+   "notional_usd": 200.0,
+   "side": 1,
+   "strategy": "dip~drop=0.03~hold_bars=48"
+  },
+  {
+   "asset": "6QyYdc6jgeKnfP1FWhiexMYq3JQ3sidSYoubjWUTo3rm",
+   "entry_at": 1791728400.0,
+   "entry_cost_usd": 3.292927010938591,
+   "entry_price": 0.0006008124325638796,
+   "id": "867a1556055f",
+   "mark_at": 1791732000.0,
+   "mark_price": 0.000628759916647915,
+   "meta": {
+    "alt_cost": {
+     "fee": 0.016,
+     "fixed_usd": 0.05,
+     "impact": 0.0012146350546929578
+    },
+    "exit_t": 1791740700.0,
+    "impact_assumed": 0.0012146350546929578,
+    "key": "6QyYdc6jgeKnfP1FWhiexMYq3JQ3sidSYoubjWUTo3rm:1791726300",
+    "label": "HeeHaw / SOL",
+    "late_entry": true,
+    "liquidity_usd": 329317.0228,
+    "mint": "EEpng77ZPn9FbgbT4xsRjwuxNCcMBYq3HTwEscyTpump",
+    "pool": "6QyYdc6jgeKnfP1FWhiexMYq3JQ3sidSYoubjWUTo3rm",
+    "registered_entry_price": 0.0006759723607150401,
+    "route_fee": 0.01,
+    "shadow": true,
+    "signal_t": 1791726300.0
+   },
+   "mode": "paper",
+   "notional_usd": 200.0,
+   "side": 1,
+   "strategy": "dip~drop=0.03~hold_bars=48"
+  },
+  {
+   "asset": "4JAnKFddd5fFTk5PxDj3PpTWJuTEfSWQEjZJcgKQ9KwW",
+   "entry_at": 1791728400.0,
+   "entry_cost_usd": 3.3584988294713747,
+   "entry_price": 0.001870687224210292,
+   "id": "c4101612dbbf",
+   "mark_at": 1791732000.0,
+   "mark_price": 0.001976413493045083,
+   "meta": {
+    "alt_cost": {
+     "fee": 0.018999999999999996,
+     "fixed_usd": 0.05,
+     "impact": 0.0015424941473568753
+    },
+    "exit_t": 1791741300.0,
+    "impact_assumed": 0.0015424941473568753,
+    "key": "4JAnKFddd5fFTk5PxDj3PpTWJuTEfSWQEjZJcgKQ9KwW:1791726900",
+    "label": "e/acc / SOL",
+    "late_entry": true,
+    "liquidity_usd": 259320.2708,
+    "mint": "CbcyNo7m1amFWqEQm2m4PLv1UNvpcL3C1Ujm6AkzpKoU",
+    "pool": "4JAnKFddd5fFTk5PxDj3PpTWJuTEfSWQEjZJcgKQ9KwW",
+    "registered_entry_price": 0.0019123835197308724,
+    "route_fee": 0.01,
+    "shadow": true,
+    "signal_t": 1791726900.0
+   },
+   "mode": "paper",
+   "notional_usd": 200.0,
+   "side": 1,
+   "strategy": "dip~drop=0.03~hold_bars=48"
+  },
+  {
+   "asset": "6qUUCwD9fyRafora8XVmdApQBxCkbUiZTMkcYD47rWsS",
+   "entry_at": 1791728400.0,
+   "entry_cost_usd": 3.630791854183998,
+   "entry_price": 0.0005378817608456895,
+   "id": "7beb2c90684c",
+   "mark_at": 1791732000.0,
+   "mark_price": 0.000579102766585492,
+   "meta": {
+    "alt_cost": {
+     "fee": 0.019499999999999997,
+     "fixed_usd": 0.05,
+     "impact": 0.002903959270919992
+    },
+    "exit_t": 1791740700.0,
+    "impact_assumed": 0.002903959270919992,
+    "key": "6qUUCwD9fyRafora8XVmdApQBxCkbUiZTMkcYD47rWsS:1791726300",
+    "label": "PQC / SOL",
+    "late_entry": true,
+    "liquidity_usd": 137742.9787,
+    "mint": "7K52aYQW9rWGjwZmQ7o2d1P6E7bji6hSMsqaLy5EcxLh",
+    "pool": "6qUUCwD9fyRafora8XVmdApQBxCkbUiZTMkcYD47rWsS",
+    "registered_entry_price": 0.0005723571523768505,
+    "route_fee": 0.01,
+    "shadow": true,
+    "signal_t": 1791726300.0
+   },
+   "mode": "paper",
+   "notional_usd": 200.0,
+   "side": 1,
+   "strategy": "dip~drop=0.03~hold_bars=48"
+  },
+  {
+   "asset": "cb4GFRgEitfu5qtxfRMiqzsaVPwgbD3HEor4cs2jFpn",
+   "entry_at": 1791728400.0,
+   "entry_cost_usd": 3.5264294461109214,
+   "entry_price": 0.0019187832972626094,
+   "id": "a8ff879f3ba1",
+   "mark_at": 1791732000.0,
+   "mark_price": 0.0023287908054257403,
+   "meta": {
+    "alt_cost": {
+     "fee": 0.0185,
+     "fixed_usd": 0.05,
+     "impact": 0.0023821472305546073
+    },
+    "exit_t": 1791742200.0,
+    "impact_assumed": 0.0023821472305546073,
+    "key": "cb4GFRgEitfu5qtxfRMiqzsaVPwgbD3HEor4cs2jFpn:1791727800",
+    "label": "QI / SOL",
+    "late_entry": true,
+    "liquidity_usd": 167915.7337,
+    "mint": "8TiMkgvsrat9tM2esko8zVTt99LZLpefUM4SnZaziXaQ",
+    "pool": "cb4GFRgEitfu5qtxfRMiqzsaVPwgbD3HEor4cs2jFpn",
+    "registered_entry_price": 0.001907779940659818,
+    "route_fee": 0.01,
+    "shadow": true,
+    "signal_t": 1791727800.0
+   },
+   "mode": "paper",
+   "notional_usd": 200.0,
+   "side": 1,
+   "strategy": "dip~drop=0.03~hold_bars=48"
+  },
+  {
+   "asset": "6qUUCwD9fyRafora8XVmdApQBxCkbUiZTMkcYD47rWsS",
+   "entry_at": 1791728400.0,
+   "entry_cost_usd": 3.630791854183998,
+   "entry_price": 0.0005378817608456895,
+   "id": "9b1a3360130f",
+   "mark_at": 1791732000.0,
+   "mark_price": 0.000579102766585492,
+   "meta": {
+    "alt_cost": {
+     "fee": 0.019499999999999997,
+     "fixed_usd": 0.05,
+     "impact": 0.002903959270919992
+    },
+    "exit_t": 1791754800.0,
+    "impact_assumed": 0.002903959270919992,
+    "key": "6qUUCwD9fyRafora8XVmdApQBxCkbUiZTMkcYD47rWsS:1791726000",
+    "label": "PQC / SOL",
+    "late_entry": true,
+    "liquidity_usd": 137742.9787,
+    "mint": "7K52aYQW9rWGjwZmQ7o2d1P6E7bji6hSMsqaLy5EcxLh",
+    "pool": "6qUUCwD9fyRafora8XVmdApQBxCkbUiZTMkcYD47rWsS",
+    "registered_entry_price": 0.0004978057165664164,
+    "route_fee": 0.01,
+    "shadow": true,
+    "signal_t": 1791726000.0
+   },
+   "mode": "paper",
+   "notional_usd": 200.0,
+   "side": 1,
+   "strategy": "dip~drop=0.03~hold_bars=96"
+  },
+  {
+   "asset": "Fe7bpDYCs74GqiCUF14HwgUMToPKV1d9mDYVX5BTohFr",
+   "entry_at": 1791728400.0,
+   "entry_cost_usd": 3.662583072725498,
+   "entry_price": 0.009363828378303813,
+   "id": "63df4f57de67",
+   "mark_at": 1791732000.0,
+   "mark_price": 0.010351971389629523,
+   "meta": {
+    "alt_cost": {
+     "fee": 0.019499999999999997,
+     "fixed_usd": 0.05,
+     "impact": 0.0030629153636274934
+    },
+    "exit_t": 1791754800.0,
+    "impact_assumed": 0.0030629153636274934,
+    "key": "Fe7bpDYCs74GqiCUF14HwgUMToPKV1d9mDYVX5BTohFr:1791726000",
+    "label": "CLAUDIA / SOL",
+    "late_entry": true,
+    "liquidity_usd": 130594.5325,
+    "mint": "2j5SaS7xy776qCBpyPQbZjyQSAtKiFgrwjfErthnW2ZM",
+    "pool": "Fe7bpDYCs74GqiCUF14HwgUMToPKV1d9mDYVX5BTohFr",
+    "registered_entry_price": 0.009941011361779084,
+    "route_fee": 0.01,
+    "shadow": true,
+    "signal_t": 1791726000.0
+   },
+   "mode": "paper",
+   "notional_usd": 200.0,
+   "side": 1,
+   "strategy": "dip~drop=0.03~hold_bars=96"
+  },
+  {
+   "asset": "cb4GFRgEitfu5qtxfRMiqzsaVPwgbD3HEor4cs2jFpn",
+   "entry_at": 1791728400.0,
+   "entry_cost_usd": 3.5264294461109214,
+   "entry_price": 0.0019187832972626094,
+   "id": "ffae1de2cf95",
+   "mark_at": 1791732000.0,
+   "mark_price": 0.0023287908054257403,
+   "meta": {
+    "alt_cost": {
+     "fee": 0.0185,
+     "fixed_usd": 0.05,
+     "impact": 0.0023821472305546073
+    },
+    "exit_t": 1791756300.0,
+    "impact_assumed": 0.0023821472305546073,
+    "key": "cb4GFRgEitfu5qtxfRMiqzsaVPwgbD3HEor4cs2jFpn:1791727500",
+    "label": "QI / SOL",
+    "late_entry": true,
+    "liquidity_usd": 167915.7337,
+    "mint": "8TiMkgvsrat9tM2esko8zVTt99LZLpefUM4SnZaziXaQ",
+    "pool": "cb4GFRgEitfu5qtxfRMiqzsaVPwgbD3HEor4cs2jFpn",
+    "registered_entry_price": 0.001924541402656641,
+    "route_fee": 0.01,
+    "shadow": true,
+    "signal_t": 1791727500.0
+   },
+   "mode": "paper",
+   "notional_usd": 200.0,
+   "side": 1,
+   "strategy": "dip~drop=0.03~hold_bars=96"
+  },
+  {
+   "asset": "3NBq9zynLPDQQDvYf8xiMbWywQfKZD7m7fyprY524efq",
+   "entry_at": 1791728400.0,
+   "entry_cost_usd": 3.6057263294847637,
+   "entry_price": 0.00025838990953476015,
+   "id": "82baa4284869",
+   "mark_at": 1791732000.0,
+   "mark_price": 0.0002650391840690894,
+   "meta": {
+    "alt_cost": {
+     "fee": 0.019499999999999997,
+     "fixed_usd": 0.05,
+     "impact": 0.0027786316474238204
+    },
+    "exit_t": 1791734100.0,
+    "impact_assumed": 0.0027786316474238204,
+    "key": "3NBq9zynLPDQQDvYf8xiMbWywQfKZD7m7fyprY524efq:1791726900",
+    "label": "TWEETCRAFT / SOL",
+    "late_entry": true,
+    "liquidity_usd": 143955.749,
+    "mint": "HzYCHqAN2uoHGRnL9v2ChCfFQX3bvJuJd5zu2Hd5MZQy",
+    "pool": "3NBq9zynLPDQQDvYf8xiMbWywQfKZD7m7fyprY524efq",
+    "registered_entry_price": 0.0002523235329385184,
+    "route_fee": 0.01,
+    "shadow": true,
+    "signal_t": 1791726900.0
+   },
+   "mode": "paper",
+   "notional_usd": 200.0,
+   "side": 1,
+   "strategy": "dip~drop=0.05~hold_bars=24"
+  },
+  {
+   "asset": "6QyYdc6jgeKnfP1FWhiexMYq3JQ3sidSYoubjWUTo3rm",
+   "entry_at": 1791728400.0,
+   "entry_cost_usd": 3.292927010938591,
+   "entry_price": 0.0006008124325638796,
+   "id": "0dc323907bf9",
+   "mark_at": 1791732000.0,
+   "mark_price": 0.000628759916647915,
+   "meta": {
+    "alt_cost": {
+     "fee": 0.016,
+     "fixed_usd": 0.05,
+     "impact": 0.0012146350546929578
+    },
+    "exit_t": 1791733800.0,
+    "impact_assumed": 0.0012146350546929578,
+    "key": "6QyYdc6jgeKnfP1FWhiexMYq3JQ3sidSYoubjWUTo3rm:1791726600",
+    "label": "HeeHaw / SOL",
+    "late_entry": true,
+    "liquidity_usd": 329317.0228,
+    "mint": "EEpng77ZPn9FbgbT4xsRjwuxNCcMBYq3HTwEscyTpump",
+    "pool": "6QyYdc6jgeKnfP1FWhiexMYq3JQ3sidSYoubjWUTo3rm",
+    "registered_entry_price": 0.0006508958209071092,
+    "route_fee": 0.01,
+    "shadow": true,
+    "signal_t": 1791726600.0
+   },
+   "mode": "paper",
+   "notional_usd": 200.0,
+   "side": 1,
+   "strategy": "dip~drop=0.05~hold_bars=24"
+  },
+  {
+   "asset": "4JAnKFddd5fFTk5PxDj3PpTWJuTEfSWQEjZJcgKQ9KwW",
+   "entry_at": 1791728400.0,
+   "entry_cost_usd": 3.3584988294713747,
+   "entry_price": 0.001870687224210292,
+   "id": "2d86d10f71a9",
+   "mark_at": 1791732000.0,
+   "mark_price": 0.001976413493045083,
+   "meta": {
+    "alt_cost": {
+     "fee": 0.018999999999999996,
+     "fixed_usd": 0.05,
+     "impact": 0.0015424941473568753
+    },
+    "exit_t": 1791734700.0,
+    "impact_assumed": 0.0015424941473568753,
+    "key": "4JAnKFddd5fFTk5PxDj3PpTWJuTEfSWQEjZJcgKQ9KwW:1791727500",
+    "label": "e/acc / SOL",
+    "late_entry": true,
+    "liquidity_usd": 259320.2708,
+    "mint": "CbcyNo7m1amFWqEQm2m4PLv1UNvpcL3C1Ujm6AkzpKoU",
+    "pool": "4JAnKFddd5fFTk5PxDj3PpTWJuTEfSWQEjZJcgKQ9KwW",
+    "registered_entry_price": 0.0018952134006426935,
+    "route_fee": 0.01,
+    "shadow": true,
+    "signal_t": 1791727500.0
+   },
+   "mode": "paper",
+   "notional_usd": 200.0,
+   "side": 1,
+   "strategy": "dip~drop=0.05~hold_bars=24"
+  },
+  {
+   "asset": "2B8tftZ5ww8TREMr3pgkgERLNjJyJxEAPWMENViGMsL4",
+   "entry_at": 1791728400.0,
+   "entry_cost_usd": 3.365495884712891,
+   "entry_price": 0.0036792566137149353,
+   "id": "6b95d73ef4bb",
+   "mark_at": 1791732000.0,
+   "mark_price": 0.0034380215068390957,
+   "meta": {
+    "alt_cost": {
+     "fee": 0.017499999999999998,
+     "fixed_usd": 0.05,
+     "impact": 0.0015774794235644573
+    },
+    "exit_t": 1791732900.0,
+    "impact_assumed": 0.0015774794235644573,
+    "key": "2B8tftZ5ww8TREMr3pgkgERLNjJyJxEAPWMENViGMsL4:1791725700",
+    "label": "CRAWL / SOL",
+    "late_entry": true,
+    "liquidity_usd": 253569.0761,
+    "mint": "BXoHJddsWJLHtAopeiSbKUSELsu8hSFMs8baGMDkpump",
+    "pool": "2B8tftZ5ww8TREMr3pgkgERLNjJyJxEAPWMENViGMsL4",
+    "registered_entry_price": 0.0038262548508039076,
+    "route_fee": 0.01,
+    "shadow": true,
+    "signal_t": 1791725700.0
+   },
+   "mode": "paper",
+   "notional_usd": 200.0,
+   "side": 1,
+   "strategy": "dip~drop=0.05~hold_bars=24"
+  },
+  {
+   "asset": "745ATaSSWxvry5qt1XVv9eXuG884hDvNJfvA2o82dNBi",
+   "entry_at": 1791728400.0,
+   "entry_cost_usd": 4.0567773191035945,
+   "entry_price": 0.00037714933660021636,
+   "id": "111749a331a9",
+   "mark_at": 1791732000.0,
+   "mark_price": 0.00033420431394588416,
+   "meta": {
+    "alt_cost": {
+     "fee": 0.019999999999999997,
+     "fixed_usd": 0.05,
+     "impact": 0.005033886595517973
+    },
+    "exit_t": 1791733200.0,
+    "impact_assumed": 0.005033886595517973,
+    "key": "745ATaSSWxvry5qt1XVv9eXuG884hDvNJfvA2o82dNBi:1791726000",
+    "label": "Frank / SOL",
+    "late_entry": true,
+    "liquidity_usd": 79461.4643,
+    "mint": "HbPDWSqu8hpVMX6gMjwMDGe5rVgicWo3Qh3Jaojypump",
+    "pool": "745ATaSSWxvry5qt1XVv9eXuG884hDvNJfvA2o82dNBi",
+    "registered_entry_price": 0.00037299152967435584,
+    "route_fee": 0.01,
+    "shadow": true,
+    "signal_t": 1791726000.0
+   },
+   "mode": "paper",
+   "notional_usd": 200.0,
+   "side": 1,
+   "strategy": "dip~drop=0.05~hold_bars=24"
+  },
+  {
+   "asset": "6qUUCwD9fyRafora8XVmdApQBxCkbUiZTMkcYD47rWsS",
+   "entry_at": 1791728400.0,
+   "entry_cost_usd": 3.630791854183998,
+   "entry_price": 0.0005378817608456895,
+   "id": "ccb96f3a6714",
+   "mark_at": 1791732000.0,
+   "mark_price": 0.000579102766585492,
+   "meta": {
+    "alt_cost": {
+     "fee": 0.019499999999999997,
+     "fixed_usd": 0.05,
+     "impact": 0.002903959270919992
+    },
+    "exit_t": 1791735000.0,
+    "impact_assumed": 0.002903959270919992,
+    "key": "6qUUCwD9fyRafora8XVmdApQBxCkbUiZTMkcYD47rWsS:1791727800",
+    "label": "PQC / SOL",
+    "late_entry": true,
+    "liquidity_usd": 137742.9787,
+    "mint": "7K52aYQW9rWGjwZmQ7o2d1P6E7bji6hSMsqaLy5EcxLh",
+    "pool": "6qUUCwD9fyRafora8XVmdApQBxCkbUiZTMkcYD47rWsS",
+    "registered_entry_price": 0.0005449547532331053,
+    "route_fee": 0.01,
+    "shadow": true,
+    "signal_t": 1791727800.0
+   },
+   "mode": "paper",
+   "notional_usd": 200.0,
+   "side": 1,
+   "strategy": "dip~drop=0.05~hold_bars=24"
+  },
+  {
+   "asset": "Fe7bpDYCs74GqiCUF14HwgUMToPKV1d9mDYVX5BTohFr",
+   "entry_at": 1791728400.0,
+   "entry_cost_usd": 3.662583072725498,
+   "entry_price": 0.009363828378303813,
+   "id": "9f06a1b24b64",
+   "mark_at": 1791732000.0,
+   "mark_price": 0.010351971389629523,
+   "meta": {
+    "alt_cost": {
+     "fee": 0.019499999999999997,
+     "fixed_usd": 0.05,
+     "impact": 0.0030629153636274934
+    },
+    "exit_t": 1791733200.0,
+    "impact_assumed": 0.0030629153636274934,
+    "key": "Fe7bpDYCs74GqiCUF14HwgUMToPKV1d9mDYVX5BTohFr:1791726000",
+    "label": "CLAUDIA / SOL",
+    "late_entry": true,
+    "liquidity_usd": 130594.5325,
+    "mint": "2j5SaS7xy776qCBpyPQbZjyQSAtKiFgrwjfErthnW2ZM",
+    "pool": "Fe7bpDYCs74GqiCUF14HwgUMToPKV1d9mDYVX5BTohFr",
+    "registered_entry_price": 0.009941011361779084,
+    "route_fee": 0.01,
+    "shadow": true,
+    "signal_t": 1791726000.0
+   },
+   "mode": "paper",
+   "notional_usd": 200.0,
+   "side": 1,
+   "strategy": "dip~drop=0.05~hold_bars=24"
+  },
+  {
+   "asset": "6qUUCwD9fyRafora8XVmdApQBxCkbUiZTMkcYD47rWsS",
+   "entry_at": 1791728400.0,
+   "entry_cost_usd": 3.630791854183998,
+   "entry_price": 0.0005378817608456895,
+   "id": "68ed3cd5b086",
+   "mark_at": 1791732000.0,
+   "mark_price": 0.000579102766585492,
+   "meta": {
+    "alt_cost": {
+     "fee": 0.019499999999999997,
+     "fixed_usd": 0.05,
+     "impact": 0.002903959270919992
+    },
+    "exit_t": 1791754800.0,
+    "impact_assumed": 0.002903959270919992,
+    "key": "6qUUCwD9fyRafora8XVmdApQBxCkbUiZTMkcYD47rWsS:1791726000",
+    "label": "PQC / SOL",
+    "late_entry": true,
+    "liquidity_usd": 137742.9787,
+    "mint": "7K52aYQW9rWGjwZmQ7o2d1P6E7bji6hSMsqaLy5EcxLh",
+    "pool": "6qUUCwD9fyRafora8XVmdApQBxCkbUiZTMkcYD47rWsS",
+    "registered_entry_price": 0.0004978057165664164,
+    "route_fee": 0.01,
+    "shadow": true,
+    "signal_t": 1791726000.0
+   },
+   "mode": "paper",
+   "notional_usd": 200.0,
+   "side": 1,
+   "strategy": "dip~drop=0.05~hold_bars=96"
+  },
+  {
+   "asset": "Fe7bpDYCs74GqiCUF14HwgUMToPKV1d9mDYVX5BTohFr",
+   "entry_at": 1791728400.0,
+   "entry_cost_usd": 3.662583072725498,
+   "entry_price": 0.009363828378303813,
+   "id": "30bdc203a0a5",
+   "mark_at": 1791732000.0,
+   "mark_price": 0.010351971389629523,
+   "meta": {
+    "alt_cost": {
+     "fee": 0.019499999999999997,
+     "fixed_usd": 0.05,
+     "impact": 0.0030629153636274934
+    },
+    "exit_t": 1791754800.0,
+    "impact_assumed": 0.0030629153636274934,
+    "key": "Fe7bpDYCs74GqiCUF14HwgUMToPKV1d9mDYVX5BTohFr:1791726000",
+    "label": "CLAUDIA / SOL",
+    "late_entry": true,
+    "liquidity_usd": 130594.5325,
+    "mint": "2j5SaS7xy776qCBpyPQbZjyQSAtKiFgrwjfErthnW2ZM",
+    "pool": "Fe7bpDYCs74GqiCUF14HwgUMToPKV1d9mDYVX5BTohFr",
+    "registered_entry_price": 0.009941011361779084,
+    "route_fee": 0.01,
+    "shadow": true,
+    "signal_t": 1791726000.0
+   },
+   "mode": "paper",
+   "notional_usd": 200.0,
+   "side": 1,
+   "strategy": "dip~drop=0.05~hold_bars=96"
+  },
+  {
+   "asset": "6QyYdc6jgeKnfP1FWhiexMYq3JQ3sidSYoubjWUTo3rm",
+   "entry_at": 1791728400.0,
+   "entry_cost_usd": 3.292927010938591,
+   "entry_price": 0.0006008124325638796,
+   "id": "2d5310a33a08",
+   "mark_at": 1791732000.0,
+   "mark_price": 0.000628759916647915,
+   "meta": {
+    "alt_cost": {
+     "fee": 0.016,
+     "fixed_usd": 0.05,
+     "impact": 0.0012146350546929578
+    },
+    "exit_t": 1791734100.0,
+    "impact_assumed": 0.0012146350546929578,
+    "key": "6QyYdc6jgeKnfP1FWhiexMYq3JQ3sidSYoubjWUTo3rm:1791726900",
+    "label": "HeeHaw / SOL",
+    "late_entry": true,
+    "liquidity_usd": 329317.0228,
+    "mint": "EEpng77ZPn9FbgbT4xsRjwuxNCcMBYq3HTwEscyTpump",
+    "pool": "6QyYdc6jgeKnfP1FWhiexMYq3JQ3sidSYoubjWUTo3rm",
+    "registered_entry_price": 0.000651995225658218,
+    "route_fee": 0.01,
+    "shadow": true,
+    "signal_t": 1791726900.0
+   },
+   "mode": "paper",
+   "notional_usd": 200.0,
+   "side": 1,
+   "strategy": "dip~drop=0.08~hold_bars=24"
+  },
+  {
+   "asset": "4JAnKFddd5fFTk5PxDj3PpTWJuTEfSWQEjZJcgKQ9KwW",
+   "entry_at": 1791728400.0,
+   "entry_cost_usd": 3.3584988294713747,
+   "entry_price": 0.001870687224210292,
+   "id": "270bb3a536f6",
+   "mark_at": 1791732000.0,
+   "mark_price": 0.001976413493045083,
+   "meta": {
+    "alt_cost": {
+     "fee": 0.018999999999999996,
+     "fixed_usd": 0.05,
+     "impact": 0.0015424941473568753
+    },
+    "exit_t": 1791735000.0,
+    "impact_assumed": 0.0015424941473568753,
+    "key": "4JAnKFddd5fFTk5PxDj3PpTWJuTEfSWQEjZJcgKQ9KwW:1791727800",
+    "label": "e/acc / SOL",
+    "late_entry": true,
+    "liquidity_usd": 259320.2708,
+    "mint": "CbcyNo7m1amFWqEQm2m4PLv1UNvpcL3C1Ujm6AkzpKoU",
+    "pool": "4JAnKFddd5fFTk5PxDj3PpTWJuTEfSWQEjZJcgKQ9KwW",
+    "registered_entry_price": 0.0018465135734703018,
+    "route_fee": 0.01,
+    "shadow": true,
+    "signal_t": 1791727800.0
+   },
+   "mode": "paper",
+   "notional_usd": 200.0,
+   "side": 1,
+   "strategy": "dip~drop=0.08~hold_bars=24"
+  },
+  {
+   "asset": "745ATaSSWxvry5qt1XVv9eXuG884hDvNJfvA2o82dNBi",
+   "entry_at": 1791728400.0,
+   "entry_cost_usd": 4.0567773191035945,
+   "entry_price": 0.00037714933660021636,
+   "id": "c228751ef8f1",
+   "mark_at": 1791732000.0,
+   "mark_price": 0.00033420431394588416,
+   "meta": {
+    "alt_cost": {
+     "fee": 0.019999999999999997,
+     "fixed_usd": 0.05,
+     "impact": 0.005033886595517973
+    },
+    "exit_t": 1791733500.0,
+    "impact_assumed": 0.005033886595517973,
+    "key": "745ATaSSWxvry5qt1XVv9eXuG884hDvNJfvA2o82dNBi:1791726300",
+    "label": "Frank / SOL",
+    "late_entry": true,
+    "liquidity_usd": 79461.4643,
+    "mint": "HbPDWSqu8hpVMX6gMjwMDGe5rVgicWo3Qh3Jaojypump",
+    "pool": "745ATaSSWxvry5qt1XVv9eXuG884hDvNJfvA2o82dNBi",
+    "registered_entry_price": 0.0003559166139223722,
+    "route_fee": 0.01,
+    "shadow": true,
+    "signal_t": 1791726300.0
+   },
+   "mode": "paper",
+   "notional_usd": 200.0,
+   "side": 1,
+   "strategy": "dip~drop=0.08~hold_bars=24"
+  },
+  {
+   "asset": "6qUUCwD9fyRafora8XVmdApQBxCkbUiZTMkcYD47rWsS",
+   "entry_at": 1791728400.0,
+   "entry_cost_usd": 3.630791854183998,
+   "entry_price": 0.0005378817608456895,
+   "id": "86643faa9d02",
+   "mark_at": 1791732000.0,
+   "mark_price": 0.000579102766585492,
+   "meta": {
+    "alt_cost": {
+     "fee": 0.019499999999999997,
+     "fixed_usd": 0.05,
+     "impact": 0.002903959270919992
+    },
+    "exit_t": 1791735000.0,
+    "impact_assumed": 0.002903959270919992,
+    "key": "6qUUCwD9fyRafora8XVmdApQBxCkbUiZTMkcYD47rWsS:1791727800",
+    "label": "PQC / SOL",
+    "late_entry": true,
+    "liquidity_usd": 137742.9787,
+    "mint": "7K52aYQW9rWGjwZmQ7o2d1P6E7bji6hSMsqaLy5EcxLh",
+    "pool": "6qUUCwD9fyRafora8XVmdApQBxCkbUiZTMkcYD47rWsS",
+    "registered_entry_price": 0.0005449547532331053,
+    "route_fee": 0.01,
+    "shadow": true,
+    "signal_t": 1791727800.0
+   },
+   "mode": "paper",
+   "notional_usd": 200.0,
+   "side": 1,
+   "strategy": "dip~drop=0.08~hold_bars=24"
+  },
+  {
+   "asset": "Fe7bpDYCs74GqiCUF14HwgUMToPKV1d9mDYVX5BTohFr",
+   "entry_at": 1791728400.0,
+   "entry_cost_usd": 3.662583072725498,
+   "entry_price": 0.009363828378303813,
+   "id": "a532408dc7a2",
+   "mark_at": 1791732000.0,
+   "mark_price": 0.010351971389629523,
+   "meta": {
+    "alt_cost": {
+     "fee": 0.019499999999999997,
+     "fixed_usd": 0.05,
+     "impact": 0.0030629153636274934
+    },
+    "exit_t": 1791733800.0,
+    "impact_assumed": 0.0030629153636274934,
+    "key": "Fe7bpDYCs74GqiCUF14HwgUMToPKV1d9mDYVX5BTohFr:1791726600",
+    "label": "CLAUDIA / SOL",
+    "late_entry": true,
+    "liquidity_usd": 130594.5325,
+    "mint": "2j5SaS7xy776qCBpyPQbZjyQSAtKiFgrwjfErthnW2ZM",
+    "pool": "Fe7bpDYCs74GqiCUF14HwgUMToPKV1d9mDYVX5BTohFr",
+    "registered_entry_price": 0.009847517397804375,
+    "route_fee": 0.01,
+    "shadow": true,
+    "signal_t": 1791726600.0
+   },
+   "mode": "paper",
+   "notional_usd": 200.0,
+   "side": 1,
+   "strategy": "dip~drop=0.08~hold_bars=24"
+  },
+  {
+   "asset": "3NBq9zynLPDQQDvYf8xiMbWywQfKZD7m7fyprY524efq",
+   "entry_at": 1791728400.0,
+   "entry_cost_usd": 3.6057263294847637,
+   "entry_price": 0.00025838990953476015,
+   "id": "ca106a87f8f7",
+   "mark_at": 1791732000.0,
+   "mark_price": 0.0002650391840690894,
+   "meta": {
+    "alt_cost": {
+     "fee": 0.019499999999999997,
+     "fixed_usd": 0.05,
+     "impact": 0.0027786316474238204
+    },
+    "exit_t": 1791741300.0,
+    "impact_assumed": 0.0027786316474238204,
+    "key": "3NBq9zynLPDQQDvYf8xiMbWywQfKZD7m7fyprY524efq:1791726900",
+    "label": "TWEETCRAFT / SOL",
+    "late_entry": true,
+    "liquidity_usd": 143955.749,
+    "mint": "HzYCHqAN2uoHGRnL9v2ChCfFQX3bvJuJd5zu2Hd5MZQy",
+    "pool": "3NBq9zynLPDQQDvYf8xiMbWywQfKZD7m7fyprY524efq",
+    "registered_entry_price": 0.0002523235329385184,
+    "route_fee": 0.01,
+    "shadow": true,
+    "signal_t": 1791726900.0
+   },
+   "mode": "paper",
+   "notional_usd": 200.0,
+   "side": 1,
+   "strategy": "dip~drop=0.08~hold_bars=48"
+  },
+  {
+   "asset": "6QyYdc6jgeKnfP1FWhiexMYq3JQ3sidSYoubjWUTo3rm",
+   "entry_at": 1791728400.0,
+   "entry_cost_usd": 3.292927010938591,
+   "entry_price": 0.0006008124325638796,
+   "id": "d4f1368d30de",
+   "mark_at": 1791732000.0,
+   "mark_price": 0.000628759916647915,
+   "meta": {
+    "alt_cost": {
+     "fee": 0.016,
+     "fixed_usd": 0.05,
+     "impact": 0.0012146350546929578
+    },
+    "exit_t": 1791741300.0,
+    "impact_assumed": 0.0012146350546929578,
+    "key": "6QyYdc6jgeKnfP1FWhiexMYq3JQ3sidSYoubjWUTo3rm:1791726900",
+    "label": "HeeHaw / SOL",
+    "late_entry": true,
+    "liquidity_usd": 329317.0228,
+    "mint": "EEpng77ZPn9FbgbT4xsRjwuxNCcMBYq3HTwEscyTpump",
+    "pool": "6QyYdc6jgeKnfP1FWhiexMYq3JQ3sidSYoubjWUTo3rm",
+    "registered_entry_price": 0.000651995225658218,
+    "route_fee": 0.01,
+    "shadow": true,
+    "signal_t": 1791726900.0
+   },
+   "mode": "paper",
+   "notional_usd": 200.0,
+   "side": 1,
+   "strategy": "dip~drop=0.08~hold_bars=48"
+  },
+  {
+   "asset": "4JAnKFddd5fFTk5PxDj3PpTWJuTEfSWQEjZJcgKQ9KwW",
+   "entry_at": 1791728400.0,
+   "entry_cost_usd": 3.3584988294713747,
+   "entry_price": 0.001870687224210292,
+   "id": "9f227e75a17b",
+   "mark_at": 1791732000.0,
+   "mark_price": 0.001976413493045083,
+   "meta": {
+    "alt_cost": {
+     "fee": 0.018999999999999996,
+     "fixed_usd": 0.05,
+     "impact": 0.0015424941473568753
+    },
+    "exit_t": 1791742200.0,
+    "impact_assumed": 0.0015424941473568753,
+    "key": "4JAnKFddd5fFTk5PxDj3PpTWJuTEfSWQEjZJcgKQ9KwW:1791727800",
+    "label": "e/acc / SOL",
+    "late_entry": true,
+    "liquidity_usd": 259320.2708,
+    "mint": "CbcyNo7m1amFWqEQm2m4PLv1UNvpcL3C1Ujm6AkzpKoU",
+    "pool": "4JAnKFddd5fFTk5PxDj3PpTWJuTEfSWQEjZJcgKQ9KwW",
+    "registered_entry_price": 0.0018465135734703018,
+    "route_fee": 0.01,
+    "shadow": true,
+    "signal_t": 1791727800.0
+   },
+   "mode": "paper",
+   "notional_usd": 200.0,
+   "side": 1,
+   "strategy": "dip~drop=0.08~hold_bars=48"
+  },
+  {
+   "asset": "745ATaSSWxvry5qt1XVv9eXuG884hDvNJfvA2o82dNBi",
+   "entry_at": 1791728400.0,
+   "entry_cost_usd": 4.0567773191035945,
+   "entry_price": 0.00037714933660021636,
+   "id": "9a507c5c39c7",
+   "mark_at": 1791732000.0,
+   "mark_price": 0.00033420431394588416,
+   "meta": {
+    "alt_cost": {
+     "fee": 0.019999999999999997,
+     "fixed_usd": 0.05,
+     "impact": 0.005033886595517973
+    },
+    "exit_t": 1791739800.0,
+    "impact_assumed": 0.005033886595517973,
+    "key": "745ATaSSWxvry5qt1XVv9eXuG884hDvNJfvA2o82dNBi:1791725400",
+    "label": "Frank / SOL",
+    "late_entry": true,
+    "liquidity_usd": 79461.4643,
+    "mint": "HbPDWSqu8hpVMX6gMjwMDGe5rVgicWo3Qh3Jaojypump",
+    "pool": "745ATaSSWxvry5qt1XVv9eXuG884hDvNJfvA2o82dNBi",
+    "registered_entry_price": 0.00037007293669565706,
+    "route_fee": 0.01,
+    "shadow": true,
+    "signal_t": 1791725400.0
+   },
+   "mode": "paper",
+   "notional_usd": 200.0,
+   "side": 1,
+   "strategy": "dip~drop=0.08~hold_bars=48"
+  },
+  {
+   "asset": "6qUUCwD9fyRafora8XVmdApQBxCkbUiZTMkcYD47rWsS",
+   "entry_at": 1791728400.0,
+   "entry_cost_usd": 3.630791854183998,
+   "entry_price": 0.0005378817608456895,
+   "id": "6505b6b56fa1",
+   "mark_at": 1791732000.0,
+   "mark_price": 0.000579102766585492,
+   "meta": {
+    "alt_cost": {
+     "fee": 0.019499999999999997,
+     "fixed_usd": 0.05,
+     "impact": 0.002903959270919992
+    },
+    "exit_t": 1791741600.0,
+    "impact_assumed": 0.002903959270919992,
+    "key": "6qUUCwD9fyRafora8XVmdApQBxCkbUiZTMkcYD47rWsS:1791727200",
+    "label": "PQC / SOL",
+    "late_entry": true,
+    "liquidity_usd": 137742.9787,
+    "mint": "7K52aYQW9rWGjwZmQ7o2d1P6E7bji6hSMsqaLy5EcxLh",
+    "pool": "6qUUCwD9fyRafora8XVmdApQBxCkbUiZTMkcYD47rWsS",
+    "registered_entry_price": 0.0005425264599143442,
+    "route_fee": 0.01,
+    "shadow": true,
+    "signal_t": 1791727200.0
+   },
+   "mode": "paper",
+   "notional_usd": 200.0,
+   "side": 1,
+   "strategy": "dip~drop=0.08~hold_bars=48"
+  },
+  {
+   "asset": "9d6fbbtAGjM6eFHo4NpsPrDgnwhZNdetgewHmupZTVjV",
+   "entry_at": 1791728400.0,
+   "entry_cost_usd": 4.765401005529901,
+   "entry_price": 5.408334760741447e-05,
+   "id": "fae89c4e56f1",
+   "mark_at": 1791732000.0,
+   "mark_price": 5.331409436982293e-05,
+   "meta": {
+    "alt_cost": {
+     "fee": 0.0215,
+     "fixed_usd": 0.05,
+     "impact": 0.008577005027649508
+    },
+    "exit_t": 1791738900.0,
+    "impact_assumed": 0.008577005027649508,
+    "key": "9d6fbbtAGjM6eFHo4NpsPrDgnwhZNdetgewHmupZTVjV:1791724500",
+    "label": "QUBIT / SOL",
+    "late_entry": true,
+    "liquidity_usd": 46636.3257,
+    "mint": "ERkmk5rs8KKD9u2fxoDZUmwwuVc7rT3sSeowGTrQuBit",
+    "pool": "9d6fbbtAGjM6eFHo4NpsPrDgnwhZNdetgewHmupZTVjV",
+    "registered_entry_price": 4.088831409686489e-05,
+    "route_fee": 0.01,
+    "shadow": true,
+    "signal_t": 1791724500.0
+   },
+   "mode": "paper",
+   "notional_usd": 200.0,
+   "side": 1,
+   "strategy": "dip~drop=0.08~hold_bars=48"
+  },
+  {
+   "asset": "Fe7bpDYCs74GqiCUF14HwgUMToPKV1d9mDYVX5BTohFr",
+   "entry_at": 1791728400.0,
+   "entry_cost_usd": 3.662583072725498,
+   "entry_price": 0.009363828378303813,
+   "id": "8e536c0cdd01",
+   "mark_at": 1791732000.0,
+   "mark_price": 0.010351971389629523,
+   "meta": {
+    "alt_cost": {
+     "fee": 0.019499999999999997,
+     "fixed_usd": 0.05,
+     "impact": 0.0030629153636274934
+    },
+    "exit_t": 1791741000.0,
+    "impact_assumed": 0.0030629153636274934,
+    "key": "Fe7bpDYCs74GqiCUF14HwgUMToPKV1d9mDYVX5BTohFr:1791726600",
+    "label": "CLAUDIA / SOL",
+    "late_entry": true,
+    "liquidity_usd": 130594.5325,
+    "mint": "2j5SaS7xy776qCBpyPQbZjyQSAtKiFgrwjfErthnW2ZM",
+    "pool": "Fe7bpDYCs74GqiCUF14HwgUMToPKV1d9mDYVX5BTohFr",
+    "registered_entry_price": 0.009847517397804375,
+    "route_fee": 0.01,
+    "shadow": true,
+    "signal_t": 1791726600.0
+   },
+   "mode": "paper",
+   "notional_usd": 200.0,
+   "side": 1,
+   "strategy": "dip~drop=0.08~hold_bars=48"
+  },
+  {
+   "asset": "6qUUCwD9fyRafora8XVmdApQBxCkbUiZTMkcYD47rWsS",
+   "entry_at": 1791728400.0,
+   "entry_cost_usd": 3.630791854183998,
+   "entry_price": 0.0005378817608456895,
+   "id": "3cab08e8347b",
+   "mark_at": 1791732000.0,
+   "mark_price": 0.000579102766585492,
+   "meta": {
+    "alt_cost": {
+     "fee": 0.019499999999999997,
+     "fixed_usd": 0.05,
+     "impact": 0.002903959270919992
+    },
+    "exit_t": 1791755700.0,
+    "impact_assumed": 0.002903959270919992,
+    "key": "6qUUCwD9fyRafora8XVmdApQBxCkbUiZTMkcYD47rWsS:1791726900",
+    "label": "PQC / SOL",
+    "late_entry": true,
+    "liquidity_usd": 137742.9787,
+    "mint": "7K52aYQW9rWGjwZmQ7o2d1P6E7bji6hSMsqaLy5EcxLh",
+    "pool": "6qUUCwD9fyRafora8XVmdApQBxCkbUiZTMkcYD47rWsS",
+    "registered_entry_price": 0.000534993897998341,
+    "route_fee": 0.01,
+    "shadow": true,
+    "signal_t": 1791726900.0
+   },
+   "mode": "paper",
+   "notional_usd": 200.0,
+   "side": 1,
+   "strategy": "dip~drop=0.08~hold_bars=96"
   }
  ],
  "strategies": {
@@ -2515,7 +3085,7 @@
    "size_factor": 1.0,
    "status": "paper",
    "verdict": {
-    "at": 1791728479.479978,
+    "at": 1791732049.4955595,
     "decision": "pending",
     "n": 0,
     "reason": "0 complete week(s); scored at 52 weeks (registered)",
@@ -2530,128 +3100,128 @@
     "pools": {
      "2B8tftZ5ww8TREMr3pgkgERLNjJyJxEAPWMENViGMsL4": {
       "busy_until": 1791731400.0,
-      "cursor": 1791727800.0,
-      "fetched_at": 1791728479.479978,
+      "cursor": 1791731400.0,
+      "fetched_at": 1791732049.4955595,
       "first_bar": 1791581400.0
      },
      "3NBq9zynLPDQQDvYf8xiMbWywQfKZD7m7fyprY524efq": {
       "busy_until": 1791735600.0,
-      "cursor": 1791727800.0,
-      "fetched_at": 1791728479.479978,
+      "cursor": 1791731400.0,
+      "fetched_at": 1791732049.4955595,
       "first_bar": 1791581400.0
      },
      "4JAnKFddd5fFTk5PxDj3PpTWJuTEfSWQEjZJcgKQ9KwW": {
-      "busy_until": 1791722400.0,
-      "cursor": 1791727200.0,
-      "fetched_at": 1791728479.479978,
+      "busy_until": 1791741900.0,
+      "cursor": 1791731400.0,
+      "fetched_at": 1791732049.4955595,
       "first_bar": 1791581400.0
      },
      "4R8CiMnJWDNoes3fQi1ccPFJygPXazaHaWpHrN3rZeNj": {
       "busy_until": 1791731100.0,
-      "cursor": 1791727800.0,
-      "fetched_at": 1791728479.479978,
+      "cursor": 1791731400.0,
+      "fetched_at": 1791732049.4955595,
       "first_bar": 1791663300.0
      },
      "4qxSqMh6iEdbdvtMp8r5MK2psAGKNk57PfGeVo2VhczQ": {
       "busy_until": 0.0,
-      "cursor": 1791727800.0,
-      "fetched_at": 1791728479.479978,
+      "cursor": 1791731400.0,
+      "fetched_at": 1791732049.4955595,
       "first_bar": 1791663000.0
      },
      "65GHmCbyRME3XwKjTqDB7pMJw2gvj2LZryfWKczoAqFR": {
       "busy_until": 1791692400.0,
-      "cursor": 1791726600.0,
-      "fetched_at": 1791728479.479978,
+      "cursor": 1791731100.0,
+      "fetched_at": 1791732049.4955595,
       "first_bar": 1791581400.0
      },
      "6QyYdc6jgeKnfP1FWhiexMYq3JQ3sidSYoubjWUTo3rm": {
-      "busy_until": 1791722400.0,
-      "cursor": 1791726300.0,
-      "fetched_at": 1791728479.479978,
+      "busy_until": 1791741000.0,
+      "cursor": 1791731400.0,
+      "fetched_at": 1791732049.4955595,
       "first_bar": 1791581400.0
      },
      "6qUUCwD9fyRafora8XVmdApQBxCkbUiZTMkcYD47rWsS": {
-      "busy_until": 1791726000.0,
-      "cursor": 1791726000.0,
-      "fetched_at": 1791728479.479978,
+      "busy_until": 1791740700.0,
+      "cursor": 1791731400.0,
+      "fetched_at": 1791732049.4955595,
       "first_bar": 1791663300.0
      },
      "745ATaSSWxvry5qt1XVv9eXuG884hDvNJfvA2o82dNBi": {
       "busy_until": 1791737100.0,
-      "cursor": 1791727800.0,
-      "fetched_at": 1791728479.479978,
+      "cursor": 1791731400.0,
+      "fetched_at": 1791732049.4955595,
       "first_bar": 1791581400.0
      },
      "867dKvaCcyRrUDP66bqNXbujXfjaxsNB9wTpc4CmBdAD": {
       "busy_until": 1791737400.0,
-      "cursor": 1791727800.0,
-      "fetched_at": 1791728479.479978,
+      "cursor": 1791731400.0,
+      "fetched_at": 1791732049.4955595,
       "first_bar": 1791581400.0
      },
      "8ewuF2o8ACro7fqWepZ3tKhkbBjndZU4Ldk9scRPw83d": {
       "busy_until": 1791721800.0,
-      "cursor": 1791727800.0,
-      "fetched_at": 1791728479.479978,
+      "cursor": 1791728100.0,
+      "fetched_at": 1791732049.4955595,
       "first_bar": 1791581400.0
      },
      "9d6fbbtAGjM6eFHo4NpsPrDgnwhZNdetgewHmupZTVjV": {
-      "busy_until": 1791724200.0,
-      "cursor": 1791724200.0,
-      "fetched_at": 1791728479.479978,
+      "busy_until": 1791738900.0,
+      "cursor": 1791731400.0,
+      "fetched_at": 1791732049.4955595,
       "first_bar": 1791663300.0
      },
      "A7nWJWGUjNyWbVNPA5RrvLoF37j3ovdh8DKdgxYefcdk": {
       "busy_until": 1791737100.0,
-      "cursor": 1791727800.0,
-      "fetched_at": 1791728479.479978,
+      "cursor": 1791731400.0,
+      "fetched_at": 1791732049.4955595,
       "first_bar": 1791581400.0
      },
      "AZgECLWq2Xd7KfjKVt6jFuJTWmFxqBuhAA4PXKDMwVcr": {
       "busy_until": 0.0,
       "cursor": 1791611700.0,
-      "fetched_at": 1791728479.479978,
+      "fetched_at": 1791732049.4955595,
       "first_bar": 1791611700.0
      },
      "CR5dTgvTddGAqDjP8dGHTL51N6PKRaXqxFBp9FQ5PrKn": {
       "busy_until": 0.0,
       "cursor": 1791700200.0,
-      "fetched_at": 1791728479.479978,
+      "fetched_at": 1791732049.4955595,
       "first_bar": 1791577500.0
      },
      "CwaEjWuUHn9v1ETy3iMHn9QV5pvbodNrJDovQMsPSv1R": {
       "busy_until": 0.0,
       "cursor": 1791607200.0,
-      "fetched_at": 1791728479.479978,
+      "fetched_at": 1791732049.4955595,
       "first_bar": 1791607200.0
      },
      "CyJwKnLiiY4fmiwqMCSWFSHxo7T9Ubshgs2uRAuJCrk5": {
       "busy_until": 1791727500.0,
-      "cursor": 1791727800.0,
-      "fetched_at": 1791728479.479978,
+      "cursor": 1791728400.0,
+      "fetched_at": 1791732049.4955595,
       "first_bar": 1791581400.0
      },
      "Fe7bpDYCs74GqiCUF14HwgUMToPKV1d9mDYVX5BTohFr": {
       "busy_until": 1791731400.0,
-      "cursor": 1791727800.0,
-      "fetched_at": 1791728479.479978,
+      "cursor": 1791731400.0,
+      "fetched_at": 1791732049.4955595,
       "first_bar": 1791663300.0
      },
      "GLL3CzybpSCLZdoACf8QUM5YrKVwyA65kQ2RcTsJxxzV": {
       "busy_until": 1791731700.0,
-      "cursor": 1791727800.0,
-      "fetched_at": 1791728479.479978,
+      "cursor": 1791731400.0,
+      "fetched_at": 1791732049.4955595,
       "first_bar": 1791688500.0
      },
      "HMzvsEEmtzHhvZNw9uwbaG85HCTmFnkbhzUx16cy7ca3": {
       "busy_until": 0.0,
-      "cursor": 1791727800.0,
-      "fetched_at": 1791728479.479978,
+      "cursor": 1791731400.0,
+      "fetched_at": 1791732049.4955595,
       "first_bar": 1791581400.0
      },
      "cb4GFRgEitfu5qtxfRMiqzsaVPwgbD3HEor4cs2jFpn": {
       "busy_until": 1791727800.0,
       "cursor": 1791727800.0,
-      "fetched_at": 1791728479.479978,
+      "fetched_at": 1791732049.4955595,
       "first_bar": 1791688500.0
      }
     }
@@ -2661,25 +3231,25 @@
    "size_factor": 1.0,
    "status": "paper",
    "verdict": {
-    "at": 1791728479.479978,
+    "at": 1791732049.4955595,
     "decision": "pending",
-    "n": 164,
-    "reason": "164 trades (74 from the out-of-sample replay) over 2.5 days: mean net -5.89% [-8.67, -2.83] (39 at real-trading execution: -5.21% vs -5.11% at the registered execution) (-6.04% at measured pool fees) (-6.56% at Jupiter-measured impact, 49 trades), excess over random entries -1.16% [-3.70, +1.16]; scored at 200 trades or 21 days",
+    "n": 168,
+    "reason": "168 trades (74 from the out-of-sample replay) over 2.5 days: mean net -5.76% [-8.63, -2.55] (43 at real-trading execution: -4.77% vs -4.73% at the registered execution) (-5.82% at measured pool fees) (-6.69% at Jupiter-measured impact, 50 trades), excess over random entries -1.29% [-3.77, +0.98]; scored at 200 trades or 21 days",
     "stats": {
-     "days": 2.5,
-     "excess": -0.011557214462113267,
-     "excess_hi": 0.011639027775746389,
-     "excess_lo": -0.036952125299624765,
-     "mean_hi": -0.02826767990926947,
-     "mean_lo": -0.08674981194829828,
-     "mean_net": -0.05889724770211852,
-     "mean_net_measured_fees": -0.06043117508450702,
-     "mean_net_quoted_impact": -0.06564166370606495,
-     "mean_net_real_execution": -0.05210546333392392,
-     "mean_net_registered_execution": -0.05114577376486374,
-     "n": 164,
-     "n_quoted": 49,
-     "n_real_execution": 39,
+     "days": 2.54,
+     "excess": -0.012911584300703736,
+     "excess_hi": 0.00982660070381246,
+     "excess_lo": -0.037712323372578474,
+     "mean_hi": -0.02549662777397368,
+     "mean_lo": -0.08632448550240583,
+     "mean_net": -0.057615817861342546,
+     "mean_net_measured_fees": -0.05818498334224499,
+     "mean_net_quoted_impact": -0.06689895674929344,
+     "mean_net_real_execution": -0.04773074064142199,
+     "mean_net_registered_execution": -0.04726692195580384,
+     "n": 168,
+     "n_quoted": 50,
+     "n_real_execution": 43,
      "n_replay": 74
     }
    }
@@ -2689,129 +3259,129 @@
    "data": {
     "pools": {
      "2B8tftZ5ww8TREMr3pgkgERLNjJyJxEAPWMENViGMsL4": {
-      "busy_until": 1791723900.0,
-      "cursor": 1791724500.0,
-      "fetched_at": 1791728479.479978,
+      "busy_until": 1791732000.0,
+      "cursor": 1791731400.0,
+      "fetched_at": 1791732049.4955595,
       "first_bar": 1791582900.0
      },
      "3NBq9zynLPDQQDvYf8xiMbWywQfKZD7m7fyprY524efq": {
-      "busy_until": 1791725100.0,
-      "cursor": 1791725100.0,
-      "fetched_at": 1791728479.479978,
+      "busy_until": 1791732600.0,
+      "cursor": 1791731400.0,
+      "fetched_at": 1791732049.4955595,
       "first_bar": 1791582900.0
      },
      "4JAnKFddd5fFTk5PxDj3PpTWJuTEfSWQEjZJcgKQ9KwW": {
-      "busy_until": 1791722400.0,
-      "cursor": 1791726600.0,
-      "fetched_at": 1791728479.479978,
+      "busy_until": 1791734100.0,
+      "cursor": 1791731400.0,
+      "fetched_at": 1791732049.4955595,
       "first_bar": 1791582900.0
      },
      "4R8CiMnJWDNoes3fQi1ccPFJygPXazaHaWpHrN3rZeNj": {
       "busy_until": 1791731400.0,
-      "cursor": 1791727800.0,
-      "fetched_at": 1791728479.479978,
+      "cursor": 1791731400.0,
+      "fetched_at": 1791732049.4955595,
       "first_bar": 1791663300.0
      },
      "4qxSqMh6iEdbdvtMp8r5MK2psAGKNk57PfGeVo2VhczQ": {
       "busy_until": 1791696300.0,
-      "cursor": 1791727800.0,
-      "fetched_at": 1791728479.479978,
+      "cursor": 1791731400.0,
+      "fetched_at": 1791732049.4955595,
       "first_bar": 1791663000.0
      },
      "65GHmCbyRME3XwKjTqDB7pMJw2gvj2LZryfWKczoAqFR": {
-      "busy_until": 1791720300.0,
-      "cursor": 1791726600.0,
-      "fetched_at": 1791728479.479978,
+      "busy_until": 1791734100.0,
+      "cursor": 1791731100.0,
+      "fetched_at": 1791732049.4955595,
       "first_bar": 1791582900.0
      },
      "6QyYdc6jgeKnfP1FWhiexMYq3JQ3sidSYoubjWUTo3rm": {
-      "busy_until": 1791722700.0,
-      "cursor": 1791726000.0,
-      "fetched_at": 1791728479.479978,
+      "busy_until": 1791733500.0,
+      "cursor": 1791731400.0,
+      "fetched_at": 1791732049.4955595,
       "first_bar": 1791582900.0
      },
      "6qUUCwD9fyRafora8XVmdApQBxCkbUiZTMkcYD47rWsS": {
-      "busy_until": 1791727200.0,
-      "cursor": 1791727200.0,
-      "fetched_at": 1791728479.479978,
+      "busy_until": 1791734700.0,
+      "cursor": 1791731400.0,
+      "fetched_at": 1791732049.4955595,
       "first_bar": 1791663300.0
      },
      "745ATaSSWxvry5qt1XVv9eXuG884hDvNJfvA2o82dNBi": {
-      "busy_until": 1791725700.0,
-      "cursor": 1791725700.0,
-      "fetched_at": 1791728479.479978,
+      "busy_until": 1791733200.0,
+      "cursor": 1791731400.0,
+      "fetched_at": 1791732049.4955595,
       "first_bar": 1791582900.0
      },
      "867dKvaCcyRrUDP66bqNXbujXfjaxsNB9wTpc4CmBdAD": {
-      "busy_until": 1791723300.0,
-      "cursor": 1791724500.0,
-      "fetched_at": 1791728479.479978,
+      "busy_until": 1791732000.0,
+      "cursor": 1791731400.0,
+      "fetched_at": 1791732049.4955595,
       "first_bar": 1791582900.0
      },
      "8ewuF2o8ACro7fqWepZ3tKhkbBjndZU4Ldk9scRPw83d": {
-      "busy_until": 1791714600.0,
-      "cursor": 1791727500.0,
-      "fetched_at": 1791728479.479978,
+      "busy_until": 1791735000.0,
+      "cursor": 1791731400.0,
+      "fetched_at": 1791732049.4955595,
       "first_bar": 1791582900.0
      },
      "9d6fbbtAGjM6eFHo4NpsPrDgnwhZNdetgewHmupZTVjV": {
       "busy_until": 1791731400.0,
-      "cursor": 1791727800.0,
-      "fetched_at": 1791728479.479978,
+      "cursor": 1791731400.0,
+      "fetched_at": 1791732049.4955595,
       "first_bar": 1791663300.0
      },
      "A7nWJWGUjNyWbVNPA5RrvLoF37j3ovdh8DKdgxYefcdk": {
       "busy_until": 1791730200.0,
-      "cursor": 1791727800.0,
-      "fetched_at": 1791728479.479978,
+      "cursor": 1791731400.0,
+      "fetched_at": 1791732049.4955595,
       "first_bar": 1791582900.0
      },
      "AZgECLWq2Xd7KfjKVt6jFuJTWmFxqBuhAA4PXKDMwVcr": {
       "busy_until": 0.0,
       "cursor": 1791611700.0,
-      "fetched_at": 1791728479.479978,
+      "fetched_at": 1791732049.4955595,
       "first_bar": 1791611700.0
      },
      "CR5dTgvTddGAqDjP8dGHTL51N6PKRaXqxFBp9FQ5PrKn": {
       "busy_until": 0.0,
       "cursor": 1791700200.0,
-      "fetched_at": 1791728479.479978,
+      "fetched_at": 1791732049.4955595,
       "first_bar": 1791577500.0
      },
      "CwaEjWuUHn9v1ETy3iMHn9QV5pvbodNrJDovQMsPSv1R": {
       "busy_until": 0.0,
       "cursor": 1791607200.0,
-      "fetched_at": 1791728479.479978,
+      "fetched_at": 1791732049.4955595,
       "first_bar": 1791607200.0
      },
      "CyJwKnLiiY4fmiwqMCSWFSHxo7T9Ubshgs2uRAuJCrk5": {
       "busy_until": 1791729900.0,
-      "cursor": 1791727800.0,
-      "fetched_at": 1791728479.479978,
+      "cursor": 1791729900.0,
+      "fetched_at": 1791732049.4955595,
       "first_bar": 1791582900.0
      },
      "Fe7bpDYCs74GqiCUF14HwgUMToPKV1d9mDYVX5BTohFr": {
-      "busy_until": 1791720300.0,
-      "cursor": 1791725700.0,
-      "fetched_at": 1791728479.479978,
+      "busy_until": 1791733200.0,
+      "cursor": 1791731400.0,
+      "fetched_at": 1791732049.4955595,
       "first_bar": 1791663300.0
      },
      "GLL3CzybpSCLZdoACf8QUM5YrKVwyA65kQ2RcTsJxxzV": {
       "busy_until": 1791724500.0,
-      "cursor": 1791727800.0,
-      "fetched_at": 1791728479.479978,
+      "cursor": 1791729900.0,
+      "fetched_at": 1791732049.4955595,
       "first_bar": 1791688500.0
      },
      "HMzvsEEmtzHhvZNw9uwbaG85HCTmFnkbhzUx16cy7ca3": {
       "busy_until": 1791657600.0,
-      "cursor": 1791727800.0,
-      "fetched_at": 1791728479.479978,
+      "cursor": 1791731400.0,
+      "fetched_at": 1791732049.4955595,
       "first_bar": 1791582900.0
      },
      "cb4GFRgEitfu5qtxfRMiqzsaVPwgbD3HEor4cs2jFpn": {
       "busy_until": 1791729000.0,
-      "cursor": 1791727800.0,
-      "fetched_at": 1791728479.479978,
+      "cursor": 1791731400.0,
+      "fetched_at": 1791732049.4955595,
       "first_bar": 1791688500.0
      }
     }
@@ -2821,23 +3391,23 @@
    "size_factor": 1.0,
    "status": "paper",
    "verdict": {
-    "at": 1791728479.479978,
+    "at": 1791732049.4955595,
     "decision": "pending",
-    "n": 183,
-    "reason": "183 trades over 1.7 days: mean net -2.46% [-4.31, +0.51] (86 at real-trading execution: -2.21% vs -1.52% at the registered execution) (-3.18% at measured pool fees), excess over random entries +0.77% [-1.28, +3.41]; scored at 200 trades or 21 days",
+    "n": 188,
+    "reason": "188 trades over 1.7 days: mean net -2.29% [-4.13, +0.57] (91 at real-trading execution: -1.86% vs -1.05% at the registered execution) (-2.99% at measured pool fees), excess over random entries +1.01% [-1.05, +3.58]; scored at 200 trades or 21 days",
     "stats": {
-     "days": 1.68,
-     "excess": 0.007688626128176746,
-     "excess_hi": 0.03409757320269205,
-     "excess_lo": -0.012786837054170136,
-     "mean_hi": 0.005081451190783092,
-     "mean_lo": -0.04313476507808315,
-     "mean_net": -0.024602228429750593,
-     "mean_net_measured_fees": -0.03179851697537902,
-     "mean_net_real_execution": -0.02207135896314656,
-     "mean_net_registered_execution": -0.015210203718825659,
-     "n": 183,
-     "n_real_execution": 86,
+     "days": 1.72,
+     "excess": 0.010088264586276154,
+     "excess_hi": 0.03575490607894253,
+     "excess_lo": -0.010482636070033483,
+     "mean_hi": 0.005685464719044857,
+     "mean_lo": -0.04132898681202417,
+     "mean_net": -0.022851950775422278,
+     "mean_net_measured_fees": -0.02994307121817954,
+     "mean_net_real_execution": -0.01859445949412784,
+     "mean_net_registered_execution": -0.010522874652781197,
+     "n": 188,
+     "n_real_execution": 91,
      "n_replay": 0
     }
    }
@@ -2848,128 +3418,128 @@
     "pools": {
      "2B8tftZ5ww8TREMr3pgkgERLNjJyJxEAPWMENViGMsL4": {
       "busy_until": 1791736800.0,
-      "cursor": 1791727800.0,
-      "fetched_at": 1791728479.479978,
+      "cursor": 1791731400.0,
+      "fetched_at": 1791732049.4955595,
       "first_bar": 1791582900.0
      },
      "3NBq9zynLPDQQDvYf8xiMbWywQfKZD7m7fyprY524efq": {
-      "busy_until": 1791724500.0,
-      "cursor": 1791724800.0,
-      "fetched_at": 1791728479.479978,
+      "busy_until": 1791739500.0,
+      "cursor": 1791731400.0,
+      "fetched_at": 1791732049.4955595,
       "first_bar": 1791582900.0
      },
      "4JAnKFddd5fFTk5PxDj3PpTWJuTEfSWQEjZJcgKQ9KwW": {
-      "busy_until": 1791721200.0,
-      "cursor": 1791726600.0,
-      "fetched_at": 1791728479.479978,
+      "busy_until": 1791741300.0,
+      "cursor": 1791731400.0,
+      "fetched_at": 1791732049.4955595,
       "first_bar": 1791582900.0
      },
      "4R8CiMnJWDNoes3fQi1ccPFJygPXazaHaWpHrN3rZeNj": {
       "busy_until": 1791730500.0,
-      "cursor": 1791727800.0,
-      "fetched_at": 1791728479.479978,
+      "cursor": 1791731400.0,
+      "fetched_at": 1791732049.4955595,
       "first_bar": 1791663300.0
      },
      "4qxSqMh6iEdbdvtMp8r5MK2psAGKNk57PfGeVo2VhczQ": {
       "busy_until": 1791703500.0,
-      "cursor": 1791727800.0,
-      "fetched_at": 1791728479.479978,
+      "cursor": 1791731400.0,
+      "fetched_at": 1791732049.4955595,
       "first_bar": 1791663000.0
      },
      "65GHmCbyRME3XwKjTqDB7pMJw2gvj2LZryfWKczoAqFR": {
-      "busy_until": 1791720300.0,
-      "cursor": 1791726600.0,
-      "fetched_at": 1791728479.479978,
+      "busy_until": 1791741300.0,
+      "cursor": 1791731100.0,
+      "fetched_at": 1791732049.4955595,
       "first_bar": 1791582900.0
      },
      "6QyYdc6jgeKnfP1FWhiexMYq3JQ3sidSYoubjWUTo3rm": {
-      "busy_until": 1791721200.0,
-      "cursor": 1791726000.0,
-      "fetched_at": 1791728479.479978,
+      "busy_until": 1791740700.0,
+      "cursor": 1791731400.0,
+      "fetched_at": 1791732049.4955595,
       "first_bar": 1791582900.0
      },
      "6qUUCwD9fyRafora8XVmdApQBxCkbUiZTMkcYD47rWsS": {
-      "busy_until": 1791726000.0,
-      "cursor": 1791726000.0,
-      "fetched_at": 1791728479.479978,
+      "busy_until": 1791740700.0,
+      "cursor": 1791731400.0,
+      "fetched_at": 1791732049.4955595,
       "first_bar": 1791663300.0
      },
      "745ATaSSWxvry5qt1XVv9eXuG884hDvNJfvA2o82dNBi": {
       "busy_until": 1791737100.0,
-      "cursor": 1791727800.0,
-      "fetched_at": 1791728479.479978,
+      "cursor": 1791731400.0,
+      "fetched_at": 1791732049.4955595,
       "first_bar": 1791582900.0
      },
      "867dKvaCcyRrUDP66bqNXbujXfjaxsNB9wTpc4CmBdAD": {
-      "busy_until": 1791723000.0,
-      "cursor": 1791724500.0,
-      "fetched_at": 1791728479.479978,
+      "busy_until": 1791739200.0,
+      "cursor": 1791731400.0,
+      "fetched_at": 1791732049.4955595,
       "first_bar": 1791582900.0
      },
      "8ewuF2o8ACro7fqWepZ3tKhkbBjndZU4Ldk9scRPw83d": {
-      "busy_until": 1791724200.0,
-      "cursor": 1791727500.0,
-      "fetched_at": 1791728479.479978,
+      "busy_until": 1791742200.0,
+      "cursor": 1791731400.0,
+      "fetched_at": 1791732049.4955595,
       "first_bar": 1791582900.0
      },
      "9d6fbbtAGjM6eFHo4NpsPrDgnwhZNdetgewHmupZTVjV": {
       "busy_until": 1791738600.0,
-      "cursor": 1791727800.0,
-      "fetched_at": 1791728479.479978,
+      "cursor": 1791731400.0,
+      "fetched_at": 1791732049.4955595,
       "first_bar": 1791663300.0
      },
      "A7nWJWGUjNyWbVNPA5RrvLoF37j3ovdh8DKdgxYefcdk": {
       "busy_until": 1791736200.0,
-      "cursor": 1791727800.0,
-      "fetched_at": 1791728479.479978,
+      "cursor": 1791731400.0,
+      "fetched_at": 1791732049.4955595,
       "first_bar": 1791582900.0
      },
      "AZgECLWq2Xd7KfjKVt6jFuJTWmFxqBuhAA4PXKDMwVcr": {
       "busy_until": 0.0,
       "cursor": 1791611700.0,
-      "fetched_at": 1791728479.479978,
+      "fetched_at": 1791732049.4955595,
       "first_bar": 1791611700.0
      },
      "CR5dTgvTddGAqDjP8dGHTL51N6PKRaXqxFBp9FQ5PrKn": {
       "busy_until": 0.0,
       "cursor": 1791700200.0,
-      "fetched_at": 1791728479.479978,
+      "fetched_at": 1791732049.4955595,
       "first_bar": 1791577500.0
      },
      "CwaEjWuUHn9v1ETy3iMHn9QV5pvbodNrJDovQMsPSv1R": {
       "busy_until": 0.0,
       "cursor": 1791607200.0,
-      "fetched_at": 1791728479.479978,
+      "fetched_at": 1791732049.4955595,
       "first_bar": 1791607200.0
      },
      "CyJwKnLiiY4fmiwqMCSWFSHxo7T9Ubshgs2uRAuJCrk5": {
       "busy_until": 1791737100.0,
-      "cursor": 1791727800.0,
-      "fetched_at": 1791728479.479978,
+      "cursor": 1791731400.0,
+      "fetched_at": 1791732049.4955595,
       "first_bar": 1791582900.0
      },
      "Fe7bpDYCs74GqiCUF14HwgUMToPKV1d9mDYVX5BTohFr": {
       "busy_until": 1791731400.0,
-      "cursor": 1791727800.0,
-      "fetched_at": 1791728479.479978,
+      "cursor": 1791731400.0,
+      "fetched_at": 1791732049.4955595,
       "first_bar": 1791663300.0
      },
      "GLL3CzybpSCLZdoACf8QUM5YrKVwyA65kQ2RcTsJxxzV": {
       "busy_until": 1791731700.0,
-      "cursor": 1791727800.0,
-      "fetched_at": 1791728479.479978,
+      "cursor": 1791731400.0,
+      "fetched_at": 1791732049.4955595,
       "first_bar": 1791688500.0
      },
      "HMzvsEEmtzHhvZNw9uwbaG85HCTmFnkbhzUx16cy7ca3": {
       "busy_until": 1791664800.0,
-      "cursor": 1791727800.0,
-      "fetched_at": 1791728479.479978,
+      "cursor": 1791731400.0,
+      "fetched_at": 1791732049.4955595,
       "first_bar": 1791582900.0
      },
      "cb4GFRgEitfu5qtxfRMiqzsaVPwgbD3HEor4cs2jFpn": {
-      "busy_until": 1791727500.0,
-      "cursor": 1791727500.0,
-      "fetched_at": 1791728479.479978,
+      "busy_until": 1791742200.0,
+      "cursor": 1791731400.0,
+      "fetched_at": 1791732049.4955595,
       "first_bar": 1791688500.0
      }
     }
@@ -2979,23 +3549,23 @@
    "size_factor": 1.0,
    "status": "paper",
    "verdict": {
-    "at": 1791728479.479978,
+    "at": 1791732049.4955595,
     "decision": "pending",
-    "n": 105,
-    "reason": "105 trades over 1.7 days: mean net -4.50% [-7.74, -0.61] (43 at real-trading execution: -6.00% vs -5.64% at the registered execution) (-5.30% at measured pool fees), excess over random entries -0.20% [-4.34, +3.47]; scored at 200 trades or 21 days",
+    "n": 108,
+    "reason": "108 trades over 1.7 days: mean net -4.26% [-7.77, -0.16] (46 at real-trading execution: -5.34% vs -5.00% at the registered execution) (-5.04% at measured pool fees), excess over random entries -0.27% [-4.22, +3.32]; scored at 200 trades or 21 days",
     "stats": {
-     "days": 1.68,
-     "excess": -0.001951298770888972,
-     "excess_hi": 0.034692885722362975,
-     "excess_lo": -0.04336278876536114,
-     "mean_hi": -0.006087025579256929,
-     "mean_lo": -0.07740415343282335,
-     "mean_net": -0.045018790077726425,
-     "mean_net_measured_fees": -0.05296273312838417,
-     "mean_net_real_execution": -0.06000725862876911,
-     "mean_net_registered_execution": -0.056369754872750893,
-     "n": 105,
-     "n_real_execution": 43,
+     "days": 1.72,
+     "excess": -0.0026664105096056733,
+     "excess_hi": 0.033194870298689574,
+     "excess_lo": -0.04222833223819165,
+     "mean_hi": -0.0016028934741980827,
+     "mean_lo": -0.07771140723954632,
+     "mean_net": -0.04262591985751133,
+     "mean_net_measured_fees": -0.05036084763623962,
+     "mean_net_real_execution": -0.053411706684500446,
+     "mean_net_registered_execution": -0.04999997931840691,
+     "n": 108,
+     "n_real_execution": 46,
      "n_replay": 0
     }
    }
@@ -3006,128 +3576,128 @@
     "pools": {
      "2B8tftZ5ww8TREMr3pgkgERLNjJyJxEAPWMENViGMsL4": {
       "busy_until": 1791729600.0,
-      "cursor": 1791727800.0,
-      "fetched_at": 1791728479.479978,
+      "cursor": 1791729900.0,
+      "fetched_at": 1791732049.4955595,
       "first_bar": 1791582900.0
      },
      "3NBq9zynLPDQQDvYf8xiMbWywQfKZD7m7fyprY524efq": {
       "busy_until": 1791731400.0,
-      "cursor": 1791727800.0,
-      "fetched_at": 1791728479.479978,
+      "cursor": 1791731400.0,
+      "fetched_at": 1791732049.4955595,
       "first_bar": 1791582900.0
      },
      "4JAnKFddd5fFTk5PxDj3PpTWJuTEfSWQEjZJcgKQ9KwW": {
       "busy_until": 1791735600.0,
-      "cursor": 1791727800.0,
-      "fetched_at": 1791728479.479978,
+      "cursor": 1791731400.0,
+      "fetched_at": 1791732049.4955595,
       "first_bar": 1791582900.0
      },
      "4R8CiMnJWDNoes3fQi1ccPFJygPXazaHaWpHrN3rZeNj": {
       "busy_until": 1791753000.0,
-      "cursor": 1791727800.0,
-      "fetched_at": 1791728479.479978,
+      "cursor": 1791731400.0,
+      "fetched_at": 1791732049.4955595,
       "first_bar": 1791663300.0
      },
      "4qxSqMh6iEdbdvtMp8r5MK2psAGKNk57PfGeVo2VhczQ": {
       "busy_until": 1791693300.0,
-      "cursor": 1791727800.0,
-      "fetched_at": 1791728479.479978,
+      "cursor": 1791731400.0,
+      "fetched_at": 1791732049.4955595,
       "first_bar": 1791663000.0
      },
      "65GHmCbyRME3XwKjTqDB7pMJw2gvj2LZryfWKczoAqFR": {
       "busy_until": 1791734400.0,
-      "cursor": 1791726600.0,
-      "fetched_at": 1791728479.479978,
+      "cursor": 1791731100.0,
+      "fetched_at": 1791732049.4955595,
       "first_bar": 1791582900.0
      },
      "6QyYdc6jgeKnfP1FWhiexMYq3JQ3sidSYoubjWUTo3rm": {
       "busy_until": 1791728700.0,
-      "cursor": 1791727800.0,
-      "fetched_at": 1791728479.479978,
+      "cursor": 1791728700.0,
+      "fetched_at": 1791732049.4955595,
       "first_bar": 1791582900.0
      },
      "6qUUCwD9fyRafora8XVmdApQBxCkbUiZTMkcYD47rWsS": {
-      "busy_until": 1791725700.0,
-      "cursor": 1791725700.0,
-      "fetched_at": 1791728479.479978,
+      "busy_until": 1791754800.0,
+      "cursor": 1791731400.0,
+      "fetched_at": 1791732049.4955595,
       "first_bar": 1791663300.0
      },
      "745ATaSSWxvry5qt1XVv9eXuG884hDvNJfvA2o82dNBi": {
       "busy_until": 1791747300.0,
-      "cursor": 1791727800.0,
-      "fetched_at": 1791728479.479978,
+      "cursor": 1791731400.0,
+      "fetched_at": 1791732049.4955595,
       "first_bar": 1791582900.0
      },
      "867dKvaCcyRrUDP66bqNXbujXfjaxsNB9wTpc4CmBdAD": {
       "busy_until": 1791750900.0,
-      "cursor": 1791727800.0,
-      "fetched_at": 1791728479.479978,
+      "cursor": 1791731400.0,
+      "fetched_at": 1791732049.4955595,
       "first_bar": 1791582900.0
      },
      "8ewuF2o8ACro7fqWepZ3tKhkbBjndZU4Ldk9scRPw83d": {
       "busy_until": 1791736200.0,
-      "cursor": 1791727800.0,
-      "fetched_at": 1791728479.479978,
+      "cursor": 1791731400.0,
+      "fetched_at": 1791732049.4955595,
       "first_bar": 1791582900.0
      },
      "9d6fbbtAGjM6eFHo4NpsPrDgnwhZNdetgewHmupZTVjV": {
       "busy_until": 1791753000.0,
-      "cursor": 1791727800.0,
-      "fetched_at": 1791728479.479978,
+      "cursor": 1791731400.0,
+      "fetched_at": 1791732049.4955595,
       "first_bar": 1791663300.0
      },
      "A7nWJWGUjNyWbVNPA5RrvLoF37j3ovdh8DKdgxYefcdk": {
       "busy_until": 1791750600.0,
-      "cursor": 1791727800.0,
-      "fetched_at": 1791728479.479978,
+      "cursor": 1791731400.0,
+      "fetched_at": 1791732049.4955595,
       "first_bar": 1791582900.0
      },
      "AZgECLWq2Xd7KfjKVt6jFuJTWmFxqBuhAA4PXKDMwVcr": {
       "busy_until": 0.0,
       "cursor": 1791611700.0,
-      "fetched_at": 1791728479.479978,
+      "fetched_at": 1791732049.4955595,
       "first_bar": 1791611700.0
      },
      "CR5dTgvTddGAqDjP8dGHTL51N6PKRaXqxFBp9FQ5PrKn": {
       "busy_until": 0.0,
       "cursor": 1791700200.0,
-      "fetched_at": 1791728479.479978,
+      "fetched_at": 1791732049.4955595,
       "first_bar": 1791577500.0
      },
      "CwaEjWuUHn9v1ETy3iMHn9QV5pvbodNrJDovQMsPSv1R": {
       "busy_until": 0.0,
       "cursor": 1791607200.0,
-      "fetched_at": 1791728479.479978,
+      "fetched_at": 1791732049.4955595,
       "first_bar": 1791607200.0
      },
      "CyJwKnLiiY4fmiwqMCSWFSHxo7T9Ubshgs2uRAuJCrk5": {
       "busy_until": 1791731700.0,
-      "cursor": 1791727800.0,
-      "fetched_at": 1791728479.479978,
+      "cursor": 1791731400.0,
+      "fetched_at": 1791732049.4955595,
       "first_bar": 1791582900.0
      },
      "Fe7bpDYCs74GqiCUF14HwgUMToPKV1d9mDYVX5BTohFr": {
-      "busy_until": 1791723300.0,
-      "cursor": 1791725700.0,
-      "fetched_at": 1791728479.479978,
+      "busy_until": 1791754800.0,
+      "cursor": 1791731400.0,
+      "fetched_at": 1791732049.4955595,
       "first_bar": 1791663300.0
      },
      "GLL3CzybpSCLZdoACf8QUM5YrKVwyA65kQ2RcTsJxxzV": {
       "busy_until": 1791746700.0,
-      "cursor": 1791727800.0,
-      "fetched_at": 1791728479.479978,
+      "cursor": 1791731400.0,
+      "fetched_at": 1791732049.4955595,
       "first_bar": 1791688500.0
      },
      "HMzvsEEmtzHhvZNw9uwbaG85HCTmFnkbhzUx16cy7ca3": {
       "busy_until": 1791679200.0,
-      "cursor": 1791727800.0,
-      "fetched_at": 1791728479.479978,
+      "cursor": 1791731400.0,
+      "fetched_at": 1791732049.4955595,
       "first_bar": 1791582900.0
      },
      "cb4GFRgEitfu5qtxfRMiqzsaVPwgbD3HEor4cs2jFpn": {
-      "busy_until": 1791725400.0,
-      "cursor": 1791727200.0,
-      "fetched_at": 1791728479.479978,
+      "busy_until": 1791756300.0,
+      "cursor": 1791731400.0,
+      "fetched_at": 1791732049.4955595,
       "first_bar": 1791688500.0
      }
     }
@@ -3137,23 +3707,23 @@
    "size_factor": 1.0,
    "status": "paper",
    "verdict": {
-    "at": 1791728479.479978,
+    "at": 1791732049.4955595,
     "decision": "pending",
-    "n": 53,
-    "reason": "53 trades over 1.7 days: mean net -5.82% [-14.08, +6.90] (17 at real-trading execution: -8.64% vs -8.73% at the registered execution) (-6.66% at measured pool fees), excess over random entries +0.50% [-5.23, +5.97]; scored at 200 trades or 21 days",
+    "n": 57,
+    "reason": "57 trades over 1.7 days: mean net -6.05% [-14.22, +6.16] (21 at real-trading execution: -8.73% vs -8.94% at the registered execution) (-6.88% at measured pool fees), excess over random entries +0.96% [-4.61, +6.23]; scored at 200 trades or 21 days",
     "stats": {
-     "days": 1.68,
-     "excess": 0.005033932306590566,
-     "excess_hi": 0.059738923169999666,
-     "excess_lo": -0.05227642614658865,
-     "mean_hi": 0.06901692952319007,
-     "mean_lo": -0.1408458466239915,
-     "mean_net": -0.05819372655237881,
-     "mean_net_measured_fees": -0.06664225891492798,
-     "mean_net_real_execution": -0.08638640233339905,
-     "mean_net_registered_execution": -0.08730277760206323,
-     "n": 53,
-     "n_real_execution": 17,
+     "days": 1.72,
+     "excess": 0.009592203459921692,
+     "excess_hi": 0.06233699948002848,
+     "excess_lo": -0.04611432529936686,
+     "mean_hi": 0.06160581171701782,
+     "mean_lo": -0.14220727654615667,
+     "mean_net": -0.06050102645715595,
+     "mean_net_measured_fees": -0.06882945636522443,
+     "mean_net_real_execution": -0.08727904002140933,
+     "mean_net_registered_execution": -0.08940346129061134,
+     "n": 57,
+     "n_real_execution": 21,
      "n_replay": 0
     }
    }
@@ -3163,129 +3733,129 @@
    "data": {
     "pools": {
      "2B8tftZ5ww8TREMr3pgkgERLNjJyJxEAPWMENViGMsL4": {
-      "busy_until": 1791724200.0,
-      "cursor": 1791725400.0,
-      "fetched_at": 1791728479.479978,
+      "busy_until": 1791732900.0,
+      "cursor": 1791731400.0,
+      "fetched_at": 1791732049.4955595,
       "first_bar": 1791582900.0
      },
      "3NBq9zynLPDQQDvYf8xiMbWywQfKZD7m7fyprY524efq": {
-      "busy_until": 1791726600.0,
-      "cursor": 1791726600.0,
-      "fetched_at": 1791728479.479978,
+      "busy_until": 1791734100.0,
+      "cursor": 1791731400.0,
+      "fetched_at": 1791732049.4955595,
       "first_bar": 1791582900.0
      },
      "4JAnKFddd5fFTk5PxDj3PpTWJuTEfSWQEjZJcgKQ9KwW": {
-      "busy_until": 1791723600.0,
-      "cursor": 1791727200.0,
-      "fetched_at": 1791728479.479978,
+      "busy_until": 1791734700.0,
+      "cursor": 1791731400.0,
+      "fetched_at": 1791732049.4955595,
       "first_bar": 1791582900.0
      },
      "4R8CiMnJWDNoes3fQi1ccPFJygPXazaHaWpHrN3rZeNj": {
       "busy_until": 1791731400.0,
-      "cursor": 1791727800.0,
-      "fetched_at": 1791728479.479978,
+      "cursor": 1791731400.0,
+      "fetched_at": 1791732049.4955595,
       "first_bar": 1791663300.0
      },
      "4qxSqMh6iEdbdvtMp8r5MK2psAGKNk57PfGeVo2VhczQ": {
       "busy_until": 0.0,
-      "cursor": 1791727800.0,
-      "fetched_at": 1791728479.479978,
+      "cursor": 1791731400.0,
+      "fetched_at": 1791732049.4955595,
       "first_bar": 1791663000.0
      },
      "65GHmCbyRME3XwKjTqDB7pMJw2gvj2LZryfWKczoAqFR": {
       "busy_until": 1791698100.0,
-      "cursor": 1791726600.0,
-      "fetched_at": 1791728479.479978,
+      "cursor": 1791731100.0,
+      "fetched_at": 1791732049.4955595,
       "first_bar": 1791582900.0
      },
      "6QyYdc6jgeKnfP1FWhiexMYq3JQ3sidSYoubjWUTo3rm": {
-      "busy_until": 1791724200.0,
-      "cursor": 1791726300.0,
-      "fetched_at": 1791728479.479978,
+      "busy_until": 1791733800.0,
+      "cursor": 1791731400.0,
+      "fetched_at": 1791732049.4955595,
       "first_bar": 1791582900.0
      },
      "6qUUCwD9fyRafora8XVmdApQBxCkbUiZTMkcYD47rWsS": {
-      "busy_until": 1791727500.0,
-      "cursor": 1791727500.0,
-      "fetched_at": 1791728479.479978,
+      "busy_until": 1791735000.0,
+      "cursor": 1791731400.0,
+      "fetched_at": 1791732049.4955595,
       "first_bar": 1791663300.0
      },
      "745ATaSSWxvry5qt1XVv9eXuG884hDvNJfvA2o82dNBi": {
-      "busy_until": 1791725700.0,
-      "cursor": 1791725700.0,
-      "fetched_at": 1791728479.479978,
+      "busy_until": 1791733200.0,
+      "cursor": 1791731400.0,
+      "fetched_at": 1791732049.4955595,
       "first_bar": 1791582900.0
      },
      "867dKvaCcyRrUDP66bqNXbujXfjaxsNB9wTpc4CmBdAD": {
       "busy_until": 1791730200.0,
-      "cursor": 1791727800.0,
-      "fetched_at": 1791728479.479978,
+      "cursor": 1791731400.0,
+      "fetched_at": 1791732049.4955595,
       "first_bar": 1791582900.0
      },
      "8ewuF2o8ACro7fqWepZ3tKhkbBjndZU4Ldk9scRPw83d": {
       "busy_until": 1791714600.0,
-      "cursor": 1791727800.0,
-      "fetched_at": 1791728479.479978,
+      "cursor": 1791728100.0,
+      "fetched_at": 1791732049.4955595,
       "first_bar": 1791582900.0
      },
      "9d6fbbtAGjM6eFHo4NpsPrDgnwhZNdetgewHmupZTVjV": {
       "busy_until": 1791731400.0,
-      "cursor": 1791727800.0,
-      "fetched_at": 1791728479.479978,
+      "cursor": 1791731400.0,
+      "fetched_at": 1791732049.4955595,
       "first_bar": 1791663300.0
      },
      "A7nWJWGUjNyWbVNPA5RrvLoF37j3ovdh8DKdgxYefcdk": {
       "busy_until": 1791731400.0,
-      "cursor": 1791727800.0,
-      "fetched_at": 1791728479.479978,
+      "cursor": 1791731400.0,
+      "fetched_at": 1791732049.4955595,
       "first_bar": 1791582900.0
      },
      "AZgECLWq2Xd7KfjKVt6jFuJTWmFxqBuhAA4PXKDMwVcr": {
       "busy_until": 0.0,
       "cursor": 1791611700.0,
-      "fetched_at": 1791728479.479978,
+      "fetched_at": 1791732049.4955595,
       "first_bar": 1791611700.0
      },
      "CR5dTgvTddGAqDjP8dGHTL51N6PKRaXqxFBp9FQ5PrKn": {
       "busy_until": 0.0,
       "cursor": 1791700200.0,
-      "fetched_at": 1791728479.479978,
+      "fetched_at": 1791732049.4955595,
       "first_bar": 1791577500.0
      },
      "CwaEjWuUHn9v1ETy3iMHn9QV5pvbodNrJDovQMsPSv1R": {
       "busy_until": 0.0,
       "cursor": 1791607200.0,
-      "fetched_at": 1791728479.479978,
+      "fetched_at": 1791732049.4955595,
       "first_bar": 1791607200.0
      },
      "CyJwKnLiiY4fmiwqMCSWFSHxo7T9Ubshgs2uRAuJCrk5": {
       "busy_until": 1791729900.0,
-      "cursor": 1791727800.0,
-      "fetched_at": 1791728479.479978,
+      "cursor": 1791729900.0,
+      "fetched_at": 1791732049.4955595,
       "first_bar": 1791582900.0
      },
      "Fe7bpDYCs74GqiCUF14HwgUMToPKV1d9mDYVX5BTohFr": {
-      "busy_until": 1791720300.0,
-      "cursor": 1791725700.0,
-      "fetched_at": 1791728479.479978,
+      "busy_until": 1791733200.0,
+      "cursor": 1791731400.0,
+      "fetched_at": 1791732049.4955595,
       "first_bar": 1791663300.0
      },
      "GLL3CzybpSCLZdoACf8QUM5YrKVwyA65kQ2RcTsJxxzV": {
       "busy_until": 1791724500.0,
-      "cursor": 1791727800.0,
-      "fetched_at": 1791728479.479978,
+      "cursor": 1791729900.0,
+      "fetched_at": 1791732049.4955595,
       "first_bar": 1791688500.0
      },
      "HMzvsEEmtzHhvZNw9uwbaG85HCTmFnkbhzUx16cy7ca3": {
       "busy_until": 0.0,
-      "cursor": 1791727800.0,
-      "fetched_at": 1791728479.479978,
+      "cursor": 1791731400.0,
+      "fetched_at": 1791732049.4955595,
       "first_bar": 1791582900.0
      },
      "cb4GFRgEitfu5qtxfRMiqzsaVPwgbD3HEor4cs2jFpn": {
       "busy_until": 1791730200.0,
-      "cursor": 1791727800.0,
-      "fetched_at": 1791728479.479978,
+      "cursor": 1791731400.0,
+      "fetched_at": 1791732049.4955595,
       "first_bar": 1791688500.0
      }
     }
@@ -3295,23 +3865,23 @@
    "size_factor": 1.0,
    "status": "paper",
    "verdict": {
-    "at": 1791728479.479978,
+    "at": 1791732049.4955595,
     "decision": "pending",
-    "n": 151,
-    "reason": "151 trades over 1.7 days: mean net -3.08% [-4.83, -0.76] (74 at real-trading execution: -3.00% vs -2.08% at the registered execution) (-3.83% at measured pool fees), excess over random entries +0.10% [-1.98, +2.33]; scored at 200 trades or 21 days",
+    "n": 157,
+    "reason": "157 trades over 1.7 days: mean net -2.80% [-4.62, -0.47] (80 at real-trading execution: -2.47% vs -1.28% at the registered execution) (-3.55% at measured pool fees), excess over random entries +0.45% [-1.57, +2.73]; scored at 200 trades or 21 days",
     "stats": {
-     "days": 1.68,
-     "excess": 0.000979939310473189,
-     "excess_hi": 0.02334675702619971,
-     "excess_lo": -0.019761434877484187,
-     "mean_hi": -0.007555348059263089,
-     "mean_lo": -0.048345972803536336,
-     "mean_net": -0.03077346127798523,
-     "mean_net_measured_fees": -0.0383393555409845,
-     "mean_net_real_execution": -0.03001916575854855,
-     "mean_net_registered_execution": -0.020796311778889714,
-     "n": 151,
-     "n_real_execution": 74,
+     "days": 1.72,
+     "excess": 0.004506831066255985,
+     "excess_hi": 0.02734110559163393,
+     "excess_lo": -0.01574506399610597,
+     "mean_hi": -0.00472784119184073,
+     "mean_lo": -0.046175659174182176,
+     "mean_net": -0.028048268635358423,
+     "mean_net_measured_fees": -0.0354543943551438,
+     "mean_net_real_execution": -0.024727547361351195,
+     "mean_net_registered_execution": -0.01278837996997989,
+     "n": 157,
+     "n_real_execution": 80,
      "n_replay": 0
     }
    }
@@ -3322,128 +3892,128 @@
     "pools": {
      "2B8tftZ5ww8TREMr3pgkgERLNjJyJxEAPWMENViGMsL4": {
       "busy_until": 1791745800.0,
-      "cursor": 1791727800.0,
-      "fetched_at": 1791728479.479978,
+      "cursor": 1791731400.0,
+      "fetched_at": 1791732049.4955595,
       "first_bar": 1791582900.0
      },
      "3NBq9zynLPDQQDvYf8xiMbWywQfKZD7m7fyprY524efq": {
       "busy_until": 1791731400.0,
-      "cursor": 1791727800.0,
-      "fetched_at": 1791728479.479978,
+      "cursor": 1791731400.0,
+      "fetched_at": 1791732049.4955595,
       "first_bar": 1791582900.0
      },
      "4JAnKFddd5fFTk5PxDj3PpTWJuTEfSWQEjZJcgKQ9KwW": {
       "busy_until": 1791736800.0,
-      "cursor": 1791727800.0,
-      "fetched_at": 1791728479.479978,
+      "cursor": 1791731400.0,
+      "fetched_at": 1791732049.4955595,
       "first_bar": 1791582900.0
      },
      "4R8CiMnJWDNoes3fQi1ccPFJygPXazaHaWpHrN3rZeNj": {
       "busy_until": 1791753000.0,
-      "cursor": 1791727800.0,
-      "fetched_at": 1791728479.479978,
+      "cursor": 1791731400.0,
+      "fetched_at": 1791732049.4955595,
       "first_bar": 1791663300.0
      },
      "4qxSqMh6iEdbdvtMp8r5MK2psAGKNk57PfGeVo2VhczQ": {
       "busy_until": 0.0,
-      "cursor": 1791727800.0,
-      "fetched_at": 1791728479.479978,
+      "cursor": 1791731400.0,
+      "fetched_at": 1791732049.4955595,
       "first_bar": 1791663000.0
      },
      "65GHmCbyRME3XwKjTqDB7pMJw2gvj2LZryfWKczoAqFR": {
       "busy_until": 1791712200.0,
-      "cursor": 1791726600.0,
-      "fetched_at": 1791728479.479978,
+      "cursor": 1791731100.0,
+      "fetched_at": 1791732049.4955595,
       "first_bar": 1791582900.0
      },
      "6QyYdc6jgeKnfP1FWhiexMYq3JQ3sidSYoubjWUTo3rm": {
       "busy_until": 1791728700.0,
-      "cursor": 1791727800.0,
-      "fetched_at": 1791728479.479978,
+      "cursor": 1791728700.0,
+      "fetched_at": 1791732049.4955595,
       "first_bar": 1791582900.0
      },
      "6qUUCwD9fyRafora8XVmdApQBxCkbUiZTMkcYD47rWsS": {
-      "busy_until": 1791725700.0,
-      "cursor": 1791725700.0,
-      "fetched_at": 1791728479.479978,
+      "busy_until": 1791754800.0,
+      "cursor": 1791731400.0,
+      "fetched_at": 1791732049.4955595,
       "first_bar": 1791663300.0
      },
      "745ATaSSWxvry5qt1XVv9eXuG884hDvNJfvA2o82dNBi": {
       "busy_until": 1791747300.0,
-      "cursor": 1791727800.0,
-      "fetched_at": 1791728479.479978,
+      "cursor": 1791731400.0,
+      "fetched_at": 1791732049.4955595,
       "first_bar": 1791582900.0
      },
      "867dKvaCcyRrUDP66bqNXbujXfjaxsNB9wTpc4CmBdAD": {
       "busy_until": 1791728100.0,
-      "cursor": 1791727800.0,
-      "fetched_at": 1791728479.479978,
+      "cursor": 1791731400.0,
+      "fetched_at": 1791732049.4955595,
       "first_bar": 1791582900.0
      },
      "8ewuF2o8ACro7fqWepZ3tKhkbBjndZU4Ldk9scRPw83d": {
       "busy_until": 1791736200.0,
-      "cursor": 1791727800.0,
-      "fetched_at": 1791728479.479978,
+      "cursor": 1791731400.0,
+      "fetched_at": 1791732049.4955595,
       "first_bar": 1791582900.0
      },
      "9d6fbbtAGjM6eFHo4NpsPrDgnwhZNdetgewHmupZTVjV": {
       "busy_until": 1791753000.0,
-      "cursor": 1791727800.0,
-      "fetched_at": 1791728479.479978,
+      "cursor": 1791731400.0,
+      "fetched_at": 1791732049.4955595,
       "first_bar": 1791663300.0
      },
      "A7nWJWGUjNyWbVNPA5RrvLoF37j3ovdh8DKdgxYefcdk": {
       "busy_until": 1791750600.0,
-      "cursor": 1791727800.0,
-      "fetched_at": 1791728479.479978,
+      "cursor": 1791731400.0,
+      "fetched_at": 1791732049.4955595,
       "first_bar": 1791582900.0
      },
      "AZgECLWq2Xd7KfjKVt6jFuJTWmFxqBuhAA4PXKDMwVcr": {
       "busy_until": 0.0,
       "cursor": 1791611700.0,
-      "fetched_at": 1791728479.479978,
+      "fetched_at": 1791732049.4955595,
       "first_bar": 1791611700.0
      },
      "CR5dTgvTddGAqDjP8dGHTL51N6PKRaXqxFBp9FQ5PrKn": {
       "busy_until": 0.0,
       "cursor": 1791700200.0,
-      "fetched_at": 1791728479.479978,
+      "fetched_at": 1791732049.4955595,
       "first_bar": 1791577500.0
      },
      "CwaEjWuUHn9v1ETy3iMHn9QV5pvbodNrJDovQMsPSv1R": {
       "busy_until": 0.0,
       "cursor": 1791607200.0,
-      "fetched_at": 1791728479.479978,
+      "fetched_at": 1791732049.4955595,
       "first_bar": 1791607200.0
      },
      "CyJwKnLiiY4fmiwqMCSWFSHxo7T9Ubshgs2uRAuJCrk5": {
       "busy_until": 1791732000.0,
-      "cursor": 1791727800.0,
-      "fetched_at": 1791728479.479978,
+      "cursor": 1791731400.0,
+      "fetched_at": 1791732049.4955595,
       "first_bar": 1791582900.0
      },
      "Fe7bpDYCs74GqiCUF14HwgUMToPKV1d9mDYVX5BTohFr": {
-      "busy_until": 1791723600.0,
-      "cursor": 1791725700.0,
-      "fetched_at": 1791728479.479978,
+      "busy_until": 1791754800.0,
+      "cursor": 1791731400.0,
+      "fetched_at": 1791732049.4955595,
       "first_bar": 1791663300.0
      },
      "GLL3CzybpSCLZdoACf8QUM5YrKVwyA65kQ2RcTsJxxzV": {
       "busy_until": 1791746700.0,
-      "cursor": 1791727800.0,
-      "fetched_at": 1791728479.479978,
+      "cursor": 1791731400.0,
+      "fetched_at": 1791732049.4955595,
       "first_bar": 1791688500.0
      },
      "HMzvsEEmtzHhvZNw9uwbaG85HCTmFnkbhzUx16cy7ca3": {
       "busy_until": 0.0,
-      "cursor": 1791727800.0,
-      "fetched_at": 1791728479.479978,
+      "cursor": 1791731400.0,
+      "fetched_at": 1791732049.4955595,
       "first_bar": 1791582900.0
      },
      "cb4GFRgEitfu5qtxfRMiqzsaVPwgbD3HEor4cs2jFpn": {
       "busy_until": 1791725400.0,
       "cursor": 1791727800.0,
-      "fetched_at": 1791728479.479978,
+      "fetched_at": 1791732049.4955595,
       "first_bar": 1791688500.0
      }
     }
@@ -3453,23 +4023,23 @@
    "size_factor": 1.0,
    "status": "paper",
    "verdict": {
-    "at": 1791728479.479978,
+    "at": 1791732049.4955595,
     "decision": "pending",
-    "n": 49,
-    "reason": "49 trades over 1.7 days: mean net -7.19% [-15.52, +8.46] (18 at real-trading execution: -2.70% vs -0.87% at the registered execution) (-8.06% at measured pool fees), excess over random entries -0.30% [-6.51, +5.62]; scored at 200 trades or 21 days",
+    "n": 51,
+    "reason": "51 trades over 1.7 days: mean net -7.42% [-15.43, +8.07] (20 at real-trading execution: -3.73% vs -1.72% at the registered execution) (-8.29% at measured pool fees), excess over random entries -0.01% [-6.36, +5.55]; scored at 200 trades or 21 days",
     "stats": {
-     "days": 1.68,
-     "excess": -0.002986541432071788,
-     "excess_hi": 0.05624098431600816,
-     "excess_lo": -0.06505502463980255,
-     "mean_hi": 0.08455185951497408,
-     "mean_lo": -0.15520548005033322,
-     "mean_net": -0.07194818093656252,
-     "mean_net_measured_fees": -0.08060652716148645,
-     "mean_net_real_execution": -0.027020862354486,
-     "mean_net_registered_execution": -0.008740944990198748,
-     "n": 49,
-     "n_real_execution": 18,
+     "days": 1.72,
+     "excess": -0.00012754333051041272,
+     "excess_hi": 0.055478297302111124,
+     "excess_lo": -0.06359265612849638,
+     "mean_hi": 0.08073499020457149,
+     "mean_lo": -0.15431304501351184,
+     "mean_net": -0.0742178202775918,
+     "mean_net_measured_fees": -0.08289278693578572,
+     "mean_net_real_execution": -0.03730117453231829,
+     "mean_net_registered_execution": -0.01721353082084317,
+     "n": 51,
+     "n_real_execution": 20,
      "n_replay": 0
     }
    }
@@ -3480,128 +4050,128 @@
     "pools": {
      "2B8tftZ5ww8TREMr3pgkgERLNjJyJxEAPWMENViGMsL4": {
       "busy_until": 1791708900.0,
-      "cursor": 1791727800.0,
-      "fetched_at": 1791728479.479978,
+      "cursor": 1791730800.0,
+      "fetched_at": 1791732049.4955595,
       "first_bar": 1791582900.0
      },
      "3NBq9zynLPDQQDvYf8xiMbWywQfKZD7m7fyprY524efq": {
       "busy_until": 1791729300.0,
-      "cursor": 1791727800.0,
-      "fetched_at": 1791728479.479978,
+      "cursor": 1791731400.0,
+      "fetched_at": 1791732049.4955595,
       "first_bar": 1791582900.0
      },
      "4JAnKFddd5fFTk5PxDj3PpTWJuTEfSWQEjZJcgKQ9KwW": {
-      "busy_until": 1791716100.0,
-      "cursor": 1791727500.0,
-      "fetched_at": 1791728479.479978,
+      "busy_until": 1791735000.0,
+      "cursor": 1791731400.0,
+      "fetched_at": 1791732049.4955595,
       "first_bar": 1791582900.0
      },
      "4R8CiMnJWDNoes3fQi1ccPFJygPXazaHaWpHrN3rZeNj": {
       "busy_until": 1791725400.0,
-      "cursor": 1791727800.0,
-      "fetched_at": 1791728479.479978,
+      "cursor": 1791731400.0,
+      "fetched_at": 1791732049.4955595,
       "first_bar": 1791663300.0
      },
      "4qxSqMh6iEdbdvtMp8r5MK2psAGKNk57PfGeVo2VhczQ": {
       "busy_until": 0.0,
-      "cursor": 1791727800.0,
-      "fetched_at": 1791728479.479978,
+      "cursor": 1791731400.0,
+      "fetched_at": 1791732049.4955595,
       "first_bar": 1791663000.0
      },
      "65GHmCbyRME3XwKjTqDB7pMJw2gvj2LZryfWKczoAqFR": {
       "busy_until": 1791698100.0,
-      "cursor": 1791726600.0,
-      "fetched_at": 1791728479.479978,
+      "cursor": 1791731100.0,
+      "fetched_at": 1791732049.4955595,
       "first_bar": 1791582900.0
      },
      "6QyYdc6jgeKnfP1FWhiexMYq3JQ3sidSYoubjWUTo3rm": {
-      "busy_until": 1791724200.0,
-      "cursor": 1791726600.0,
-      "fetched_at": 1791728479.479978,
+      "busy_until": 1791734100.0,
+      "cursor": 1791731400.0,
+      "fetched_at": 1791732049.4955595,
       "first_bar": 1791582900.0
      },
      "6qUUCwD9fyRafora8XVmdApQBxCkbUiZTMkcYD47rWsS": {
-      "busy_until": 1791727500.0,
-      "cursor": 1791727500.0,
-      "fetched_at": 1791728479.479978,
+      "busy_until": 1791735000.0,
+      "cursor": 1791731400.0,
+      "fetched_at": 1791732049.4955595,
       "first_bar": 1791663300.0
      },
      "745ATaSSWxvry5qt1XVv9eXuG884hDvNJfvA2o82dNBi": {
-      "busy_until": 1791726000.0,
-      "cursor": 1791726000.0,
-      "fetched_at": 1791728479.479978,
+      "busy_until": 1791733500.0,
+      "cursor": 1791731400.0,
+      "fetched_at": 1791732049.4955595,
       "first_bar": 1791582900.0
      },
      "867dKvaCcyRrUDP66bqNXbujXfjaxsNB9wTpc4CmBdAD": {
       "busy_until": 1791686400.0,
-      "cursor": 1791727800.0,
-      "fetched_at": 1791728479.479978,
+      "cursor": 1791731400.0,
+      "fetched_at": 1791732049.4955595,
       "first_bar": 1791582900.0
      },
      "8ewuF2o8ACro7fqWepZ3tKhkbBjndZU4Ldk9scRPw83d": {
       "busy_until": 1791717300.0,
-      "cursor": 1791727800.0,
-      "fetched_at": 1791728479.479978,
+      "cursor": 1791728100.0,
+      "fetched_at": 1791732049.4955595,
       "first_bar": 1791582900.0
      },
      "9d6fbbtAGjM6eFHo4NpsPrDgnwhZNdetgewHmupZTVjV": {
       "busy_until": 1791731400.0,
-      "cursor": 1791727800.0,
-      "fetched_at": 1791728479.479978,
+      "cursor": 1791731400.0,
+      "fetched_at": 1791732049.4955595,
       "first_bar": 1791663300.0
      },
      "A7nWJWGUjNyWbVNPA5RrvLoF37j3ovdh8DKdgxYefcdk": {
       "busy_until": 1791729000.0,
-      "cursor": 1791727800.0,
-      "fetched_at": 1791728479.479978,
+      "cursor": 1791731400.0,
+      "fetched_at": 1791732049.4955595,
       "first_bar": 1791582900.0
      },
      "AZgECLWq2Xd7KfjKVt6jFuJTWmFxqBuhAA4PXKDMwVcr": {
       "busy_until": 0.0,
       "cursor": 1791611700.0,
-      "fetched_at": 1791728479.479978,
+      "fetched_at": 1791732049.4955595,
       "first_bar": 1791611700.0
      },
      "CR5dTgvTddGAqDjP8dGHTL51N6PKRaXqxFBp9FQ5PrKn": {
       "busy_until": 0.0,
       "cursor": 1791700200.0,
-      "fetched_at": 1791728479.479978,
+      "fetched_at": 1791732049.4955595,
       "first_bar": 1791577500.0
      },
      "CwaEjWuUHn9v1ETy3iMHn9QV5pvbodNrJDovQMsPSv1R": {
       "busy_until": 0.0,
       "cursor": 1791607200.0,
-      "fetched_at": 1791728479.479978,
+      "fetched_at": 1791732049.4955595,
       "first_bar": 1791607200.0
      },
      "CyJwKnLiiY4fmiwqMCSWFSHxo7T9Ubshgs2uRAuJCrk5": {
       "busy_until": 1791730500.0,
-      "cursor": 1791727800.0,
-      "fetched_at": 1791728479.479978,
+      "cursor": 1791731400.0,
+      "fetched_at": 1791732049.4955595,
       "first_bar": 1791582900.0
      },
      "Fe7bpDYCs74GqiCUF14HwgUMToPKV1d9mDYVX5BTohFr": {
-      "busy_until": 1791720300.0,
-      "cursor": 1791726300.0,
-      "fetched_at": 1791728479.479978,
+      "busy_until": 1791733800.0,
+      "cursor": 1791731400.0,
+      "fetched_at": 1791732049.4955595,
       "first_bar": 1791663300.0
      },
      "GLL3CzybpSCLZdoACf8QUM5YrKVwyA65kQ2RcTsJxxzV": {
       "busy_until": 1791724800.0,
-      "cursor": 1791727800.0,
-      "fetched_at": 1791728479.479978,
+      "cursor": 1791730500.0,
+      "fetched_at": 1791732049.4955595,
       "first_bar": 1791688500.0
      },
      "HMzvsEEmtzHhvZNw9uwbaG85HCTmFnkbhzUx16cy7ca3": {
       "busy_until": 0.0,
-      "cursor": 1791727800.0,
-      "fetched_at": 1791728479.479978,
+      "cursor": 1791731400.0,
+      "fetched_at": 1791732049.4955595,
       "first_bar": 1791582900.0
      },
      "cb4GFRgEitfu5qtxfRMiqzsaVPwgbD3HEor4cs2jFpn": {
       "busy_until": 1791730200.0,
-      "cursor": 1791727800.0,
-      "fetched_at": 1791728479.479978,
+      "cursor": 1791731400.0,
+      "fetched_at": 1791732049.4955595,
       "first_bar": 1791688500.0
      }
     }
@@ -3611,23 +4181,23 @@
    "size_factor": 1.0,
    "status": "paper",
    "verdict": {
-    "at": 1791728479.479978,
+    "at": 1791732049.4955595,
     "decision": "pending",
-    "n": 118,
-    "reason": "118 trades over 1.7 days: mean net -2.65% [-4.79, -0.16] (59 at real-trading execution: -3.03% vs -0.61% at the registered execution) (-3.41% at measured pool fees), excess over random entries +0.99% [-1.80, +3.61]; scored at 200 trades or 21 days",
+    "n": 123,
+    "reason": "123 trades over 1.7 days: mean net -2.39% [-4.68, +0.16] (64 at real-trading execution: -2.50% vs +0.01% at the registered execution) (-3.14% at measured pool fees), excess over random entries +1.36% [-1.42, +3.91]; scored at 200 trades or 21 days",
     "stats": {
-     "days": 1.68,
-     "excess": 0.009931588691756036,
-     "excess_hi": 0.036087634497404986,
-     "excess_lo": -0.018043048489586593,
-     "mean_hi": -0.0016150828464110728,
-     "mean_lo": -0.047921758381602696,
-     "mean_net": -0.02647010334662122,
-     "mean_net_measured_fees": -0.03410834337872028,
-     "mean_net_real_execution": -0.030295928847959668,
-     "mean_net_registered_execution": -0.006076299287339173,
-     "n": 118,
-     "n_real_execution": 59,
+     "days": 1.72,
+     "excess": 0.013603536177470555,
+     "excess_hi": 0.039114123963612926,
+     "excess_lo": -0.014241879966020703,
+     "mean_hi": 0.0016485211623679817,
+     "mean_lo": -0.04679576854192684,
+     "mean_net": -0.02386712872543197,
+     "mean_net_measured_fees": -0.031433056415026535,
+     "mean_net_real_execution": -0.024994444380569504,
+     "mean_net_registered_execution": 0.00010247249603974329,
+     "n": 123,
+     "n_real_execution": 64,
      "n_replay": 0
     }
    }
@@ -3638,128 +4208,128 @@
     "pools": {
      "2B8tftZ5ww8TREMr3pgkgERLNjJyJxEAPWMENViGMsL4": {
       "busy_until": 1791716100.0,
-      "cursor": 1791727800.0,
-      "fetched_at": 1791728479.479978,
+      "cursor": 1791730800.0,
+      "fetched_at": 1791732049.4955595,
       "first_bar": 1791582900.0
      },
      "3NBq9zynLPDQQDvYf8xiMbWywQfKZD7m7fyprY524efq": {
-      "busy_until": 1791725100.0,
-      "cursor": 1791726600.0,
-      "fetched_at": 1791728479.479978,
+      "busy_until": 1791741300.0,
+      "cursor": 1791731400.0,
+      "fetched_at": 1791732049.4955595,
       "first_bar": 1791582900.0
      },
      "4JAnKFddd5fFTk5PxDj3PpTWJuTEfSWQEjZJcgKQ9KwW": {
-      "busy_until": 1791723300.0,
-      "cursor": 1791727500.0,
-      "fetched_at": 1791728479.479978,
+      "busy_until": 1791742200.0,
+      "cursor": 1791731400.0,
+      "fetched_at": 1791732049.4955595,
       "first_bar": 1791582900.0
      },
      "4R8CiMnJWDNoes3fQi1ccPFJygPXazaHaWpHrN3rZeNj": {
       "busy_until": 1791732600.0,
-      "cursor": 1791727800.0,
-      "fetched_at": 1791728479.479978,
+      "cursor": 1791731400.0,
+      "fetched_at": 1791732049.4955595,
       "first_bar": 1791663300.0
      },
      "4qxSqMh6iEdbdvtMp8r5MK2psAGKNk57PfGeVo2VhczQ": {
       "busy_until": 0.0,
-      "cursor": 1791727800.0,
-      "fetched_at": 1791728479.479978,
+      "cursor": 1791731400.0,
+      "fetched_at": 1791732049.4955595,
       "first_bar": 1791663000.0
      },
      "65GHmCbyRME3XwKjTqDB7pMJw2gvj2LZryfWKczoAqFR": {
       "busy_until": 1791705300.0,
-      "cursor": 1791726600.0,
-      "fetched_at": 1791728479.479978,
+      "cursor": 1791731100.0,
+      "fetched_at": 1791732049.4955595,
       "first_bar": 1791582900.0
      },
      "6QyYdc6jgeKnfP1FWhiexMYq3JQ3sidSYoubjWUTo3rm": {
-      "busy_until": 1791723300.0,
-      "cursor": 1791726600.0,
-      "fetched_at": 1791728479.479978,
+      "busy_until": 1791741300.0,
+      "cursor": 1791731400.0,
+      "fetched_at": 1791732049.4955595,
       "first_bar": 1791582900.0
      },
      "6qUUCwD9fyRafora8XVmdApQBxCkbUiZTMkcYD47rWsS": {
-      "busy_until": 1791726900.0,
-      "cursor": 1791726900.0,
-      "fetched_at": 1791728479.479978,
+      "busy_until": 1791741600.0,
+      "cursor": 1791731400.0,
+      "fetched_at": 1791732049.4955595,
       "first_bar": 1791663300.0
      },
      "745ATaSSWxvry5qt1XVv9eXuG884hDvNJfvA2o82dNBi": {
-      "busy_until": 1791721800.0,
-      "cursor": 1791725100.0,
-      "fetched_at": 1791728479.479978,
+      "busy_until": 1791739800.0,
+      "cursor": 1791731400.0,
+      "fetched_at": 1791732049.4955595,
       "first_bar": 1791582900.0
      },
      "867dKvaCcyRrUDP66bqNXbujXfjaxsNB9wTpc4CmBdAD": {
       "busy_until": 1791693600.0,
-      "cursor": 1791727800.0,
-      "fetched_at": 1791728479.479978,
+      "cursor": 1791731400.0,
+      "fetched_at": 1791732049.4955595,
       "first_bar": 1791582900.0
      },
      "8ewuF2o8ACro7fqWepZ3tKhkbBjndZU4Ldk9scRPw83d": {
       "busy_until": 1791724500.0,
-      "cursor": 1791727800.0,
-      "fetched_at": 1791728479.479978,
+      "cursor": 1791728100.0,
+      "fetched_at": 1791732049.4955595,
       "first_bar": 1791582900.0
      },
      "9d6fbbtAGjM6eFHo4NpsPrDgnwhZNdetgewHmupZTVjV": {
-      "busy_until": 1791724200.0,
-      "cursor": 1791724200.0,
-      "fetched_at": 1791728479.479978,
+      "busy_until": 1791738900.0,
+      "cursor": 1791731400.0,
+      "fetched_at": 1791732049.4955595,
       "first_bar": 1791663300.0
      },
      "A7nWJWGUjNyWbVNPA5RrvLoF37j3ovdh8DKdgxYefcdk": {
       "busy_until": 1791736200.0,
-      "cursor": 1791727800.0,
-      "fetched_at": 1791728479.479978,
+      "cursor": 1791731400.0,
+      "fetched_at": 1791732049.4955595,
       "first_bar": 1791582900.0
      },
      "AZgECLWq2Xd7KfjKVt6jFuJTWmFxqBuhAA4PXKDMwVcr": {
       "busy_until": 0.0,
       "cursor": 1791611700.0,
-      "fetched_at": 1791728479.479978,
+      "fetched_at": 1791732049.4955595,
       "first_bar": 1791611700.0
      },
      "CR5dTgvTddGAqDjP8dGHTL51N6PKRaXqxFBp9FQ5PrKn": {
       "busy_until": 0.0,
       "cursor": 1791700200.0,
-      "fetched_at": 1791728479.479978,
+      "fetched_at": 1791732049.4955595,
       "first_bar": 1791577500.0
      },
      "CwaEjWuUHn9v1ETy3iMHn9QV5pvbodNrJDovQMsPSv1R": {
       "busy_until": 0.0,
       "cursor": 1791607200.0,
-      "fetched_at": 1791728479.479978,
+      "fetched_at": 1791732049.4955595,
       "first_bar": 1791607200.0
      },
      "CyJwKnLiiY4fmiwqMCSWFSHxo7T9Ubshgs2uRAuJCrk5": {
       "busy_until": 1791737700.0,
-      "cursor": 1791727800.0,
-      "fetched_at": 1791728479.479978,
+      "cursor": 1791731400.0,
+      "fetched_at": 1791732049.4955595,
       "first_bar": 1791582900.0
      },
      "Fe7bpDYCs74GqiCUF14HwgUMToPKV1d9mDYVX5BTohFr": {
-      "busy_until": 1791718800.0,
-      "cursor": 1791726300.0,
-      "fetched_at": 1791728479.479978,
+      "busy_until": 1791741000.0,
+      "cursor": 1791731400.0,
+      "fetched_at": 1791732049.4955595,
       "first_bar": 1791663300.0
      },
      "GLL3CzybpSCLZdoACf8QUM5YrKVwyA65kQ2RcTsJxxzV": {
       "busy_until": 1791732000.0,
-      "cursor": 1791727800.0,
-      "fetched_at": 1791728479.479978,
+      "cursor": 1791731400.0,
+      "fetched_at": 1791732049.4955595,
       "first_bar": 1791688500.0
      },
      "HMzvsEEmtzHhvZNw9uwbaG85HCTmFnkbhzUx16cy7ca3": {
       "busy_until": 0.0,
-      "cursor": 1791727800.0,
-      "fetched_at": 1791728479.479978,
+      "cursor": 1791731400.0,
+      "fetched_at": 1791732049.4955595,
       "first_bar": 1791582900.0
      },
      "cb4GFRgEitfu5qtxfRMiqzsaVPwgbD3HEor4cs2jFpn": {
       "busy_until": 1791727800.0,
-      "cursor": 1791727800.0,
-      "fetched_at": 1791728479.479978,
+      "cursor": 1791731400.0,
+      "fetched_at": 1791732049.4955595,
       "first_bar": 1791688500.0
      }
     }
@@ -3769,12 +4339,12 @@
    "size_factor": 1.0,
    "status": "paper",
    "verdict": {
-    "at": 1791728479.479978,
+    "at": 1791732049.4955595,
     "decision": "pending",
     "n": 75,
     "reason": "75 trades over 1.7 days: mean net -4.28% [-9.03, +1.25] (35 at real-trading execution: -3.74% vs -1.12% at the registered execution) (-5.10% at measured pool fees), excess over random entries +0.25% [-6.63, +5.42]; scored at 200 trades or 21 days",
     "stats": {
-     "days": 1.68,
+     "days": 1.72,
      "excess": 0.0024558464486749004,
      "excess_hi": 0.054189299248812176,
      "excess_lo": -0.06634527711452451,
@@ -3796,128 +4366,128 @@
     "pools": {
      "2B8tftZ5ww8TREMr3pgkgERLNjJyJxEAPWMENViGMsL4": {
       "busy_until": 1791730500.0,
-      "cursor": 1791727800.0,
-      "fetched_at": 1791728479.479978,
+      "cursor": 1791730800.0,
+      "fetched_at": 1791732049.4955595,
       "first_bar": 1791582900.0
      },
      "3NBq9zynLPDQQDvYf8xiMbWywQfKZD7m7fyprY524efq": {
       "busy_until": 1791750900.0,
-      "cursor": 1791727800.0,
-      "fetched_at": 1791728479.479978,
+      "cursor": 1791731400.0,
+      "fetched_at": 1791732049.4955595,
       "first_bar": 1791582900.0
      },
      "4JAnKFddd5fFTk5PxDj3PpTWJuTEfSWQEjZJcgKQ9KwW": {
       "busy_until": 1791737700.0,
-      "cursor": 1791727800.0,
-      "fetched_at": 1791728479.479978,
+      "cursor": 1791731400.0,
+      "fetched_at": 1791732049.4955595,
       "first_bar": 1791582900.0
      },
      "4R8CiMnJWDNoes3fQi1ccPFJygPXazaHaWpHrN3rZeNj": {
       "busy_until": 1791747000.0,
-      "cursor": 1791727800.0,
-      "fetched_at": 1791728479.479978,
+      "cursor": 1791731400.0,
+      "fetched_at": 1791732049.4955595,
       "first_bar": 1791663300.0
      },
      "4qxSqMh6iEdbdvtMp8r5MK2psAGKNk57PfGeVo2VhczQ": {
       "busy_until": 0.0,
-      "cursor": 1791727800.0,
-      "fetched_at": 1791728479.479978,
+      "cursor": 1791731400.0,
+      "fetched_at": 1791732049.4955595,
       "first_bar": 1791663000.0
      },
      "65GHmCbyRME3XwKjTqDB7pMJw2gvj2LZryfWKczoAqFR": {
       "busy_until": 1791719700.0,
-      "cursor": 1791726600.0,
-      "fetched_at": 1791728479.479978,
+      "cursor": 1791731100.0,
+      "fetched_at": 1791732049.4955595,
       "first_bar": 1791582900.0
      },
      "6QyYdc6jgeKnfP1FWhiexMYq3JQ3sidSYoubjWUTo3rm": {
       "busy_until": 1791737700.0,
-      "cursor": 1791727800.0,
-      "fetched_at": 1791728479.479978,
+      "cursor": 1791731400.0,
+      "fetched_at": 1791732049.4955595,
       "first_bar": 1791582900.0
      },
      "6qUUCwD9fyRafora8XVmdApQBxCkbUiZTMkcYD47rWsS": {
-      "busy_until": 1791726600.0,
-      "cursor": 1791726600.0,
-      "fetched_at": 1791728479.479978,
+      "busy_until": 1791755700.0,
+      "cursor": 1791731400.0,
+      "fetched_at": 1791732049.4955595,
       "first_bar": 1791663300.0
      },
      "745ATaSSWxvry5qt1XVv9eXuG884hDvNJfvA2o82dNBi": {
       "busy_until": 1791747600.0,
-      "cursor": 1791727800.0,
-      "fetched_at": 1791728479.479978,
+      "cursor": 1791731400.0,
+      "fetched_at": 1791732049.4955595,
       "first_bar": 1791582900.0
      },
      "867dKvaCcyRrUDP66bqNXbujXfjaxsNB9wTpc4CmBdAD": {
       "busy_until": 1791708000.0,
-      "cursor": 1791727800.0,
-      "fetched_at": 1791728479.479978,
+      "cursor": 1791731400.0,
+      "fetched_at": 1791732049.4955595,
       "first_bar": 1791582900.0
      },
      "8ewuF2o8ACro7fqWepZ3tKhkbBjndZU4Ldk9scRPw83d": {
       "busy_until": 1791738900.0,
-      "cursor": 1791727800.0,
-      "fetched_at": 1791728479.479978,
+      "cursor": 1791731400.0,
+      "fetched_at": 1791732049.4955595,
       "first_bar": 1791582900.0
      },
      "9d6fbbtAGjM6eFHo4NpsPrDgnwhZNdetgewHmupZTVjV": {
       "busy_until": 1791753000.0,
-      "cursor": 1791727800.0,
-      "fetched_at": 1791728479.479978,
+      "cursor": 1791731400.0,
+      "fetched_at": 1791732049.4955595,
       "first_bar": 1791663300.0
      },
      "A7nWJWGUjNyWbVNPA5RrvLoF37j3ovdh8DKdgxYefcdk": {
       "busy_until": 1791750600.0,
-      "cursor": 1791727800.0,
-      "fetched_at": 1791728479.479978,
+      "cursor": 1791731400.0,
+      "fetched_at": 1791732049.4955595,
       "first_bar": 1791582900.0
      },
      "AZgECLWq2Xd7KfjKVt6jFuJTWmFxqBuhAA4PXKDMwVcr": {
       "busy_until": 0.0,
       "cursor": 1791611700.0,
-      "fetched_at": 1791728479.479978,
+      "fetched_at": 1791732049.4955595,
       "first_bar": 1791611700.0
      },
      "CR5dTgvTddGAqDjP8dGHTL51N6PKRaXqxFBp9FQ5PrKn": {
       "busy_until": 0.0,
       "cursor": 1791700200.0,
-      "fetched_at": 1791728479.479978,
+      "fetched_at": 1791732049.4955595,
       "first_bar": 1791577500.0
      },
      "CwaEjWuUHn9v1ETy3iMHn9QV5pvbodNrJDovQMsPSv1R": {
       "busy_until": 0.0,
       "cursor": 1791607200.0,
-      "fetched_at": 1791728479.479978,
+      "fetched_at": 1791732049.4955595,
       "first_bar": 1791607200.0
      },
      "CyJwKnLiiY4fmiwqMCSWFSHxo7T9Ubshgs2uRAuJCrk5": {
       "busy_until": 1791752100.0,
-      "cursor": 1791727800.0,
-      "fetched_at": 1791728479.479978,
+      "cursor": 1791731400.0,
+      "fetched_at": 1791732049.4955595,
       "first_bar": 1791582900.0
      },
      "Fe7bpDYCs74GqiCUF14HwgUMToPKV1d9mDYVX5BTohFr": {
       "busy_until": 1791733200.0,
-      "cursor": 1791727800.0,
-      "fetched_at": 1791728479.479978,
+      "cursor": 1791731400.0,
+      "fetched_at": 1791732049.4955595,
       "first_bar": 1791663300.0
      },
      "GLL3CzybpSCLZdoACf8QUM5YrKVwyA65kQ2RcTsJxxzV": {
       "busy_until": 1791746700.0,
-      "cursor": 1791727800.0,
-      "fetched_at": 1791728479.479978,
+      "cursor": 1791731400.0,
+      "fetched_at": 1791732049.4955595,
       "first_bar": 1791688500.0
      },
      "HMzvsEEmtzHhvZNw9uwbaG85HCTmFnkbhzUx16cy7ca3": {
       "busy_until": 0.0,
-      "cursor": 1791727800.0,
-      "fetched_at": 1791728479.479978,
+      "cursor": 1791731400.0,
+      "fetched_at": 1791732049.4955595,
       "first_bar": 1791582900.0
      },
      "cb4GFRgEitfu5qtxfRMiqzsaVPwgbD3HEor4cs2jFpn": {
       "busy_until": 1791725400.0,
-      "cursor": 1791727800.0,
-      "fetched_at": 1791728479.479978,
+      "cursor": 1791731400.0,
+      "fetched_at": 1791732049.4955595,
       "first_bar": 1791688500.0
      }
     }
@@ -3927,23 +4497,23 @@
    "size_factor": 1.0,
    "status": "paper",
    "verdict": {
-    "at": 1791728479.479978,
+    "at": 1791732049.4955595,
     "decision": "pending",
-    "n": 42,
-    "reason": "42 trades over 1.7 days: mean net -9.92% [-16.92, -2.20] (16 at real-trading execution: -9.49% vs -3.48% at the registered execution) (-10.91% at measured pool fees), excess over random entries -1.34% [-10.37, +6.17]; scored at 200 trades or 21 days",
+    "n": 43,
+    "reason": "43 trades over 1.7 days: mean net -9.50% [-16.80, -2.00] (17 at real-trading execution: -8.45% vs -3.38% at the registered execution) (-10.46% at measured pool fees), excess over random entries -0.84% [-9.75, +6.22]; scored at 200 trades or 21 days",
     "stats": {
-     "days": 1.68,
-     "excess": -0.013446035367992291,
-     "excess_hi": 0.061659606449911794,
-     "excess_lo": -0.10366748459284335,
-     "mean_hi": -0.022004562497328784,
-     "mean_lo": -0.1692113096520319,
-     "mean_net": -0.09920907364409419,
-     "mean_net_measured_fees": -0.10905698450454888,
-     "mean_net_real_execution": -0.09493183410855555,
-     "mean_net_registered_execution": -0.034815533413632645,
-     "n": 42,
-     "n_real_execution": 16,
+     "days": 1.72,
+     "excess": -0.008393190418338511,
+     "excess_hi": 0.06223113659628757,
+     "excess_lo": -0.0975357708167904,
+     "mean_hi": -0.020010902233682338,
+     "mean_lo": -0.16797494180885214,
+     "mean_net": -0.09497760504589885,
+     "mean_net_measured_fees": -0.10462860447249583,
+     "mean_net_real_execution": -0.08448030997991667,
+     "mean_net_registered_execution": -0.03380682473019473,
+     "n": 43,
+     "n_real_execution": 17,
      "n_replay": 0
     }
    }
@@ -3959,7 +4529,7 @@
    "size_factor": 1.0,
    "status": "paper",
    "verdict": {
-    "at": 1791728479.479978,
+    "at": 1791732049.4955595,
     "decision": "pending",
     "n": 0,
     "reason": "0 interval(s); scored after 2027-04-10 (registered)",
@@ -3977,7 +4547,7 @@
    "size_factor": 1.0,
    "status": "paper",
    "verdict": {
-    "at": 1791728479.479978,
+    "at": 1791732049.4955595,
     "decision": "pending",
     "n": 0,
     "reason": "0 closed legs, basket P&L $+0.00 on $200 of JLP; the registered verdict is `jlp_paper.py evaluate --final` after 2027-01-08",
@@ -4006,14 +4576,14 @@
   },
   "us_capit": {
    "data": {
-    "done_hour": 497700
+    "done_hour": 497701
    },
    "errors": 0,
    "registered_at": 1791692533.5285056,
    "size_factor": 1.0,
    "status": "paper",
    "verdict": {
-    "at": 1791728479.479978,
+    "at": 1791732049.4955595,
     "decision": "pending",
     "n": 0,
     "reason": "0 trade(s); scored after 2027-10-11 (registered)",
@@ -4024,14 +4594,14 @@
   },
   "us_volspike": {
    "data": {
-    "done_hour": 497700
+    "done_hour": 497701
    },
    "errors": 0,
    "registered_at": 1791692533.5285056,
    "size_factor": 1.0,
    "status": "paper",
    "verdict": {
-    "at": 1791728479.479978,
+    "at": 1791732049.4955595,
     "decision": "pending",
     "n": 0,
     "reason": "0 trade(s); scored after 2027-10-11 (registered)",
@@ -4047,7 +4617,7 @@
    "size_factor": 1.0,
    "status": "paper",
    "verdict": {
-    "at": 1791728479.479978,
+    "at": 1791732049.4955595,
     "decision": "pending",
     "n": 0,
     "reason": "0 complete week(s); scored at 52 weeks (registered)",
@@ -4058,7 +4628,7 @@
   },
   "wick_bounce": {
    "data": {
-    "done_hour": 497701,
+    "done_hour": 497702,
     "exec": {},
     "exec_pending": {}
    },
@@ -4067,7 +4637,7 @@
    "size_factor": 1.0,
    "status": "paper",
    "verdict": {
-    "at": 1791728479.479978,
+    "at": 1791732049.4955595,
     "decision": "pending",
     "n": 0,
     "reason": "0 trade(s); scored after 2027-10-11 (registered)",
@@ -4083,7 +4653,7 @@
    "size_factor": 1.0,
    "status": "paper",
    "verdict": {
-    "at": 1791728479.479978,
+    "at": 1791732049.4955595,
     "decision": "pending",
     "n": 0,
     "reason": "0 complete week(s); scored at 52 weeks (registered)",
