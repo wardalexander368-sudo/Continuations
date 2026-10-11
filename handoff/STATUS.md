@@ -506,6 +506,12 @@ the Log). Owner thread names are the project's thread titles.
 
 ## Log (newest first)
 
+* **2026-10-11 ~07:30 UTC, trading-skills thread: Kalshi closed, nothing passes** (`edge-hunt.md` §M).
+  16,342 settled sports/weather/economics markets, 24 favourite/longshot rules bought at the ask with
+  Kalshi's fee: every band loses in train; the 0.95-0.99 favourites were +1.5% in 2025 only. With §L
+  (D3 on Coinbase US perps, registered) and §K (two US-spot patterns, registered), the US lane has
+  three paper tests from 2026-10-12 and nothing else.
+
 * **2026-10-11 ~07:10 UTC, trading-skills thread: cde-vol-momentum addendum (funding, whole contracts)**
   before the window. Primary unchanged; secondary lines from `experiments/edge-hunt/perps/cde_rounding.py`:
   HL funding as a stand-in costs ~0.04%/week; rounding to whole Coinbase contracts builds 80% of the book

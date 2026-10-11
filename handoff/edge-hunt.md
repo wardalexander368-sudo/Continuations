@@ -225,6 +225,19 @@ commission) earned in every split (+1.33%/month [+0.18, +2.70] in test; 2025 +19
 falling as it grows), so holding it against a 5% cash hurdle is **pre-registered** for 180 days:
 `preregistration/hlp-hold/SPEC.md`, scorer `experiments/edge-hunt/vaults/hlp_forward.py`.
 
+### M. Kalshi favourite/longshot pricing (2026-10-11, trading-skills thread): closed, nothing passes
+
+Kalshi (CFTC-regulated, US). `predmkt/fetch_kalshi.py` + `ks_biases.py`: 16,342 settled sports, weather
+and economics markets (MLB, NBA, NFL, NHL, college football and basketball, EPL, daily highs in four
+cities, Fed, CPI; live list plus `/historical/markets`, 2021-07..2026-10, mostly 2025-26; the hourly
+crypto/index strike ladders left out). Buy at the hourly ask K = 2/6/24 h before close, pay Kalshi's
+taker fee 0.07·p·(1−p), hold to settlement; 24 rules; output `data/edge-hunt/predmkt/ks-biases.txt`.
+* **Every band loses in train after the spread and fee**; longshots under 15 cents lose 25–90%.
+  Favourites at 0.95–0.99 were +1.5–1.8% in validation (2025) but −5.7% to −20% in train, so the
+  chosen rule fails the gate; test not read. Early (pre-2025) archived markets are thin and their
+  quotes may be stale, so train is the weakest split, but nothing is positive in both.
+* Same answer as Polymarket (§H): no favourite-longshot edge survives paying the ask plus fees.
+
 ### L. Momentum on Coinbase's US perps (2026-10-11, trading-skills thread): pre-registered (D3 on 23 coins)
 
 Coinbase Financial Markets lists CFTC-regulated perpetual-style futures for US customers on 23 crypto
@@ -424,6 +437,7 @@ Round 2 has nothing registered; F2 (funding-spike shorts) stays on hold.
 * (added) **E1, pump.fun revenue surprise -> PUMP perp:** both halves positive after costs, each
   ~1.7 SE, beyond-trend part positive. **Forward test registered** (180 days, hourly Action).
   E1b: the same rule on 8 other buyback tokens is flat (family −0.01%/day), so lower the prior.
+* (added) **M, Kalshi pricing:** 24 rules, nothing passes after spread and fee (closed).
 * (added) **L, D3 on Coinbase US perps:** positive in all splits (test +0.39%/week, CI spans 0).
   **Forward test registered** (52 weeks, free). The US route for the momentum edge.
 * (added) **K, US-spot chart patterns:** capitulation bounce and volume-spike follow-through
