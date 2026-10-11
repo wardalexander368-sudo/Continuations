@@ -511,6 +511,11 @@ the Log). Owner thread names are the project's thread titles.
 
 ## Log (newest first)
 
+* **2026-10-11 ~20:40 UTC, overall-review thread** (`reviews/overall-2026-10-11.md`). No US registration can
+  clear its CI bar in 52 weeks (too few independent events), so AJ needs a go-live-small rule. CAPIT holds on 10
+  extra US coins (+4.52%/trade, CI spans zero, mostly the same crash days); VOLSPIKE does not (−0.30%). New paper
+  research line `us_capit~wide` (shadow, no twin, no Alpaca mirror); `coinbase_pattern` passes `shadow` to its trades.
+
 * **2026-10-11 ~19:40 UTC, trade-timing thread: timing and exits on the US strategies** (`reviews/timing-2026-10-11.md`).
   Exits stay as registered (24 exit variants and 8 CDE holding/lag/day variants, none survives). Capitulation
   bounces fade with delay: +4.11%/trade at 15 min, +2.97% at the registered 30, +1.93% at the ~90 min a

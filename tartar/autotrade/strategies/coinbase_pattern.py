@@ -98,6 +98,7 @@ class CoinbasePattern:
         # 15m bars from the signal hour's close to the entry (2 = registered; 1 = the first hourly run after the signal,
         # which starts :21-:32, so the :15 bar is final: handoff/reviews/timing-2026-10-11.md)
         self.delay = int(cfg.get("delay_bars", DELAY))
+        # shadow = research line outside the risk caps, live twins and the Alpaca mirror (as dip variants)
         self.get = cfg.get("_get") or self._get  # tests inject a fake API
         self._last: dict[str, tuple[float, float]] = {}
 
@@ -174,7 +175,8 @@ class CoinbasePattern:
                                       f"{self.rule} signal at the {day(h)} {h % 24:02d}:00 UTC hour, hold {self.hold} h",
                                       asset=coin, side=1, notional_usd=self.size, cost=CostModel(fee=self.cost),
                                       meta={"key": key, "signal_hour": h, "exit_t": exit_t, "label": f"{coin}-USD",
-                                            "venue": "coinbase", "entry_day": day(h), "rule": self.rule}))
+                                            "venue": "coinbase", "entry_day": day(h), "rule": self.rule,
+                                            "shadow": bool(self.cfg.get("shadow"))}))
                 busy = h + self.hold + 1
                 if exit_t + 60 <= now:  # a late look: the whole hold is in the data
                     x = self.exit_intent(coin, lo_h, C15, exit_t, now, key=key)

@@ -172,6 +172,33 @@
       },
       "delay_bars": 1
     },
+    "us_capit~wide": {
+      "kind": "coinbase_pattern",
+      "rule": "capit",
+      "enabled": true,
+      "size_usd": 200,
+      "shadow": true,
+      "coins": [
+        "AAVE",
+        "UNI",
+        "SHIB",
+        "CRV",
+        "GRT",
+        "XTZ",
+        "BAT",
+        "SUSHI",
+        "YFI",
+        "PEPE"
+      ],
+      "prereg": "handoff/preregistration/us-patterns/SPEC.md",
+      "note": "Research line, not registered (handoff/reviews/overall-2026-10-11.md): us_capit's exact rule on 10 US coins outside the study's 11 (all on Coinbase USD; on Alpaca's list, to confirm before any live use). On 2023-01..2026-10 hourly history (handoff/experiments/edge-hunt/patterns/wide_coins.py, 60-min entry, 0.39%/side) capit made +4.52%/trade on these coins (48 trades, 17 days, CI spans zero) vs +3.66% on the study coins; VOLSPIKE did not carry over (-0.30%), so it has no wide line. Shadow: outside the risk caps, no live twin, no Alpaca mirror. More coins = more dollars per crash day, not more independent days.",
+      "cost_per_side": 0.0062,
+      "venue_costs": {
+        "coinbase_taker": 0.0091,
+        "coinbase_maker": 0.005,
+        "alpaca": 0.0039
+      }
+    },
     "us_volspike": {
       "kind": "coinbase_pattern",
       "rule": "volspike",
