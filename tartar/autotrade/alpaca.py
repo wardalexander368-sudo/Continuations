@@ -121,6 +121,7 @@ class AlpacaMirror:
     def __init__(self, cfg: dict, client: AlpacaPaper, root: Path | None, journal=None):
         self.cfg, self.client, self.root, self.journal = cfg, client, Path(root) if root else None, journal
         self._ok: bool | None = None
+        self.last_error, self.crypto_status = "", None
         self._incr: dict[str, float] = {}
 
     def log(self, row: dict) -> None:
@@ -133,18 +134,26 @@ class AlpacaMirror:
         if self.journal:
             self.journal({"event": "alpaca_error", **row})
 
-    def ready(self, now: float) -> bool:
+    def ready(self, now: float, quiet: bool = False) -> bool:
         """Once per run: the key must open a paper account (paper account numbers start with PA)."""
         if self._ok is None:
             try:
                 acct = self.client.account()
                 self._ok = str(acct.get("account_number", "")).startswith("PA") and acct.get("status") == "ACTIVE"
+                self.crypto_status = acct.get("crypto_status")
                 if not self._ok:
-                    self.error({"at": now, "error": f"account not an active paper account (status {acct.get('status')})"})
+                    self.last_error = f"account not an active paper account (status {acct.get('status')})"
             except Exception as exc:  # noqa: BLE001
                 self._ok = False
-                self.error({"at": now, "error": f"account check: {type(exc).__name__}: {exc}"[:300]})
+                self.last_error = f"account check: {type(exc).__name__}: {exc}"[:300]
+            if not self._ok and not quiet:
+                self.error({"at": now, "error": self.last_error})
         return self._ok
+
+    def status(self, now: float) -> dict:
+        """The per-run key check, kept in state.json (no row in alpaca_fills.jsonl unless a trade needed it)."""
+        ok = self.ready(now, quiet=True)
+        return {"checked_at": now, "ok": ok, **({"crypto_status": self.crypto_status} if ok else {"error": self.last_error})}
 
     def wants(self, strategy: str, meta: dict) -> bool:
         return strategy in self.cfg["strategies"] and meta.get("venue") == "coinbase"
@@ -233,14 +242,20 @@ def make_mirror(config: dict, env, root=None, journal=None, client=None) -> Alpa
     return AlpacaMirror(cfg, client, root, journal)
 
 
-def report_lines(root: Path) -> list[str]:
+def report_lines(root: Path, state: dict | None = None) -> list[str]:
     path = Path(root) / "alpaca_fills.jsonl"
     rows = [json.loads(x) for x in path.read_text().splitlines() if x.strip()] if path.exists() else []
-    if not rows:
+    st = (state or {}).get("alpaca")
+    if not rows and not st:
         return []
+    head = ["", "## Alpaca paper fills (US spot, paper account; alpaca_fills.jsonl)", ""]
+    if st:
+        head.append("Key check this run: " + ("paper account OK" + (f", crypto {st['crypto_status']}" if st.get("crypto_status") else "")
+                                             if st.get("ok") else f"not working ({st.get('error')})") + ".")
+    if not rows:
+        return head
     sells = [r for r in rows if r.get("event") == "sell"]
-    out = ["", "## Alpaca paper fills (US spot, paper account; alpaca_fills.jsonl)", "",
-           f"{sum(r.get('event') == 'buy' for r in rows)} buys, {len(sells)} round trips, "
+    out = head + [f"{sum(r.get('event') == 'buy' for r in rows)} buys, {len(sells)} round trips, "
            f"{sum(r.get('event') == 'error' for r in rows)} errors."]
     if sells:
         n = len(sells)

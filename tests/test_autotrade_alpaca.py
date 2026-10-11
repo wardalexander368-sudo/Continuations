@@ -122,3 +122,23 @@ def test_any_other_base_url_is_refused():
     c = alpaca.AlpacaPaper("id", "secret", http=FakeHttp({}), sleep=lambda s: None)
     with pytest.raises(ValueError):
         c._req("GET", "/v2/account", base="https://api.alpaca.markets")
+
+
+def test_every_run_checks_the_key_and_reports_it(tmp_path):
+    s, http, client = setup(tmp_path)
+    run_once(tmp_path, now=(H0 + 190) * 3600 + 1200, strategies={"c": s}, alpaca=client)
+    assert Ledger(tmp_path).state["alpaca"]["ok"] is True
+    assert "Key check this run: paper account OK" in (tmp_path / "REPORT.md").read_text()
+    (tmp_path / "x").mkdir()
+    s, http, client = setup(tmp_path / "x", account="LIVE9")
+    run_once(tmp_path / "x", now=(H0 + 190) * 3600 + 1200, strategies={"c": s}, alpaca=client)
+    st = Ledger(tmp_path / "x").state["alpaca"]
+    assert st["ok"] is False and "not an active paper account" in st["error"]
+    assert not (tmp_path / "x" / "alpaca_fills.jsonl").exists()  # the hourly check alone writes no fill rows
+
+
+def test_missing_secrets_show_in_state(tmp_path, monkeypatch):
+    monkeypatch.delenv("APCA_API_KEY_ID", raising=False)
+    s, http, client = setup(tmp_path)
+    run_once(tmp_path, now=(H0 + 190) * 3600 + 1200, strategies={"c": s})
+    assert "not set" in Ledger(tmp_path).state["alpaca"]["error"]

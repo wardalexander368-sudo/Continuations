@@ -88,6 +88,9 @@ def run_once(root: Path = ROOT, now: float | None = None, strategies: dict | Non
     risk = Risk(config, root, ledger)
     risk.now = now
     mirror = make_mirror(config, os.environ, root, ledger.journal, client=alpaca)  # Alpaca paper fills (alpaca.py)
+    if (config.get("alpaca_paper") or {}).get("enabled"):  # the key is checked every run, trades or not
+        ledger.state["alpaca"] = mirror.status(now) if mirror else {"checked_at": now, "ok": False,
+                                                                     "error": "secrets APCA_API_KEY_ID / APCA_API_SECRET_KEY not set"}
     if strategies is None:
         from .search import active_candidates
 
@@ -367,7 +370,7 @@ def write_report(root: Path, ledger: Ledger, strategies: dict, now: float, risk:
                   + (f" Registered strategies' closed trades at the measured impact: mean net {100 * sum(qn) / len(qn):+.2f}% "
                      f"over {len(qn)} trades." if qn else "")]
     lines += live_report(ledger, config_mode(root))
-    lines += alpaca_report(root)
+    lines += alpaca_report(root, ledger.state)
     unreal = sum(p.unrealized() for p in ledger.positions if not p.meta.get("shadow"))
     lines += ["", f"Realized PnL {total:+.2f} USD (registered strategies; variants listed above); open positions {len(ledger.positions)}, unrealized {unreal:+.2f} USD "
               f"(entry costs included); today {risk.day_pnl(now, ledger.positions):+.2f} USD "
