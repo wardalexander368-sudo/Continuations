@@ -15,6 +15,7 @@ Paper only. Ranked by effect on the goal (a profitable strategy a US person can 
 | 7 | New US instruments not in any survey: Coinbase Derivatives **US500 perp** (2026-08-17, equity perps 0 bp maker / 1 bp taker promo), Kalshi's approved US BTC perp; Deribit also lists SPY/QQQ/gold/oil perps | securities.io; decrypt.co | Trading-skills lane |
 | 8 | Health doesn't watch the HL 1h candle cache the wick test needs, or `hl-book.yml` / `autotrade-search.yml` | `autotrade/health.json` (9 checks) | Done by the autotrade owner (3d37766) |
 | 9 | Dip rule: −5.95% [−9.64, −2.25] per trade, 9 variants still trade hourly | `autotrade/REPORT.md` | Scored 10-30 by routine; autotrade owner may retire early |
+| 10 | **The wick test's 1h candle recording was broken**: `perps-ctx.yml` ran `wick_forward.py --update` without numpy and `|| true` hid the error, so `data/edge-hunt/hl-1h` has not grown since 2026-10-10 18:56 UTC; and `health.yml`'s sparse checkout left out that folder, so its new check showed a false red | git log of `hl-1h`; the update works locally once numpy is installed | Fixed (numpy installed, failure now a visible warning, sparse path added, `tests/test_workflow_deps.py`). HL keeps ~5,000 1h bars, so nothing was lost |
 
 ## A. US-spot patterns at real costs
 
