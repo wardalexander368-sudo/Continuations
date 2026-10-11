@@ -225,6 +225,26 @@ commission) earned in every split (+1.33%/month [+0.18, +2.70] in test; 2025 +19
 falling as it grows), so holding it against a 5% cash hurdle is **pre-registered** for 180 days:
 `preregistration/hlp-hold/SPEC.md`, scorer `experiments/edge-hunt/vaults/hlp_forward.py`.
 
+### K. Chart patterns on US spot (2026-10-11, trading-skills thread): two weak rules pre-registered
+
+AJ asked what other chart-watching methods the agent could learn; venue must be US-usable (Coinbase
+spot, long only), and the agent enters ~20 minutes after a candle closes. `patterns/patterns.py`,
+11 Coinbase coins, 15-minute candles 2020-01..2026-10, entry/exit 30 minutes after the hourly close,
+0.62%/side taker (Coinbase Exchange's published sub-$10k fee; Kraken's lowest tier is 0.80% taker).
+24 rules, 6 families; outputs `data/edge-hunt/patterns/patterns-cost{0.0062,0.0042,0}.txt`.
+* **Costs decide it.** A round trip costs ~1.24%, so only patterns whose moves last a day or more can
+  pay. Gross (zero cost), breakouts and volume spikes look positive in 2020-24 but that is mostly the
+  bull market (random long holds made +0.17%/day then, −0.05% in 2025-26).
+* **Wick bounce does not carry over to US spot**: train −0.75 to −1.08% per trade at taker costs
+  (the HL test, §J, stays a Hyperliquid-only paper test).
+* Breakouts (72/168-hour highs), RSI oversold, Bollinger squeeze: fail at taker costs (breakout's
+  chosen rule reaches test only at maker costs: −0.70%).
+* **Capitulation bounce** (24-hour drop ≥ 4 sigma, hold 24 h): test **+5.77% [−1.5, +11.4]** (28
+  trades on 11 days). **Volume-spike follow-through** (10x volume on an up hour, hold 72 h): test
+  **+1.32% [−1.9, +4.5]** (87). Both positive in all three splits, CIs span zero, **pre-registered
+  with a low prior** (52 weeks, free, from Coinbase's full public history):
+  `preregistration/us-patterns/SPEC.md`, scorer `patterns/pattern_forward.py`.
+
 ### J. Intraday timing on perps (2026-10-10, trading-skills thread): one weak rule pre-registered
 
 `perps/intraday.py`, 20 liquid HL perp coins, Binance hourly 2020-01..2026-09 as a stand-in (HL keeps
@@ -389,6 +409,8 @@ Round 2 has nothing registered; F2 (funding-spike shorts) stays on hold.
 * (added) **E1, pump.fun revenue surprise -> PUMP perp:** both halves positive after costs, each
   ~1.7 SE, beyond-trend part positive. **Forward test registered** (180 days, hourly Action).
   E1b: the same rule on 8 other buyback tokens is flat (family −0.01%/day), so lower the prior.
+* (added) **K, US-spot chart patterns:** capitulation bounce and volume-spike follow-through
+  passed all splits (CIs span 0), low prior. **Forward tests registered** (52 weeks, free).
 * (added) **J, wick bounce on perps:** all three splits positive (test +80 bp/trade, CI spans 0),
   low prior. **Forward test registered** (52 weeks, free). Hour of day and big-move reversal closed.
 * (added) **I, calendar / lottery / low-vol / beta / skew / CME gap on perps:** 36 rules, none passes (closed).

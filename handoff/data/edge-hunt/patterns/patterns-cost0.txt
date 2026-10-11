@@ -1,0 +1,34 @@
+  O, Hh, L, C, V = b[:, 0, 0], np.nanmax(b[:, :, 1], 1), np.nanmin(b[:, :, 2], 1), b[:, 3, 3], np.nansum(b[:, :, 4], 1)
+11 coins; cost 0.00%/side; entry 30 min after the signal close
+  WICK     Z=4 H=4    train +0.16% [-0.25,+0.60] n442  val -0.26% [-1.71,+1.07] n152
+  WICK     Z=4 H=24   train +0.31% [-0.56,+1.21] n407  val +1.65% [-0.12,+3.31] n136
+  WICK     Z=6 H=4    train +0.36% [-0.57,+1.56] n147  val +0.60% [-0.71,+1.78] n48
+  WICK     Z=6 H=24   train +0.49% [-1.31,+2.29] n144  val +1.75% [-0.64,+4.41] n48
+  -> WICK chosen Z=6 H=24: TEST +2.39% [-1.77,+7.10] n56
+  hh[i] = np.nanmax(H[i - N: i])
+  BREAKOUT N=72 H=24  train +0.21% [-0.05,+0.49] n2439  val +0.51% [+0.08,+0.93] n834
+  BREAKOUT N=72 H=72  train +0.90% [+0.41,+1.40] n1680  val +1.59% [+0.58,+2.67] n532
+  BREAKOUT N=168 H=24 train +0.47% [+0.16,+0.78] n1507  val +0.77% [+0.22,+1.34] n523
+  BREAKOUT N=168 H=72 train +1.33% [+0.65,+1.98] n1038  val +1.23% [+0.06,+2.42] n343
+  -> BREAKOUT chosen N=168 H=72: TEST +0.14% [-0.91,+1.21] n528
+  VOLSPIKE K=5 H=24   train +0.66% [+0.14,+1.16] n805  val +1.15% [+0.01,+2.26] n278
+  VOLSPIKE K=5 H=72   train +1.34% [+0.43,+2.27] n671  val +1.98% [+0.45,+3.42] n228
+  VOLSPIKE K=10 H=24  train -0.41% [-1.42,+0.65] n129  val +1.03% [-1.09,+3.18] n39
+  VOLSPIKE K=10 H=72  train +1.62% [-0.35,+3.83] n122  val +3.38% [+0.83,+5.96] n39
+  -> VOLSPIKE chosen K=10 H=72: TEST +2.56% [-0.61,+5.77] n87
+  CAPIT    Z=3 H=24   train +1.23% [-0.40,+2.92] n216  val +3.15% [+0.19,+5.84] n73
+  CAPIT    Z=3 H=72   train -1.34% [-3.54,+0.82] n191  val +2.78% [-0.76,+6.16] n68
+  CAPIT    Z=4 H=24   train +1.56% [-0.87,+4.09] n55  val +5.08% [-0.59,+8.79] n22
+  CAPIT    Z=4 H=72   train -0.62% [-3.02,+1.75] n53  val +4.53% [-2.29,+9.37] n22
+  -> CAPIT chosen Z=4 H=24: TEST +7.01% [-0.24,+12.65] n28
+  OVERSOLD X=20 H=24  train +0.74% [+0.04,+1.51] n470  val +1.01% [-0.85,+2.92] n143
+  OVERSOLD X=20 H=72  train -0.24% [-1.52,+0.98] n433  val +0.79% [-1.33,+2.94] n131
+  OVERSOLD X=15 H=24  train +0.78% [-0.44,+2.06] n147  val +0.97% [-1.93,+4.06] n43
+  OVERSOLD X=15 H=72  train -0.40% [-1.65,+0.84] n143  val +0.95% [-3.01,+5.01] n42
+  -> OVERSOLD chosen X=15 H=24: TEST +1.55% [-0.43,+3.87] n86
+  SQUEEZE  P=5 H=24   train -0.27% [-0.63,+0.09] n1019  val -0.24% [-0.69,+0.24] n261
+  SQUEEZE  P=5 H=72   train +0.17% [-0.43,+0.76] n786  val +0.07% [-0.79,+1.00] n219
+  SQUEEZE  P=10 H=24  train -0.19% [-0.51,+0.13] n1539  val -0.14% [-0.51,+0.24] n417
+  SQUEEZE  P=10 H=72  train +0.16% [-0.44,+0.73] n1110  val +0.12% [-0.66,+0.96] n323
+  -> SQUEEZE chosen P=5 H=72: TEST -0.31% [-1.14,+0.52] n472
+rules tried: 24

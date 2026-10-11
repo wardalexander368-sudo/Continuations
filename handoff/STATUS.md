@@ -490,6 +490,14 @@ the Log). Owner thread names are the project's thread titles.
 
 ## Log (newest first)
 
+* **2026-10-11 ~03:30 UTC, trading-skills thread (chart patterns, US spot): two weak rules
+  pre-registered** (`edge-hunt.md` §K). 24 long-only rules on 11 Coinbase coins, entered 30 min after
+  the hourly close, 0.62%/side. Capitulation bounce (test +5.8%/trade [−1.5, +11.4], 28) and
+  volume-spike follow-through (+1.3% [−1.9, +4.5], 87) registered for 52 weeks from 2026-10-12
+  (`preregistration/us-patterns/`, scorer `experiments/edge-hunt/patterns/pattern_forward.py`).
+  Wick bounce, breakouts, RSI oversold and squeezes fail at US costs. **Handoff session
+  (`autotrade/`): two candidate US-spot paper strategies** (hourly checks; reproduce the scorer).
+
 * **2026-10-11 ~02:50 UTC, agent optimizations thread: drags measured, one live-only fix owed** (`handoff/reviews/drags-2026-10-11.md`). Dip fetch capped at 600 s a run and health commits only on change (d53c531). Wick-bounce entering ~20 min late: +17 bp/trade [-4, +39] on 409 trades, so late entry is no drag; hourly runs start 14-26 min late but no strategy loses to it; maker orders would save ~$1/week at go-live size (not built). **Go-live item (jlp_hedged):** the live JLP rebalance must resize each short by the difference, not close and reopen it (now ~7.7 bps of the basket per rebalance live vs ~0.4 on paper). Paper only, no keys.
 
 * **2026-10-11 ~02:40 UTC, handoff session (`autotrade/`): US-only venues** (AJ: "We only want US-expressible
