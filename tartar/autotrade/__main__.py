@@ -103,7 +103,10 @@ def main(argv=None) -> int:
         (root / "HALT").write_text(a.arg or "halted by hand")
         ledger.change({"t": now, "kind": "halt", "scope": "agent", "reason": a.arg or "halted by hand"})
     else:  # resume
-        if a.arg:
+        if a.arg and a.arg.startswith("book:"):
+            (ledger.state.get("book_halts") or {}).pop(a.arg[5:], None)
+            ledger.change({"t": now, "kind": "resume", "scope": a.arg, "reason": "resumed by hand"})
+        elif a.arg:
             rec = ledger.strategy(a.arg)
             if rec["status"] == "halted":
                 rec["status"] = rec.pop("status_before_halt", "paper")
@@ -114,6 +117,7 @@ def main(argv=None) -> int:
         else:
             (root / "HALT").unlink(missing_ok=True)
             ledger.state["halted"] = None
+            ledger.state["book_halts"] = {}
             ledger.change({"t": now, "kind": "resume", "scope": "agent", "reason": "resumed by hand"})
     ledger.save()
     return 0

@@ -42,6 +42,9 @@ class Risk:
         self.now: float | None = None  # the run's clock (set by the runner)
         self.root = Path(root)
         self.ledger = ledger
+        from .perp_risk import BOOKS, book_names
+
+        self.book_of = {n: b for b in BOOKS for n in book_names(config, b)}  # perps book strategies -> book
 
     def kill_reason(self) -> str | None:
         f = self.root / "HALT"
@@ -91,7 +94,8 @@ class Risk:
 
     def allow_open(self, intent: Intent, positions: list[Position]) -> str | None:
         """None if allowed, else why not."""
-        why = self.kill_reason() or self.daily_block(intent.strategy, time.time() if self.now is None else self.now)
+        why = self.kill_reason() or self.daily_block(intent.strategy, time.time() if self.now is None else self.now) \
+            or (self.ledger.state.get("book_halts") or {}).get(self.book_of.get(intent.strategy, ""))
         if why:
             return why
         lim = self.limits

@@ -54,14 +54,25 @@ def test_weekly_loss_limit_flattens_and_pauses_once(tmp_path):
     assert led.strategy("xs")["stopped_week"] == "2026-10-12"
 
 
-def test_account_drawdown_writes_halt(tmp_path):
+def test_book_drawdown_stops_only_that_book(tmp_path):
     root = setup(tmp_path, {"perp_risk": {"weekly_stop_frac": 10.0, "account_drawdown_stop_frac": 0.35}})
     book(root)
     run_once(root, now=2000.0, strategies={"xs": Idle("xs", {"A": 1.0, "B": 1.0, "C": 1.0, "D": 1.0})})
     assert not (root / "HALT").exists()
     s = run_once(root, now=3000.0, strategies={"xs": Idle("xs", {"A": 0.6, "B": 0.6, "C": 1.4, "D": 1.4})})
-    assert (root / "HALT").exists() and "drawdown" in (root / "HALT").read_text()
-    assert s["new_halts"] and s["halted"]
+    led = Ledger(root)
+    assert not (root / "HALT").exists() and "drawdown" in led.state["book_halts"]["hl"]
+    assert s["new_halts"] and s["new_halts"][0]["scope"] == "book:hl" and not s["halted"]
+    from tartar.autotrade.core import Intent
+    from tartar.autotrade.risk import Risk
+
+    cfg = json.loads((root / "config.json").read_text())
+    risk = Risk(cfg, root, led)
+    assert "drawdown" in risk.allow_open(Intent("open", "xs", 0, 1, "", asset="A", side=1, notional_usd=10), [])
+    assert risk.allow_open(Intent("open", "other", 0, 1, "", asset="A", side=1, notional_usd=10), []) is None
+    from tartar.autotrade.__main__ import main
+    main(["resume", "book:hl", "--root", str(root)])
+    assert not Ledger(root).state["book_halts"].get("hl")
 
 
 def test_hl_sqrt_costs_scale_with_size_and_liquidity():
@@ -140,4 +151,4 @@ def test_us_and_hyperliquid_books_are_sized_and_stopped_separately(tmp_path):
     p.mark_price = 50.0
     assert perp_risk.account_drawdown(led, cfg, root, 20.0, {}, "hl") is None
     perp_risk.account_drawdown(led, cfg, root, 20.0, {}, "us")
-    assert "perp_risk_us" in led.state and (root / "HALT").exists()
+    assert "perp_risk_us" in led.state and led.state["book_halts"].get("us") and not led.state["book_halts"].get("hl")

@@ -8,10 +8,12 @@ backtest by handoff/experiments/perps_risk_controls.py (results in handoff/autot
   strategy sits out until its next weekly rebalance. In the backtest a 12% stop kept the mean weekly
   return (candidate +2.92% vs +2.83%, vol-momentum +1.31% vs +1.42%, xs +1.10% vs +1.03%) and cut the
   worst week from -36/-24/-31% to -25/-22/-18%.
-* **Account drawdown stop** (``account_drawdown_stop_frac``, default 0.35): when the registered (non-shadow)
-  perps strategies' combined P&L falls more than that fraction of their combined side notional below its
-  peak, the agent writes the kill switch file ``HALT`` (new entries stop everywhere; exits still run) and
-  logs a halt, which fails the Action so the owner is emailed.
+* **Book drawdown stop** (``account_drawdown_stop_frac``, default 0.35): when a book's registered (non-shadow)
+  strategies' combined P&L falls more than that fraction of their combined side notional below its peak, that
+  book stops taking new entries (``state.book_halts``; exits still run) and a halt is logged, which fails the
+  Action so the owner is emailed. Only that book stops (2026-10-11: the Hyperliquid book is research, so its
+  drawdown must not freeze the registered US tests, nor the reverse); ``resume book:hl`` / ``resume book:us``
+  (or a bare ``resume``) clears it. The ``HALT`` file stays the manual, agent-wide kill switch.
 
 * **Book volatility target** (``book_vol_target``, default 0.02): the registered perps strategies are one
   equal-weight book; once it has ``book_min_weeks`` (8) weekly returns, every new leg's size (and its
@@ -121,7 +123,7 @@ def book_scale(ledger, config: dict, cfg: dict, book: str = "hl") -> tuple[float
 
 
 def account_drawdown(ledger, config: dict, root, now: float, cfg: dict, book: str = "hl") -> str | None:
-    """Write HALT when a registered perps book's drawdown passes the limit; returns the reason if it fired now."""
+    """Stop a registered perps book's new entries when its drawdown passes the limit; the reason if it fired now."""
     lim = {**DEFAULTS, **cfg}
     names = book_names(config, book)
     def deployed(n):  # the open book's leg_usd (vol-scaled), else the configured one
@@ -138,11 +140,11 @@ def account_drawdown(ledger, config: dict, root, now: float, cfg: dict, book: st
     st["equity"] = equity
     dd = st["peak"] - equity
     st["drawdown_frac"] = dd / capital
-    halt = root / "HALT"
-    if dd > lim["account_drawdown_stop_frac"] * capital and not halt.exists():
+    halts = ledger.state.setdefault("book_halts", {})
+    if dd > lim["account_drawdown_stop_frac"] * capital and not halts.get(book):
         reason = (f"{'US ' if book == 'us' else ''}perps account drawdown {dd:.2f} USD > {lim['account_drawdown_stop_frac']:.0%} of {capital:.0f} USD "
                   f"(peak {st['peak']:+.2f}, now {equity:+.2f})")
-        halt.write_text(reason + "\n")
-        ledger.change({"t": now, "kind": "halt", "scope": "agent", "reason": reason})
+        halts[book] = reason
+        ledger.change({"t": now, "kind": "halt", "scope": f"book:{book}", "reason": reason + "; this book takes no new entries until resumed"})
         return reason
     return None

@@ -168,6 +168,7 @@ def check_agent(root: Path, now: float | None = None) -> list[dict]:
             [f"{n}: {r['halted']}" for n, r in live.get("strategies", {}).items() if r.get("halted")]
     if state.get("halted"):
         halts.insert(0, f"agent: {state['halted']}")
+    halts += [f"book {b}: {r}" for b, r in (state.get("book_halts") or {}).items() if r]
     if halts:
         out.append({"check": "Agent: halts", "level": "red", "detail": "; ".join(halts)[:400]})
     strats = state.get("strategies", {})

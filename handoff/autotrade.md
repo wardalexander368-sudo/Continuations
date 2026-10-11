@@ -133,9 +133,11 @@ Applied to the paper book every run; live twins exit with their paper legs, so t
 * **Weekly loss limit, 12%:** a perps strategy whose current-week P&L (closed legs of the week plus open
   legs at marks) is below -12% of its side notional is flattened at its marks (20 bps per side, funding
   carried) and stays flat until its next rebalance; logged as a `pause` change.
-* **Account drawdown stop, 35%:** when the registered perps strategies' combined P&L is more than 35% of
-  their combined side notional below its peak, the agent writes `HALT` and logs a halt (the Action fails,
-  so the owner is emailed). Delete `HALT` to resume.
+* **Book drawdown stop, 35%:** when a book's registered strategies' combined P&L is more than 35% of their
+  combined side notional below its peak, that book takes no new entries and a halt is logged (the Action
+  fails, so the owner is emailed). Two books since 2026-10-11, Hyperliquid (research) and US Coinbase perps,
+  each stopping only itself; `python -m tartar.autotrade resume book:hl` (or `book:us`) clears it. `HALT`
+  stays the manual kill switch for everything.
 * **Sizing:** legs stay equal weight; inverse-volatility sizing cost return on every rule.
 * **Book volatility target, 2%/week (from 2026-10-10 late):** `xs_momentum` and `vol_momentum` form one
   equal-weight book. Once it has 8 completed weeks, every new leg (and its `leg_usd`) is multiplied by

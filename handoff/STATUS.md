@@ -511,6 +511,10 @@ the Log). Owner thread names are the project's thread titles.
 
 ## Log (newest first)
 
+* **2026-10-11 ~17:48 UTC, handoff session (`autotrade/`): spec pass 7 (book stops stay in their book).**
+  A 35% perps-book drawdown used to write `HALT`, stopping every strategy: a research Hyperliquid drawdown would
+  have frozen the registered US tests mid-window. Each book's stop now blocks only that book's new entries
+  (`state.book_halts`, shown in health; `resume book:hl` / `book:us`). `HALT` stays the manual kill switch.
 * **2026-10-11 ~17:46 UTC, handoff session (`autotrade/`): spec pass 6 (REPORT.md easier to read).** The eight
   dip research variants now sit in a collapsed section, so the report opens on health, the US book line and the
   main strategy table.

@@ -199,6 +199,6 @@
     "weekly_stop_frac": 0.12,
     "account_drawdown_stop_frac": 0.35,
     "exit_cost": 0.002,
-    "note": "tartar/autotrade/perp_risk.py: a perps strategy whose week P&L falls below -12% of its side notional is flattened at marks until its next rebalance; a registered perps book drawdown past 35% of its side notional writes HALT. Scored in handoff/experiments/perps_risk_controls.py (handoff/autotrade.md). Live twins exit with their paper legs, so this is the live default too. Two books since 2026-10-11: Hyperliquid (research) and US Coinbase perps (data: coinbase), each with its own vol target and drawdown stop; the weekly limit applies to both."
+    "note": "tartar/autotrade/perp_risk.py: a perps strategy whose week P&L falls below -12% of its side notional is flattened at marks until its next rebalance; a registered perps book drawdown past 35% of its side notional stops that book's new entries (state.book_halts; resume book:hl / book:us); HALT stays the manual kill switch. Scored in handoff/experiments/perps_risk_controls.py (handoff/autotrade.md). Live twins exit with their paper legs, so this is the live default too. Two books since 2026-10-11: Hyperliquid (research) and US Coinbase perps (data: coinbase), each with its own vol target and drawdown stop; the weekly limit applies to both."
   }
 }
