@@ -116,3 +116,9 @@ def test_duplicate_client_order_id_returns_the_existing_order():
 
     http.request = request
     assert c.submit("x", "BTC/USD", "buy", notional=10)["id"] == "o9"
+
+
+def test_any_other_base_url_is_refused():
+    c = alpaca.AlpacaPaper("id", "secret", http=FakeHttp({}), sleep=lambda s: None)
+    with pytest.raises(ValueError):
+        c._req("GET", "/v2/account", base="https://api.alpaca.markets")

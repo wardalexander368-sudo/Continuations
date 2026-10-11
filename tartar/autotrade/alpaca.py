@@ -48,7 +48,8 @@ class AlpacaPaper:
         self.headers = {"APCA-API-KEY-ID": key_id, "APCA-API-SECRET-KEY": secret}
 
     def _req(self, method: str, path: str, base: str = PAPER_URL, **kw) -> dict:
-        assert base in (PAPER_URL, DATA_URL)  # never a live-money endpoint
+        if base not in (PAPER_URL, DATA_URL):  # never a live-money endpoint (a raise, not an assert: -O strips asserts)
+            raise ValueError(f"Alpaca base URL {base!r} is not the paper or data endpoint")
         r = self.http.request(method, base + path, headers=self.headers, **kw)
         if r.status_code >= 400:
             raise AlpacaError(r.status_code, r.text[:200])
