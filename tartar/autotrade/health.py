@@ -170,6 +170,14 @@ def check_agent(root: Path, now: float | None = None) -> list[dict]:
         halts.insert(0, f"agent: {state['halted']}")
     if halts:
         out.append({"check": "Agent: halts", "level": "red", "detail": "; ".join(halts)[:400]})
+    strats = state.get("strategies", {})
+    stopped = [f"{n} ({(r.get('last_error') or '?')[:80]})" for n, r in strats.items() if r.get("status") == "halted"]
+    if stopped:  # a strategy halted by errors (it retries itself every few hours; resume by hand if it keeps failing)
+        out.append({"check": "Agent: strategies halted", "level": "red", "detail": "; ".join(stopped)[:400]})
+    failing = [f"{n} x{r['errors']} ({(r.get('last_error') or '?')[:80]})" for n, r in strats.items()
+               if r.get("errors") and r.get("status") != "halted"]
+    if failing:
+        out.append({"check": "Agent: strategy errors", "level": "yellow", "detail": "; ".join(failing)[:400]})
     path = root / "fills.jsonl"
     rows = [json.loads(x) for x in path.read_text().splitlines() if x.strip()] if path.exists() else []
     closes = [r for r in rows if r.get("event") in ("sell", "perp_close", "perp_roll_out", "usd_sell") and "compare" in r]
@@ -186,7 +194,7 @@ def check_agent(root: Path, now: float | None = None) -> list[dict]:
             out.append({"check": f"Twins: {name}", "level": "green",
                         "detail": f"median twin − paper {100 * med:+.2f} points over the last {len(last)} closes"})
     if not out:
-        out.append({"check": "Agent", "level": "green", "detail": "no halts, no orphans, no closed twins yet"})
+        out.append({"check": "Agent", "level": "green", "detail": "no halts, no strategy errors, no orphans, no closed twins yet"})
     return out
 
 

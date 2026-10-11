@@ -101,6 +101,16 @@ def test_agent_halts_orphans_and_drift(tmp_path):
     assert items == {"Agent: orphans": "red", "Agent: halts": "red", "Twins: xs": "yellow"}
 
 
+def test_halted_and_erroring_strategies_show_in_health(tmp_path):
+    (tmp_path / "state.json").write_text(json.dumps({"strategies": {
+        "us_capit": {"status": "halted", "errors": 3, "last_error": "HTTPError: 503"},
+        "wick_bounce": {"status": "paper", "errors": 1, "last_error": "Timeout"},
+        "dip": {"status": "paper", "errors": 0}}}))
+    items = {i["check"]: i for i in health.check_agent(tmp_path)}
+    assert items["Agent: strategies halted"]["level"] == "red" and "us_capit" in items["Agent: strategies halted"]["detail"]
+    assert items["Agent: strategy errors"]["level"] == "yellow" and "wick_bounce x1" in items["Agent: strategy errors"]["detail"]
+
+
 class FakeInfo:
     def __init__(self):
         self.calls = []

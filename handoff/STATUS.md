@@ -511,6 +511,9 @@ the Log). Owner thread names are the project's thread titles.
 
 ## Log (newest first)
 
+* **2026-10-11 ~17:40 UTC, handoff session (`autotrade/`): spec pass 5 (health sees strategy failures).**
+  A strategy halted by repeated errors, or erroring, never showed in health: only live halts and orphans did.
+  Health now goes red for a halted strategy and yellow for one with errors, with the last error text.
 * **2026-10-11 ~17:36 UTC, handoff session (`autotrade/`): spec pass 4 (US perps marks, capital note).**
   `cde_vol_momentum` marked its legs at yesterday's daily close, so its 12% weekly loss limit could react up to a
   day late; it now marks at Coinbase's last trade (ticker), falling back to the daily close. `handoff/autotrade.md`
