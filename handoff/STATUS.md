@@ -1,6 +1,6 @@
 # STATUS: read this first
 
-> **WHERE WE STAND (2026-10-11 ~04:30 UTC, gap-review thread; update this block, don't append to it).**
+> **WHERE WE STAND (2026-10-11 ~04:00 UTC, gap-review thread; update this block, don't append to it).**
 > * **Rule:** only US-expressible strategies can go live (AJ, 10-11). Hyperliquid and Jupiter are paper research only.
 > * **Nothing is profitable yet on a venue a US person can use.** The only edge found so far, perps momentum, needs
 >   a short leg on many coins, and that exists only on Hyperliquid today.
