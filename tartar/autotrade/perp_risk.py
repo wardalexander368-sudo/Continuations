@@ -20,6 +20,11 @@ backtest by handoff/experiments/perps_risk_controls.py (results in handoff/autot
   drawdown 24% vs 38%, at a lower mean). Scoring is per unit of ``leg_usd``, so verdicts don't change;
   a coin kept on the same side across a resize still pays no cost (the scale moves slowly).
 
+**Two books** (2026-10-11, US-only rule): the Hyperliquid strategies (research only) and the Coinbase US-perp
+strategies (``data: coinbase``, venue ``coinbase_perps``) are separate books. Each gets its own volatility
+target and drawdown stop, so a US book's sizing never depends on Hyperliquid's weeks or the reverse; the
+weekly loss limit applies to both (Coinbase legs carry no funding).
+
 Inverse-volatility sizing was scored too and cost return on every rule, so legs stay equal weight.
 """
 
@@ -33,8 +38,16 @@ DEFAULTS = {"weekly_stop_frac": 0.12, "account_drawdown_stop_frac": 0.35, "exit_
             "book_vol_target": 0.02, "book_window_weeks": 13, "book_min_weeks": 8, "book_scale_min": 0.5, "book_scale_max": 1.5}
 
 
+BOOKS = ("hl", "us")
+BOOK_VENUE = {"hl": "hyperliquid", "us": "coinbase_perps"}
+
+
 def is_perp_book(pos) -> bool:
-    return pos.meta.get("venue") == "hyperliquid" and "week" in pos.meta and "leg_usd" in pos.meta
+    return pos.meta.get("venue") in BOOK_VENUE.values() and "week" in pos.meta and "leg_usd" in pos.meta
+
+
+def book_of(scfg: dict) -> str:
+    return "us" if scfg.get("data") == "coinbase" else "hl"
 
 
 def weekly_stops(ledger, strategies: dict, now: float, cfg: dict, http=None) -> list[Intent]:
@@ -78,9 +91,9 @@ def weekly_stops(ledger, strategies: dict, now: float, cfg: dict, http=None) -> 
     return out
 
 
-def book_names(config: dict) -> list[str]:
+def book_names(config: dict, book: str = "hl") -> list[str]:
     return [n for n, s in config.get("strategies", {}).items()
-            if s.get("kind") == "xs_momentum" and s.get("enabled", True) and not s.get("shadow")]
+            if s.get("kind") == "xs_momentum" and s.get("enabled", True) and not s.get("shadow") and book_of(s) == book]
 
 
 def book_weeks(ledger, names: list[str]) -> list[float]:
@@ -96,10 +109,10 @@ def book_weeks(ledger, names: list[str]) -> list[float]:
     return [sum(d.values()) / len(d) for w, d in sorted(by_week.items()) if w not in open_weeks]
 
 
-def book_scale(ledger, config: dict, cfg: dict) -> tuple[float, str]:
-    """Size multiplier for new legs of the registered perps book, and a one-line reason."""
+def book_scale(ledger, config: dict, cfg: dict, book: str = "hl") -> tuple[float, str]:
+    """Size multiplier for new legs of a registered perps book, and a one-line reason."""
     lim = {**DEFAULTS, **cfg}
-    x = book_weeks(ledger, book_names(config))
+    x = book_weeks(ledger, book_names(config, book))
     if len(x) < lim["book_min_weeks"]:
         return 1.0, f"book vol target off until {lim['book_min_weeks']} weeks ({len(x)} so far)"
     vol = float(np.std(x[-int(lim["book_window_weeks"]):], ddof=1))
@@ -107,10 +120,10 @@ def book_scale(ledger, config: dict, cfg: dict) -> tuple[float, str]:
     return k, f"book vol {100 * vol:.2f}%/week over {min(len(x), int(lim['book_window_weeks']))} weeks -> scale x{k:.2f}"
 
 
-def account_drawdown(ledger, config: dict, root, now: float, cfg: dict) -> str | None:
-    """Write HALT when the registered perps book's drawdown passes the limit; returns the reason if it fired now."""
+def account_drawdown(ledger, config: dict, root, now: float, cfg: dict, book: str = "hl") -> str | None:
+    """Write HALT when a registered perps book's drawdown passes the limit; returns the reason if it fired now."""
     lim = {**DEFAULTS, **cfg}
-    names = book_names(config)
+    names = book_names(config, book)
     def deployed(n):  # the open book's leg_usd (vol-scaled), else the configured one
         legs = [float(p.meta["leg_usd"]) for p in ledger.positions if p.strategy == n and "leg_usd" in p.meta]
         return max(legs) if legs else float(config["strategies"][n].get("leg_usd", 100.0))
@@ -120,14 +133,14 @@ def account_drawdown(ledger, config: dict, root, now: float, cfg: dict) -> str |
         return None
     equity = sum(t.pnl_usd for n in names for t in ledger.trades(n)) + \
         sum(p.unrealized() for p in ledger.positions if p.strategy in names)
-    st = ledger.state.setdefault("perp_risk", {})
+    st = ledger.state.setdefault("perp_risk" if book == "hl" else f"perp_risk_{book}", {})
     st["peak"] = max(st.get("peak", 0.0), equity)
     st["equity"] = equity
     dd = st["peak"] - equity
     st["drawdown_frac"] = dd / capital
     halt = root / "HALT"
     if dd > lim["account_drawdown_stop_frac"] * capital and not halt.exists():
-        reason = (f"perps account drawdown {dd:.2f} USD > {lim['account_drawdown_stop_frac']:.0%} of {capital:.0f} USD "
+        reason = (f"{'US ' if book == 'us' else ''}perps account drawdown {dd:.2f} USD > {lim['account_drawdown_stop_frac']:.0%} of {capital:.0f} USD "
                   f"(peak {st['peak']:+.2f}, now {equity:+.2f})")
         halt.write_text(reason + "\n")
         ledger.change({"t": now, "kind": "halt", "scope": "agent", "reason": reason})

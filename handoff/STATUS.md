@@ -511,6 +511,11 @@ the Log). Owner thread names are the project's thread titles.
 
 ## Log (newest first)
 
+* **2026-10-11 ~17:28 UTC, handoff session (`autotrade/`): spec pass 2 (US book risk), paper only.** The
+  perps risk layer counted `cde_vol_momentum` (US) in the Hyperliquid book: its sizing followed HL's weekly vol and
+  an HL drawdown could have halted on US losses (and vice versa), while the weekly 12% loss limit skipped Coinbase
+  legs entirely. Now two books (`perp_risk.BOOKS`: hl, us), each with its own vol target and 35% drawdown stop;
+  the weekly loss limit covers Coinbase legs too (no funding).
 * **2026-10-11 ~17:23 UTC, handoff session (`autotrade/`): spec pass 1 (reliability + reporting), paper only.**
   (a) A strategy halted by 3 straight errors now retries itself every 6 h (`risk.error_retry_hours`) and resumes
   on a clean step; before, one 3-hour Coinbase or Hyperliquid outage froze a registered test until someone typed

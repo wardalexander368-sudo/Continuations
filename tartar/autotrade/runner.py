@@ -122,8 +122,8 @@ def run_once(root: Path = ROOT, now: float | None = None, strategies: dict | Non
 
     from . import perp_risk
 
-    book = set(perp_risk.book_names(config))
-    scale, scale_why = perp_risk.book_scale(ledger, config, config.get("perp_risk", {}))
+    books = {n: b for b in perp_risk.BOOKS for n in perp_risk.book_names(config, b)}  # strategy -> its book
+    scales = {b: perp_risk.book_scale(ledger, config, config.get("perp_risk", {}), b) for b in perp_risk.BOOKS}
     for name, strat in strategies.items():
         rec = ledger.strategy(name)
         if "registered_at" not in rec:  # the agent's own pre-registration: rule and criteria before any data
@@ -155,7 +155,8 @@ def run_once(root: Path = ROOT, now: float | None = None, strategies: dict | Non
         broker = _broker(config, rec["status"], ledger, name, now, root)
         exits = lambda: _exit_broker(config, ledger, root, now)  # noqa: E731
         for intent in intents:  # book volatility target (perp_risk.book_scale), before twins are sized from the legs
-            if intent.kind == "open" and name in book and "leg_usd" in intent.meta and scale != 1.0:
+            scale, scale_why = scales[books[name]] if name in books else (1.0, "")
+            if intent.kind == "open" and name in books and "leg_usd" in intent.meta and scale != 1.0:
                 intent.notional_usd *= scale
                 intent.meta.update(leg_usd=float(intent.meta["leg_usd"]) * scale, book_scale=scale, book_scale_why=scale_why)
         plan = getattr(broker, "plan_book", None)
@@ -186,7 +187,8 @@ def run_once(root: Path = ROOT, now: float | None = None, strategies: dict | Non
         k = _apply(intent, rec, ledger, risk, _broker(config, rec["status"], ledger, intent.strategy, now, root), now,
                    exit_broker=lambda: _exit_broker(config, ledger, root, now))
         summary[k] = summary.get(k, 0) + 1
-    perp_risk.account_drawdown(ledger, config, root, now, prc)
+    for b in perp_risk.BOOKS:
+        perp_risk.account_drawdown(ledger, config, root, now, prc, b)
     why = risk.kill_reason()
     if why and risk.limits.get("flatten_on_halt"):
         for pos in list(ledger.positions):
