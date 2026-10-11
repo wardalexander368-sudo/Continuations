@@ -511,6 +511,9 @@ the Log). Owner thread names are the project's thread titles.
 
 ## Log (newest first)
 
+* **2026-10-11 ~17:46 UTC, handoff session (`autotrade/`): spec pass 6 (REPORT.md easier to read).** The eight
+  dip research variants now sit in a collapsed section, so the report opens on health, the US book line and the
+  main strategy table.
 * **2026-10-11 ~17:40 UTC, handoff session (`autotrade/`): spec pass 5 (health sees strategy failures).**
   A strategy halted by repeated errors, or erroring, never showed in health: only live halts and orphans did.
   Health now goes red for a halted strategy and yellow for one with errors, with the last error text.

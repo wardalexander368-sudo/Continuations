@@ -372,9 +372,12 @@ def write_report(root: Path, ledger: Ledger, strategies: dict, now: float, risk:
     total = 0.0
     for name in names + variants + cands:
         if name == (variants[0] if variants else None):
-            lines += ["", "Shadow variants (research copies of a rule; scored with a family-wide CI; outside the risk caps):", "",
+            lines += ["", f"<details><summary>Shadow variants ({len(variants)} research copies of a rule; scored with a family-wide CI; "
+                      "outside the risk caps)</summary>", "",
                       "| Variant | Venue | Status | Open | Closed trades | Mean net/trade | PnL (USD) | Score |", "|---|---|---|---|---|---|---|---|"]
         if name == (cands[0] if cands else None):
+            if variants:
+                lines += ["", "</details>"]
             lines += ["", "Candidates found by the agent's own search (autotrade/candidates/, autotrade/search/REPORT.md; "
                       "paper, outside the risk caps):", "",
                       "| Candidate | Venue | Status | Open | Closed trades | Mean net/trade | PnL (USD) | Score |", "|---|---|---|---|---|---|---|---|"]
@@ -388,6 +391,8 @@ def write_report(root: Path, ledger: Ledger, strategies: dict, now: float, risk:
         cfg = scfg.get(name) or scfg.get(name.split("~")[0]) or (strategies[name].cfg if hasattr(strategies.get(name), "cfg") else {})
         lines.append(f"| {name} | {venue_of(cfg)[0]} | {rec['status']} | {n_open} | {len(tr)} | {mean} | {pnl:+.2f} | "
                      f"{v.get('decision', '-')}: {v.get('reason', '')} |")
+    if variants and not cands:
+        lines += ["", "</details>"]
     checked = [x for x in [*(t.meta for t in ledger.trades()), *(p.meta for p in ledger.positions)] if "jup_impact_measured_pct" in x]
     if checked:
         q = sorted(x["jup_impact_measured_pct"] for x in checked)
