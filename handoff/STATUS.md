@@ -506,6 +506,10 @@ the Log). Owner thread names are the project's thread titles.
 
 ## Log (newest first)
 
+* **2026-10-11 ~08:40 UTC, trading-skills thread: US500 trend closed; US lane stands down**
+  (`edge-hunt.md` §N). 8 trend-timing rules on the S&P 500 (1950-2026) all lose to holding in train.
+  US paper tests from 2026-10-12: cde-vol-momentum and the two us-patterns rules. Nothing half-done.
+
 * **2026-10-11 ~07:30 UTC, trading-skills thread: Kalshi closed, nothing passes** (`edge-hunt.md` §M).
   16,342 settled sports/weather/economics markets, 24 favourite/longshot rules bought at the ask with
   Kalshi's fee: every band loses in train; the 0.95-0.99 favourites were +1.5% in 2025 only. With §L

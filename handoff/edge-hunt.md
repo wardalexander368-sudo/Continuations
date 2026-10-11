@@ -225,6 +225,14 @@ commission) earned in every split (+1.33%/month [+0.18, +2.70] in test; 2025 +19
 falling as it grows), so holding it against a 5% cash hurdle is **pre-registered** for 180 days:
 `preregistration/hlp-hold/SPEC.md`, scorer `experiments/edge-hunt/vaults/hlp_forward.py`.
 
+### N. Trend timing on the S&P 500 / Coinbase US500 perp (2026-10-11, trading-skills thread): closed
+
+`perps/us500_trend.py`, S&P 500 daily closes 1950-2026 as the US500 perp's stand-in, 1-day lag, 3 bps
+per switch, measured against holding the index. Above-moving-average (50/100/200 days) and 12-month
+time-series momentum, long/flat or long/short: 8 rules, **all lose to holding in train** (−0.8 to −4.3%
+a year, 1950-99); test not read (`data/edge-hunt/perps/us500-trend.txt`). Trend on the crypto majors
+was already closed (D3 TS family). With §K–M, the US list is exhausted for now.
+
 ### M. Kalshi favourite/longshot pricing (2026-10-11, trading-skills thread): closed, nothing passes
 
 Kalshi (CFTC-regulated, US). `predmkt/fetch_kalshi.py` + `ks_biases.py`: 16,342 settled sports, weather
