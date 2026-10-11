@@ -142,3 +142,9 @@ def test_missing_secrets_show_in_state(tmp_path, monkeypatch):
     s, http, client = setup(tmp_path)
     run_once(tmp_path, now=(H0 + 190) * 3600 + 1200, strategies={"c": s})
     assert "not set" in Ledger(tmp_path).state["alpaca"]["error"]
+
+
+def test_config_mirrors_only_us_spot_pattern_strategies():
+    cfg = json.loads(open("autotrade/config.json").read())
+    for name in cfg["alpaca_paper"]["strategies"]:
+        assert cfg["strategies"][name]["kind"] == "coinbase_pattern", name
