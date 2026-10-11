@@ -365,6 +365,68 @@ gross, +0.05% after 20 bps per side on ~54% weekly turnover, −0.96% without th
 edge doesn't carry over to what a US account can trade; the US perps list (BTC, ETH, SOL, XRP nano contracts)
 is too short for a cross-sectional book.
 
+### US spot: the two Coinbase patterns (paper, from 2026-10-12)
+
+`coinbase_pattern` (strategies `us_capit`, `us_volspike`) runs the trading-skills thread's pre-registered
+rules (`handoff/preregistration/us-patterns/SPEC.md`): capitulation bounce (CAPIT Z=4 H=24) and volume-spike
+follow-through (VOLSPIKE K=10 H=72) on Coinbase's public 15-minute candles for 11 USD pairs, long only, $200
+a trade, entry and exit at the close of the 15-minute bar 30 minutes after the hour. Each run books every
+signal whose entry candle has closed (the next hourly run), at the candle's time and price. Positions carry
+`venue: coinbase`; the broker keeps them on paper in every mode (no US spot route yet), so no Jupiter or
+Solana twin is ever attempted. The official scorer (`pattern_forward.py`) stays the authority.
+
+* **Parity (2026-10-11):** the strategy run every 3 h over Coinbase candles 2026-05-01 .. 10-01 booked the
+  same trades at the same prices as `patterns.run`: CAPIT 3 of 3 (−2.13%/trade), VOLSPIKE 27 of 27
+  (+5.67%/trade, 90% CI [−1.65, +11.18]), both at the registered 0.62% per side.
+* **Fees are configurable.** `cost_per_side` (default 0.0062, the registered cost) is what the paper book
+  pays; `venue_costs` reports the same fills net at other venues' costs, in the verdict text and as
+  `mean_net_<venue>` stats. Configured: `coinbase_now` 0.92% per side (Coinbase raised its entry-tier US
+  fees on 2026-09-16 to 0.90% taker / 0.50% maker, plus ~2 bps spread on these pairs) and `alpaca` 0.39%
+  per side (0.25% taker plus spread). On VOLSPIKE's +1.32%/trade registered study edge that is about
+  +0.72% at Coinbase taker and +1.78% at Alpaca. The pass/fail verdict stays on the registered cost.
+
+#### What a live US spot route would need (scoped 2026-10-11, nothing built or sent)
+
+Common to both venues: a `coinbase`/`alpaca` branch in `LiveBroker.open/close` (USD twin sized from the
+paper leg, idempotent client order ids, sizes rounded down to the venue's step, a leg under the minimum
+skipped as the perps route does), a dry executor first, the gate's approval, and AJ's word before any real
+order. Both are US venues, so both are compatible with `us_only`. Keys go only in GitHub secrets, passed by
+`autotrade.yml` like the others (empty = paper). GitHub runners have no fixed IP, so neither key can be
+IP-allowlisted: give it trade permission only, no transfers or withdrawals, on an account or portfolio
+holding just the trading budget.
+
+**Alpaca (cheaper; the better first route):**
+
+* **Account and key:** an Alpaca account in AJ's name with crypto enabled; secrets `APCA_API_KEY_ID` and
+  `APCA_API_SECRET_KEY` (sent as headers of the same names, no request signing).
+* **Paper first:** `https://paper-api.alpaca.markets` takes the same calls with a paper key and simulated
+  fills, so a dry route can place real API orders without money before `https://api.alpaca.markets`.
+* **Orders:** `POST /v2/orders` with `symbol` `BTC/USD`, `side`, `type` `market` (or `limit`, plus
+  `stop_limit`), `time_in_force` `gtc` or `ioc`, and `notional` (USD) to buy or `qty` to sell;
+  `client_order_id` for idempotency. Fills from `GET /v2/orders/{id}` and the account activities.
+* **Fees and minimums:** tier-1 crypto 0.15% maker / 0.25% taker. The minimum order differs between doc
+  versions; read `min_order_size` and `min_trade_increment` from `GET /v2/assets/{symbol}`. Check there
+  that all 11 coins are tradable before go-live (coverage not confirmed here).
+* **Basis:** the signals come from Coinbase candles; Alpaca's own prices differ a little. The dry route's
+  paper fills measure that gap.
+
+**Coinbase Advanced Trade:**
+
+* **Account and key:** a Coinbase account in AJ's name (US, KYC done) and a CDP API key with only the
+  `trade` (and `view`) permission. Secrets: `COINBASE_API_KEY_NAME` and `COINBASE_API_PRIVATE_KEY` (ES256 PEM).
+* **Auth:** every request carries a fresh ES256 JWT (claims `sub` = key name, `iss` = "cdp", `nbf`, `exp` =
+  +120 s, `uri` = "METHOD api.coinbase.com/path"), built with a small JWT signer (the `cryptography` package).
+* **Orders:** `POST https://api.coinbase.com/api/v3/brokerage/orders` with `client_order_id` (idempotent: a
+  repeated id returns the existing order), `product_id` (`BTC-USD`, ...), `side`, and `order_configuration`:
+  `market_market_ioc` with `quote_size` (USD) to buy and `base_size` to sell; or `limit_limit_gtc` with
+  `post_only` to pay the maker fee. Fills and fees from `GET /orders/historical/{id}` and `/orders/historical/fills`.
+* **Minimums:** per product from `GET /api/v3/brokerage/products/{id}` (`quote_min_size`, `base_increment`).
+* **Fees, the real risk:** since 2026-09-16 the entry tier is 0.90% taker / 0.50% maker, so a taker round
+  trip costs ~1.84% against the registered 1.24%. Read the account's tier from
+  `GET /api/v3/brokerage/transaction_summary` before go-live; post-only limits (maker) only help if fills
+  stay close to the 30-minute entry. No public sandbox for this API, so the dry executor would walk the
+  public order book (`/products/{id}/book`) like the Hyperliquid one.
+
 ### Perp twins (Hyperliquid)
 
 **Weekly books (from 2026-10-10 late, audit 1a).** Twins of the weekly long-short books (`xs_momentum`,

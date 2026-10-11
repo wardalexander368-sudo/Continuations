@@ -498,6 +498,14 @@ the Log). Owner thread names are the project's thread titles.
   `experiments/edge-hunt/perps/cde_forward.py`, free). Long-only spot momentum = holding everything.
   **Handoff session (`autotrade/`): candidate US paper strategy** (weekly, like vol-momentum). Kalshi next.
 
+* **2026-10-11 ~03:55 UTC, handoff session (`autotrade/`): the two US-spot rules paper-trade in the agent**
+  (strategies `us_capit`, `us_volspike`, kind `coinbase_pattern`, from 2026-10-12, $200 a trade). Same signals,
+  timing and costs as the registration (exact parity with `patterns.run` on 2026-05..10: 3/3 and 27/27 trades).
+  Paper book pays the registered 0.62%/side; `venue_costs` also reports Coinbase now (0.92%/side, fees raised
+  2026-09-16) and Alpaca (0.39%/side). Coinbase-venue positions never get a live or Solana twin. Live US spot
+  route scoped for Alpaca (cheaper, has a paper endpoint) and Coinbase in `handoff/autotrade.md`; nothing
+  built, no keys. Health now also watches hl-book.yml, autotrade-search.yml and the HL 1h candle cache.
+
 * **2026-10-11 ~03:30 UTC, trading-skills thread (chart patterns, US spot): two weak rules
   pre-registered** (`edge-hunt.md` §K). 24 long-only rules on 11 Coinbase coins, entered 30 min after
   the hourly close, 0.62%/side. Capitulation bounce (test +5.8%/trade [−1.5, +11.4], 28) and

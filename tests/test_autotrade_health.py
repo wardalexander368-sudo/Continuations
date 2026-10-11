@@ -53,6 +53,11 @@ def write_inputs(repo, age_h=1.0):
         (repo / rel).write_text(json.dumps({"t": ts}) + "\n")
     (repo / "handoff/data/edge-hunt/hl-ctx").mkdir(parents=True, exist_ok=True)
     (repo / "handoff/data/edge-hunt/hl-ctx/2026-10.jsonl").write_text(json.dumps({"t": NOW - age_h * 3600}) + "\n")
+    hl = repo / "handoff/data/edge-hunt/hl-1h"
+    hl.mkdir(parents=True, exist_ok=True)
+    h0 = int(NOW - age_h * 3600) // 3600 * 3600
+    (hl / "BTC.csv").write_text(f"{h0 - 3600},1,1,1,1\n{h0},1,1,1,1\n")
+    (hl / "ETH.csv").write_text(f"{h0 - 3600},1,1,1,1\n")
     d = repo / "handoff/preregistration/dip-rolling"
     d.mkdir(parents=True, exist_ok=True)
     (d / f"cohort-{datetime.fromtimestamp(NOW - age_h * 3600, timezone.utc):%Y-%m-%dT%H%M}.json").write_text("{}")
@@ -83,7 +88,7 @@ def test_failed_skipped_gaps_and_stale_are_red(tmp_path):
     h = health.run(tmp_path, tmp_path, now=NOW, http=FakeGH(runs, hours))
     red = {i["check"] for i in h["items"] if i["level"] == "red"}
     assert {"Action autotrade.yml", "Action paper-tests.yml", "Input: JLP snapshots",
-            "Input: pumpflow snapshots", "Input: dip cohorts"} <= red
+            "Input: pumpflow snapshots", "Input: dip cohorts", "Input: HL 1h candles (wick test)"} <= red
     text = "\n".join(health.report_lines(tmp_path, NOW))
     assert "🔴 RED" in text and "10 hours missing" not in text
 

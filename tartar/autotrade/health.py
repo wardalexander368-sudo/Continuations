@@ -29,6 +29,8 @@ WORKFLOWS = {
     "paper-tests.yml": (5 * 3600, "JLP check-ins every 4 h, dip cohort daily"),
     "pumpflow-paper.yml": (2 * 3600, "pumpflow snapshots, hourly"),
     "perps-ctx.yml": (5 * 3600, "Hyperliquid OI/funding snapshots, every 4 h"),
+    "hl-book.yml": (3 * 3600, "Hyperliquid order-book cost snapshots, every 2 h"),
+    "autotrade-search.yml": (8 * 86400, "weekly candidate search, Wednesdays"),
 }
 RECORDER_START = datetime(2026, 10, 9, 21, tzinfo=timezone.utc)  # first full hour of the recorder Action
 RECORDER_MOVED = datetime(2026, 10, 10, 20, tzinfo=timezone.utc)  # first hour recorded in Continuations; earlier releases stayed in TARTAR
@@ -39,6 +41,7 @@ INPUTS = {
     "dip cohorts": ("handoff/preregistration/dip-rolling", 28 * 3600, "cohort_name"),
     "pumpflow snapshots": ("handoff/data/pumpflow-paper/snapshots.jsonl", 54 * 3600, "jsonl_t"),
     "HL OI/funding snapshots": ("handoff/data/edge-hunt/hl-ctx", 9 * 3600, "jsonl_t_dir"),
+    "HL 1h candles (wick test)": ("handoff/data/edge-hunt/hl-1h", 9 * 3600, "csv_last_t_dir"),
 }
 DRIFT_POINTS, DRIFT_N = 0.03, 10
 AGENT_MAX_GAP = 2 * 3600  # the agent runs once an hour
@@ -112,6 +115,13 @@ def check_recorder(http, now: float) -> list[dict]:
 
 
 def _newest(path: Path, how: str) -> float | None:
+    if how == "csv_last_t_dir":  # <COIN>.csv rows t,o,h,l,c (t = unix seconds of the hour start)
+        ts = []
+        for f in sorted(path.glob("*.csv")) if path.exists() else []:
+            lines = [x for x in f.read_text().splitlines() if x.strip()]
+            if lines and lines[-1].split(",")[0].isdigit():
+                ts.append(float(lines[-1].split(",")[0]))
+        return max(ts) if ts else None
     if how == "jsonl_t":
         files = [path] if path.exists() else []
     elif how == "jsonl_t_dir":

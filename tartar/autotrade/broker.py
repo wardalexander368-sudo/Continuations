@@ -258,6 +258,11 @@ class LiveBroker(PaperBroker):
         return None, round(size, 6)
 
     def open(self, intent: Intent, positions: list[Position] | None = None) -> tuple[Position, dict]:
+        if intent.meta.get("venue") == "coinbase":  # US spot: paper until a Coinbase route exists (handoff/autotrade.md)
+            pos, row = PaperBroker.open(self, intent)
+            pos.mode = row["mode"] = "paper"
+            row["live"] = {"skipped": "no Coinbase route yet (paper only)"}
+            return pos, row
         if is_vault(intent.meta):
             return self._open_vault(intent, positions or [])
         if is_perp(intent.meta):
