@@ -3,11 +3,13 @@
 from __future__ import annotations
 
 import json
+import os
 import time
 import traceback
 from pathlib import Path
 
 from . import lifecycle
+from .alpaca import make_mirror, report_lines as alpaca_report
 from .broker import LiveBroker, LiveNotAllowed, PaperBroker, make_broker
 from .core import Context, Intent
 from .ledger import Ledger
@@ -70,7 +72,7 @@ def _exit_broker(config: dict, ledger: Ledger, root: Path, now: float):
         return None
 
 
-def run_once(root: Path = ROOT, now: float | None = None, strategies: dict | None = None, http=None) -> dict:
+def run_once(root: Path = ROOT, now: float | None = None, strategies: dict | None = None, http=None, alpaca=None) -> dict:
     now = time.time() if now is None else now
     root = Path(root)
     config = load_config(root)
@@ -85,6 +87,7 @@ def run_once(root: Path = ROOT, now: float | None = None, strategies: dict | Non
             return {**summary, "skipped": f"live lease held by {blocker}", "changes": [], "halted": None, "new_halts": []}
     risk = Risk(config, root, ledger)
     risk.now = now
+    mirror = make_mirror(config, os.environ, root, ledger.journal, client=alpaca)  # Alpaca paper fills (alpaca.py)
     if strategies is None:
         from .search import active_candidates
 
@@ -158,7 +161,7 @@ def run_once(root: Path = ROOT, now: float | None = None, strategies: dict | Non
         for intent in sorted(intents, key=lambda i: (i.at, i.kind != "close")):
             summary_key = _apply(intent, rec, ledger, risk, broker, now,
                                  quote=bool(config.get("execution", {}).get("quote_check")) and not intent.meta.get("shadow"),
-                                 exit_broker=exits)
+                                 exit_broker=exits, mirror=mirror)
             summary[summary_key] = summary.get(summary_key, 0) + 1
         finish = getattr(broker, "finish_book", None)
         if callable(finish):
@@ -188,7 +191,7 @@ def run_once(root: Path = ROOT, now: float | None = None, strategies: dict | Non
                 intent = Intent("close", pos.strategy, pos.mark_at or now, pos.mark_price, reason=f"flatten: {why}",
                                 position_id=pos.id)
                 _apply(intent, ledger.strategy(pos.strategy), ledger, risk, PaperBroker(), now,
-                       exit_broker=lambda: _exit_broker(config, ledger, root, now))
+                       exit_broker=lambda: _exit_broker(config, ledger, root, now), mirror=mirror)
     risk.check_daily(now, ledger.positions)
     summary["changes"] = lifecycle.review(ledger, strategies, now, config.get("lifecycle", {}))
     summary["halted"] = risk.kill_reason()
@@ -206,7 +209,7 @@ def run_once(root: Path = ROOT, now: float | None = None, strategies: dict | Non
 
 
 def _apply(intent: Intent, rec: dict, ledger: Ledger, risk: Risk, broker, now: float, quote: bool = False,
-           exit_broker=None) -> str:
+           exit_broker=None, mirror=None) -> str:
     if intent.kind == "close":
         key = intent.meta.get("key")
         pos = next((p for p in ledger.positions if (intent.position_id and p.id == intent.position_id)
@@ -221,6 +224,8 @@ def _apply(intent: Intent, rec: dict, ledger: Ledger, risk: Risk, broker, now: f
                 ledger.journal({"event": "live_orphan", "strategy": pos.strategy, "position": pos.id, "at": now,
                                 "reason": "paper exit ran but no live route works now; tokens still held (state live.orphans)"})
         trade, row = broker.close(pos, intent)
+        if mirror:
+            mirror.on_close(pos, trade, intent, now)
         ledger.positions.remove(pos)
         ledger.add_trade(trade)
         ledger.journal({**row, "logged_at": now})
@@ -242,6 +247,8 @@ def _apply(intent: Intent, rec: dict, ledger: Ledger, risk: Risk, broker, now: f
         if check:
             intent.meta.update(check)
     pos, row = broker.open(intent, ledger.positions) if isinstance(broker, LiveBroker) else broker.open(intent)
+    if mirror:
+        mirror.on_open(pos, intent, now)
     ledger.positions.append(pos)
     ledger.journal({**row, "logged_at": now})
     return "opened"
@@ -360,6 +367,7 @@ def write_report(root: Path, ledger: Ledger, strategies: dict, now: float, risk:
                   + (f" Registered strategies' closed trades at the measured impact: mean net {100 * sum(qn) / len(qn):+.2f}% "
                      f"over {len(qn)} trades." if qn else "")]
     lines += live_report(ledger, config_mode(root))
+    lines += alpaca_report(root)
     unreal = sum(p.unrealized() for p in ledger.positions if not p.meta.get("shadow"))
     lines += ["", f"Realized PnL {total:+.2f} USD (registered strategies; variants listed above); open positions {len(ledger.positions)}, unrealized {unreal:+.2f} USD "
               f"(entry costs included); today {risk.day_pnl(now, ledger.positions):+.2f} USD "

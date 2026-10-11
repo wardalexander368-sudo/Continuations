@@ -410,6 +410,13 @@ Solana twin is ever attempted. The official scorer (`pattern_forward.py`) stays 
 
 #### What a live US spot route would need (scoped 2026-10-11, nothing built or sent)
 
+*Built 2026-10-11: the paper half of the Alpaca route.* `tartar/autotrade/alpaca.py` mirrors `us_capit` and
+`us_volspike` onto an Alpaca paper account (config `alpaca_paper`; secrets `APCA_API_KEY_ID`/`APCA_API_SECRET_KEY`),
+market orders at the paper size, idempotent client order ids, sells rounded to `min_trade_increment`. Each round
+trip logs entry/exit fill gaps against the paper prices and Alpaca's quoted spread (`alpaca_fills.jsonl`, REPORT
+section "Alpaca paper fills"). `max_spread_bps` is null (record only); a live route would set it (AVAX/LTC/BCH
+quoted 57-63 bp). Still missing for live: a live executor, the gate, and AJ's word.
+
 Common to both venues: a `coinbase`/`alpaca` branch in `LiveBroker.open/close` (USD twin sized from the
 paper leg, idempotent client order ids, sizes rounded down to the venue's step, a leg under the minimum
 skipped as the perps route does), a dry executor first, the gate's approval, and AJ's word before any real

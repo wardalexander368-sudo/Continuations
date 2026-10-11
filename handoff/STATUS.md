@@ -67,6 +67,11 @@ the Log). Owner thread names are the project's thread titles.
 
 * **Continue TARTAR handoff session:** owns `autotrade/` and `tartar/autotrade/` (the hourly agent).
   Next: the system audit's sections 1-2 (`handoff/reviews/system-audit-2026-10-10.md`).
+* **Alpaca paper route (thread "Alpaca api key added"):** owns `tartar/autotrade/alpaca.py`. `us_capit` and
+  `us_volspike` entries/exits also go as market orders to an Alpaca **paper** account (paper endpoint only; no live
+  Alpaca route), fills in `autotrade/alpaca_fills.jsonl` and trade meta `alpaca` (measured cost per side vs the
+  assumed 0.39%). Waits on AJ adding GitHub secrets `APCA_API_KEY_ID` and `APCA_API_SECRET_KEY` (a paper key);
+  until then it sends nothing.
 * **Real-money cost test, fresh key:** holds the wallet (0.0466 SOL, no spending). Work done and on `main`.
 * **Improve the agent's trading skills:** intraday hunt done; wick-bounce pre-registered (paper from 10-12).
 * **Continue Jev cost handoff session:** scheduled scoring routines: 10-14 HL cost rescore, 10-24 jevtrader
@@ -506,6 +511,10 @@ the Log). Owner thread names are the project's thread titles.
 
 ## Log (newest first)
 
+* **2026-10-11 ~16:50 UTC, Alpaca thread: Alpaca paper mirror built** (`tartar/autotrade/alpaca.py`,
+  config `alpaca_paper`, `tests/test_autotrade_alpaca.py`). Off until the two GitHub secrets exist; a key must open an
+  active paper account (`PA...`) or nothing is sent. The key added to the cloud session's environment got 401 from
+  the paper endpoint, so it was not verified.
 * **2026-10-11 ~08:40 UTC, trading-skills thread: US500 trend closed; US lane stands down**
   (`edge-hunt.md` §N). 8 trend-timing rules on the S&P 500 (1950-2026) all lose to holding in train.
   US paper tests from 2026-10-12: cde-vol-momentum and the two us-patterns rules. Nothing half-done.

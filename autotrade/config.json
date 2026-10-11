@@ -2,6 +2,17 @@
   "mode": "dry_live",
   "us_only": true,
   "us_only_note": "AJ 2026-10-11: only venues a US person may use. In mode live, Hyperliquid (perps, HLP; terms bar US persons) and Jupiter (terms: no US wallets) get no route; their strategies keep paper-trading as research (AJ chose 'Keep as research'). Pump.fun / PumpPortal Lightning stay.",
+  "alpaca_paper": {
+    "enabled": true,
+    "strategies": [
+      "us_capit",
+      "us_volspike"
+    ],
+    "taker_fee": 0.0025,
+    "max_spread_bps": null,
+    "fill_wait_s": 10,
+    "note": "tartar/autotrade/alpaca.py: us_capit and us_volspike entries and exits are also sent as market orders to an Alpaca PAPER account (paper-api.alpaca.markets only; no live Alpaca route exists), so the 0.39%/side Alpaca cost becomes a measurement (alpaca_fills.jsonl, trade meta 'alpaca', REPORT section). Needs GitHub secrets APCA_API_KEY_ID and APCA_API_SECRET_KEY (a paper key); without them the strategies paper-trade as before. max_spread_bps null = record spreads, skip nothing (a live route would set it, e.g. 50)."
+  },
   "live_approved_on": null,
   "live": {
     "route": "auto",

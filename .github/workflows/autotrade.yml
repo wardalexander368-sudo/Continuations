@@ -45,6 +45,8 @@ jobs:
           JUPITER_API_KEY: ${{ secrets.JUPITER_API_KEY }}
           HYPERLIQUID_AGENT_KEY: ${{ secrets.HYPERLIQUID_AGENT_KEY }}
           HYPERLIQUID_ACCOUNT: ${{ secrets.HYPERLIQUID_ACCOUNT }}
+          APCA_API_KEY_ID: ${{ secrets.APCA_API_KEY_ID }}
+          APCA_API_SECRET_KEY: ${{ secrets.APCA_API_SECRET_KEY }}
           TARTAR_LIVE_KILL: ${{ vars.TARTAR_LIVE_KILL }}
         run: |
           set -o pipefail
