@@ -511,6 +511,10 @@ the Log). Owner thread names are the project's thread titles.
 
 ## Log (newest first)
 
+* **2026-10-11 ~19:40 UTC, trade-timing thread: timing and exits on the US strategies** (`reviews/timing-2026-10-11.md`).
+  Exits stay as registered (24 exit variants and 8 CDE holding/lag/day variants, none survives). Capitulation
+  bounces fade with delay: +4.11%/trade at 15 min, +2.97% at the registered 30, +1.93% at the ~90 min a
+  next-run order gets. New paper research line `us_capit_fast` (`delay_bars: 1`) beside the unchanged `us_capit`.
 * **2026-10-11 ~17:54 UTC, handoff session (`autotrade/`): book stops also pause that book's
   shadow variants and search candidates** (by their legs' venue), so a candidate builds no paper record while its
   book is stopped.

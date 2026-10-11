@@ -95,6 +95,9 @@ class CoinbasePattern:
         self.venue_costs = dict(cfg.get("venue_costs") or {})
         self.coins = cfg.get("coins") or COINS
         self.start, self.end = cfg.get("start", START), cfg.get("end", END)
+        # 15m bars from the signal hour's close to the entry (2 = registered; 1 = the first hourly run after the signal,
+        # which starts :21-:32, so the :15 bar is final: handoff/reviews/timing-2026-10-11.md)
+        self.delay = int(cfg.get("delay_bars", DELAY))
         self.get = cfg.get("_get") or self._get  # tests inject a fake API
         self._last: dict[str, tuple[float, float]] = {}
 
@@ -130,7 +133,7 @@ class CoinbasePattern:
     def step(self, ctx: Context) -> list[Intent]:
         now = int(ctx.now)
         # the last signal hour whose entry candle (closing 30 min after the hour) is final
-        h_max = (now - 60 - DELAY * G) // 3600 - 1
+        h_max = (now - 60 - self.delay * G) // 3600 - 1
         done = int(ctx.state.setdefault("done_hour", h_max))
         due = [p for p in ctx.positions if p.meta["exit_t"] + 60 <= now]
         if done >= h_max and not due:
@@ -161,10 +164,10 @@ class CoinbasePattern:
                 i = h - lo_h
                 if h < busy or not sig[i] or not (self.start <= day(h) <= self.end):
                     continue
-                e = 4 * (i + 1) + DELAY - 1
+                e = 4 * (i + 1) + self.delay - 1
                 if np.isnan(C15[e]):
                     continue  # the scorer skips a trade without its entry candle
-                entry_t = float((h + 1) * 3600 + DELAY * G)
+                entry_t = float((h + 1) * 3600 + self.delay * G)
                 exit_t = entry_t + self.hold * 3600
                 key = f"{coin}:{h}"
                 intents.append(Intent("open", self.name, entry_t, float(C15[e]),
@@ -204,7 +207,7 @@ class CoinbasePattern:
 
     def describe(self) -> dict:
         return {"kind": "coinbase_pattern", "rule": self.rule, **RULES[self.rule], "coins": self.coins, "cost_per_side": self.cost, "venue_costs": self.venue_costs,
-                "entry": f"{DELAY * 15} min after the signal hour's close", "venue": "coinbase (US spot)",
+                "entry": f"{self.delay * 15} min after the signal hour's close", "venue": "coinbase (US spot)",
                 "size_usd": self.size, "window": [self.start, self.end]}
 
     def evaluate(self, trades: list[Trade], now: float, state: dict) -> Verdict:

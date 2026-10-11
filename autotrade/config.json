@@ -151,9 +151,25 @@
       "note": "US spot (Coinbase), paper: CAPIT Z=4 H=24 from the trading-skills thread's edge-hunt K, entries 2026-10-12..2027-10-11, 0.62%/side, entry/exit 30 min after the hour. Official scorer: pattern_forward.py. cost_per_side is the registered 0.62%; venue_costs score the same fills at the addendum's lines (us-patterns/ADDENDUM-2026-10-11-venue-costs.md): Coinbase taker 0.91%, Coinbase maker 0.50%, Alpaca 0.39%. Live route: Alpaca or Coinbase post-only, never Coinbase taker (the study's train fails there).",
       "cost_per_side": 0.0062,
       "venue_costs": {
-        "coinbase_taker": 0.0091, "coinbase_maker": 0.005,
+        "coinbase_taker": 0.0091,
+        "coinbase_maker": 0.005,
         "alpaca": 0.0039
       }
+    },
+    "us_capit_fast": {
+      "kind": "coinbase_pattern",
+      "rule": "capit",
+      "enabled": true,
+      "size_usd": 200,
+      "prereg": "handoff/preregistration/us-patterns/SPEC.md",
+      "note": "Research line, not registered (handoff/reviews/timing-2026-10-11.md): us_capit's exact rule with entry and exit 15 min after the hour instead of 30, i.e. booked at the first hourly run after the signal (runs start :21-:32). On 2020-2026 history the bounce fades with delay: +4.11%/trade at 15 min, +2.97% at 30 (registered), +1.93% at 90 (what an order at the next run gets), net 0.39%/side. Scored beside us_capit; the registered test is unchanged.",
+      "cost_per_side": 0.0062,
+      "venue_costs": {
+        "coinbase_taker": 0.0091,
+        "coinbase_maker": 0.005,
+        "alpaca": 0.0039
+      },
+      "delay_bars": 1
     },
     "us_volspike": {
       "kind": "coinbase_pattern",
@@ -164,7 +180,8 @@
       "note": "US spot (Coinbase), paper: VOLSPIKE K=10 H=72 from the trading-skills thread's edge-hunt K, entries 2026-10-12..2027-10-11, 0.62%/side, entry/exit 30 min after the hour. Official scorer: pattern_forward.py. cost_per_side is the registered 0.62%; venue_costs score the same fills at the addendum's lines (us-patterns/ADDENDUM-2026-10-11-venue-costs.md): Coinbase taker 0.91%, Coinbase maker 0.50%, Alpaca 0.39%. Live route: Alpaca or Coinbase post-only, never Coinbase taker (the study's train fails there).",
       "cost_per_side": 0.0062,
       "venue_costs": {
-        "coinbase_taker": 0.0091, "coinbase_maker": 0.005,
+        "coinbase_taker": 0.0091,
+        "coinbase_maker": 0.005,
         "alpaca": 0.0039
       }
     }

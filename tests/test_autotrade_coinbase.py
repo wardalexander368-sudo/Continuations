@@ -71,3 +71,22 @@ def test_exit_waits_for_its_candle_and_a_delisted_pair_does_not_raise(tmp_path):
 
     gone = CoinbasePattern("g", {"rule": "capit", "coins": ["GONE"]})
     assert gone._get(Context(0, [], {}, {}, H()), "GONE", 0, 900 * 10) == []
+
+
+def test_delay_bars_1_books_the_entry_at_the_first_run_after_the_signal(tmp_path):
+    rows = bars(260, 200)
+
+    def get(ctx, coin, t0, t1):
+        return [r for r in rows if t0 <= r[0] < t1]
+
+    (tmp_path / "config.json").write_text(json.dumps({"mode": "dry_live", "strategies": {"c": {"kind": "coinbase_pattern"}}}))
+    s = CoinbasePattern("c", {"_get": get, "rule": "capit", "coins": ["BTC"], "start": "2000-01-01", "end": "2100-01-01",
+                              "delay_bars": 1})
+    run_once(tmp_path, now=(H0 + 190) * 3600 + 1200, strategies={"c": s})
+    run_once(tmp_path, now=(H0 + 201) * 3600 + 1260, strategies={"c": s})  # the run at :21 right after the signal hour
+    (p,) = Ledger(tmp_path).positions
+    assert p.entry_at == (H0 + 201) * 3600 + 900
+    for h in range(H0 + 202, H0 + 240):
+        run_once(tmp_path, now=h * 3600 + 1260, strategies={"c": s})
+    (t,) = Ledger(tmp_path).trades()
+    assert t.exit_at == t.entry_at + 24 * 3600 and s.describe()["entry"].startswith("15 min")
