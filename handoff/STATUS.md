@@ -506,6 +506,12 @@ the Log). Owner thread names are the project's thread titles.
 
 ## Log (newest first)
 
+* **2026-10-11 ~07:10 UTC, trading-skills thread: cde-vol-momentum addendum (funding, whole contracts)**
+  before the window. Primary unchanged; secondary lines from `experiments/edge-hunt/perps/cde_rounding.py`:
+  HL funding as a stand-in costs ~0.04%/week; rounding to whole Coinbase contracts builds 80% of the book
+  at $1,000 a leg and adds noise as large as the edge (test +0.12%/week at $1k a leg, +0.30% at $5k, vs
+  +0.39% unrounded). A live version needs ~$1,000+ a leg (~$8k gross).
+
 * **2026-10-11 ~04:15 UTC, gap-review thread: what we missed** (`handoff/reviews/gap-review-2026-10-11.md`,
   paper only). (1) Coinbase US fees are 0.90% taker / 0.50% maker since 09-16, not 0.62%; Alpaca ~0.39%/side.
   At Coinbase taker cost neither registered US pattern passes its own study; addendum with real-cost lines

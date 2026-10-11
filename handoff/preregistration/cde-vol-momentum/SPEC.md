@@ -31,3 +31,16 @@ Tuesday's close and held to the next Tuesday's close; 20 bps per side of turnove
 Signals 2026-10-12..2027-10-11 (52 weeks). Mean weekly return with a 90% moving-block bootstrap CI
 (4-week blocks, 10,000 resamples, seed 1). Success: mean > 0 AND lower bound > 0, from
 `cde_forward.py CACHE --final` after 2027-10-19. Every constant is fixed in the two scripts.
+
+## Addendum 2026-10-11 (~07:10 UTC, before the window opens): funding and whole contracts
+The primary statistic is unchanged. Prompted by the gap review (`handoff/reviews/gap-review-2026-10-11.md` §C),
+two **secondary** lines will be reported beside it at scoring, from
+`experiments/edge-hunt/perps/cde_rounding.py DAILY_DIR --funding-dir DIR --from 2026-10-12 --to 2027-10-11`:
+1. **Funding.** Coinbase's US perps pay funding hourly and publish no history, so the secondary line
+   subtracts Hyperliquid's hourly funding for the same coins as a stand-in (refresh the cache first with
+   `fetch_funding_since.py`). On 2025-04..2026-10 it costs the rule ~0.04%/week (test +0.39 → +0.35%).
+2. **Whole contracts.** Each leg rounded to whole Coinbase contracts at $1,000 and $5,000 a leg (contract
+   sizes from the 2026-10-11 product list). On history the book is 80% built at $1,000 a leg and 100% at
+   $5,000; rounding adds noise of the same size as the edge: test +0.12%/week at $1,000, −0.07% at
+   $2,000, +0.30% at $5,000 (unrounded +0.39%). Below ~$1,000 a leg ($8k gross) the rule can't be built
+   faithfully; a live version needs about that much.
