@@ -41,3 +41,33 @@ def test_capit_buys_30_min_after_the_crash_hour_and_sells_24_h_later(tmp_path):
     assert s.evaluate([t], t.exit_at, {}).decision == "pending"
     v = s.evaluate([t, t], t.exit_at, {})
     assert v.stats["mean_net_alpaca"] == pytest.approx(-2 * 0.0039, abs=1e-6) and "at alpaca" in v.reason
+
+
+def test_exit_waits_for_its_candle_and_a_delisted_pair_does_not_raise(tmp_path):
+    rows = bars(260, 200)
+    cut = (H0 + 225) * 3600  # Coinbase stops publishing after this (the exit candle comes later)
+
+    def get(ctx, coin, t0, t1):
+        return [r for r in rows if t0 <= r[0] < min(t1, cut)]
+
+    (tmp_path / "config.json").write_text(json.dumps({"mode": "paper", "strategies": {"c": {"kind": "coinbase_pattern"}}}))
+    s = CoinbasePattern("c", {"_get": get, "rule": "capit", "coins": ["BTC"], "start": "2000-01-01", "end": "2100-01-01"})
+    for h in range(H0 + 190, H0 + 232):
+        run_once(tmp_path, now=h * 3600 + 1200, strategies={"c": s})
+    assert not Ledger(tmp_path).trades() and len(Ledger(tmp_path).positions) == 1  # waits, no stale exit
+    cut = 10**12
+    run_once(tmp_path, now=(H0 + 232) * 3600 + 1200, strategies={"c": s})
+    (t,) = Ledger(tmp_path).trades()
+    assert t.exit_at == t.entry_at + 24 * 3600
+
+    class R:
+        status_code = 404
+
+    class H:
+        def get(self, *a, **k):
+            return R()
+
+    from tartar.autotrade.core import Context
+
+    gone = CoinbasePattern("g", {"rule": "capit", "coins": ["GONE"]})
+    assert gone._get(Context(0, [], {}, {}, H()), "GONE", 0, 900 * 10) == []

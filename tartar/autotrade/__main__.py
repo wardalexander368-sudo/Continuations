@@ -107,6 +107,8 @@ def main(argv=None) -> int:
             rec = ledger.strategy(a.arg)
             if rec["status"] == "halted":
                 rec["status"] = rec.pop("status_before_halt", "paper")
+            for k in ("halted_by_errors_at", "last_retry_at"):
+                rec.pop(k, None)
             rec["errors"] = 0
             ledger.change({"t": now, "kind": "resume", "scope": a.arg, "reason": "resumed by hand"})
         else:

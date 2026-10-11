@@ -107,6 +107,33 @@ def test_errors_halt_strategy_after_limit(tmp_path):
     assert Ledger(root).strategy("fake")["status"] == "paper"
 
 
+def test_error_halt_retries_after_the_cool_down_and_resumes_on_a_clean_step(tmp_path):
+    root = setup(tmp_path, {"risk": {"error_retry_hours": 6}})
+    for t in range(3):
+        run_once(root, now=3000 + t, strategies={"fake": Fake(fail=True)})
+    assert Ledger(root).strategy("fake")["status"] == "halted"
+    ok = Fake(script=[[opener()]])
+    s = run_once(root, now=3000 + 3600, strategies={"fake": ok})
+    assert s["opened"] == 0 and Ledger(root).strategy("fake")["status"] == "halted"  # still cooling down
+    run_once(root, now=3005 + 6 * 3600, strategies={"fake": Fake(fail=True)})  # the retry fails: next one 6 h on
+    assert Ledger(root).strategy("fake")["status"] == "halted"
+    s = run_once(root, now=3000 + 9 * 3600, strategies={"fake": ok})
+    assert s["opened"] == 0
+    s = run_once(root, now=3010 + 12 * 3600, strategies={"fake": ok})
+    rec = Ledger(root).strategy("fake")
+    assert s["opened"] == 1 and rec["status"] == "paper" and "halted_by_errors_at" not in rec
+    assert any(c["kind"] == "resume" and "retry" in c["reason"] for c in Ledger(root).changes())
+
+
+def test_a_book_leg_may_exceed_the_position_cap_up_to_its_side_budget(tmp_path):
+    root = setup(tmp_path, {"risk": {"max_position_usd": 250}})
+    leg = opener(notional=1000 / 3)
+    leg.meta.update(week="2026-10-12", leg_usd=1000)
+    too_big = opener(key="b", notional=400)
+    s = run_once(root, now=3000, strategies={"fake": Fake(script=[[leg, too_big]])})
+    assert s["opened"] == 1 and s["rejected"] == 1
+
+
 def test_live_mode_without_approval_stays_on_paper(tmp_path, monkeypatch):
     monkeypatch.delenv("TARTAR_LIVE_APPROVED", raising=False)
     root = setup(tmp_path, {"mode": "live"})

@@ -116,6 +116,8 @@ class CoinbasePattern:
                 if r.status_code == 200:
                     out += [[int(ts), op, hi, lo, cl, v] for ts, lo, hi, op, cl, v in r.json() if t <= ts < e]
                     break
+                if r.status_code == 404:  # the pair is gone (delisted): no candles, not an error that halts both rules
+                    return []
                 time.sleep(2 * (i + 1))
             else:
                 r.raise_for_status()
@@ -150,7 +152,9 @@ class CoinbasePattern:
                 self._last[coin] = (float(C15[ok15[-1]]), float(lo_h * 3600 + (ok15[-1] + 1) * G))
             for p in mine:
                 if p.meta["exit_t"] + 60 <= now:
-                    intents.append(self.exit_intent(coin, lo_h, C15, p.meta["exit_t"], now, position_id=p.id))
+                    x = self.exit_intent(coin, lo_h, C15, p.meta["exit_t"], now, position_id=p.id)
+                    if x:
+                        intents.append(x)
             sig = signals(self.rule, C, V)
             busy = max([p.meta["signal_hour"] + self.hold + 1 for p in mine], default=-1)
             for h in range(done + 1, h_max + 1):
@@ -170,17 +174,24 @@ class CoinbasePattern:
                                             "venue": "coinbase", "entry_day": day(h), "rule": self.rule}))
                 busy = h + self.hold + 1
                 if exit_t + 60 <= now:  # a late look: the whole hold is in the data
-                    intents.append(self.exit_intent(coin, lo_h, C15, exit_t, now, key=key))
+                    x = self.exit_intent(coin, lo_h, C15, exit_t, now, key=key)
+                    if x:
+                        intents.append(x)
         ctx.state["done_hour"] = h_max
         return intents
 
-    def exit_intent(self, coin, lo_h, C15, exit_t, now, position_id="", key="") -> Intent:
+    def exit_intent(self, coin, lo_h, C15, exit_t, now, position_id="", key="") -> Intent | None:
+        """The close at the 15m bar ending at exit_t (or the next one there is). None while Coinbase has no
+        close at or after it yet: wait for the next run, and after a day give up waiting and use the latest."""
         k = int((exit_t - lo_h * 3600) // G) - 1  # the 15m bar closing at exit_t
         j = k
         while j < len(C15) and (j < 0 or np.isnan(C15[j])):
             j += 1
-        if j >= len(C15):  # no close at or after the exit yet: use the latest
-            j = int(np.where(~np.isnan(C15))[0][-1])
+        if j >= len(C15):
+            ok = np.where(~np.isnan(C15))[0]
+            if now - exit_t < 86400 or not len(ok):
+                return None
+            j = int(ok[-1])
         at = float(lo_h * 3600 + (j + 1) * G)
         meta = {"key": key} if key else {}
         if j != k:

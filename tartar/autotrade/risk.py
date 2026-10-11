@@ -2,14 +2,19 @@
 
 * Kill switch: the file ``autotrade/HALT`` (any content is the reason) stops every new entry. Exits still run so positions close on schedule; with
   ``flatten_on_halt`` the agent closes everything at the latest marks instead.
-* Caps: max notional per position, max open positions per strategy and in total, max gross exposure.
+* Caps: max notional per position, max open positions per strategy and in total, max gross exposure. A weekly
+  long-short book leg (meta ``week`` and ``leg_usd``) is capped by its side's budget ``leg_usd`` instead of
+  ``max_position_usd``: a small universe (Coinbase's 23 US-perp coins) makes 3-coin quintiles, and refusing one
+  leg would leave a half book the registered rule never holds.
 * Shadow variants (research copies of a rule) count only against their own per-strategy cap.
 * Daily loss cap, per strategy: a strategy whose realized + unrealized PnL of the UTC day is below
   ``-daily_loss_cap_usd`` takes no new entries for the rest of that UTC day (its exits still run); the
   stop clears by itself at the next UTC day, logged as a change. One strategy's bad day (the memecoin dip
   rule, say) no longer stops the others (audit 2026-10-10, 1b).
 * Errors: a strategy whose step raises ``max_consecutive_errors`` times in a row is halted
-  (status "halted") until ``resume``.
+  (status "halted"). Every ``error_retry_hours`` (default 6) the runner tries it once more; a clean step
+  resumes it (logged), since steps book from candles retroactively and an outage loses no trades.
+  ``resume`` still works by hand.
 """
 
 from __future__ import annotations
@@ -26,6 +31,7 @@ DEFAULTS = {
     "max_gross_usd": 10_000.0,
     "daily_loss_cap_usd": 500.0,
     "max_consecutive_errors": 3,
+    "error_retry_hours": 6.0,
     "flatten_on_halt": False,
 }
 
@@ -91,8 +97,11 @@ class Risk:
         lim = self.limits
         if intent.notional_usd <= 0:
             return "zero size"
-        if intent.notional_usd > lim["max_position_usd"]:
-            return f"position {intent.notional_usd:.2f} > max {lim['max_position_usd']:.2f} USD"
+        cap = lim["max_position_usd"]
+        if "week" in intent.meta and "leg_usd" in intent.meta:  # a book leg: bounded by its side's budget
+            cap = max(cap, float(intent.meta["leg_usd"]) * (1 + 1e-9))
+        if intent.notional_usd > cap:
+            return f"position {intent.notional_usd:.2f} > max {cap:.2f} USD"
         mine = [p for p in positions if p.strategy == intent.strategy]
         if len(mine) >= lim["max_open_per_strategy"]:
             return f"{len(mine)} open >= max {lim['max_open_per_strategy']} for {intent.strategy}"
@@ -114,9 +123,28 @@ class Risk:
         if rec["errors"] >= self.limits["max_consecutive_errors"] and rec["status"] != "halted":
             rec["status_before_halt"] = rec["status"]
             rec["status"] = "halted"
+            rec["halted_by_errors_at"] = now
             self.ledger.change({"t": now, "kind": "halt", "scope": name, "reason": f"{rec['errors']} consecutive errors: {err[:300]}"})
             return True
         return False
 
-    def record_ok(self, name: str) -> None:
-        self.ledger.strategy(name)["errors"] = 0
+    def retry_due(self, name: str, now: float) -> bool:
+        """A strategy halted by errors gets one more try every ``error_retry_hours``."""
+        rec = self.ledger.strategy(name)
+        t = rec.get("halted_by_errors_at")
+        if rec["status"] != "halted" or t is None:
+            return False
+        if now - float(rec.get("last_retry_at", t)) < 3600 * float(self.limits.get("error_retry_hours", 6.0)):
+            return False
+        rec["last_retry_at"] = now
+        return True
+
+    def record_ok(self, name: str, now: float | None = None) -> None:
+        rec = self.ledger.strategy(name)
+        rec["errors"] = 0
+        if rec["status"] == "halted" and rec.get("halted_by_errors_at") is not None:
+            rec["status"] = rec.pop("status_before_halt", "paper")
+            for k in ("halted_by_errors_at", "last_retry_at"):
+                rec.pop(k, None)
+            self.ledger.change({"t": now or time.time(), "kind": "resume", "scope": name,
+                                "reason": "a retry after the error halt ran cleanly; steps book retroactively, so nothing was missed"})

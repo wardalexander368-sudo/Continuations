@@ -511,6 +511,14 @@ the Log). Owner thread names are the project's thread titles.
 
 ## Log (newest first)
 
+* **2026-10-11 ~17:23 UTC, handoff session (`autotrade/`): spec pass 1 (reliability + reporting), paper only.**
+  (a) A strategy halted by 3 straight errors now retries itself every 6 h (`risk.error_retry_hours`) and resumes
+  on a clean step; before, one 3-hour Coinbase or Hyperliquid outage froze a registered test until someone typed
+  `resume` (steps book retroactively, so nothing is lost). (b) Weekly book legs are capped by their side budget,
+  not the $250 position cap: Coinbase's 23-coin universe makes 3-coin quintiles ($333 legs) that would have been
+  refused, leaving a half book. (c) `coinbase_pattern`: a delisted pair (404) no longer errors both rules; an exit
+  waits for its own candle instead of using a stale price. (d) REPORT.md: a "US book at a glance" line, a Venue
+  column, US-usable strategies listed first; the daily-cap note now says it is per strategy.
 * **2026-10-11 ~16:50 UTC, Alpaca thread: Alpaca paper mirror built** (`tartar/autotrade/alpaca.py`,
   config `alpaca_paper`, `tests/test_autotrade_alpaca.py`). Off until the two GitHub secrets exist; a key must open an
   active paper account (`PA...`) or nothing is sent. The key added to the cloud session's environment got 401 from
