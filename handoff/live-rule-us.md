@@ -1,4 +1,9 @@
-# Live rule for US strategies (DRAFT v2, 2026-10-12 ~22:30 UTC, not adopted)
+# Live rule for US strategies (v2, ADOPTED by AJ 2026-10-12 22:45 UTC)
+
+> **Adopted** (AJ, 2026-10-12 22:45 UTC: "approved, move forward when ready"). Adopting the rule does not fund
+> anything or send any order: section 4 item 1 (AJ's go in words to fund an Alpaca live account, its keys, and the
+> live route built and reviewed) still has to happen. The paper side of the gate is checked every hour by
+> `tartar/autotrade/live_gate.py` (REPORT line "Live rule gate", health check "Alpaca paper cost").
 
 Redrafted by the "Full project overview and alignment" thread at AJ's request ("redraft the live rules to better
 fit the whole picture we get from overview"). v1 (2026-10-12 ~00:20 UTC, "Overall improvement review") is in git
@@ -53,8 +58,8 @@ BCH 60.1, LTC 62.6), so AVAX, BCH and LTC cost about 0.55%/side before slippage.
 1. AJ says go in words, opens and funds an Alpaca **live** account (suggested $1,500), and adds its keys as new
    GitHub secrets. Only then is the live order route built and reviewed.
 2. Paper `us_capit` has at least **3 crash days and 8 trades** since 2026-10-12.
-3. **Judged on the Alpaca paper fills**, not the book's prices: the fills are sent at the first hourly run after
-   the signal, which is the timing a live route will have (~90 min, the backtest's 120-min column). Their mean net
+3. **Judged on the Alpaca paper fills**, not the book's prices: those of `us_capit_fast` (the same signals; its
+   mirror orders go at the first hourly run after the signal), which is the timing a live route will have (~90 min, the backtest's 120-min column). Their mean net
    per trade is above **−4.7%** (the backtest's 10th percentile for 3 crash days at that entry).
 4. Alpaca paper cost: median at most **0.50%/side** overall, and no fill more than 0.5% from the paper book's
    price for the same trade (health shows this once plan A1 is built).

@@ -8,7 +8,7 @@ import time
 import traceback
 from pathlib import Path
 
-from . import lifecycle
+from . import lifecycle, live_gate
 from .alpaca import make_mirror, report_lines as alpaca_report
 from .broker import LiveBroker, LiveNotAllowed, PaperBroker, make_broker
 from .core import Context, Intent
@@ -367,6 +367,7 @@ def write_report(root: Path, ledger: Ledger, strategies: dict, now: float, risk:
         lines += ["", f"**US book at a glance** (strategies a US account could take live: {', '.join(us)}): "
                   f"{len(us_open)} open (${sum(p.notional_usd for p in us_open):,.0f}), realized {us_pnl:+.2f} USD, "
                   f"unrealized {sum(p.unrealized() for p in us_open):+.2f} USD. All paper; scored by their registrations."]
+        lines += live_gate.report_lines(root)
     lines += ["", "| Strategy | Venue | Status | Open | Closed trades | Mean net/trade | PnL (USD) | Score vs registered rule |",
               "|---|---|---|---|---|---|---|---|"]
     total = 0.0
