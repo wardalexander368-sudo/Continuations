@@ -1,0 +1,18 @@
+{
+  "recorded_at_utc": "2026-10-12T12:59:03.575417+00:00",
+  "method": "Official documentation reviewed with web tools during this session; no live stream connected.",
+  "sources": [
+    {
+      "url": "https://github.com/bluesky-social/atproto/blob/main/lexicons/app/bsky/feed/searchPosts.json",
+      "finding": "Authentication requirements vary by implementation; cursors and totals do not prove complete history. Search since/until uses sortAt, which can differ from createdAt."
+    },
+    {
+      "url": "https://bsky.network/docs/category/http-reference/",
+      "finding": "Public AppView GETs are documented; actual two Mac search requests returned 403."
+    },
+    {
+      "url": "https://github.com/bluesky-social/jetstream",
+      "finding": "Official repository describes an archive/replay/streaming service; usability for this strategy is untested."
+    }
+  ]
+}

@@ -1,0 +1,25 @@
+{
+  "status": "published paper-return accounting audit; not a funded-account replication",
+  "source": "https://zenodo.org/records/23017853",
+  "source_version": "v1.3 2026-09-28",
+  "trade_rows": 190,
+  "sum_of_trade_returns_pct": 117.73,
+  "mean_trade_return_pct": 0.6196315789473684,
+  "win_fraction": 0.4052631578947368,
+  "price_return_matches_reported_return_max_abs_difference": 4.999898343198417e-05,
+  "size_weighted_paper_pnl_sol": 0.038735,
+  "sum_of_trade_notional_sol": 3.275,
+  "hypothetical_fixed14pct_account_multiple_before_further_costs": 1.0668872189675962,
+  "hypothetical_50usd_ending_before_further_costs": 53.34436094837981,
+  "hypothetical_fixed14pct_multiple_without_top3": 0.8503628478913343,
+  "sum_without_top3_pct": -50.580000000000005,
+  "hypothetical_campaign_40usd_floor_hit_after_trades": 19,
+  "hypothetical_campaign_balance_at_floor": 39.602374725597564,
+  "overlapping_reported_position_intervals": 57,
+  "limitations": [
+    "Public reported returns agree with price-ratio arithmetic to rounding precision; there is no fee-debit/fill-signature ledger",
+    "Summed trade percentages are not an account return",
+    "Fixed-fraction examples are algebraic counterfactuals, ignoring the original sizing, overlapping positions, gas, and execution",
+    "This external strategy does not validate SLR or REV"
+  ]
+}

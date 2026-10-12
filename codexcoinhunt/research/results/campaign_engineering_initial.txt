@@ -1,0 +1,55 @@
+test_30th_position_can_qualify_but_no_31st_entry (test_campaign.CampaignTests.test_30th_position_can_qualify_but_no_31st_entry) ... ERROR
+test_90_minute_missing_quote_requests_valuation (test_campaign.CampaignTests.test_90_minute_missing_quote_requests_valuation) ... FAIL
+test_asserted_confirmation_cannot_skip_real_wait (test_campaign.CampaignTests.test_asserted_confirmation_cannot_skip_real_wait) ... ok
+test_calendar_deadline_is_local_30_days_across_dst (test_campaign.CampaignTests.test_calendar_deadline_is_local_30_days_across_dst) ... ok
+test_cost_after_entry_quote_invalidates_original_allocation (test_campaign.CampaignTests.test_cost_after_entry_quote_invalidates_original_allocation) ... ok
+test_documented_writeoff_is_required_for_zero_recovery (test_campaign.CampaignTests.test_documented_writeoff_is_required_for_zero_recovery) ... ok
+test_duplicate_or_nonchronological_events_cannot_mutate_balances (test_campaign.CampaignTests.test_duplicate_or_nonchronological_events_cannot_mutate_balances) ... ok
+test_exact_100_is_not_success_and_unpaid_fees_prevent_certification (test_campaign.CampaignTests.test_exact_100_is_not_success_and_unpaid_fees_prevent_certification) ... ok
+test_exact_dust_remainder_stays_open (test_campaign.CampaignTests.test_exact_dust_remainder_stays_open) ... ok
+test_failed_entry_pays_cost_but_uses_no_quota_or_cooldown (test_campaign.CampaignTests.test_failed_entry_pays_cost_but_uses_no_quota_or_cooldown) ... ok
+test_fee_accrual_settlement_is_not_double_cost (test_campaign.CampaignTests.test_fee_accrual_settlement_is_not_double_cost) ... ok
+test_fee_already_in_net_fill_cannot_be_charged_again (test_campaign.CampaignTests.test_fee_already_in_net_fill_cannot_be_charged_again) ... ok
+test_identity_change_and_long_gap_restart_confirmation (test_campaign.CampaignTests.test_identity_change_and_long_gap_restart_confirmation) ... ok
+test_late_recovery_after_calendar_timeout_cannot_be_success (test_campaign.CampaignTests.test_late_recovery_after_calendar_timeout_cannot_be_success) ... ok
+test_maximum_hold_supersedes_unfilled_partial_intent (test_campaign.CampaignTests.test_maximum_hold_supersedes_unfilled_partial_intent) ... ok
+test_post_target_cost_revokes_claim_until_reconciled (test_campaign.CampaignTests.test_post_target_cost_revokes_claim_until_reconciled) ... ok
+test_recovery_slippage_below_target_is_not_recovered (test_campaign.CampaignTests.test_recovery_slippage_below_target_is_not_recovered) ... ok
+test_rent_is_locked_cash_until_evidenced_refund (test_campaign.CampaignTests.test_rent_is_locked_cash_until_evidenced_refund) ... ok
+test_required_gas_can_exceed_nominal_reserve (test_campaign.CampaignTests.test_required_gas_can_exceed_nominal_reserve) ... ok
+test_retries_are_initial_plus_two_then_unresolved (test_campaign.CampaignTests.test_retries_are_initial_plus_two_then_unresolved) ... ok
+test_runtime_gap_records_lateness_without_backdating_fill (test_campaign.CampaignTests.test_runtime_gap_records_lateness_without_backdating_fill) ... ok
+test_same_mint_cooldown_requires_24_hours (test_campaign.CampaignTests.test_same_mint_cooldown_requires_24_hours) ... ok
+test_session_cost_loss_resets_at_chicago_midnight (test_campaign.CampaignTests.test_session_cost_loss_resets_at_chicago_midnight) ... ok
+test_size_specific_partial_recovery_then_runner_trail (test_campaign.CampaignTests.test_size_specific_partial_recovery_then_runner_trail) ... ok
+test_stale_and_future_quote_are_atomic_errors (test_campaign.CampaignTests.test_stale_and_future_quote_are_atomic_errors) ... ok
+test_stall_windows_must_be_complete_consecutive_distinct_and_exact_pool (test_campaign.CampaignTests.test_stall_windows_must_be_complete_consecutive_distinct_and_exact_pool) ... ok
+test_stop_request_cannot_book_a_threshold_fill (test_campaign.CampaignTests.test_stop_request_cannot_book_a_threshold_fill) ... ok
+test_strengthened_thesis_defers_90_minute_exit (test_campaign.CampaignTests.test_strengthened_thesis_defers_90_minute_exit) ... ok
+test_three_entries_rolling_limit_and_exact_boundary (test_campaign.CampaignTests.test_three_entries_rolling_limit_and_exact_boundary) ... ok
+test_unknown_or_false_us_eligibility_rejects (test_campaign.CampaignTests.test_unknown_or_false_us_eligibility_rejects) ... ok
+
+======================================================================
+ERROR: test_30th_position_can_qualify_but_no_31st_entry (test_campaign.CampaignTests.test_30th_position_can_qualify_but_no_31st_entry)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/94da817d2f08/campaign_work/Resolant_Memecoin_Research_Kit/tests/test_campaign.py", line 360, in test_30th_position_can_qualify_but_no_31st_entry
+    f.close("57.10" if index == 29 else p["debit"])
+                                        ~^^^^^^^^^
+TypeError: 'NoneType' object is not subscriptable
+
+======================================================================
+FAIL: test_90_minute_missing_quote_requests_valuation (test_campaign.CampaignTests.test_90_minute_missing_quote_requests_valuation)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/94da817d2f08/campaign_work/Resolant_Memecoin_Research_Kit/tests/test_campaign.py", line 291, in test_90_minute_missing_quote_requests_valuation
+    self.assertEqual(result["actions"][0]["reason"], "stalled_90_minutes")
+AssertionError: '90_minute_condition_unknown' != 'stalled_90_minutes'
+- 90_minute_condition_unknown
++ stalled_90_minutes
+
+
+----------------------------------------------------------------------
+Ran 30 tests in 0.056s
+
+FAILED (failures=1, errors=1)

@@ -1,0 +1,25 @@
+{
+  "id": "SOCIAL-COVERAGE-0.1",
+  "frozen_at_utc": "2026-10-12T11:24:42.503671Z",
+  "purpose": "Bound public social coverage for the fixed development token without treating missing access as quiet attention.",
+  "exact_identity": {
+    "chain": "solana",
+    "mint": "2j5SaS7xy776qCBpyPQbZjyQSAtKiFgrwjfErthnW2ZM",
+    "pool": "Fe7bpDYCs74GqiCUF14HwgUMToPKV1d9mDYVX5BTohFr",
+    "name": "Claudia",
+    "symbol": "CLAUDIA"
+  },
+  "queries": [
+    {"id": "exact_mint", "q": "2j5SaS7xy776qCBpyPQbZjyQSAtKiFgrwjfErthnW2ZM"},
+    {"id": "name_chain", "q": "CLAUDIA Solana"},
+    {"id": "project_domain", "q": "claudia.gallery"}
+  ],
+  "interval": {"since": "2026-10-05T00:00:00Z", "until": "2026-10-12T11:24:42Z"},
+  "source": "https://public.api.bsky.app/xrpc/app.bsky.feed.searchPosts",
+  "bounds": {"limit_per_page": 100, "maximum_pages_per_query": 2, "maximum_consecutive_errors": 2, "timeout_seconds": 8},
+  "deduplication": ["AT URI", "author DID plus normalized text", "exact normalized cross-author copy"],
+  "identity_rule": "Name-only matches describe a meme family and never satisfy exact-mint agreement.",
+  "missing_data_rule": "No response, incomplete pagination or missing clocks remains unknown; it never proves quiet attention.",
+  "historical_use": "Development audit only. Later receipt cannot create an earlier decision-time gate.",
+  "cost_and_authority": {"paid_data_usd": 0, "authentication_used": false, "orders_or_wallet_actions": false}
+}

@@ -1,0 +1,54 @@
+{
+  "id": "FLOW-0.2",
+  "mode": "paper_quote_replay",
+  "universe": [
+    "DOGE/USD",
+    "BONK/USD",
+    "WIF/USD",
+    "PEPE/USD"
+  ],
+  "venue": "alpaca_us",
+  "development_dates": [
+    "2026-10-09"
+  ],
+  "chronological_comparison_dates": [
+    "2026-10-10"
+  ],
+  "trade_window_seconds": 60,
+  "min_buy_usd": 50,
+  "min_buy_fraction": 0.6,
+  "decision_after_trade_seconds": 2,
+  "entry_delay_seconds": 5,
+  "maximum_entry_wait_seconds": 30,
+  "holding_seconds": 3600,
+  "maximum_exit_wait_seconds": 30,
+  "minimum_side_top_quote_notional_usd": 14,
+  "max_spread_bps": 100,
+  "fee_per_side": 0.0025,
+  "adverse_allowance_per_side": 0.0025,
+  "starting_usd": 50,
+  "position_fraction": 0.14,
+  "one_position": true,
+  "max_entries_per_24h": 3,
+  "same_instrument_cooldown_seconds": 86400,
+  "campaign_floor_usd": 40,
+  "campaign_deadline_days": 30,
+  "campaign_strict_target": 100,
+  "controls": [
+    "random same decision and spread bucket within eligible known instruments, excluding main",
+    "strongest positive trailing 10-minute momentum among eligible known instruments, excluding main"
+  ],
+  "attention_control": "unavailable",
+  "random_seed": 20261012,
+  "historical_quote_availability": "source event time plus assumed 2-second publication allowance; freshness means at most 2 seconds after this assumed publication (source age at most 4 seconds); actual historical receipt times unavailable",
+  "token_identity": "venue plus listed exact pair; not automatically mapped to arbitrary on-chain mints",
+  "scope_limits": [
+    "two daily partial campaign replays; no 30-day campaign completion claim",
+    "no full historical depth book or wallet identities",
+    "account increments and state eligibility are unverified",
+    "USD is assumed already funded; data provider payment observed zero, funding/conversion costs assumed zero",
+    "No stop fill or maker queue fill invented"
+  ],
+  "original_sources_frozen_before_quote_outcomes": true,
+  "maximum_quote_age_seconds_since_assumed_publication": 2
+}

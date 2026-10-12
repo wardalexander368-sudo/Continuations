@@ -1,0 +1,36 @@
+{
+  "date_utc": "2026-10-12",
+  "source_manifest_entries_verified": 379,
+  "source_manifest_preserved": true,
+  "research_kit_subtree_matches_source": true,
+  "research_unittest": {
+    "command": "cd codexcoinhunt/research && python3 -m unittest discover -s tests -q",
+    "passed": 161,
+    "seconds": 0.261
+  },
+  "installer_unittest": {
+    "command": "cd codexcoinhunt && python3 -m unittest discover -s installer_tests -q",
+    "passed": 9,
+    "seconds": 0.016
+  },
+  "repository_pytest": {
+    "command": "python3 -m pytest -q",
+    "passed": 313,
+    "skipped": 1,
+    "seconds": 94.87,
+    "environment": "isolated Python 3.12 virtual environment, project dev/live dependencies plus httpx[socks]",
+    "initial_attempt": "7 failures from missing socksio in this proxy-using runtime; installing the environment dependency resolves them without repository code changes"
+  },
+  "source_candidate_secret_scan": {
+    "files_scanned": 383,
+    "compressed_gzip_and_zip_payloads_examined": true,
+    "patterns": ["GitHub tokens", "OpenAI key prefixes", "AWS access-key prefixes", "private-key PEM blocks", "long literal secret assignments"],
+    "candidate_matches": 0,
+    "limitation": "Pattern scan is not a universal secret detector. Added import metadata contains no credential values."
+  },
+  "existing_trading_code_modified": false,
+  "existing_paper_book_modified": false,
+  "workflow_changes": false,
+  "strategy_configuration_modified": false,
+  "verified_strategy_outcomes_added": 0
+}

@@ -1,0 +1,57 @@
+{
+  "study_id": "ENTRY-MODEL-0.1",
+  "frozen_at_utc": "2026-10-12T06:00:00.724255+00:00",
+  "mode": "research_plan_no_training_or_orders",
+  "strategy_id_unchanged": "SLR-0.2",
+  "strategy_sha256": "9bcd83ce0ec71cdae8c410c202bd5a75b1496679e5ddb94ccc7d300e57c3663f",
+  "trained_models": 0,
+  "validated_net_outcome_labels_current": 0,
+  "hypothesis": "Verified diversified buyers with declining prior selling, retained nearby execution capacity and bounded price expansion may provide an entry window whose payoff exceeds all costs; active-wallet counts and signed buying alone may instead describe bots or replenished selling",
+  "first_model_comparison": [
+    "rule_only",
+    "simple_logistic_baseline",
+    "catboost",
+    "simple_discrete_time_competing_risks"
+  ],
+  "later_model_comparison": [
+    "tabpfn_v2_with_attribution",
+    "temporal_convolutional_network",
+    "temporal_graph_network"
+  ],
+  "mandatory_gates_remain": [
+    "US_state_account_asset_venue_eligibility",
+    "exact_identity",
+    "safety_and_sell_route",
+    "fresh_size_specific_quotes",
+    "funded_costs_and_reserves",
+    "timed_confirmation",
+    "campaign_entry_and_exit_limits"
+  ],
+  "prediction_targets": [
+    "distribution_of_net_recoverable_trade_outcomes_under_fixed_exit_policy",
+    "time_to_cost_qualified_capital_recovery",
+    "documented_zero_recovery_or_route_failure",
+    "quote_observability_and_right_censoring_as_separate_states"
+  ],
+  "never_labels": [
+    "chart_peak_as_fill",
+    "old_balance_as_trade",
+    "wallet_count_as_independent_humans",
+    "missing_exit_as_documented_zero_recovery",
+    "repeated_snapshot_as_new_independent_sample"
+  ],
+  "entry_ablation": [
+    "verified_buyer_quality_vs_activity_count_only",
+    "SLR_audience_conversion_vs_signed_flow_only",
+    "persistent_nearby_book_capacity_vs_total_depth",
+    "ask_depletion_vs_replenished_ask_absorption_where_event_data_exist",
+    "capital_recovery_runner_vs_full_liquidation_on_identical_eligible_paths"
+  ],
+  "venues_separate": true,
+  "graph_service_hubs_require_classification": true,
+  "evaluation": "Grouped chronological development, validation and later untouched forward period; whole-day/narrative blocks, delayed profile availability, all costs, missing routes/timeouts, $50 account controller and matched random/attention/momentum peers",
+  "parameter_tuning_or_model_selection_on_holdout": false,
+  "rule_thresholds_revised": false,
+  "data_readiness": "Blocked for trustworthy net-payoff training by missing complete entry/exit, social, funding/cluster, execution and conversion labels; continue independent evidence collection",
+  "paid_model_or_hosted_inference_used": false
+}

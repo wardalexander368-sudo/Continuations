@@ -1,0 +1,168 @@
+{
+  "status": "bounded finalized swap-event subset, not complete interval or independent-human buyers",
+  "completed_at_utc": "2026-10-12T01:47:18.025680+00:00",
+  "plan": {
+    "started_at_utc": "2026-10-12T01:42:47.307685+00:00",
+    "pool": "Fe7bpDYCs74GqiCUF14HwgUMToPKV1d9mDYVX5BTohFr",
+    "mint": "2j5SaS7xy776qCBpyPQbZjyQSAtKiFgrwjfErthnW2ZM",
+    "selection": "first fixed PumpSwap prefilter pool; independent of subsequent returns",
+    "signature_limit": 30,
+    "transaction_limit": 12,
+    "commitment": "finalized",
+    "funding_clusters": "unavailable; never inferred independent from different wallets",
+    "quote_mint": "So11111111111111111111111111111111111111112"
+  },
+  "pool_owner_and_exact_mint_verified": true,
+  "listed_signatures": 30,
+  "transactions_attempted": 12,
+  "listed_signature_time_span_seconds": 112,
+  "decoded_swap_events": 7,
+  "buy_events": 5,
+  "sell_events": 2,
+  "unique_buy_event_users": 5,
+  "buy_quote_lamports": 10211858525,
+  "sell_user_receipts_lamports": 979844154,
+  "largest_buyer_notional_fraction": 0.8733324083139901,
+  "apparently_unrelated_seasoned_buyer_clusters": null,
+  "new_to_mint_verified_buyers": null,
+  "wallet_funding_provenance_coverage": null,
+  "strategy_entry": "REJECT_MISSING_BUYER_HISTORY_FUNDING_SOCIAL_SAFETY",
+  "outcomes": [
+    {
+      "signature": "4xEd9dV9LXWCFrK8T97z2UTkSQmMKuPJNrorb2rPjVpvfSduagUR6bRYEAzU55S4Xn42SJKuHX8Qt9TRCVUeK17m",
+      "status": "decoded",
+      "http_status": 200,
+      "rpc_error": {
+        "code": -32015,
+        "message": "Transaction version (1) is not supported by the requesting client. Please try the request again with the following configuration parameter: \"maxSupportedTransactionVersion\": 1"
+      },
+      "original_status": "transaction_unavailable",
+      "retried_at_utc": "2026-10-12T01:46:43.709614+00:00",
+      "retry_status": "recovered",
+      "events": 1,
+      "parse_errors": []
+    },
+    {
+      "signature": "2agsVC8298e4K8rHcWT4mJQRrgR3DKU5nQdyMaAGmXjL3PurwGyE9523Sg7crRqiE4fACSEYzp7Dd7RqktoWxgPp",
+      "status": "decoded",
+      "events": 1,
+      "parse_errors": []
+    },
+    {
+      "signature": "JXf9UkteQUtcL2Xk4D9ZQSk8uiauwYefPBG8NCqhjyvtPq9EocHqpD7HfvvxvvKr1ATLAUp3Z6rk2EvRWyXoMys",
+      "status": "decoded",
+      "events": 1,
+      "parse_errors": []
+    },
+    {
+      "signature": "dVjkKGfCDjYCYFEepJTWoGQEJBQNgJstuaqMexjhYWPyKCcQhteCMcqc2JGiM377brDkA963iywaZazdw9KbuWw",
+      "status": "no_matching_swap_event",
+      "http_status": 200,
+      "rpc_error": {
+        "code": -32015,
+        "message": "Transaction version (1) is not supported by the requesting client. Please try the request again with the following configuration parameter: \"maxSupportedTransactionVersion\": 1"
+      },
+      "original_status": "transaction_unavailable",
+      "retried_at_utc": "2026-10-12T01:46:49.151404+00:00",
+      "retry_status": "recovered",
+      "events": 0,
+      "parse_errors": []
+    },
+    {
+      "signature": "22Zs2CFkcjMN5ru1rjBdYdioUji9UGriaAoCjUd8ZxnrxdYgmxh5STzVmrpBKZa3LXExyERZRBymdNzf9iotRjYk",
+      "status": "decoded",
+      "http_status": 200,
+      "rpc_error": {
+        "code": -32015,
+        "message": "Transaction version (1) is not supported by the requesting client. Please try the request again with the following configuration parameter: \"maxSupportedTransactionVersion\": 1"
+      },
+      "original_status": "transaction_unavailable",
+      "retried_at_utc": "2026-10-12T01:46:54.511007+00:00",
+      "retry_status": "recovered",
+      "events": 1,
+      "parse_errors": []
+    },
+    {
+      "signature": "5JUSunUthkGizUWcLms5WVV7CG6N6YST1aRvnLszeVg3VFeNg3voN8GhB9ZoY5wHP443mGn1AXRwiKwjrzWwA3PT",
+      "status": "no_matching_swap_event",
+      "http_status": 200,
+      "rpc_error": {
+        "code": -32015,
+        "message": "Transaction version (1) is not supported by the requesting client. Please try the request again with the following configuration parameter: \"maxSupportedTransactionVersion\": 1"
+      },
+      "original_status": "transaction_unavailable",
+      "retried_at_utc": "2026-10-12T01:47:00.019504+00:00",
+      "retry_status": "recovered",
+      "events": 0,
+      "parse_errors": []
+    },
+    {
+      "signature": "4MQzX9yZvmvxnihhcJXANTcVzGkpV5bn2BqNomsc6XyqKoW6449P4L2j5QwtdRTDic4QVk3J2ndfnAoBcePTDZ7r",
+      "status": "no_matching_swap_event",
+      "events": 0,
+      "parse_errors": []
+    },
+    {
+      "signature": "2tKSwp5KTUC4tC97cEVh9qFou4rWBitzCs3gtGZ3t78V3ULD2ppkuWhPD4jQRYSNefmdyxM9ZwJbG3LbbukWJJFd",
+      "status": "no_matching_swap_event",
+      "http_status": 200,
+      "rpc_error": {
+        "code": -32015,
+        "message": "Transaction version (1) is not supported by the requesting client. Please try the request again with the following configuration parameter: \"maxSupportedTransactionVersion\": 1"
+      },
+      "original_status": "transaction_unavailable",
+      "retried_at_utc": "2026-10-12T01:47:05.281721+00:00",
+      "retry_status": "recovered",
+      "events": 0,
+      "parse_errors": []
+    },
+    {
+      "signature": "25v1XyRmKDfWYpWH8uH65ZZWgqDmxLjpwZYRqtUdjAVGzWSHVyWjwQAMxS5nszJxS2Ygg3GQ5pfF35DQr33KQAuA",
+      "status": "decoded",
+      "events": 1,
+      "parse_errors": []
+    },
+    {
+      "signature": "4RygJfBrPs3DJsKoHfydVV9d4bF67MammsyNEqd27LuJtsFAwLcRmUgJwDV6gihnwQP86PgSBxPytYtMXXWC3j7Z",
+      "status": "no_matching_swap_event",
+      "http_status": 200,
+      "rpc_error": {
+        "code": -32015,
+        "message": "Transaction version (1) is not supported by the requesting client. Please try the request again with the following configuration parameter: \"maxSupportedTransactionVersion\": 1"
+      },
+      "original_status": "transaction_unavailable",
+      "retried_at_utc": "2026-10-12T01:47:12.404030+00:00",
+      "retry_status": "recovered",
+      "events": 0,
+      "parse_errors": []
+    },
+    {
+      "signature": "d7e2tdanKS5rURm9K8anXVZJpBDnjaNEyweVcztnkSL2ZWeRUza9TiTLrXdmgBdTQe1svmsmxgD1MRs5KZvpy5S",
+      "status": "decoded",
+      "events": 1,
+      "parse_errors": []
+    },
+    {
+      "signature": "2MHpZRik2qjB86bAPf5JzZtd8Nq11K9ShPT3EfXoBsKvgJmVnDBnySxcoo88BFUuSEbCMYAf2qLznZaGaLqa9F3G",
+      "status": "decoded",
+      "http_status": 200,
+      "rpc_error": {
+        "code": -32015,
+        "message": "Transaction version (1) is not supported by the requesting client. Please try the request again with the following configuration parameter: \"maxSupportedTransactionVersion\": 1"
+      },
+      "original_status": "transaction_unavailable",
+      "retried_at_utc": "2026-10-12T01:47:18.024887+00:00",
+      "retry_status": "recovered",
+      "events": 1,
+      "parse_errors": []
+    }
+  ],
+  "explicit_version_failures_recovered": 7,
+  "transaction_versions": {
+    "0": 4,
+    "legacy": 1,
+    "1": 7
+  },
+  "initial_v0_result": "summary_initial_v0.json; version failure correction is implementation development, not a later outcome-selection filter",
+  "exact_quote_mint_verified": true
+}

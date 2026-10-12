@@ -1,0 +1,14 @@
+{
+  "name": "resolant-read-only-quote-probe",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "scripts": {
+    "probe": "node quote_probe.mjs"
+  },
+  "dependencies": {
+    "@pump-fun/pump-swap-sdk": "2.1.0",
+    "@solana/web3.js": "1.98.4",
+    "bn.js": "5.2.2"
+  }
+}

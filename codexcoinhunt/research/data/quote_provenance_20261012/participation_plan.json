@@ -1,0 +1,101 @@
+{
+  "id": "QUOTE-PROVENANCE-0.1-PARTICIPATION-CHECK",
+  "frozen_at_utc": "2026-10-12T08:26:34.933722+00:00",
+  "wallet": "CSx2gDhH9nw6vqknJkrHVCaWWDDr6sLbRvtJkiUieRFZ",
+  "target_mint": "2j5SaS7xy776qCBpyPQbZjyQSAtKiFgrwjfErthnW2ZM",
+  "cutoff_unix_time": 1791769336,
+  "start_unix_time": 1791682936,
+  "selection": "eight closest pre-target uninspected signatures for the one buyer without demonstrated earlier target participation; failures retained; selection independent of new body outcomes",
+  "maximum_body_requests": 8,
+  "selected": [
+    {
+      "blockTime": 1791769218,
+      "confirmationStatus": "finalized",
+      "err": {
+        "InsufficientFundsForRent": {
+          "account_index": 4
+        }
+      },
+      "memo": null,
+      "signature": "2UoXjF1RF8WvN4R9s1p2sMpRizjKWDMMSNScdKg881j2akE2SjDqVYyYNApLhtxwWmvMsj8msE6vaonxnCmrNLwG",
+      "slot": 455868668,
+      "transactionIndex": 1100
+    },
+    {
+      "blockTime": 1791768776,
+      "confirmationStatus": "finalized",
+      "err": null,
+      "memo": null,
+      "signature": "TiniFhMZHXn6ggRJCoNjhCAdK8j4aoTT3QBSiPSgb5NTMUicPVCTtT87zccmSLzp8CUTVHFpt7djtDy4Mqmq2mr",
+      "slot": 455866627,
+      "transactionIndex": 473
+    },
+    {
+      "blockTime": 1791768774,
+      "confirmationStatus": "finalized",
+      "err": null,
+      "memo": null,
+      "signature": "2E2pRJroxp4p6gVsgrHcA7SNifJyTwAP5ApQGGDCvj2LiAfrRRJJuyLV1jxapWYTmAfKHz3e48E7KEopGe2R8QNC",
+      "slot": 455866615,
+      "transactionIndex": 748
+    },
+    {
+      "blockTime": 1791768765,
+      "confirmationStatus": "finalized",
+      "err": {
+        "InsufficientFundsForRent": {
+          "account_index": 3
+        }
+      },
+      "memo": null,
+      "signature": "3ih64CdV2qKjw71R8TiRRuEb1pen1f6GoRewAMtAMtJEwKDEMnWm1b6oVyyxCdZv8AzUMUEtfhVPEfbqmYmWhG3h",
+      "slot": 455866579,
+      "transactionIndex": 162
+    },
+    {
+      "blockTime": 1791768597,
+      "confirmationStatus": "finalized",
+      "err": null,
+      "memo": null,
+      "signature": "5PBtSejxybgJ14CgTUJh3TyeS6bRsuGcZbbK7bMXVGZ5MUoLC2fWm6QVWCUsngkNWyREmsNcDSKyVLDJdKKjvW6r",
+      "slot": 455865818,
+      "transactionIndex": 1102
+    },
+    {
+      "blockTime": 1791768587,
+      "confirmationStatus": "finalized",
+      "err": null,
+      "memo": null,
+      "signature": "5cZinhBHq3Nt3xiaaVe1BDwggoH6FsD4KWUdpbTK6TqU5UY1pZSKgKp5yHathYqo6vHFGmzg6XqwPuaKS1f2R2fu",
+      "slot": 455865772,
+      "transactionIndex": 939
+    },
+    {
+      "blockTime": 1791768370,
+      "confirmationStatus": "finalized",
+      "err": null,
+      "memo": null,
+      "signature": "f7Q9R8SWJDMV3xyxBKvr7MfYystLxN86d1FaqTRszGCCkmHuQ3dLHZCnauvrA8aJz27qx5mLGMuTE8mEBeuYe8D",
+      "slot": 455864778,
+      "transactionIndex": 133
+    },
+    {
+      "blockTime": 1791768275,
+      "confirmationStatus": "finalized",
+      "err": null,
+      "memo": null,
+      "signature": "3i4C8db66BaW4j1Jz5EJEP5etrTHphViQ47fBYAWTw6YU6qxoKwp4tuHPhHiHRQeAq1wxiBUTd8yNGAb3qHsHJ9v",
+      "slot": 455864339,
+      "transactionIndex": 71
+    }
+  ],
+  "saved_raw_sources": [
+    "data/buyer_probe_20261012/rpc.jsonl",
+    "data/buyer_probe_20261012/wallet_rpc.jsonl",
+    "data/buyer_history_deep_20261012/rpc.jsonl",
+    "data/buyer_trade_history_20261012/rpc.jsonl",
+    "data/buyer_funding_20261012/rpc.jsonl"
+  ],
+  "historical_eligibility_promoted": false,
+  "source_lookup_not_used_as_prior_state": true
+}

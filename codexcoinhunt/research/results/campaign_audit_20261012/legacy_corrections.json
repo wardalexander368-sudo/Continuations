@@ -1,0 +1,647 @@
+{
+  "evidence_type": "synthetic engineering regression replay, not market observations",
+  "source_sha256": "fdfe1480c3bf17c3e15e66944503e949ea6f7ee5d5625e586733a030a367a1f2",
+  "ledger_sha256": "f42f587100be1e1654bbeea60f0f0235ec2a6b52b991ece5782612a3777f7f60",
+  "false_boundary_cases_corrected": [
+    {
+      "cost_usd": "0.02",
+      "corrected_audit": {
+        "status": "fully_settled",
+        "starting_usd": 50.0,
+        "ending_cash_usd": 100.0,
+        "ending_cash_usd_exact": "100.00",
+        "realized_account_pnl_usd": 50.0,
+        "withdrawable_cash_multiple": 2.0,
+        "target_met": false,
+        "closed_positions": 1,
+        "open_positions": [],
+        "external_costs_usd": 0.02,
+        "positions": [
+          {
+            "position_id": "synthetic",
+            "mint": "SYNTHETIC",
+            "entry_at": "2026-10-12T00:00:00Z",
+            "debit_usd": 7.0,
+            "original_quantity": 1.0,
+            "remaining_quantity": 0.0,
+            "credit_usd": 57.02,
+            "exit_at": "2026-10-12T00:01:00Z",
+            "pnl_usd": 50.02,
+            "net_multiple": 8.145714285714286
+          }
+        ],
+        "cash_curve": [
+          {
+            "at": "2026-10-12T00:00:00Z",
+            "cash_usd": 43.0,
+            "open_positions": 1,
+            "equity_verified_without_mark_estimates": false
+          },
+          {
+            "at": "2026-10-12T00:01:00Z",
+            "cash_usd": 100.02,
+            "open_positions": 0,
+            "equity_verified_without_mark_estimates": true
+          },
+          {
+            "at": "2026-10-12T00:02:00Z",
+            "cash_usd": 100.0,
+            "open_positions": 0,
+            "equity_verified_without_mark_estimates": true
+          }
+        ],
+        "note": "This legacy net-fill audit does not authenticate inputs or enforce the campaign lifecycle. Net USD inputs must include fees/conversion costs; token dust is open until sold or documented as zero recovery. Use campaign_controller.py for timed policy checks."
+      }
+    },
+    {
+      "cost_usd": "0.21",
+      "corrected_audit": {
+        "status": "fully_settled",
+        "starting_usd": 50.0,
+        "ending_cash_usd": 100.0,
+        "ending_cash_usd_exact": "100.00",
+        "realized_account_pnl_usd": 50.0,
+        "withdrawable_cash_multiple": 2.0,
+        "target_met": false,
+        "closed_positions": 1,
+        "open_positions": [],
+        "external_costs_usd": 0.21,
+        "positions": [
+          {
+            "position_id": "synthetic",
+            "mint": "SYNTHETIC",
+            "entry_at": "2026-10-12T00:00:00Z",
+            "debit_usd": 7.0,
+            "original_quantity": 1.0,
+            "remaining_quantity": 0.0,
+            "credit_usd": 57.21,
+            "exit_at": "2026-10-12T00:01:00Z",
+            "pnl_usd": 50.21,
+            "net_multiple": 8.172857142857143
+          }
+        ],
+        "cash_curve": [
+          {
+            "at": "2026-10-12T00:00:00Z",
+            "cash_usd": 43.0,
+            "open_positions": 1,
+            "equity_verified_without_mark_estimates": false
+          },
+          {
+            "at": "2026-10-12T00:01:00Z",
+            "cash_usd": 100.21,
+            "open_positions": 0,
+            "equity_verified_without_mark_estimates": true
+          },
+          {
+            "at": "2026-10-12T00:02:00Z",
+            "cash_usd": 100.0,
+            "open_positions": 0,
+            "equity_verified_without_mark_estimates": true
+          }
+        ],
+        "note": "This legacy net-fill audit does not authenticate inputs or enforce the campaign lifecycle. Net USD inputs must include fees/conversion costs; token dust is open until sold or documented as zero recovery. Use campaign_controller.py for timed policy checks."
+      }
+    },
+    {
+      "cost_usd": "0.24",
+      "corrected_audit": {
+        "status": "fully_settled",
+        "starting_usd": 50.0,
+        "ending_cash_usd": 100.0,
+        "ending_cash_usd_exact": "100.00",
+        "realized_account_pnl_usd": 50.0,
+        "withdrawable_cash_multiple": 2.0,
+        "target_met": false,
+        "closed_positions": 1,
+        "open_positions": [],
+        "external_costs_usd": 0.24,
+        "positions": [
+          {
+            "position_id": "synthetic",
+            "mint": "SYNTHETIC",
+            "entry_at": "2026-10-12T00:00:00Z",
+            "debit_usd": 7.0,
+            "original_quantity": 1.0,
+            "remaining_quantity": 0.0,
+            "credit_usd": 57.24,
+            "exit_at": "2026-10-12T00:01:00Z",
+            "pnl_usd": 50.24,
+            "net_multiple": 8.177142857142858
+          }
+        ],
+        "cash_curve": [
+          {
+            "at": "2026-10-12T00:00:00Z",
+            "cash_usd": 43.0,
+            "open_positions": 1,
+            "equity_verified_without_mark_estimates": false
+          },
+          {
+            "at": "2026-10-12T00:01:00Z",
+            "cash_usd": 100.24,
+            "open_positions": 0,
+            "equity_verified_without_mark_estimates": true
+          },
+          {
+            "at": "2026-10-12T00:02:00Z",
+            "cash_usd": 100.0,
+            "open_positions": 0,
+            "equity_verified_without_mark_estimates": true
+          }
+        ],
+        "note": "This legacy net-fill audit does not authenticate inputs or enforce the campaign lifecycle. Net USD inputs must include fees/conversion costs; token dust is open until sold or documented as zero recovery. Use campaign_controller.py for timed policy checks."
+      }
+    },
+    {
+      "cost_usd": "0.27",
+      "corrected_audit": {
+        "status": "fully_settled",
+        "starting_usd": 50.0,
+        "ending_cash_usd": 100.0,
+        "ending_cash_usd_exact": "100.00",
+        "realized_account_pnl_usd": 50.0,
+        "withdrawable_cash_multiple": 2.0,
+        "target_met": false,
+        "closed_positions": 1,
+        "open_positions": [],
+        "external_costs_usd": 0.27,
+        "positions": [
+          {
+            "position_id": "synthetic",
+            "mint": "SYNTHETIC",
+            "entry_at": "2026-10-12T00:00:00Z",
+            "debit_usd": 7.0,
+            "original_quantity": 1.0,
+            "remaining_quantity": 0.0,
+            "credit_usd": 57.27,
+            "exit_at": "2026-10-12T00:01:00Z",
+            "pnl_usd": 50.27,
+            "net_multiple": 8.18142857142857
+          }
+        ],
+        "cash_curve": [
+          {
+            "at": "2026-10-12T00:00:00Z",
+            "cash_usd": 43.0,
+            "open_positions": 1,
+            "equity_verified_without_mark_estimates": false
+          },
+          {
+            "at": "2026-10-12T00:01:00Z",
+            "cash_usd": 100.27,
+            "open_positions": 0,
+            "equity_verified_without_mark_estimates": true
+          },
+          {
+            "at": "2026-10-12T00:02:00Z",
+            "cash_usd": 100.0,
+            "open_positions": 0,
+            "equity_verified_without_mark_estimates": true
+          }
+        ],
+        "note": "This legacy net-fill audit does not authenticate inputs or enforce the campaign lifecycle. Net USD inputs must include fees/conversion costs; token dust is open until sold or documented as zero recovery. Use campaign_controller.py for timed policy checks."
+      }
+    },
+    {
+      "cost_usd": "0.46",
+      "corrected_audit": {
+        "status": "fully_settled",
+        "starting_usd": 50.0,
+        "ending_cash_usd": 100.0,
+        "ending_cash_usd_exact": "100.00",
+        "realized_account_pnl_usd": 50.0,
+        "withdrawable_cash_multiple": 2.0,
+        "target_met": false,
+        "closed_positions": 1,
+        "open_positions": [],
+        "external_costs_usd": 0.46,
+        "positions": [
+          {
+            "position_id": "synthetic",
+            "mint": "SYNTHETIC",
+            "entry_at": "2026-10-12T00:00:00Z",
+            "debit_usd": 7.0,
+            "original_quantity": 1.0,
+            "remaining_quantity": 0.0,
+            "credit_usd": 57.46,
+            "exit_at": "2026-10-12T00:01:00Z",
+            "pnl_usd": 50.46,
+            "net_multiple": 8.208571428571428
+          }
+        ],
+        "cash_curve": [
+          {
+            "at": "2026-10-12T00:00:00Z",
+            "cash_usd": 43.0,
+            "open_positions": 1,
+            "equity_verified_without_mark_estimates": false
+          },
+          {
+            "at": "2026-10-12T00:01:00Z",
+            "cash_usd": 100.46,
+            "open_positions": 0,
+            "equity_verified_without_mark_estimates": true
+          },
+          {
+            "at": "2026-10-12T00:02:00Z",
+            "cash_usd": 100.0,
+            "open_positions": 0,
+            "equity_verified_without_mark_estimates": true
+          }
+        ],
+        "note": "This legacy net-fill audit does not authenticate inputs or enforce the campaign lifecycle. Net USD inputs must include fees/conversion costs; token dust is open until sold or documented as zero recovery. Use campaign_controller.py for timed policy checks."
+      }
+    },
+    {
+      "cost_usd": "0.49",
+      "corrected_audit": {
+        "status": "fully_settled",
+        "starting_usd": 50.0,
+        "ending_cash_usd": 100.0,
+        "ending_cash_usd_exact": "100.00",
+        "realized_account_pnl_usd": 50.0,
+        "withdrawable_cash_multiple": 2.0,
+        "target_met": false,
+        "closed_positions": 1,
+        "open_positions": [],
+        "external_costs_usd": 0.49,
+        "positions": [
+          {
+            "position_id": "synthetic",
+            "mint": "SYNTHETIC",
+            "entry_at": "2026-10-12T00:00:00Z",
+            "debit_usd": 7.0,
+            "original_quantity": 1.0,
+            "remaining_quantity": 0.0,
+            "credit_usd": 57.49,
+            "exit_at": "2026-10-12T00:01:00Z",
+            "pnl_usd": 50.49,
+            "net_multiple": 8.212857142857143
+          }
+        ],
+        "cash_curve": [
+          {
+            "at": "2026-10-12T00:00:00Z",
+            "cash_usd": 43.0,
+            "open_positions": 1,
+            "equity_verified_without_mark_estimates": false
+          },
+          {
+            "at": "2026-10-12T00:01:00Z",
+            "cash_usd": 100.49,
+            "open_positions": 0,
+            "equity_verified_without_mark_estimates": true
+          },
+          {
+            "at": "2026-10-12T00:02:00Z",
+            "cash_usd": 100.0,
+            "open_positions": 0,
+            "equity_verified_without_mark_estimates": true
+          }
+        ],
+        "note": "This legacy net-fill audit does not authenticate inputs or enforce the campaign lifecycle. Net USD inputs must include fees/conversion costs; token dust is open until sold or documented as zero recovery. Use campaign_controller.py for timed policy checks."
+      }
+    },
+    {
+      "cost_usd": "0.52",
+      "corrected_audit": {
+        "status": "fully_settled",
+        "starting_usd": 50.0,
+        "ending_cash_usd": 100.0,
+        "ending_cash_usd_exact": "100.00",
+        "realized_account_pnl_usd": 50.0,
+        "withdrawable_cash_multiple": 2.0,
+        "target_met": false,
+        "closed_positions": 1,
+        "open_positions": [],
+        "external_costs_usd": 0.52,
+        "positions": [
+          {
+            "position_id": "synthetic",
+            "mint": "SYNTHETIC",
+            "entry_at": "2026-10-12T00:00:00Z",
+            "debit_usd": 7.0,
+            "original_quantity": 1.0,
+            "remaining_quantity": 0.0,
+            "credit_usd": 57.52,
+            "exit_at": "2026-10-12T00:01:00Z",
+            "pnl_usd": 50.52,
+            "net_multiple": 8.217142857142857
+          }
+        ],
+        "cash_curve": [
+          {
+            "at": "2026-10-12T00:00:00Z",
+            "cash_usd": 43.0,
+            "open_positions": 1,
+            "equity_verified_without_mark_estimates": false
+          },
+          {
+            "at": "2026-10-12T00:01:00Z",
+            "cash_usd": 100.52,
+            "open_positions": 0,
+            "equity_verified_without_mark_estimates": true
+          },
+          {
+            "at": "2026-10-12T00:02:00Z",
+            "cash_usd": 100.0,
+            "open_positions": 0,
+            "equity_verified_without_mark_estimates": true
+          }
+        ],
+        "note": "This legacy net-fill audit does not authenticate inputs or enforce the campaign lifecycle. Net USD inputs must include fees/conversion costs; token dust is open until sold or documented as zero recovery. Use campaign_controller.py for timed policy checks."
+      }
+    },
+    {
+      "cost_usd": "0.71",
+      "corrected_audit": {
+        "status": "fully_settled",
+        "starting_usd": 50.0,
+        "ending_cash_usd": 100.0,
+        "ending_cash_usd_exact": "100.00",
+        "realized_account_pnl_usd": 50.0,
+        "withdrawable_cash_multiple": 2.0,
+        "target_met": false,
+        "closed_positions": 1,
+        "open_positions": [],
+        "external_costs_usd": 0.71,
+        "positions": [
+          {
+            "position_id": "synthetic",
+            "mint": "SYNTHETIC",
+            "entry_at": "2026-10-12T00:00:00Z",
+            "debit_usd": 7.0,
+            "original_quantity": 1.0,
+            "remaining_quantity": 0.0,
+            "credit_usd": 57.71,
+            "exit_at": "2026-10-12T00:01:00Z",
+            "pnl_usd": 50.71,
+            "net_multiple": 8.244285714285715
+          }
+        ],
+        "cash_curve": [
+          {
+            "at": "2026-10-12T00:00:00Z",
+            "cash_usd": 43.0,
+            "open_positions": 1,
+            "equity_verified_without_mark_estimates": false
+          },
+          {
+            "at": "2026-10-12T00:01:00Z",
+            "cash_usd": 100.71,
+            "open_positions": 0,
+            "equity_verified_without_mark_estimates": true
+          },
+          {
+            "at": "2026-10-12T00:02:00Z",
+            "cash_usd": 100.0,
+            "open_positions": 0,
+            "equity_verified_without_mark_estimates": true
+          }
+        ],
+        "note": "This legacy net-fill audit does not authenticate inputs or enforce the campaign lifecycle. Net USD inputs must include fees/conversion costs; token dust is open until sold or documented as zero recovery. Use campaign_controller.py for timed policy checks."
+      }
+    },
+    {
+      "cost_usd": "0.74",
+      "corrected_audit": {
+        "status": "fully_settled",
+        "starting_usd": 50.0,
+        "ending_cash_usd": 100.0,
+        "ending_cash_usd_exact": "100.00",
+        "realized_account_pnl_usd": 50.0,
+        "withdrawable_cash_multiple": 2.0,
+        "target_met": false,
+        "closed_positions": 1,
+        "open_positions": [],
+        "external_costs_usd": 0.74,
+        "positions": [
+          {
+            "position_id": "synthetic",
+            "mint": "SYNTHETIC",
+            "entry_at": "2026-10-12T00:00:00Z",
+            "debit_usd": 7.0,
+            "original_quantity": 1.0,
+            "remaining_quantity": 0.0,
+            "credit_usd": 57.74,
+            "exit_at": "2026-10-12T00:01:00Z",
+            "pnl_usd": 50.74,
+            "net_multiple": 8.248571428571429
+          }
+        ],
+        "cash_curve": [
+          {
+            "at": "2026-10-12T00:00:00Z",
+            "cash_usd": 43.0,
+            "open_positions": 1,
+            "equity_verified_without_mark_estimates": false
+          },
+          {
+            "at": "2026-10-12T00:01:00Z",
+            "cash_usd": 100.74,
+            "open_positions": 0,
+            "equity_verified_without_mark_estimates": true
+          },
+          {
+            "at": "2026-10-12T00:02:00Z",
+            "cash_usd": 100.0,
+            "open_positions": 0,
+            "equity_verified_without_mark_estimates": true
+          }
+        ],
+        "note": "This legacy net-fill audit does not authenticate inputs or enforce the campaign lifecycle. Net USD inputs must include fees/conversion costs; token dust is open until sold or documented as zero recovery. Use campaign_controller.py for timed policy checks."
+      }
+    },
+    {
+      "cost_usd": "0.77",
+      "corrected_audit": {
+        "status": "fully_settled",
+        "starting_usd": 50.0,
+        "ending_cash_usd": 100.0,
+        "ending_cash_usd_exact": "100.00",
+        "realized_account_pnl_usd": 50.0,
+        "withdrawable_cash_multiple": 2.0,
+        "target_met": false,
+        "closed_positions": 1,
+        "open_positions": [],
+        "external_costs_usd": 0.77,
+        "positions": [
+          {
+            "position_id": "synthetic",
+            "mint": "SYNTHETIC",
+            "entry_at": "2026-10-12T00:00:00Z",
+            "debit_usd": 7.0,
+            "original_quantity": 1.0,
+            "remaining_quantity": 0.0,
+            "credit_usd": 57.77,
+            "exit_at": "2026-10-12T00:01:00Z",
+            "pnl_usd": 50.77,
+            "net_multiple": 8.252857142857144
+          }
+        ],
+        "cash_curve": [
+          {
+            "at": "2026-10-12T00:00:00Z",
+            "cash_usd": 43.0,
+            "open_positions": 1,
+            "equity_verified_without_mark_estimates": false
+          },
+          {
+            "at": "2026-10-12T00:01:00Z",
+            "cash_usd": 100.77,
+            "open_positions": 0,
+            "equity_verified_without_mark_estimates": true
+          },
+          {
+            "at": "2026-10-12T00:02:00Z",
+            "cash_usd": 100.0,
+            "open_positions": 0,
+            "equity_verified_without_mark_estimates": true
+          }
+        ],
+        "note": "This legacy net-fill audit does not authenticate inputs or enforce the campaign lifecycle. Net USD inputs must include fees/conversion costs; token dust is open until sold or documented as zero recovery. Use campaign_controller.py for timed policy checks."
+      }
+    },
+    {
+      "cost_usd": "0.96",
+      "corrected_audit": {
+        "status": "fully_settled",
+        "starting_usd": 50.0,
+        "ending_cash_usd": 100.0,
+        "ending_cash_usd_exact": "100.00",
+        "realized_account_pnl_usd": 50.0,
+        "withdrawable_cash_multiple": 2.0,
+        "target_met": false,
+        "closed_positions": 1,
+        "open_positions": [],
+        "external_costs_usd": 0.96,
+        "positions": [
+          {
+            "position_id": "synthetic",
+            "mint": "SYNTHETIC",
+            "entry_at": "2026-10-12T00:00:00Z",
+            "debit_usd": 7.0,
+            "original_quantity": 1.0,
+            "remaining_quantity": 0.0,
+            "credit_usd": 57.96,
+            "exit_at": "2026-10-12T00:01:00Z",
+            "pnl_usd": 50.96,
+            "net_multiple": 8.28
+          }
+        ],
+        "cash_curve": [
+          {
+            "at": "2026-10-12T00:00:00Z",
+            "cash_usd": 43.0,
+            "open_positions": 1,
+            "equity_verified_without_mark_estimates": false
+          },
+          {
+            "at": "2026-10-12T00:01:00Z",
+            "cash_usd": 100.96,
+            "open_positions": 0,
+            "equity_verified_without_mark_estimates": true
+          },
+          {
+            "at": "2026-10-12T00:02:00Z",
+            "cash_usd": 100.0,
+            "open_positions": 0,
+            "equity_verified_without_mark_estimates": true
+          }
+        ],
+        "note": "This legacy net-fill audit does not authenticate inputs or enforce the campaign lifecycle. Net USD inputs must include fees/conversion costs; token dust is open until sold or documented as zero recovery. Use campaign_controller.py for timed policy checks."
+      }
+    },
+    {
+      "cost_usd": "0.99",
+      "corrected_audit": {
+        "status": "fully_settled",
+        "starting_usd": 50.0,
+        "ending_cash_usd": 100.0,
+        "ending_cash_usd_exact": "100.00",
+        "realized_account_pnl_usd": 50.0,
+        "withdrawable_cash_multiple": 2.0,
+        "target_met": false,
+        "closed_positions": 1,
+        "open_positions": [],
+        "external_costs_usd": 0.99,
+        "positions": [
+          {
+            "position_id": "synthetic",
+            "mint": "SYNTHETIC",
+            "entry_at": "2026-10-12T00:00:00Z",
+            "debit_usd": 7.0,
+            "original_quantity": 1.0,
+            "remaining_quantity": 0.0,
+            "credit_usd": 57.99,
+            "exit_at": "2026-10-12T00:01:00Z",
+            "pnl_usd": 50.99,
+            "net_multiple": 8.284285714285714
+          }
+        ],
+        "cash_curve": [
+          {
+            "at": "2026-10-12T00:00:00Z",
+            "cash_usd": 43.0,
+            "open_positions": 1,
+            "equity_verified_without_mark_estimates": false
+          },
+          {
+            "at": "2026-10-12T00:01:00Z",
+            "cash_usd": 100.99,
+            "open_positions": 0,
+            "equity_verified_without_mark_estimates": true
+          },
+          {
+            "at": "2026-10-12T00:02:00Z",
+            "cash_usd": 100.0,
+            "open_positions": 0,
+            "equity_verified_without_mark_estimates": true
+          }
+        ],
+        "note": "This legacy net-fill audit does not authenticate inputs or enforce the campaign lifecycle. Net USD inputs must include fees/conversion costs; token dust is open until sold or documented as zero recovery. Use campaign_controller.py for timed policy checks."
+      }
+    }
+  ],
+  "dust_case_corrected": {
+    "status": "open_positions_excluded_from_performance_claim",
+    "starting_usd": 50.0,
+    "ending_cash_usd": 100.1,
+    "ending_cash_usd_exact": "100.10",
+    "realized_account_pnl_usd": null,
+    "withdrawable_cash_multiple": null,
+    "target_met": false,
+    "closed_positions": 0,
+    "open_positions": [
+      {
+        "position_id": "synthetic",
+        "mint": "SYNTHETIC",
+        "entry_at": "2026-10-12T00:00:00Z",
+        "debit_usd": 7.0,
+        "original_quantity": 1.0,
+        "remaining_quantity": 1e-09,
+        "credit_usd": 57.1,
+        "remaining_quantity_exact": "1E-9"
+      }
+    ],
+    "external_costs_usd": 0,
+    "positions": [],
+    "cash_curve": [
+      {
+        "at": "2026-10-12T00:00:00Z",
+        "cash_usd": 43.0,
+        "open_positions": 1,
+        "equity_verified_without_mark_estimates": false
+      },
+      {
+        "at": "2026-10-12T00:01:00Z",
+        "cash_usd": 100.1,
+        "open_positions": 1,
+        "equity_verified_without_mark_estimates": false
+      }
+    ],
+    "note": "This legacy net-fill audit does not authenticate inputs or enforce the campaign lifecycle. Net USD inputs must include fees/conversion costs; token dust is open until sold or documented as zero recovery. Use campaign_controller.py for timed policy checks."
+  },
+  "all_expected_false_successes_rejected": true
+}

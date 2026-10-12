@@ -1,0 +1,7 @@
+# Retain research receipts even though the parent repository ignores JSONL.
+!*.jsonl
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.venv/
+*.egg-info/

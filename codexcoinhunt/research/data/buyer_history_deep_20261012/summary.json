@@ -1,0 +1,210 @@
+{
+  "status": "bounded historical activity and transfer evidence; no independence inferred",
+  "completed_at_utc": "2026-10-12T02:13:15.011821+00:00",
+  "wallet_count": 5,
+  "maturity_14d_verified": 2,
+  "first_funding_roots_verified": 0,
+  "unrelated_clusters_verified": 0,
+  "rows": [
+    {
+      "wallet": "3uzy6vZMwwgHRrbe86YYFKZj2XaQjWXijqcnV3T6dej4",
+      "mint": "2j5SaS7xy776qCBpyPQbZjyQSAtKiFgrwjfErthnW2ZM",
+      "pages_queried": 3,
+      "prior_cutoff_unix_time": 1791769343,
+      "successful_prior_signatures_lower_bound": 295,
+      "observed_prior_age_days_lower_bound": 265.31413194444445,
+      "at_least_14_days_verified": true,
+      "at_least_10_prior_transactions_verified": true,
+      "prior_other_mints_owned_or_touched_lower_bound": 5,
+      "prior_other_mints": [
+        "39ahtL8ynzE4amH26J29C93PA5172V3ft9UuUcqQS8fz",
+        "4KdRXLTk5A1PRxs9cPdzmQTUEL2fseBGJ1WMMwJXpump",
+        "6hTLdzZaaCjmqtn7RtaEMQsCbXT5Pg8q76tRViEGpump",
+        "7VertkgF9KLhxxJXHX6uaWuoYZTP9LdGj2bWmVXVpump",
+        "Es9vMFrzaCERmJfrF4H2FYD4KCoNkY11McCe8BenwNYB"
+      ],
+      "inspected_prior_bodies": 4,
+      "incoming_transfer_evidence": [],
+      "first_funding_root": null,
+      "apparently_unrelated_buyer_cluster": null,
+      "new_to_mint": null,
+      "returned_history_page_exhausted": false,
+      "complete_archival_history_verified": false,
+      "available_at_utc": "2026-10-12T02:09:28.714013+00:00",
+      "signature_fetch_errors": [],
+      "transaction_fetch_errors": [],
+      "at_least_3_other_mints_balance_evidence": true,
+      "prior_other_mints_trade_count_verified": null
+    },
+    {
+      "wallet": "6KBtrzj3Rxew41MD5ydL3AiB7WwTjLtFUKsSEf9yaJfD",
+      "mint": "2j5SaS7xy776qCBpyPQbZjyQSAtKiFgrwjfErthnW2ZM",
+      "pages_queried": 5,
+      "prior_cutoff_unix_time": 1791769337,
+      "successful_prior_signatures_lower_bound": 290,
+      "observed_prior_age_days_lower_bound": 3.1269560185185186,
+      "at_least_14_days_verified": null,
+      "at_least_10_prior_transactions_verified": true,
+      "prior_other_mints_owned_or_touched_lower_bound": 3,
+      "prior_other_mints": [
+        "J3NKxxXZcnNiMjKw9hYb2K4LUxgwB6t1FtPtQVsv3KFr",
+        "J8PSdNP3QewKq2Z1JJJFDMaqF7KcaiJhR7gbr5KZpump",
+        "pumpCmXqMfrsAkQ5r49WcJnRayYRqmXz6ae8H7H9Dfn"
+      ],
+      "inspected_prior_bodies": 4,
+      "incoming_transfer_evidence": [
+        {
+          "signature": "4SHyQEo9UNy3s4mGB7aTkDBkv3h78V2GK2hiJBi2PxRDLJxZBbffzaLiZu1SPyrLT9L8qyVkS4TFMttUiq9YVBSe",
+          "source": "AXT4hVMF2wLxDLPWH4gL9LpEP7jdVn3BExjB93Xpx9Ez",
+          "destination": "6KBtrzj3Rxew41MD5ydL3AiB7WwTjLtFUKsSEf9yaJfD",
+          "lamports": 2956,
+          "block_time": 1791567659,
+          "available_at_utc": "2026-10-12T02:10:07.046143+00:00",
+          "kind": "observed_prior_incoming_transfer",
+          "first_funding_root": false,
+          "source_service_status": "unknown"
+        },
+        {
+          "signature": "3XZdT8WBppu8cDZ34AC2phneUkBJfUYXURSqgaYsjLJUoz8VvKMAptoLBYh8vX2jhjzAmnZ7ib7D8ogVBSMBUjaC",
+          "source": "AXT4hVMF2wLxDLPWH4gL9LpEP7jdVn3BExjB93Xpx9Ez",
+          "destination": "6KBtrzj3Rxew41MD5ydL3AiB7WwTjLtFUKsSEf9yaJfD",
+          "lamports": 1258,
+          "block_time": 1791643423,
+          "available_at_utc": "2026-10-12T02:10:13.117081+00:00",
+          "kind": "observed_prior_incoming_transfer",
+          "first_funding_root": false,
+          "source_service_status": "unknown"
+        }
+      ],
+      "first_funding_root": null,
+      "apparently_unrelated_buyer_cluster": null,
+      "new_to_mint": null,
+      "returned_history_page_exhausted": false,
+      "complete_archival_history_verified": false,
+      "available_at_utc": "2026-10-12T02:10:18.791724+00:00",
+      "signature_fetch_errors": [],
+      "transaction_fetch_errors": [],
+      "at_least_3_other_mints_balance_evidence": true,
+      "prior_other_mints_trade_count_verified": null
+    },
+    {
+      "wallet": "8i8WsSj27j998Z7fqjw4JLeBBo7FkAPfqoNKEhYzXttG",
+      "mint": "2j5SaS7xy776qCBpyPQbZjyQSAtKiFgrwjfErthnW2ZM",
+      "pages_queried": 4,
+      "prior_cutoff_unix_time": 1791769361,
+      "successful_prior_signatures_lower_bound": 396,
+      "observed_prior_age_days_lower_bound": 15.414872685185186,
+      "at_least_14_days_verified": true,
+      "at_least_10_prior_transactions_verified": true,
+      "prior_other_mints_owned_or_touched_lower_bound": 4,
+      "prior_other_mints": [
+        "7VertkgF9KLhxxJXHX6uaWuoYZTP9LdGj2bWmVXVpump",
+        "98kfF7rmsg1QDUEoCqNE7g7M1FdrTt92TEp2CLzypump",
+        "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v",
+        "Es9vMFrzaCERmJfrF4H2FYD4KCoNkY11McCe8BenwNYB"
+      ],
+      "inspected_prior_bodies": 4,
+      "incoming_transfer_evidence": [],
+      "first_funding_root": null,
+      "apparently_unrelated_buyer_cluster": null,
+      "new_to_mint": null,
+      "returned_history_page_exhausted": false,
+      "complete_archival_history_verified": false,
+      "available_at_utc": "2026-10-12T02:11:13.868600+00:00",
+      "signature_fetch_errors": [],
+      "transaction_fetch_errors": [],
+      "at_least_3_other_mints_balance_evidence": true,
+      "prior_other_mints_trade_count_verified": null
+    },
+    {
+      "wallet": "CSx2gDhH9nw6vqknJkrHVCaWWDDr6sLbRvtJkiUieRFZ",
+      "mint": "2j5SaS7xy776qCBpyPQbZjyQSAtKiFgrwjfErthnW2ZM",
+      "pages_queried": 5,
+      "prior_cutoff_unix_time": 1791769336,
+      "successful_prior_signatures_lower_bound": 406,
+      "observed_prior_age_days_lower_bound": 2.5335763888888887,
+      "at_least_14_days_verified": null,
+      "at_least_10_prior_transactions_verified": true,
+      "prior_other_mints_owned_or_touched_lower_bound": 4,
+      "prior_other_mints": [
+        "33jENUQnjoitkMFpvNJcSHyLAHFWJuHwT6E3E8CNpump",
+        "64GXmXjTQmVxc3XwZG5aMZdbmq4UrkedCLyqHFzppump",
+        "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v",
+        "SPCXxcqXj6e5dJDVNovHN8744zkbhM2bYudU45BimGb"
+      ],
+      "inspected_prior_bodies": 4,
+      "incoming_transfer_evidence": [
+        {
+          "signature": "4rMtdYTPQAbvdbFAiRPSC74VS2fW45CK6bdVicokGNjzzpAuSwrjGmCsCZQd5EYahJH9XWRQ4rQifRJ6uJ1iyaZ",
+          "source": "EiwvTD1xnPw2wyftBSBrzW9C5EbMwYgayT7AKWP9QY93",
+          "destination": "CSx2gDhH9nw6vqknJkrHVCaWWDDr6sLbRvtJkiUieRFZ",
+          "lamports": 6238,
+          "block_time": 1791550435,
+          "available_at_utc": "2026-10-12T02:11:53.124297+00:00",
+          "kind": "observed_prior_incoming_transfer",
+          "first_funding_root": false,
+          "source_service_status": "unknown"
+        }
+      ],
+      "first_funding_root": null,
+      "apparently_unrelated_buyer_cluster": null,
+      "new_to_mint": null,
+      "returned_history_page_exhausted": false,
+      "complete_archival_history_verified": false,
+      "available_at_utc": "2026-10-12T02:12:13.533670+00:00",
+      "signature_fetch_errors": [],
+      "transaction_fetch_errors": [],
+      "at_least_3_other_mints_balance_evidence": true,
+      "prior_other_mints_trade_count_verified": null
+    },
+    {
+      "wallet": "FXh9XcdM38anfSjMjqvPsj7zk2ttzJbwtDCzDhR6YHcn",
+      "mint": "2j5SaS7xy776qCBpyPQbZjyQSAtKiFgrwjfErthnW2ZM",
+      "pages_queried": 5,
+      "prior_cutoff_unix_time": 1791769357,
+      "successful_prior_signatures_lower_bound": 489,
+      "observed_prior_age_days_lower_bound": 7.122511574074074,
+      "at_least_14_days_verified": null,
+      "at_least_10_prior_transactions_verified": true,
+      "prior_other_mints_owned_or_touched_lower_bound": 4,
+      "prior_other_mints": [
+        "3NZ9JMVBmGAqocybic2c7LQCJScmgsAZ6vQqTDzcqmJh",
+        "9XKzy4KahcZaGJPJtz1PtqGPB3CiseoBrx7TcQhEpump",
+        "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v",
+        "cbbtcf3aa214zXHbiAZQwf4122FBYbraNdFqgw4iMij"
+      ],
+      "inspected_prior_bodies": 4,
+      "incoming_transfer_evidence": [
+        {
+          "signature": "2Znd1qgUTJRphoPSU4pgjVZfURX8z5XtS26krHCyFuCVrVKKqiRDnHtC1MTwJuSbaophK1SGkh9ZHWpAcb9tG9Zc",
+          "source": "G6fFz3oVxjrDvquuQM4zLhwfHq78NNfzRZ4nL7vTVkds",
+          "destination": "FXh9XcdM38anfSjMjqvPsj7zk2ttzJbwtDCzDhR6YHcn",
+          "lamports": 1,
+          "block_time": 1791153972,
+          "available_at_utc": "2026-10-12T02:12:50.184630+00:00",
+          "kind": "observed_prior_incoming_transfer",
+          "first_funding_root": false,
+          "source_service_status": "unknown"
+        }
+      ],
+      "first_funding_root": null,
+      "apparently_unrelated_buyer_cluster": null,
+      "new_to_mint": null,
+      "returned_history_page_exhausted": false,
+      "complete_archival_history_verified": false,
+      "available_at_utc": "2026-10-12T02:13:15.011462+00:00",
+      "signature_fetch_errors": [],
+      "transaction_fetch_errors": [],
+      "at_least_3_other_mints_balance_evidence": true,
+      "prior_other_mints_trade_count_verified": null
+    }
+  ],
+  "limits": [
+    "a common exchange/service funding source must not collapse unrelated buyers",
+    "distinct unlabelled funders do not prove independent buyers",
+    "post-event receipt times prevent retrospective eligibility promotion",
+    "four inspected bodies do not establish first-ever mint participation"
+  ],
+  "at_least_3_other_mints_balance_evidence": 5,
+  "wallets_traded_3_other_mints_verified": null
+}

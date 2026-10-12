@@ -1,0 +1,163 @@
+{
+  "status": "structural pre-fee AMM depth diagnostic, not bids/asks, not quote fills or new demand information",
+  "source_quote_probe": "results/quote_probe_20261012_pass6/quote_results.json",
+  "source_completed_at_utc": "2026-10-12T01:31:47.464Z",
+  "findings": [
+    "a plain constant-product curve has no resting-order cancellation or queue imbalance",
+    "curve depth is a deterministic function of already-observed reserves",
+    "pool vault minus accrued fee buckets limits real quote recovery; effective pricing reserves are different",
+    "do not apply this formula to Raydium CLMM total TVL or reinterpret it as human bid walls"
+  ],
+  "results": [
+    {
+      "mint": "2j5SaS7xy776qCBpyPQbZjyQSAtKiFgrwjfErthnW2ZM",
+      "pool": "Fe7bpDYCs74GqiCUF14HwgUMToPKV1d9mDYVX5BTohFr",
+      "bands": [
+        {
+          "marginal_price_change_fraction": 0.01,
+          "buy_quote_before_fees_raw": 8091455157.173083,
+          "sell_base_before_fees_raw": 111344784810.57982,
+          "gross_sell_quote_before_fees_raw": 8132014592.056266,
+          "real_quote_capacity_raw": 1604742189573,
+          "gross_sell_exceeds_real_quote": false
+        },
+        {
+          "marginal_price_change_fraction": 0.05,
+          "buy_quote_before_fees_raw": 40063481995.51016,
+          "sell_base_before_fees_raw": 574168339612.2312,
+          "gross_sell_quote_before_fees_raw": 41078229372.92302,
+          "real_quote_capacity_raw": 1604742189573,
+          "gross_sell_exceeds_real_quote": false
+        },
+        {
+          "marginal_price_change_fraction": 0.1,
+          "buy_quote_before_fees_raw": 79183897336.29607,
+          "sell_base_before_fees_raw": 1195542791290.4805,
+          "gross_sell_quote_before_fees_raw": 83252455469.54686,
+          "real_quote_capacity_raw": 1604742189573,
+          "gross_sell_exceeds_real_quote": false
+        }
+      ]
+    },
+    {
+      "mint": "6KDpQM4BVDdtAkjtyFDiBCkbii8q8BieEyXXm6kNpump",
+      "pool": "ARcvd2GiVSmz7oR2ozpe3KzVBadsVrEav5DdnVJ8sjhK",
+      "bands": [
+        {
+          "marginal_price_change_fraction": 0.01,
+          "buy_quote_before_fees_raw": 1932011164.2335382,
+          "sell_base_before_fees_raw": 335329483981.84247,
+          "gross_sell_quote_before_fees_raw": 1941695612.7643867,
+          "real_quote_capacity_raw": 369781329830,
+          "gross_sell_exceeds_real_quote": false
+        },
+        {
+          "marginal_price_change_fraction": 0.05,
+          "buy_quote_before_fees_raw": 9566028976.231432,
+          "sell_base_before_fees_raw": 1729183574860.9424,
+          "gross_sell_quote_before_fees_raw": 9808322015.487835,
+          "real_quote_capacity_raw": 369781329830,
+          "gross_sell_exceeds_real_quote": false
+        },
+        {
+          "marginal_price_change_fraction": 0.1,
+          "buy_quote_before_fees_raw": 18906880247.07468,
+          "sell_base_before_fees_raw": 3600534573430.2896,
+          "gross_sell_quote_before_fees_raw": 19878337121.405293,
+          "real_quote_capacity_raw": 369781329830,
+          "gross_sell_exceeds_real_quote": false
+        }
+      ]
+    },
+    {
+      "mint": "EQ46GCkgPctvueFDt2edutfa1hKxsDzo2EZeSMiHpump",
+      "pool": "3yvBGUSj2cPmtMJHVBPJCJUVNE1nLB463JZxTwjQKqro",
+      "bands": [
+        {
+          "marginal_price_change_fraction": 0.01,
+          "buy_quote_before_fees_raw": 827233604.3585145,
+          "sell_base_before_fees_raw": 641302824212.6753,
+          "gross_sell_quote_before_fees_raw": 831380216.6621637,
+          "real_quote_capacity_raw": 148274802630,
+          "gross_sell_exceeds_real_quote": false
+        },
+        {
+          "marginal_price_change_fraction": 0.05,
+          "buy_quote_before_fees_raw": 4095908334.2281184,
+          "sell_base_before_fees_raw": 3306987196510.698,
+          "gross_sell_quote_before_fees_raw": 4199651494.66403,
+          "real_quote_capacity_raw": 148274802630,
+          "gross_sell_exceeds_real_quote": false
+        },
+        {
+          "marginal_price_change_fraction": 0.1,
+          "buy_quote_before_fees_raw": 8095401819.361229,
+          "sell_base_before_fees_raw": 6885863310311.404,
+          "gross_sell_quote_before_fees_raw": 8511352713.697898,
+          "real_quote_capacity_raw": 148274802630,
+          "gross_sell_exceeds_real_quote": false
+        }
+      ]
+    },
+    {
+      "mint": "FdZRSoq4MfUPkqAi8mipJ9UaFYu8gfDCwCfw76YZpump",
+      "pool": "EdV32pDiDmuFSsEbA9DB97VziSfSRXDdUQ7WCPRJwzEP",
+      "bands": [
+        {
+          "marginal_price_change_fraction": 0.01,
+          "buy_quote_before_fees_raw": 821966603.0765338,
+          "sell_base_before_fees_raw": 649078646636.2411,
+          "gross_sell_quote_before_fees_raw": 826086813.8749684,
+          "real_quote_capacity_raw": 147218776081,
+          "gross_sell_exceeds_real_quote": false
+        },
+        {
+          "marginal_price_change_fraction": 0.05,
+          "buy_quote_before_fees_raw": 4069829661.488531,
+          "sell_base_before_fees_raw": 3347084548691.616,
+          "gross_sell_quote_before_fees_raw": 4172912288.6045513,
+          "real_quote_capacity_raw": 147218776081,
+          "gross_sell_exceeds_real_quote": false
+        },
+        {
+          "marginal_price_change_fraction": 0.1,
+          "buy_quote_before_fees_raw": 8043858347.800025,
+          "sell_base_before_fees_raw": 6969354678682.756,
+          "gross_sell_quote_before_fees_raw": 8457160880.317047,
+          "real_quote_capacity_raw": 147218776081,
+          "gross_sell_exceeds_real_quote": false
+        }
+      ]
+    },
+    {
+      "mint": "HMYd9tosnUXuNHmq7pXmoePRVBLBBjA3JBfydq6upump",
+      "pool": "12jc1DzJpzbCDaKuM4brAKh9jcFry2TLG1FfGsL4ftCG",
+      "bands": [
+        {
+          "marginal_price_change_fraction": 0.01,
+          "buy_quote_before_fees_raw": 2572945848.4149547,
+          "sell_base_before_fees_raw": 218330210515.90338,
+          "gross_sell_quote_before_fees_raw": 2585843062.5216446,
+          "real_quote_capacity_raw": 498287936859,
+          "gross_sell_exceeds_real_quote": false
+        },
+        {
+          "marginal_price_change_fraction": 0.05,
+          "buy_quote_before_fees_raw": 12739509478.961098,
+          "sell_base_before_fees_raw": 1125856901806.0896,
+          "gross_sell_quote_before_fees_raw": 13062181977.441156,
+          "real_quote_capacity_raw": 498287936859,
+          "gross_sell_exceeds_real_quote": false
+        },
+        {
+          "marginal_price_change_fraction": 0.1,
+          "buy_quote_before_fees_raw": 25179139716.559746,
+          "sell_base_before_fees_raw": 2344277819093.8613,
+          "gross_sell_quote_before_fees_raw": 26472872370.902203,
+          "real_quote_capacity_raw": 498287936859,
+          "gross_sell_exceeds_real_quote": false
+        }
+      ]
+    }
+  ]
+}

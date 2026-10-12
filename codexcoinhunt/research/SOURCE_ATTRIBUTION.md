@@ -1,0 +1,13 @@
+# External research data attribution
+
+The compact rejection dataset derives from **Arati Uday Kamat, RED-REJECT-2026-v2 corrected release v2.3**, published September 25, 2026: https://zenodo.org/records/22967373 (DOI 10.5281/zenodo.22967373), under CC-BY-4.0. It retains 14 documented fields and every canonical input row, serialized as CSV gzip; no price data is imputed. The original licence and source schema/provenance documentation are included. Source-producer labels and private identity mappings are not used or reconstructed. Changes and checksums are documented in data/red_reject_compact_provenance.json.
+
+The external 190-paper-trade table and accompanying context derive from **Arati Uday Kamat, Hour-Aware Adaptive Risk Management for Autonomous Memecoin Trading: companion bundle v1.3**, September 28, 2026: https://zenodo.org/records/23017853 (DOI 10.5281/zenodo.23017853), under the supplied CC-BY-4.0 licence. Data is audited independently and does not imply endorsement of Resolant Labs. No source audit script or proprietary trading methodology is executed or copied.
+
+The studies here use aggregator marks and documented public observations. They do not reproduce a funded account or certify token safety, US access, real fills or consistent profit. Original full archives remain available from the cited public sources; the compact subset and every input used in this study are retained for reproducibility.
+
+The social increment uses the official Bluesky public API documentation and `app.bsky.feed.searchPosts` Lexicon to define its bounded query contract. Direct requests returned HTTP 403; raw failures and UTC clocks are retained, and inaccessible coverage is never interpreted as zero attention. No post content was obtained or redistributed.
+
+Paid-visibility context uses DEX Screener's public API reference, Boosting guide and Boosting Terms. Exact Solana chain and mint were required. Raw exact-token orders, independent exact-pair snapshots, bounded top/latest responses and clocks are retained under `data/social_evidence_20261012`; no promoter identity or causal trade effect is inferred.
+
+The complete-event fee audit uses pump-fun's official `pump_amm.json`, PumpSwap program documentation, creator-fee documentation and trade-v3 fee-routing documentation. The retained IDL has SHA-256 `b7d8c57a4d9c4dd0109a9ab893052352333252d4eedced10ac091d4d66cab89b`; original and refreshed receipt times are preserved under `data/model_and_entry_sources_20261012` and `data/fee_event_reconciliation_20261012`. Only field semantics and arithmetic are derived. Event payloads remain tied to their original finalized transaction receipts; fee decoding is not a strategy return or a claim about beneficial ownership.

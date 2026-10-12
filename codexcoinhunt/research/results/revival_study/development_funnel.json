@@ -1,0 +1,21 @@
+{
+  "development_only_diagnostic": true,
+  "nested_observation_counts": {
+    "development_observations": 422120,
+    "allowed_reason_venue": 271285,
+    "age_10m_to_6h": 68959,
+    "capacity_cost_gate": 30800,
+    "positive_5m_2_to_15": 7135,
+    "previous_within_30m": 7124,
+    "previous_5m_minus1_to_zero": 553,
+    "hour_decline_at_least10": 161,
+    "liquidity_growth20": 0,
+    "price_growth_at_most15": 0
+  },
+  "constant_product_liquidity_ratio_diagnostic": {
+    "pairs": 385853,
+    "median_L_ratio_over_sqrt_price_ratio": 1.0,
+    "note": "For a balanced constant-product pool at unchanged LP capital and quote USD price, USD liquidity scales with sqrt(token USD price). Deviation here is only an approximation; no LP deposits or owner identities inferred."
+  },
+  "conclusion": "Zero REV-0.1 signals; do not weaken thresholds on the inspected holdout and relabel the result as fresh validation."
+}

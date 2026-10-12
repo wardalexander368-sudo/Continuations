@@ -1,0 +1,11 @@
+{
+  "status": "development attempts retained; pass6 is the final bounded result",
+  "attempts": [
+    {"directory": "quote_probe_20261012_pass1", "result": "rejected: 3057 ms state window", "note": "initial owner verification made a separate cold RPC request"},
+    {"directory": "quote_probe_20261012_pass2", "result": "rejected: 3125 ms state window", "note": "repeat of initial implementation"},
+    {"directory": "quote_probe_20261012_pass3", "result": "rejected: 2970 ms state window", "note": "owner verification reused captured RPC state, but cold RPC latency remained"},
+    {"directory": "quote_probe_20261012_pass4", "result": "fresh state achieved: 284 ms", "note": "preliminary all-in presentation; retained for development history"},
+    {"directory": "quote_probe_20261012_pass5", "result": "five capacity-only passes: 300 ms", "note": "finalized-state draft with corrected all-in arithmetic"},
+    {"directory": "quote_probe_20261012_pass6", "result": "five capacity-only passes: 326 ms", "note": "processed current state; market-reference age also bounded; current final result"}
+  ]
+}

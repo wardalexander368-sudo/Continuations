@@ -1,0 +1,41 @@
+{
+  "id": "MAC-REPOSITORY-VALIDATION-20261012",
+  "recorded_at_utc": "2026-10-12T18:12:03.106949+00:00",
+  "original_v5_source_entries_verified": 379,
+  "active_unchanged_release_files": 369,
+  "original_documents_preserved_before_continuity_edits": [
+    ".ai/CLAUDE_NOTES.md",
+    ".ai/CODEX_NOTES.md",
+    ".ai/PROJECT.md",
+    ".ai/TASKS.md",
+    "Mac_Desktop_Handoff.md",
+    "PROJECT_HANDOFF.md",
+    "README.md",
+    "research/Mac_Desktop_Handoff.md",
+    "research/Resolant_Memecoin_Project_Tracker.md",
+    "research/Resolant_Second_Look_Strategy.md"
+  ],
+  "retained_mac_evidence_files_verified": 33,
+  "strategy_sha256": "9bcd83ce0ec71cdae8c410c202bd5a75b1496679e5ddb94ccc7d300e57c3663f",
+  "research_checks": 161,
+  "installer_checks": 9,
+  "repository_pytest": {
+    "passed": 313,
+    "skipped": 1,
+    "command": "PYTHONDONTWRITEBYTECODE=1 <isolated Python 3.12> -m pytest -q -p no:cacheprovider",
+    "environment": "project dependencies + dev/live test dependencies and httpx[socks]; macOS libomp installed; mocked localhost WebSocket tests require socket permission",
+    "initial_attempt": "299 passed, 1 skipped, 11 failed, 3 errors: missing libomp.dylib and restricted local socket binds; resolved by environment repair, without code edits"
+  },
+  "connected_project_entries": 11,
+  "northstar_source": "specification only; exact repository/model artifacts still missing",
+  "crypto_trading_system": "excluded; no source access or changes",
+  "secret_pattern_scan": {
+    "files_scanned": 66,
+    "candidate_matches": 0,
+    "scope": "new and modified Mac continuity files; imported baseline already has its separate recorded scan",
+    "limitation": "pattern scan is not a universal secret detector"
+  },
+  "trading_code_changes": false,
+  "workflow_changes": false,
+  "new_strategy_outcomes": 0
+}

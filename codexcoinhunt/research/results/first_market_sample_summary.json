@@ -1,0 +1,29 @@
+{
+  "status": "development observation; not a backtest or recommendation",
+  "first_observation_utc": "2026-10-12T00:24:30.915238+00:00",
+  "last_observation_utc": "2026-10-12T00:36:09.528366+00:00",
+  "unique_discovered_tokens": 66,
+  "selected_tokens": 66,
+  "cycles": 24,
+  "snapshot_requests": 72,
+  "failed_snapshot_requests": 0,
+  "initial_pool_quotes": 66,
+  "valid_endpoint_pairs": 65,
+  "missing_endpoint_pairs": 1,
+  "initial_liquidity_at_least_25k": 15,
+  "pool_age_liquidity_prefilter": 6,
+  "median_endpoint_chart_return": 0.0,
+  "minimum_endpoint_chart_return": -0.7553207547169811,
+  "maximum_endpoint_chart_return": 2.471544715447154,
+  "endpoint_chart_2x_count": 1,
+  "observed_peak_chart_2x_count": 1,
+  "forward_strategy_positions": 0,
+  "executed_trades": 0,
+  "data_gaps": [
+    "This is a small visibility-biased API universe, not all launched tokens",
+    "Pool age is not mint age",
+    "DEX prices are marks, not executable size-specific swap quotes",
+    "No complete social-author/attention or wallet funding history",
+    "No validated independent strategy signals or account-doubling campaigns"
+  ]
+}

@@ -1,0 +1,30 @@
+{
+  "source": "Arati Uday Kamat, RED-REJECT-2026-v2 v2.3",
+  "source_url": "https://zenodo.org/records/22967373",
+  "source_archive": "RED-REJECT-2026-v2_v2.3.zip",
+  "source_md5": "66b83aab945cc6566ba85ba4434d0cbd",
+  "source_archive_sha256": "5ea50dd7ca815f698a68ab1819c555df0bdd7a945897e6b31f0c3f50a50e61aa",
+  "source_download_completed_utc": "2026-10-12T00:50:01.271023+00:00",
+  "derived_file": "data/red_reject_compact.csv.gz",
+  "derived_sha256": "8e4ab7e95feee7f82d9e3b83789a2c1250474ccb0fc12e1d92f06689373c1df3",
+  "row_count": 716762,
+  "retained_fields": [
+    "event_id",
+    "sample_id",
+    "mint",
+    "rejectReason",
+    "sampleTs_utc_ms",
+    "rejectTs_utc_ms",
+    "priceUsd",
+    "liquidity",
+    "volume24h",
+    "priceChange5m",
+    "priceChange1h",
+    "priceChange24h",
+    "dexId",
+    "pairAddress"
+  ],
+  "transformation": "Retain listed canonical public fields in original row order; CSV-gzip serialization; no prices imputed and no rows filtered in the compact source",
+  "license": "CC-BY-4.0; original LICENSE and attribution retained",
+  "source_limitations": "Observed follow-up frame with a June collection gap; not all rejected or launched tokens; not a fills ledger"
+}

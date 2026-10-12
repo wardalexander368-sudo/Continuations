@@ -1,0 +1,220 @@
+{
+  "status": "retrospective top-quote paths with explicit publication assumption; not fills or validated account outcomes",
+  "config": "FLOW-0.2",
+  "completed_at_utc": "2026-10-12T02:18:55.488236+00:00",
+  "quote_source": {
+    "completed_at_utc": "2026-10-12T02:16:28.176875+00:00",
+    "source": "public Alpaca us quote endpoint",
+    "streams": [
+      {
+        "date": "2026-10-09",
+        "symbol": "DOGE/USD",
+        "pages": 1,
+        "quote_rows": 6996,
+        "status": "complete",
+        "next_page_token": null
+      },
+      {
+        "date": "2026-10-09",
+        "symbol": "BONK/USD",
+        "pages": 7,
+        "quote_rows": 64052,
+        "status": "complete",
+        "next_page_token": null
+      },
+      {
+        "date": "2026-10-09",
+        "symbol": "WIF/USD",
+        "pages": 2,
+        "quote_rows": 17652,
+        "status": "complete",
+        "next_page_token": null
+      },
+      {
+        "date": "2026-10-09",
+        "symbol": "PEPE/USD",
+        "pages": 9,
+        "quote_rows": 89877,
+        "status": "complete",
+        "next_page_token": null
+      },
+      {
+        "date": "2026-10-10",
+        "symbol": "DOGE/USD",
+        "pages": 1,
+        "quote_rows": 2777,
+        "status": "complete",
+        "next_page_token": null
+      },
+      {
+        "date": "2026-10-10",
+        "symbol": "BONK/USD",
+        "pages": 3,
+        "quote_rows": 26430,
+        "status": "complete",
+        "next_page_token": null
+      },
+      {
+        "date": "2026-10-10",
+        "symbol": "WIF/USD",
+        "pages": 1,
+        "quote_rows": 9016,
+        "status": "complete",
+        "next_page_token": null
+      },
+      {
+        "date": "2026-10-10",
+        "symbol": "PEPE/USD",
+        "pages": 4,
+        "quote_rows": 32657,
+        "status": "complete",
+        "next_page_token": null
+      }
+    ]
+  },
+  "invalid_quote_counts": {},
+  "daily_partial_replays": [
+    {
+      "date": "2026-10-09",
+      "partition": "development",
+      "source_trade_count": 54,
+      "raw_signed_flow_triggers_repeated": 22,
+      "selection_and_rejection_counts": {
+        "random_unmatched": 3,
+        "momentum_unmatched": 3,
+        "same_pair_cooldown": 2,
+        "one_position_or_unresolved_skip": 6,
+        "account_limit_skip": 10,
+        "purged_development_boundary": 1
+      },
+      "accounts": {
+        "flow": {
+          "cash": 49.8009237394023,
+          "unresolved": false,
+          "next_available": 1791521027.786713,
+          "entries": [
+            {
+              "status": "observed_quote_path",
+              "decision": 1791504088.438385,
+              "entry_at": 1791504107.225822,
+              "exit_at": 1791507711.307138,
+              "budget": 7.0,
+              "quantity": 1813813.4765625,
+              "proceeds": 6.912214505318299,
+              "net_return": -0.012540784954528705,
+              "gross_mid_return": 0.0026109660574413773,
+              "next_available": 1791507711.307138,
+              "symbol": "PEPE/USD",
+              "policy": "flow"
+            },
+            {
+              "status": "missing_entry_quote",
+              "decision": 1791508410.279957,
+              "next_available": 1791508440.279957,
+              "symbol": "DOGE/USD",
+              "policy": "flow"
+            },
+            {
+              "status": "observed_quote_path",
+              "decision": 1791517408.733695,
+              "entry_at": 1791517418.904343,
+              "exit_at": 1791521027.786713,
+              "budget": 6.987710031,
+              "quantity": 2094221.431937558,
+              "proceeds": 6.876419265084007,
+              "net_return": -0.015926643409967967,
+              "gross_mid_return": 0.00302571860816947,
+              "next_available": 1791521027.786713,
+              "symbol": "BONK/USD",
+              "policy": "flow"
+            }
+          ],
+          "instrument_last_entry": {
+            "PEPE/USD": 1791504107.225822,
+            "BONK/USD": 1791517418.904343
+          }
+        },
+        "random": {
+          "cash": 50.0,
+          "unresolved": false,
+          "next_available": 0.0,
+          "entries": [],
+          "instrument_last_entry": {}
+        },
+        "momentum": {
+          "cash": 50.0,
+          "unresolved": false,
+          "next_available": 0.0,
+          "entries": [],
+          "instrument_last_entry": {}
+        }
+      },
+      "observed_pairs": [],
+      "campaign_status": "partial_window_not_30_day_complete",
+      "withdrawable_live_money_verified": false
+    },
+    {
+      "date": "2026-10-10",
+      "partition": "chronological_comparison",
+      "source_trade_count": 39,
+      "raw_signed_flow_triggers_repeated": 3,
+      "selection_and_rejection_counts": {
+        "random_unmatched": 1,
+        "momentum_unmatched": 1,
+        "one_position_or_unresolved_skip": 2
+      },
+      "accounts": {
+        "flow": {
+          "cash": 43.0,
+          "unresolved": true,
+          "next_available": 1791603629.376778,
+          "entries": [
+            {
+              "status": "censored_exit",
+              "decision": 1791599985.506921,
+              "entry_at": 1791599999.376778,
+              "budget": 7.0,
+              "quantity": 80.446335758,
+              "next_available": 1791603629.376778,
+              "symbol": "DOGE/USD",
+              "policy": "flow"
+            }
+          ],
+          "instrument_last_entry": {
+            "DOGE/USD": 1791599999.376778
+          }
+        },
+        "random": {
+          "cash": 50.0,
+          "unresolved": false,
+          "next_available": 0.0,
+          "entries": [],
+          "instrument_last_entry": {}
+        },
+        "momentum": {
+          "cash": 50.0,
+          "unresolved": false,
+          "next_available": 0.0,
+          "entries": [],
+          "instrument_last_entry": {}
+        }
+      },
+      "observed_pairs": [],
+      "campaign_status": "partial_window_not_30_day_complete",
+      "withdrawable_live_money_verified": false
+    }
+  ],
+  "validated_doubling_campaigns": 0,
+  "limits": [
+    "two daily partial campaign replays; no 30-day campaign completion claim",
+    "no full historical depth book or wallet identities",
+    "account increments and state eligibility are unverified",
+    "USD is assumed already funded; data provider payment observed zero, funding/conversion costs assumed zero",
+    "No stop fill or maker queue fill invented",
+    "no social attention control",
+    "small two-day sample; no positive edge confidence claim",
+    "no stop-price fills assumed",
+    "development exits purged at chronological boundary",
+    "fees current, not proven exact at historical execution time"
+  ]
+}

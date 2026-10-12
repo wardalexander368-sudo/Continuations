@@ -1,0 +1,67 @@
+{
+  "id": "OB-0.1",
+  "status": "paper research; frozen before prospective collection",
+  "instruments": [
+    {
+      "venue": "alpaca_us",
+      "symbol": "DOGE/USD",
+      "quote_currency": "USD",
+      "identity": "venue plus exact pair; not joined to arbitrary Solana mints"
+    },
+    {
+      "venue": "alpaca_us",
+      "symbol": "BONK/USD",
+      "quote_currency": "USD",
+      "identity": "venue plus exact pair; not joined to arbitrary Solana mints"
+    },
+    {
+      "venue": "alpaca_us",
+      "symbol": "WIF/USD",
+      "quote_currency": "USD",
+      "identity": "venue plus exact pair; not joined to arbitrary Solana mints"
+    },
+    {
+      "venue": "alpaca_us",
+      "symbol": "PEPE/USD",
+      "quote_currency": "USD",
+      "identity": "venue plus exact pair; not joined to arbitrary Solana mints"
+    }
+  ],
+  "sampling_seconds": 10,
+  "collection_minutes": 12,
+  "source_book_max_age_seconds": 2,
+  "max_spread_bps": 100,
+  "depth_band_bps_from_mid": 100,
+  "minimum_side_depth_usd": 70,
+  "buy_imbalance_min": 0.6,
+  "persistence_snapshots": 3,
+  "signed_flow_window_seconds": 60,
+  "signed_buy_notional_fraction_min": 0.6,
+  "minimum_signed_buy_usd": 50,
+  "positive_snapshot_ofi_required": true,
+  "maximum_trailing_60s_mid_return": 0.005,
+  "paper_entry_delay_seconds": 5,
+  "max_entry_wait_seconds": 30,
+  "holding_seconds": 60,
+  "max_exit_wait_seconds": 30,
+  "controls": [
+    "same-entry-time matched random cost-qualified instrument",
+    "largest positive 60-second momentum cost-qualified instrument",
+    "persistent book imbalance without signed-trade confirmation"
+  ],
+  "attention_control": "unavailable social evidence; no fabricated attention signal",
+  "selection_rule": "highest 100bps near-mid bid-notional share, ties alphabetical",
+  "fee_fraction_each_side": 0.0025,
+  "adverse_allowance_each_side": 0.0025,
+  "position_fraction": 0.14,
+  "starting_cash_usd": 50,
+  "minimum_order_usd": 1,
+  "max_entries_in_bounded_pilot": 3,
+  "one_position": true,
+  "campaign_floor_usd": 40,
+  "campaign_calendar_deadline_days": 30,
+  "bounded_pilot_is_complete_campaign": false,
+  "wallet_identity_on_alpaca": "not observable; signed taker volume is not distinct buyers",
+  "fees_are_book_sweep_plus_published_taker_fees": "buy fee in received token; sell fee in credited USD",
+  "fillable_scope": "modeled displayed-book sweep, no captured fill or queue guarantee; account asset increments not authenticated"
+}

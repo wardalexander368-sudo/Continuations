@@ -1,0 +1,29 @@
+{
+  "id": "PUMP-EVENT-FEE-RECONCILIATION-0.1",
+  "frozen_at_utc": "2026-10-12T12:39:27.844711+00:00",
+  "scope": "Forensic accounting audit of the already selected fixed PumpSwap transaction subset; not a preregistered return test or a new market sample.",
+  "selection": {
+    "source_transactions": "All successful getTransaction bodies already retained in data/buyer_probe_20261012/rpc.jsonl",
+    "event_identity": "PumpSwap BuyEvent or SellEvent discriminator under the exact executing PumpSwap program",
+    "deduplication": "Identical log and CPI representations count once; repeated identical events count by maximum source occurrence.",
+    "target_pool": "Fe7bpDYCs74GqiCUF14HwgUMToPKV1d9mDYVX5BTohFr",
+    "target_mint": "2j5SaS7xy776qCBpyPQbZjyQSAtKiFgrwjfErthnW2ZM"
+  },
+  "tests": [
+    "Decode complete BuyEvent and SellEvent bodies against the pinned official IDL and require exact byte consumption.",
+    "For buy_exact_quote_in variants, test quote_amount_in minus user_quote_amount_in against LP plus protocol plus creator fees.",
+    "For buy variants, test user_quote_amount_in minus quote_amount_in against LP plus protocol plus creator fees.",
+    "For sells, test quote_amount_out minus user_quote_amount_out against LP plus protocol plus creator fees.",
+    "Test buyback_fee as a subdivision of protocol_fee, not an additional user fee.",
+    "For the five existing buy route audits, compare instruction-aware gross debit with exact quote-account token outflow.",
+    "Recompute concentration and returning-buyer notional descriptively using gross debits; do not change historical eligibility."
+  ],
+  "post_observation_disclosure": "The two approximately 0.45% discrepancies and exploratory complete-event fields were inspected before this plan was written. This is an explanatory forensic audit, not untouched or out-of-sample evidence.",
+  "outcomes_not_tested": [
+    "price return",
+    "entry expectancy",
+    "strategy profitability",
+    "campaign doubling",
+    "buyer independence"
+  ]
+}

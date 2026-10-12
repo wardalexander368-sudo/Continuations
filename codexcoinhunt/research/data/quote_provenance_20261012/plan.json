@@ -1,0 +1,134 @@
+{
+  "id": "QUOTE-PROVENANCE-0.1",
+  "frozen_at_utc": "2026-10-12T08:22:27.696862+00:00",
+  "selection": "same five original buy transactions, selected before any current source-account lookup; no return outcomes used",
+  "observed_routing_leads": [
+    {
+      "user": "8i8WsSj27j998Z7fqjw4JLeBBo7FkAPfqoNKEhYzXttG",
+      "signature": "JXf9UkteQUtcL2Xk4D9ZQSk8uiauwYefPBG8NCqhjyvtPq9EocHqpD7HfvvxvvKr1ATLAUp3Z6rk2EvRWyXoMys",
+      "pool": "Fe7bpDYCs74GqiCUF14HwgUMToPKV1d9mDYVX5BTohFr",
+      "mint": "2j5SaS7xy776qCBpyPQbZjyQSAtKiFgrwjfErthnW2ZM",
+      "quote_account": "44bYRptZqTUF6HQFBKVPtDHDwk22X8mJVHVbmCeNQtwz",
+      "event_quote_raw": "8918346999",
+      "fee_payer": "8i8WsSj27j998Z7fqjw4JLeBBo7FkAPfqoNKEhYzXttG",
+      "incoming_quote_transfers": [
+        {
+          "instruction_path": "inner:3:8",
+          "source_account": "8ncU5YW1CQwvr4gs7buH57bW58e86TDau4STrCJBuz8z",
+          "source_token_owner": "GMCJvYGf5Ex2ARiMquaBDqU6iKM8uiEQkB8jCnoNfHpC",
+          "transfer_authority": "GMCJvYGf5Ex2ARiMquaBDqU6iKM8uiEQkB8jCnoNfHpC",
+          "amount_raw": "8958479563"
+        }
+      ],
+      "owned_token_deltas_raw": {
+        "Es9vMFrzaCERmJfrF4H2FYD4KCoNkY11McCe8BenwNYB": "-1000000000",
+        "2j5SaS7xy776qCBpyPQbZjyQSAtKiFgrwjfErthnW2ZM": "121390352892"
+      },
+      "block_time": 1791769361,
+      "source_available_at_utc": "2026-10-12T01:43:13.918818+00:00"
+    },
+    {
+      "user": "3uzy6vZMwwgHRrbe86YYFKZj2XaQjWXijqcnV3T6dej4",
+      "signature": "25v1XyRmKDfWYpWH8uH65ZZWgqDmxLjpwZYRqtUdjAVGzWSHVyWjwQAMxS5nszJxS2Ygg3GQ5pfF35DQr33KQAuA",
+      "pool": "Fe7bpDYCs74GqiCUF14HwgUMToPKV1d9mDYVX5BTohFr",
+      "mint": "2j5SaS7xy776qCBpyPQbZjyQSAtKiFgrwjfErthnW2ZM",
+      "quote_account": "42itv4m9CwZ7F4mUieSJZAR1rCpYnRCEdYJkDuyHtbkq",
+      "event_quote_raw": "742906918",
+      "fee_payer": "3uzy6vZMwwgHRrbe86YYFKZj2XaQjWXijqcnV3T6dej4",
+      "incoming_quote_transfers": [],
+      "owned_token_deltas_raw": {
+        "2j5SaS7xy776qCBpyPQbZjyQSAtKiFgrwjfErthnW2ZM": "10172875514"
+      },
+      "block_time": 1791769343,
+      "source_available_at_utc": "2026-10-12T01:43:53.626261+00:00"
+    },
+    {
+      "user": "6KBtrzj3Rxew41MD5ydL3AiB7WwTjLtFUKsSEf9yaJfD",
+      "signature": "d7e2tdanKS5rURm9K8anXVZJpBDnjaNEyweVcztnkSL2ZWeRUza9TiTLrXdmgBdTQe1svmsmxgD1MRs5KZvpy5S",
+      "pool": "Fe7bpDYCs74GqiCUF14HwgUMToPKV1d9mDYVX5BTohFr",
+      "mint": "2j5SaS7xy776qCBpyPQbZjyQSAtKiFgrwjfErthnW2ZM",
+      "quote_account": "BqJsBJQYnxa2TsaxJNkWhMuR1Xo2CdZGNVUu4a3Pw8Ck",
+      "event_quote_raw": "221683792",
+      "fee_payer": "6KBtrzj3Rxew41MD5ydL3AiB7WwTjLtFUKsSEf9yaJfD",
+      "incoming_quote_transfers": [
+        {
+          "instruction_path": "inner:2:12",
+          "source_account": "2rDB8Srhx2DPCCAxgqkS13mu9FeamCuGWgua1KfwQLXX",
+          "source_token_owner": "3KFCgJ5R3zshW8hTDbzjSrrKSRYmKvsMfhc4Vo4iddxD",
+          "transfer_authority": "3KFCgJ5R3zshW8hTDbzjSrrKSRYmKvsMfhc4Vo4iddxD",
+          "amount_raw": "221683792"
+        }
+      ],
+      "owned_token_deltas_raw": {
+        "2j5SaS7xy776qCBpyPQbZjyQSAtKiFgrwjfErthnW2ZM": "3023793010",
+        "J8PSdNP3QewKq2Z1JJJFDMaqF7KcaiJhR7gbr5KZpump": "-3641394595"
+      },
+      "block_time": 1791769337,
+      "source_available_at_utc": "2026-10-12T01:44:04.772542+00:00"
+    },
+    {
+      "user": "FXh9XcdM38anfSjMjqvPsj7zk2ttzJbwtDCzDhR6YHcn",
+      "signature": "22Zs2CFkcjMN5ru1rjBdYdioUji9UGriaAoCjUd8ZxnrxdYgmxh5STzVmrpBKZa3LXExyERZRBymdNzf9iotRjYk",
+      "pool": "Fe7bpDYCs74GqiCUF14HwgUMToPKV1d9mDYVX5BTohFr",
+      "mint": "2j5SaS7xy776qCBpyPQbZjyQSAtKiFgrwjfErthnW2ZM",
+      "quote_account": "5dNoUgJ8BfLfQdBRxKiqGLtgNF4xgq4K8sg1M8snPEZm",
+      "event_quote_raw": "44028572",
+      "fee_payer": "AgmLJBMDCqWynYnQiPCuj9ewsNNsBJXyzoUhD9LJzN51",
+      "incoming_quote_transfers": [
+        {
+          "instruction_path": "inner:0:7",
+          "source_account": "5pVN5XZB8cYBjNLFrsBCPWkCQBan5K5Mq2dWGzwPgGJV",
+          "source_token_owner": "8ekCy2jHHUbW2yeNGFWYJT9Hm9FW7SvZcZK66dSZCDiF",
+          "transfer_authority": "8ekCy2jHHUbW2yeNGFWYJT9Hm9FW7SvZcZK66dSZCDiF",
+          "amount_raw": "44028572"
+        }
+      ],
+      "owned_token_deltas_raw": {
+        "2j5SaS7xy776qCBpyPQbZjyQSAtKiFgrwjfErthnW2ZM": "599904951",
+        "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v": "-5000000"
+      },
+      "block_time": 1791769357,
+      "source_available_at_utc": "2026-10-12T01:46:54.511007+00:00"
+    },
+    {
+      "user": "CSx2gDhH9nw6vqknJkrHVCaWWDDr6sLbRvtJkiUieRFZ",
+      "signature": "2MHpZRik2qjB86bAPf5JzZtd8Nq11K9ShPT3EfXoBsKvgJmVnDBnySxcoo88BFUuSEbCMYAf2qLznZaGaLqa9F3G",
+      "pool": "Fe7bpDYCs74GqiCUF14HwgUMToPKV1d9mDYVX5BTohFr",
+      "mint": "2j5SaS7xy776qCBpyPQbZjyQSAtKiFgrwjfErthnW2ZM",
+      "quote_account": "Dj1LRXXpp94CtUVkbJcthn5nRR6KegdPszYRazh1SMvA",
+      "event_quote_raw": "284892244",
+      "fee_payer": "AgmLJBMDCqWynYnQiPCuj9ewsNNsBJXyzoUhD9LJzN51",
+      "incoming_quote_transfers": [
+        {
+          "instruction_path": "inner:0:7",
+          "source_account": "5pVN5XZB8cYBjNLFrsBCPWkCQBan5K5Mq2dWGzwPgGJV",
+          "source_token_owner": "8ekCy2jHHUbW2yeNGFWYJT9Hm9FW7SvZcZK66dSZCDiF",
+          "transfer_authority": "8ekCy2jHHUbW2yeNGFWYJT9Hm9FW7SvZcZK66dSZCDiF",
+          "amount_raw": "284892244"
+        }
+      ],
+      "owned_token_deltas_raw": {
+        "2j5SaS7xy776qCBpyPQbZjyQSAtKiFgrwjfErthnW2ZM": "3887176768",
+        "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v": "-32360835"
+      },
+      "block_time": 1791769336,
+      "source_available_at_utc": "2026-10-12T01:47:18.024887+00:00"
+    }
+  ],
+  "current_account_addresses": [
+    "2rDB8Srhx2DPCCAxgqkS13mu9FeamCuGWgua1KfwQLXX",
+    "3KFCgJ5R3zshW8hTDbzjSrrKSRYmKvsMfhc4Vo4iddxD",
+    "5pVN5XZB8cYBjNLFrsBCPWkCQBan5K5Mq2dWGzwPgGJV",
+    "8ekCy2jHHUbW2yeNGFWYJT9Hm9FW7SvZcZK66dSZCDiF",
+    "8ncU5YW1CQwvr4gs7buH57bW58e86TDau4STrCJBuz8z",
+    "GMCJvYGf5Ex2ARiMquaBDqU6iKM8uiEQkB8jCnoNfHpC"
+  ],
+  "source_current_state_not_historical": true,
+  "maximum_new_rpc_requests": 16,
+  "maximum_history_bodies": 8,
+  "native_only_roots_or_shared_fee_payer_are_not_independence": true,
+  "strategy_config_sha256": "9bcd83ce0ec71cdae8c410c202bd5a75b1496679e5ddb94ccc7d300e57c3663f",
+  "real_orders": false,
+  "paid_data": false,
+  "private_keys": false
+}
