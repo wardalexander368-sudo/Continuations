@@ -7,7 +7,8 @@
 >   account, and `cde_vol_momentum` on Coinbase's US perps (+0.39%/wk test, CI includes zero; needs ~$8k).
 > * **US costs:** Coinbase 0.90% taker / 0.50% maker since 2026-09-16; Alpaca ~0.39%/side (the first live US
 >   route if one is approved). Details `reviews/gap-review-2026-10-11.md`.
-> * **Live rule:** `live-rule-us.md` is a DRAFT (us_capit only, $100/trade); nothing goes live without AJ's words.
+> * **Live rule:** `live-rule-us.md` is DRAFT v2 (10-12, fits `findings.md`): us_capit only, on coins whose measured
+>   Alpaca cost is at most 0.50%/side, $100/trade, judged on Alpaca paper fills; nothing goes live without AJ's words.
 > * **Every finding (Claude and Codex) in one table:** `findings.md`. Check it before proposing an idea.
 > * **Plan:** `plan-2026-10-12.md` (section G is the order of work). **Map of the repo:** `README.md` and `handoff/README.md`.
 > * **Paper tests running:** see *Active*. Every registered test is scored by a routine and/or the weekly
@@ -45,7 +46,7 @@ Lanes as of 2026-10-12 (all paper only). Owner thread names are the project's th
 
 * **Full project overview and alignment (from 2026-10-12 ~21:30 UTC):** one findings ledger (`findings.md`), board,
   plan and topic docs brought into line. Done when it lands; then the ledger is kept by whoever lands a result.
-* **Overall improvement review:** draft live rule `live-rule-us.md` waits on AJ to adopt or edit it.
+* **Live rule (thread "Full project overview and alignment"):** DRAFT v2 of `live-rule-us.md` waits on AJ to adopt or edit it.
 
 * **ChatGPT lane (Codex, thread "ChatGPT lane with Claude review", from 2026-10-12):** AJ's ChatGPT works only on
   `codex/*` branches and opens PRs into `main`; rules in `AGENTS.md`. Claude reviews each PR before it lands;
@@ -98,6 +99,11 @@ Lanes as of 2026-10-12 (all paper only). Owner thread names are the project's th
   `archive/STATUS-history-to-2026-10-10.md`; that lane is closed.
 
 ## Log (newest first)
+
+* **2026-10-12 ~22:30 UTC, overview thread: live rule DRAFT v2** (`live-rule-us.md`, not adopted; AJ asked for a
+  redraft that fits the overview). Adds a standing eligibility checklist, a per-coin Alpaca cost screen (AVAX, BCH,
+  LTC books ~0.55%/side), a gate judged on Alpaca paper fills, stops in account dollars, and scaling that needs the
+  account up in dollars and a positive excess over random entries. Still us_capit only, $100/trade, $250 stop.
 
 * **2026-10-12 ~22:00 UTC, full overview thread** (`findings.md`). Every idea Claude or Codex tested is in one
   ledger with its status, after-cost evidence and source. Claude's and Codex's numbers agree (Alpaca, PumpPortal
