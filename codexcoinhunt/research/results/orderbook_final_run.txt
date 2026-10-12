@@ -1,0 +1,209 @@
+{
+  "status": "bounded prospective displayed-book development probe; paths are not fills",
+  "config": "OB-0.1",
+  "completed_at_utc": "2026-10-12T01:58:37.741808+00:00",
+  "collection_first_receipt": "2026-10-12T01:41:20.679428+00:00",
+  "collection_last_receipt": "2026-10-12T01:53:10.414140+00:00",
+  "http_records": 144,
+  "invalid_or_incomplete_records": [],
+  "snapshot_count": 288,
+  "independent_campaigns": 0,
+  "validated_doubling_campaigns": 0,
+  "symbols": {
+    "BONK/USD": {
+      "book_receipts": 72,
+      "unique_source_updates": 27,
+      "fresh_source_receipts_2s": 12,
+      "source_age_seconds": {
+        "min": 0.23599004745483398,
+        "median": 14.636116981506348,
+        "max": 157.4906780719757
+      },
+      "spread_bps": {
+        "min": 57.971014492753625,
+        "median": 87.08272859216255,
+        "max": 87.33624454148472
+      },
+      "all_levels_bid_share": {
+        "min": 0.07674314558559514,
+        "median": 0.07681882655959084,
+        "max": 0.07692975760685487
+      },
+      "near_mid_bid_share": {
+        "min": 0.3315662820797901,
+        "median": 0.49641156066001446,
+        "max": 0.6634589366365964
+      },
+      "all_vs_near_share_gap_max": 0.5866260109597778,
+      "same_state_net_roundtrip_cost_fraction": {
+        "min": 0.015685322215498787,
+        "median": 0.0185467020927792,
+        "max": 0.018571583656929458
+      },
+      "signed_trade_count": 0,
+      "buy_trade_count": 0,
+      "sell_trade_count": 0,
+      "trade_participant_identity": null
+    },
+    "DOGE/USD": {
+      "book_receipts": 72,
+      "unique_source_updates": 16,
+      "fresh_source_receipts_2s": 5,
+      "source_age_seconds": {
+        "min": 0.5099349021911621,
+        "median": 28.278656005859375,
+        "max": 146.24193000793457
+      },
+      "spread_bps": {
+        "min": 28.478176470962616,
+        "median": 32.71045911714216,
+        "max": 34.75585601475823
+      },
+      "all_levels_bid_share": {
+        "min": 0.4823676205649689,
+        "median": 0.4826862757500744,
+        "max": 0.4841562003866605
+      },
+      "near_mid_bid_share": {
+        "min": 0.4264106285021711,
+        "median": 0.5683656586001777,
+        "max": 0.57264445345801
+      },
+      "all_vs_near_share_gap_max": 0.08942003807540583,
+      "same_state_net_roundtrip_cost_fraction": {
+        "min": 0.012777999626728098,
+        "median": 0.013195732456557585,
+        "max": 0.013397553025272901
+      },
+      "signed_trade_count": 1,
+      "buy_trade_count": 0,
+      "sell_trade_count": 1,
+      "trade_participant_identity": null
+    },
+    "PEPE/USD": {
+      "book_receipts": 72,
+      "unique_source_updates": 35,
+      "fresh_source_receipts_2s": 11,
+      "source_age_seconds": {
+        "min": 0.22194719314575195,
+        "median": 11.932476997375488,
+        "max": 104.02995085716248
+      },
+      "spread_bps": {
+        "min": 23.952095808383234,
+        "median": 47.84688995215311,
+        "max": 48.07692307692308
+      },
+      "all_levels_bid_share": {
+        "min": 0.023508632916407174,
+        "median": 0.023545985389713184,
+        "max": 0.02361662603109113
+      },
+      "near_mid_bid_share": {
+        "min": 0.4981306528174352,
+        "median": 0.5004129287387301,
+        "max": 0.5034582460689161
+      },
+      "all_vs_near_share_gap_max": 0.479851854158646,
+      "same_state_net_roundtrip_cost_fraction": {
+        "min": 0.012331073077059718,
+        "median": 0.014688278153248246,
+        "max": 0.014710943456329062
+      },
+      "signed_trade_count": 0,
+      "buy_trade_count": 0,
+      "sell_trade_count": 0,
+      "trade_participant_identity": null
+    },
+    "WIF/USD": {
+      "book_receipts": 72,
+      "unique_source_updates": 33,
+      "fresh_source_receipts_2s": 10,
+      "source_age_seconds": {
+        "min": 0.14991283416748047,
+        "median": 11.996277093887329,
+        "max": 94.54600787162781
+      },
+      "spread_bps": {
+        "min": 28.877375096314406,
+        "median": 33.0264437758726,
+        "max": 38.75846429749154
+      },
+      "all_levels_bid_share": {
+        "min": 0.48919628238774604,
+        "median": 0.4897029397827769,
+        "max": 0.4899668050921543
+      },
+      "near_mid_bid_share": {
+        "min": 0.42456963250074464,
+        "median": 0.5675197920198195,
+        "max": 0.5711005261642563
+      },
+      "all_vs_near_share_gap_max": 0.08113372107210204,
+      "same_state_net_roundtrip_cost_fraction": {
+        "min": 0.012817408712160971,
+        "median": 0.013226913556535047,
+        "max": 0.013792373666967839
+      },
+      "signed_trade_count": 0,
+      "buy_trade_count": 0,
+      "sell_trade_count": 0,
+      "trade_participant_identity": null
+    }
+  },
+  "signal_counts_repeated_decisions_not_independent": {
+    "momentum": 6
+  },
+  "rejection_reason_counts": {
+    "stale_source_book": 250,
+    "no_persistent_near_bid_imbalance": 288,
+    "nonpositive_sampled_ofi": 203,
+    "no_verified_signed_buy_flow": 288,
+    "missing_or_extended_60s_price": 28
+  },
+  "account_replays": {
+    "full_book_and_flow": {
+      "cash": 50.0,
+      "position_unresolved": false,
+      "next_decision": 0,
+      "attempts": []
+    },
+    "book_only": {
+      "cash": 50.0,
+      "position_unresolved": false,
+      "next_decision": 0,
+      "attempts": []
+    },
+    "momentum": {
+      "cash": 43.0,
+      "position_unresolved": true,
+      "next_decision": 1791769599.838077,
+      "attempts": [
+        {
+          "status": "censored_exit",
+          "symbol": "BONK/USD",
+          "decision": 1791769502.477643,
+          "entry_at": 1791769509.838077,
+          "budget": 7.000000000000001,
+          "quantity": 2013018.424855491,
+          "next_available_at": 1791769599.838077
+        }
+      ]
+    },
+    "matched_random": {
+      "cash": 50.0,
+      "position_unresolved": false,
+      "next_decision": 0,
+      "attempts": []
+    }
+  },
+  "limits": [
+    "no authenticated asset increment/account or US-state eligibility",
+    "no queue/latency fill guarantee",
+    "polled snapshots miss intrapoll additions/cancellations",
+    "no distinct buyer identities from Alpaca trades",
+    "attention control unavailable",
+    "12-minute window does not complete 30-day campaigns",
+    "small window and repeated observations cannot establish profitability"
+  ]
+}

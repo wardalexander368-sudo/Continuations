@@ -1,0 +1,35 @@
+{
+  "id": "PARTICIPATION-ABLATION-0.1",
+  "frozen_at_utc": "2026-10-12T07:06:34.595598+00:00",
+  "status": "future research-only comparison; no return observation or promoted strategy",
+  "development_evidence": "results/buyer_funding_reconciled_20261012/summary.json",
+  "strategy_sha256": "9bcd83ce0ec71cdae8c410c202bd5a75b1496679e5ddb94ccc7d300e57c3663f",
+  "arms": [
+    "SLR new-to-mint conversion, rejecting any demonstrated prior target participation",
+    "returning buyer accumulation with repeated traders explicitly classified, retaining all other buyer/identity/US/safety/cost/quote/campaign rules",
+    "raw activity reference, labelled as an ablation rather than evidence of new demand"
+  ],
+  "newness_labels": {
+    "returning": "exact authorized successful prior target trade before the decision",
+    "unknown": "bounded absence, balances without authorized earlier trades, incomplete history or unverified event sources",
+    "new_verified": "requires adequate mint-lifetime/owned-account coverage and recorded timestamped proof; never supplied by a simple absence flag"
+  },
+  "capital_origin_labels": [
+    "direct signed native receipt candidate",
+    "own/transient wrapped-SOL or storage balance release",
+    "token assets or capital already carried into window",
+    "unknown or service-origin funds"
+  ],
+  "evaluation": "Same fully costed one-position $50 campaign ledger and exit policy for all arms; contemporaneous eligible matched random, attention and momentum controls; standdowns, rejected entries, missing exits and calendar timeouts preserved. No inherited funded USD assumption.",
+  "chronology": "Existing inspected five-wallet sample is development/falsification only. Freeze data availability and a genuinely later untouched prospective period before inspecting any payoff. Group repeated wallet/token/narrative observations. Do not backdate new receipt times.",
+  "primary_metrics": [
+    "recoverable net account outcome after execution/data/funding/conversion costs",
+    "opportunity rate and calendar time",
+    "missing exits and failure/unsellability rate",
+    "target crossing as strict >100 after full reconciliation"
+  ],
+  "trained_model": false,
+  "real_orders": false,
+  "service_and_funding_independence_requirements_waived": false,
+  "parameter_search_performed": false
+}

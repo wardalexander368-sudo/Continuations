@@ -1,0 +1,164 @@
+{
+  "source": "https://zenodo.org/api/records/22967373",
+  "payload": {
+    "created": "2026-09-25T20:08:33.299004+00:00",
+    "modified": "2026-10-11T23:16:46.814860+00:00",
+    "id": 22967373,
+    "conceptrecid": "21402476",
+    "doi": "10.5281/zenodo.22967373",
+    "conceptdoi": "10.5281/zenodo.21402476",
+    "doi_url": "https://doi.org/10.5281/zenodo.22967373",
+    "metadata": {
+      "title": "RED-REJECT-2026-v2: A 96-Day Public Corpus of Algorithmic Filter Rejections with Post-Rejection Follow-up Samples on the Solana pump.fun Ecosystem",
+      "doi": "10.5281/zenodo.22967373",
+      "publication_date": "2026-09-25",
+      "description": "<div>RED-REJECT-2026-v2 is the second release of a public benchmark corpus of algorithmic filter rejections with post-rejection follow-up samples, collected by a purpose-built follow-up-tracking process on the Solana pump.fun ecosystem between 2026-04-11 and 2026-07-16. The 96-day window contains one collection gap: no new rejection events were recorded from 2026-06-03T06:35Z and no samples from 2026-06-04T06:32Z until 2026-06-24 (about 21.4 and 20.4 days), so the window contains about 75.6 days of sampling coverage. It supersedes v1 (published 2026-07-16); see CHANGELOG.md for the changes.</div>\n<div>&nbsp;</div>\n<div>Corpus size: 716,762 post-rejection sample records across 4,635 unique SPL token mint addresses, comprising 18,237 distinct rejection events under eight named algorithmic trading filter families (shares of the 716,762 sample rows: downtrend_24h 56.13 percent, marketcap_out_of_range 21.38 percent, multi_tf_fade 11.98 percent, timeSlot_not_strong 5.17 percent, hour_blacklist 2.36 percent, ultra_fast_reject_exit 1.64 percent, utc_hour_blocked 0.92 percent, h6_sellers_dominating 0.41 percent). After canonicalization, no row carries a null rejectReason (v1's 348 null-reason rows came from an unfolded alias). For each observation, the corpus records the token's live market state at the sample time (price, liquidity, volume, rolling price changes), the identity of the DEX pair (absent in the 8,356 legacy family_2 rows), and the elapsed minutes since the original rejection event. Rows in schema variant 1 (from 24 April 2026 onward) also record macro-regime context (BTC price, fear-greed index, regime label).</div>\n<div>&nbsp;</div>\n<div>The corpus applies the Post-Rejection Follow-up Sampling (PRFS) methodology to this collection.</div>\n<div>&nbsp;</div>\n<div>Version note: v2.3 updates the documentation only; every data file is byte-identical to v2.2. It discloses the June collection gap, which v2.2 described as continuous coverage, clarifies that the 4,278 events listed in alt_venue_report.csv have more than one (dexId, pairAddress) value, a null value included (88 of them are observed on two or more identified trading pools), and updates several descriptive statements; see CHANGELOG.md.</div>",
+      "access_right": "open",
+      "creators": [
+        {
+          "name": "Kamat, Arati Uday",
+          "affiliation": null,
+          "orcid": "0009-0000-4781-312X"
+        }
+      ],
+      "keywords": [
+        "Solana",
+        "memecoin",
+        "pump.fun",
+        "PumpSwap",
+        "algorithmic rejection",
+        "filter precision",
+        "post-rejection follow-up sampling",
+        "PRFS",
+        "counterfactual evaluation",
+        "benchmark dataset",
+        "market microstructure",
+        "decentralised exchange",
+        "replication corpus",
+        "BTC regime"
+      ],
+      "related_identifiers": [
+        {
+          "identifier": "10.5281/zenodo.19989074",
+          "relation": "isSupplementTo",
+          "resource_type": "dataset",
+          "scheme": "doi"
+        },
+        {
+          "identifier": "10.5281/zenodo.20633486",
+          "relation": "isSupplementTo",
+          "resource_type": "dataset",
+          "scheme": "doi"
+        },
+        {
+          "identifier": "10.5281/zenodo.20978741",
+          "relation": "isSupplementTo",
+          "resource_type": "dataset",
+          "scheme": "doi"
+        },
+        {
+          "identifier": "10.5281/zenodo.21399919",
+          "relation": "isSupplementTo",
+          "resource_type": "dataset",
+          "scheme": "doi"
+        },
+        {
+          "identifier": "10.2139/ssrn.7129798",
+          "relation": "isSupplementTo",
+          "scheme": "doi"
+        }
+      ],
+      "version": "v2.3",
+      "language": "eng",
+      "resource_type": {
+        "title": "Dataset",
+        "type": "dataset"
+      },
+      "license": {
+        "id": "cc-by-4.0"
+      },
+      "relations": {
+        "version": [
+          {
+            "index": 2,
+            "is_last": true,
+            "parent": {
+              "pid_type": "recid",
+              "pid_value": "21402476"
+            }
+          }
+        ]
+      }
+    },
+    "title": "RED-REJECT-2026-v2: A 96-Day Public Corpus of Algorithmic Filter Rejections with Post-Rejection Follow-up Samples on the Solana pump.fun Ecosystem",
+    "links": {
+      "self": "https://zenodo.org/api/records/22967373",
+      "self_html": "https://zenodo.org/records/22967373",
+      "preview_html": "https://zenodo.org/records/22967373?preview=1",
+      "doi": "https://doi.org/10.5281/zenodo.22967373",
+      "self_doi": "https://doi.org/10.5281/zenodo.22967373",
+      "self_doi_html": "https://zenodo.org/doi/10.5281/zenodo.22967373",
+      "reserve_doi": "https://zenodo.org/api/records/22967373/draft/pids/doi",
+      "parent": "https://zenodo.org/api/records/21402476",
+      "parent_html": "https://zenodo.org/records/21402476",
+      "parent_doi": "https://doi.org/10.5281/zenodo.21402476",
+      "parent_doi_html": "https://zenodo.org/doi/10.5281/zenodo.21402476",
+      "self_iiif_manifest": "https://zenodo.org/api/iiif/record:22967373/manifest",
+      "self_iiif_sequence": "https://zenodo.org/api/iiif/record:22967373/sequence/default",
+      "files": "https://zenodo.org/api/records/22967373/files",
+      "media_files": "https://zenodo.org/api/records/22967373/media-files",
+      "latest": "https://zenodo.org/api/records/22967373/versions/latest",
+      "latest_html": "https://zenodo.org/records/22967373/latest",
+      "versions": "https://zenodo.org/api/records/22967373/versions",
+      "draft": "https://zenodo.org/api/records/22967373/draft",
+      "access_links": "https://zenodo.org/api/records/22967373/access/links",
+      "access_grants": "https://zenodo.org/api/records/22967373/access/grants",
+      "access_users": "https://zenodo.org/api/records/22967373/access/users",
+      "access_request": "https://zenodo.org/api/records/22967373/access/request",
+      "access": "https://zenodo.org/api/records/22967373/access",
+      "communities": "https://zenodo.org/api/records/22967373/communities",
+      "communities-suggestions": "https://zenodo.org/api/records/22967373/communities-suggestions",
+      "request_deletion": "https://zenodo.org/api/records/22967373/request-deletion",
+      "file_modification": "https://zenodo.org/api/records/22967373/file-modification",
+      "quota_increase": "https://zenodo.org/api/records/22967373/quota-increase",
+      "requests": "https://zenodo.org/api/records/22967373/requests"
+    },
+    "updated": "2026-10-11T23:16:46.814860+00:00",
+    "recid": "22967373",
+    "revision": 8,
+    "files": [
+      {
+        "id": "73951f26-7a68-44b6-a817-bd036b7ac0af",
+        "key": "RED-REJECT-2026-v2_v2.3.zip",
+        "size": 144803824,
+        "checksum": "md5:66b83aab945cc6566ba85ba4434d0cbd",
+        "links": {
+          "self": "https://zenodo.org/api/records/22967373/files/RED-REJECT-2026-v2_v2.3.zip/content"
+        }
+      }
+    ],
+    "swh": {},
+    "owners": [
+      {
+        "id": "1618083"
+      }
+    ],
+    "status": "published",
+    "stats": {
+      "downloads": 83,
+      "unique_downloads": 71,
+      "views": 209,
+      "unique_views": 191,
+      "version_downloads": 13,
+      "version_unique_downloads": 10,
+      "version_unique_views": 32,
+      "version_views": 33
+    },
+    "state": "done",
+    "submitted": true
+  },
+  "requested_at": "2026-10-12T00:47:39.805584+00:00",
+  "received_at": null,
+  "original_saved_at_utc": "2026-10-12T00:47:50.546175+00:00",
+  "timestamp_note": "Initial probe timestamp represented request start; exact receipt time was not retained. Original storage modification time retained separately."
+}

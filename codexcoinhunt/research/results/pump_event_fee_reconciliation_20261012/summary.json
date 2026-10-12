@@ -1,0 +1,48 @@
+{
+  "id": "PUMP-EVENT-FEE-RECONCILIATION-0.1",
+  "completed_at_utc": "2026-10-12T12:42:05.578496+00:00",
+  "status": "post-observation forensic accounting correction; same fixed transactions, no return test",
+  "pinned_official_idl_sha256": "b7d8c57a4d9c4dd0109a9ab893052352333252d4eedced10ac091d4d66cab89b",
+  "retained_transaction_bodies": 12,
+  "complete_events_decoded": 8,
+  "buy_events": 5,
+  "sell_events": 3,
+  "parse_issues": 0,
+  "log_cpi_dual_representations": 8,
+  "fee_decompositions_exact": 8,
+  "lp_bridge_equations_exact": 8,
+  "buyback_protocol_suballocations_exact": 8,
+  "nominal_fee_basis_point_counts": {
+    "45": 7,
+    "50": 1
+  },
+  "buy_instruction_counts": {
+    "buy_v2": 3,
+    "buy_exact_quote_in_v2": 1,
+    "buy_exact_quote_in": 1
+  },
+  "buy_route_audits_reconciled": 5,
+  "instruction_aware_gross_matches_exact_outflow": 5,
+  "stable_prefix_user_quote_matches_exact_outflow": 3,
+  "previously_unexplained_user_quote_mismatches": 2,
+  "previously_unexplained_mismatches_now_exactly_fee_decomposed": 2,
+  "five_buy_gross_quote_raw": "10255334171",
+  "gross_quote_decimals": 9,
+  "proven_returning_buyers_gross_quote_raw": "9970441927",
+  "proven_returning_fraction_by_gross_debit": "0.9722200915884713592332924087",
+  "largest_buyer_fraction_by_gross_debit": "0.8735434081058771185702009047",
+  "historical_eligibility_changed": false,
+  "strategy_or_controller_rules_changed": false,
+  "new_market_observations": 0,
+  "new_strategy_entries": 0,
+  "new_closed_positions": 0,
+  "new_matched_net_account_comparisons": 0,
+  "new_doubling_campaigns": 0,
+  "accounting_rule": "Use instruction-aware gross debit or exact account movement. Pool fees already embedded in a fee-aware SDK quote or net fill must not be charged again. PumpPortal, network, priority, rent, conversion and other execution costs remain separate when actually applicable.",
+  "limits": [
+    "This audit explains existing event fields and account transfers; it does not measure a strategy return.",
+    "The fixed sample is development evidence and was selected before this forensic analysis, not an untouched cohort.",
+    "A fee field identifies protocol accounting but does not prove a user's complete USD funding or recovery path.",
+    "Gross-debit concentration still does not establish independent people or profitable buyer skill."
+  ]
+}

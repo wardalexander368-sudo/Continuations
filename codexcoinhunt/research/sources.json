@@ -1,0 +1,457 @@
+{
+  "checked_local_date": "2026-10-11",
+  "checked_utc_date": "2026-10-12",
+  "primary_sources": [
+    {
+      "source_id": "S01",
+      "description": "Qureshi & Zaman, [Social Media Engagement and Cryptocurrency Performance](https://arxiv.org/abs/2209.02911), research paper. Related peer-reviewed full text: [PLOS/PMC](https://pmc.ncbi.nlm.nih.gov/articles/PMC10174546/).",
+      "urls": [
+        "https://arxiv.org/abs/2209.02911",
+        "https://pmc.ncbi.nlm.nih.gov/articles/PMC10174546/"
+      ]
+    },
+    {
+      "source_id": "S02",
+      "description": "Szwajcok et al., [Meme Coin Factories: Uncovering Large-Scale Manipulations on pump.fun](https://arxiv.org/abs/2609.10246), September 2026 preprint.",
+      "urls": [
+        "https://arxiv.org/abs/2609.10246"
+      ]
+    },
+    {
+      "source_id": "S03",
+      "description": "[marlowxbt/trace](https://github.com/marlowxbt/trace), original project documentation describing a pre-existing attention-spike detector.",
+      "urls": [
+        "https://github.com/marlowxbt/trace"
+      ]
+    },
+    {
+      "source_id": "S04",
+      "description": "[DEX Screener API reference](https://docs.dexscreener.com/api/reference), provider documentation.",
+      "urls": [
+        "https://docs.dexscreener.com/api/reference"
+      ]
+    },
+    {
+      "source_id": "S05",
+      "description": "[PumpPortal fees](https://pumpportal.fun/fees/), provider fee schedule.",
+      "urls": [
+        "https://pumpportal.fun/fees/"
+      ]
+    },
+    {
+      "source_id": "S06",
+      "description": "[PumpPortal real-time data](https://pumpportal.fun/data-api/real-time/), provider websocket documentation.",
+      "urls": [
+        "https://pumpportal.fun/data-api/real-time/"
+      ]
+    },
+    {
+      "source_id": "S07",
+      "description": "[Pump fees](https://pump.fun/docs/fees), current schedule updated October 8, 2026.",
+      "urls": [
+        "https://pump.fun/docs/fees"
+      ]
+    },
+    {
+      "source_id": "S08",
+      "description": "[Alpaca crypto spot fees](https://docs.alpaca.markets/us/docs/crypto-fees), official fee schedule.",
+      "urls": [
+        "https://docs.alpaca.markets/us/docs/crypto-fees"
+      ]
+    },
+    {
+      "source_id": "S09",
+      "description": "[Alpaca supported cryptocurrencies](https://alpaca.markets/support/what-cryptocurrencies-does-alpaca-currently-support), official asset list.",
+      "urls": [
+        "https://alpaca.markets/support/what-cryptocurrencies-does-alpaca-currently-support"
+      ]
+    },
+    {
+      "source_id": "S10",
+      "description": "[X API pricing](https://docs.x.com/x-api/getting-started/pricing), official resource-based pricing.",
+      "urls": [
+        "https://docs.x.com/x-api/getting-started/pricing"
+      ]
+    },
+    {
+      "source_id": "S11",
+      "description": "[PumpPortal terms](https://pumpportal.fun/legal/), provider eligibility and access terms.",
+      "urls": [
+        "https://pumpportal.fun/legal/"
+      ]
+    },
+    {
+      "source_id": "S12",
+      "description": "[Pump terms](https://pump.fun/docs/terms-and-conditions), updated October 8, 2026.",
+      "urls": [
+        "https://pump.fun/docs/terms-and-conditions"
+      ]
+    },
+    {
+      "source_id": "S13",
+      "description": "[SEC staff statement on meme coins](https://www.sec.gov/newsroom/speeches-statements/staff-statement-meme-coins), February 27, 2025.",
+      "urls": [
+        "https://www.sec.gov/newsroom/speeches-statements/staff-statement-meme-coins"
+      ]
+    },
+    {
+      "source_id": "S14",
+      "description": "[IRS digital assets](https://www.irs.gov/filing/digital-assets), official record/reporting guidance.",
+      "urls": [
+        "https://www.irs.gov/filing/digital-assets"
+      ]
+    },
+    {
+      "source_id": "S15",
+      "description": "[Solana transaction fees](https://solana.com/docs/core/fees) and [token account creation costs](https://solana.com/docs/tokens/basics/create-token-account), official protocol documentation; quoted account sizes/rent vary and must be queried.",
+      "urls": [
+        "https://solana.com/docs/core/fees",
+        "https://solana.com/docs/tokens/basics/create-token-account"
+      ]
+    },
+    {
+      "source_id": "S16",
+      "description": "[PumpPortal Local trading API](https://pumpportal.fun/local-trading-api/trading-api/), supported route parameters. Reviewed as a future implementation reference; no order called.",
+      "urls": [
+        "https://pumpportal.fun/local-trading-api/trading-api/"
+      ]
+    },
+    {
+      "source_id": "S17",
+      "urls": [
+        "https://zenodo.org/records/22967373"
+      ],
+      "description": "Corrected public rejection corpus v2.3; archive checksum verified, selected fields retained without filtering rows."
+    },
+    {
+      "source_id": "S18",
+      "urls": [
+        "https://zenodo.org/records/23017853"
+      ],
+      "description": "External paper-trading benchmark v1.3; return/account arithmetic independently audited."
+    },
+    {
+      "source_id": "S19",
+      "urls": [
+        "https://alpaca.markets/sdks/python/market_data.html"
+      ],
+      "description": "Official public crypto-data guidance; unauthenticated historical bar endpoint verified."
+    },
+    {
+      "source_id": "S20",
+      "description": "Official PumpSwap program documentation: account layout, effective quote reserves and SDK quoting guidance.",
+      "urls": [
+        "https://github.com/pump-fun/pump-public-docs/blob/main/docs/PUMP_SWAP_README.md"
+      ]
+    },
+    {
+      "source_id": "S21",
+      "description": "Official Pump fee-program documentation and current fee schedule: dynamic tier selection and published rates.",
+      "urls": [
+        "https://github.com/pump-fun/pump-public-docs/blob/main/docs/FEE_PROGRAM_README.md",
+        "https://pump.fun/docs/fees"
+      ]
+    },
+    {
+      "source_id": "S22",
+      "description": "Official Solana getMultipleAccounts RPC documentation and official PumpSwap SDK package pinned at 2.1.0.",
+      "urls": [
+        "https://solana.com/docs/rpc/http/getmultipleaccounts",
+        "https://www.npmjs.com/package/@pump-fun/pump-swap-sdk"
+      ]
+    },
+    {
+      "source_id": "S23",
+      "description": "Alpaca real-time crypto schemas: source timestamps, bid/ask updates and taker side; venue-specific data.",
+      "urls": [
+        "https://docs.alpaca.markets/us/docs/real-time-crypto-pricing-data",
+        "https://docs.alpaca.markets/us/reference/cryptolatestorderbooks-1"
+      ],
+      "checked_utc_date": "2026-10-12"
+    },
+    {
+      "source_id": "S24",
+      "description": "Cont, Kukanov and Stoikov, The Price Impact of Order Book Events; stock-market OFI prior art, not a meme-coin validation.",
+      "urls": [
+        "https://arxiv.org/abs/1011.6402"
+      ],
+      "checked_utc_date": "2026-10-12"
+    },
+    {
+      "source_id": "S25",
+      "description": "Solana signatures and finalized transaction retrieval; pool references do not themselves establish swaps.",
+      "urls": [
+        "https://solana.com/docs/rpc/http/getsignaturesforaddress",
+        "https://solana.com/docs/rpc/http/gettransaction"
+      ],
+      "checked_utc_date": "2026-10-12"
+    },
+    {
+      "source_id": "S26",
+      "description": "Solana v1 read compatibility: opt into integer maxSupportedTransactionVersion=1; verified explicit errors and recovery.",
+      "urls": [
+        "https://solana.com/docs/core/transactions/versioned-transactions"
+      ],
+      "checked_utc_date": "2026-10-12"
+    },
+    {
+      "source_id": "S27",
+      "description": "Anchor event provenance, invoking-program checks, successful transaction metadata and log/CPI limitations.",
+      "urls": [
+        "https://solana.com/docs/programs/anchor-events",
+        "https://www.anchor-lang.com/docs/features/events"
+      ],
+      "checked_utc_date": "2026-10-12"
+    },
+    {
+      "source_id": "S28",
+      "description": "Official Alpaca historical quote/trade pagination; 93 trades and 249457 raw quote rows captured with UTC receipts.",
+      "urls": [
+        "https://docs.alpaca.markets/us/reference/cryptoquotes-1",
+        "https://docs.alpaca.markets/us/reference/cryptotrades-1"
+      ]
+    },
+    {
+      "source_id": "S29",
+      "description": "MemeTrans/MELT research and successor repository; commercial-use licence restriction assessed, dataset/code/predictions not adopted.",
+      "urls": [
+        "https://arxiv.org/abs/2602.13480",
+        "https://github.com/git-disl/MELT"
+      ]
+    },
+    {
+      "source_id": "S30",
+      "description": "Official Solana refundable account storage balance; locked rent is excluded until an evidenced refund.",
+      "urls": [
+        "https://solana.com/docs/core/accounts"
+      ],
+      "checked_utc_date": "2026-10-12"
+    },
+    {
+      "source_id": "S31",
+      "description": "Official Solana network fee structure; fees charged even for transaction failure. No priority-fee amount or failure rate assumed.",
+      "urls": [
+        "https://solana.com/docs/core/fees/fee-structure"
+      ],
+      "checked_utc_date": "2026-10-12"
+    },
+    {
+      "source_id": "S32",
+      "description": "CatBoost original ordered-boosting/categorical-feature paper; proposed numeric-model comparator, no memecoin benchmark",
+      "urls": [
+        "https://proceedings.neurips.cc/paper_files/paper/2018/hash/14491b756b3a51daac41c24863285549-Abstract.html"
+      ],
+      "checked_utc_date": "2026-10-12"
+    },
+    {
+      "source_id": "S33",
+      "description": "DeepHit original competing-risk survival paper; later neural-method candidate, not trained",
+      "urls": [
+        "https://aaai.org/papers/11842-deephit-a-deep-learning-approach-to-survival-analysis-with-competing-risks/"
+      ],
+      "checked_utc_date": "2026-10-12"
+    },
+    {
+      "source_id": "S34",
+      "description": "TabPFN small-tabular-data Nature paper, published January 8 2025; not financial-return validation",
+      "urls": [
+        "https://www.nature.com/articles/s41586-024-08328-6"
+      ],
+      "checked_utc_date": "2026-10-12"
+    },
+    {
+      "source_id": "S35",
+      "description": "Original generic temporal-convolution sequence-modeling study",
+      "urls": [
+        "https://arxiv.org/abs/1803.01271"
+      ],
+      "checked_utc_date": "2026-10-12"
+    },
+    {
+      "source_id": "S36",
+      "description": "Original Temporal Graph Networks method paper; no independent-wallet certification",
+      "urls": [
+        "https://arxiv.org/abs/2006.10637"
+      ],
+      "checked_utc_date": "2026-10-12"
+    },
+    {
+      "source_id": "S37",
+      "description": "Current TabPFN implementation and separately licensed model weights; v2 attribution terms versus newer noncommercial weights",
+      "urls": [
+        "https://github.com/PriorLabs/TabPFN",
+        "https://huggingface.co/Prior-Labs/TabPFN-v2-clf/blob/main/LICENSE.txt",
+        "https://huggingface.co/Prior-Labs/TabPFN-v2-reg/blob/main/LICENSE.txt"
+      ],
+      "checked_utc_date": "2026-10-12"
+    },
+    {
+      "source_id": "S38",
+      "description": "Official PumpSwap IDL with signer and exact mint/token-account roles; captured raw content and receipt",
+      "urls": [
+        "https://github.com/pump-fun/pump-public-docs/blob/main/idl/pump_amm.json"
+      ],
+      "checked_utc_date": "2026-10-12"
+    },
+    {
+      "source_id": "S39",
+      "description": "Official OpenAI cross-device conversation history, separate local-folder access and desktop project setup",
+      "urls": [
+        "https://learn.chatgpt.com/docs/projects?surface=app",
+        "https://learn.chatgpt.com/docs/reference/troubleshooting",
+        "https://learn.chatgpt.com/docs/whats-new"
+      ],
+      "checked_utc_date": "2026-10-12"
+    },
+    {
+      "source_id": "S40",
+      "description": "Official Solana token account closure and wrapped SOL exception; transient accounts require initialization evidence",
+      "urls": [
+        "https://solana.com/docs/tokens/basics/close-account"
+      ],
+      "checked_utc_date": "2026-10-12"
+    },
+    {
+      "source_id": "S41",
+      "description": "Pump creator-fee role and permissionless collection; event role is not proof of a mint-creation signer or human identity",
+      "urls": [
+        "https://github.com/pump-fun/pump-public-docs/blob/main/docs/instructions/COLLECT_CREATOR_FEE.md"
+      ],
+      "checked_utc_date": "2026-10-12"
+    },
+    {
+      "source_id": "S42",
+      "description": "Solana WSOL balance syncing, transfer owner/authority roles and fee sponsorship",
+      "urls": [
+        "https://solana.com/docs/tokens/basics/sync-native",
+        "https://solana.com/docs/tokens/basics/transfer-tokens",
+        "https://solana.com/docs/payments/send-payments/payment-processing/fee-abstraction"
+      ],
+      "checked_utc_date": "2026-10-12"
+    },
+    {
+      "source_id": "S43",
+      "description": "Circle supported native USDC mint, identity only; no assumed redemption value or user eligibility",
+      "urls": [
+        "https://help.circle.com/support/en/usdc-supported-blockchains-minting-redemption-faqs?id=kb_article_view&sysparm_article=KB0010590"
+      ],
+      "checked_utc_date": "2026-10-12"
+    },
+    {
+      "source_id": "S44",
+      "description": "Tether supported protocols and exact Solana USDT mint; no assumed one-USD value",
+      "urls": [
+        "https://tether.to/en/supported-protocols/"
+      ],
+      "checked_utc_date": "2026-10-12"
+    },
+    {
+      "source_id": "S45",
+      "description": "DEX Screener paid-order, boosting and API documentation; visibility confounder without causal return attribution",
+      "urls": [
+        "https://docs.dexscreener.com/privacy/boosting-terms-and-conditions",
+        "https://docs.dexscreener.com/boosting",
+        "https://docs.dexscreener.com/api/reference"
+      ],
+      "checked_utc_date": "2026-10-12"
+    },
+    {
+      "source_id": "S46",
+      "description": "Bluesky public AppView and searchPosts Lexicon; inaccessible or incomplete search is not zero attention",
+      "urls": [
+        "https://docs.bsky.app/docs/api/app-bsky-feed-get-author-feed",
+        "https://github.com/bluesky-social/atproto/blob/main/lexicons/app/bsky/feed/searchPosts.json"
+      ],
+      "checked_utc_date": "2026-10-12"
+    },
+    {
+      "source_id": "S47",
+      "description": "Official complete Pump AMM BuyEvent and SellEvent schema, pinned for instruction-aware fee decoding",
+      "urls": [
+        "https://github.com/pump-fun/pump-public-docs/blob/main/idl/pump_amm.json"
+      ],
+      "checked_utc_date": "2026-10-12"
+    },
+    {
+      "source_id": "S48",
+      "description": "Official PumpSwap LP, protocol and creator-fee documentation",
+      "urls": [
+        "https://github.com/pump-fun/pump-public-docs/blob/main/docs/PUMP_SWAP_README.md",
+        "https://github.com/pump-fun/pump-public-docs/blob/main/docs/PUMP_SWAP_CREATOR_FEE_README.md"
+      ],
+      "checked_utc_date": "2026-10-12"
+    },
+    {
+      "source_id": "S49",
+      "description": "Official trade-v3 fee-routing documentation; buyback is a portion of protocol fee",
+      "urls": [
+        "https://github.com/pump-fun/pump-public-docs/blob/main/docs/instructions/TRADE_V3.md"
+      ],
+      "checked_utc_date": "2026-10-12"
+    }
+  ],
+  "campaign_source_refresh": {
+    "requested_at_utc": "2026-10-12T03:01:35.849Z",
+    "received_at_utc": "2026-10-12T03:01:36.889Z",
+    "raw_evidence": "data/campaign_sources_20261012/raw_web_evidence.json",
+    "refreshed_sources": [
+      "S05",
+      "S08",
+      "S30",
+      "S31"
+    ],
+    "new_market_observations": 0
+  },
+  "model_and_entry_refresh": {
+    "raw_evidence": "data/model_and_entry_sources_20261012/raw_model_web_evidence.json",
+    "model_source_received_at_utc": "2026-10-12T05:54:05.332Z",
+    "official_idl_receipt": "data/model_and_entry_sources_20261012/idl_receipt.json",
+    "new_trade_history_rpc_responses": 40,
+    "trading_orders": 0
+  },
+  "desktop_handoff_refresh": {
+    "requested_at_utc": "2026-10-12T06:13:26.134Z",
+    "received_at_utc": "2026-10-12T06:13:27.735Z",
+    "raw_evidence": "data/model_and_entry_sources_20261012/raw_mac_handoff_docs.json",
+    "direct_mac_access": false,
+    "private_claude_content_reviewed": false
+  },
+  "funding_participation_refresh": {
+    "raw_primary_docs": "data/buyer_funding_20261012/raw_primary_docs.json",
+    "primary_docs_received_at_utc": "2026-10-12T06:58:13.584Z",
+    "raw_fee_eligibility_docs": "data/buyer_funding_20261012/raw_fee_eligibility_refresh.json",
+    "fee_docs_received_at_utc": "2026-10-12T07:06:34.412Z",
+    "new_read_only_rpc_responses": 40,
+    "second_hop_reads": 0,
+    "real_orders": 0,
+    "data_fees_paid": 0,
+    "funding_transfers_performed": 0
+  },
+  "quote_provenance_refresh": {
+    "primary_receipts": "data/quote_provenance_20261012/primary_source_receipts.json",
+    "primary_docs_received_at_utc": "2026-10-12T08:24:04.415Z",
+    "fee_eligibility_receipts": "data/quote_provenance_20261012/fee_eligibility_receipts.json",
+    "fee_docs_received_at_utc": "2026-10-12T08:37:25.326Z",
+    "raw_account_rpc_responses": 1,
+    "accounts_in_bundle": 6,
+    "raw_participation_rpc_responses": 8,
+    "same_original_buys_reaudited": 5,
+    "new_trade_outcomes": 0,
+    "orders_or_paid_services": 0
+  },
+  "social_and_paid_visibility_refresh": {
+    "primary_receipts": "data/social_evidence_20261012/primary_source_receipts.json",
+    "social_collection_first_received_at_utc": "2026-10-12T11:25:44.025793+00:00",
+    "paid_order_received_at_utc": "2026-10-12T11:25:46.130612+00:00",
+    "successful_social_responses": 0,
+    "orders_or_paid_services": 0
+  },
+  "complete_event_fee_refresh": {
+    "primary_receipts": "data/fee_event_reconciliation_20261012/primary_source_receipts.json",
+    "primary_docs_received_at_utc": "2026-10-12T12:37:23.014673+00:00",
+    "pinned_official_idl_sha256": "b7d8c57a4d9c4dd0109a9ab893052352333252d4eedced10ac091d4d66cab89b",
+    "same_retained_transactions_reaudited": 12,
+    "new_trade_outcomes": 0,
+    "orders_or_paid_services": 0
+  }
+}

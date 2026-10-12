@@ -1,0 +1,61 @@
+{
+  "received_at_utc": "2026-10-12T12:37:23.014673+00:00",
+  "sources": [
+    {
+      "url": "https://github.com/pump-fun/pump-public-docs/blob/main/idl/pump_amm.json",
+      "publisher": "pump-fun",
+      "status": "retrieved",
+      "relevant_fields": [
+        "quote_amount_in",
+        "lp_fee_basis_points",
+        "lp_fee",
+        "protocol_fee_basis_points",
+        "protocol_fee",
+        "quote_amount_in_with_lp_fee",
+        "user_quote_amount_in",
+        "coin_creator_fee_basis_points",
+        "coin_creator_fee",
+        "ix_name",
+        "buyback_fee_basis_points",
+        "buyback_fee",
+        "holder_rewards_bps",
+        "holder_rewards"
+      ]
+    },
+    {
+      "url": "https://github.com/pump-fun/pump-public-docs/blob/main/docs/PUMP_SWAP_README.md",
+      "publisher": "pump-fun",
+      "status": "retrieved",
+      "relevant_statement": "PumpSwap documents 20 bps LP and 5 bps protocol fees and separately identifies coin-creator fees."
+    },
+    {
+      "url": "https://github.com/pump-fun/pump-public-docs/blob/main/docs/PUMP_SWAP_CREATOR_FEE_README.md",
+      "publisher": "pump-fun",
+      "status": "retrieved",
+      "relevant_statement": "Canonical Pump pools can charge a coin-creator fee in addition to LP and protocol fees."
+    },
+    {
+      "url": "https://github.com/pump-fun/pump-public-docs/blob/main/docs/instructions/TRADE_V3.md",
+      "publisher": "pump-fun",
+      "status": "retrieved",
+      "relevant_statement": "The buyback portion is part of the protocol fee; routing can change without changing fee amounts."
+    },
+    {
+      "url": "https://pumpportal.fun/fees/",
+      "publisher": "PumpPortal",
+      "status": "retrieved",
+      "relevant_statement": "Local charges 0.5% and Lightning 1%, exclusive of Solana network and underlying venue fees."
+    }
+  ],
+  "pinned_idl": {
+    "local_path": "data/model_and_entry_sources_20261012/pump_amm_idl.json",
+    "original_received_at_utc": "2026-10-12T05:49:14.024403+00:00",
+    "sha256": "b7d8c57a4d9c4dd0109a9ab893052352333252d4eedced10ac091d4d66cab89b",
+    "program_address": "pAMMBay6oceH9fJKBRHGP5D4bD4sWpmSwMn52FMfXEA"
+  },
+  "limitations": [
+    "Fresh source retrieval confirms field names and fee categories; the retained hashed IDL supplies exact decoding bytes.",
+    "Current documentation does not backdate future fee schedules or prove a historical wallet's total USD cost.",
+    "This receipt is source metadata and selected factual notes, not a republication of full pages."
+  ]
+}

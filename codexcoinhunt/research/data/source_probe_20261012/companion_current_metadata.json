@@ -1,0 +1,155 @@
+{
+  "source": "https://zenodo.org/api/records/23017853",
+  "received_at": "2026-10-12T00:49:47.956609+00:00",
+  "payload": {
+    "created": "2026-09-28T14:11:35.160465+00:00",
+    "modified": "2026-09-29T00:33:26.736439+00:00",
+    "id": 23017853,
+    "conceptrecid": "20043301",
+    "doi": "10.5281/zenodo.23017853",
+    "conceptdoi": "10.5281/zenodo.20043301",
+    "doi_url": "https://doi.org/10.5281/zenodo.23017853",
+    "metadata": {
+      "title": "Hour-Aware Adaptive Risk Management for Autonomous Memecoin Trading: Companion Dataset + Manuscript Bundle",
+      "doi": "10.5281/zenodo.23017853",
+      "publication_date": "2026-09-28",
+      "description": "<p>Hour-Aware Adaptive Risk Management for Autonomous Memecoin Trading: Companion Dataset + Manuscript Bundle (v1.3)</p>\n<p>Kamat, Arati Uday. Independent Researcher. ORCID 0009-0000-4781-312X.</p>\n<p>Companion deposit for Kamat (2026), a 15-day paper-traded deployment of an autonomous memecoin trading system on Solana decentralised exchanges. The bundle contains the exact data underlying the paper's headline results (190 closed paper-trades and 4,874 post-rejection price samples), four supporting figures (SVG), and the v4 manuscript (Markdown source, HTML and PDF).</p>\n<p>v1.3 (2026-09-28) removes patent application numbers from the manuscript files and the documentation, replacing each with \"a pending U.S. provisional patent application\", and removes submission-status details from the documentation. Data files, figures and the reproduction script are byte-identical to v1.2. See CHANGELOG_v1.2_to_v1.3.md.</p>\n<p>v1.2 (2026-08-03) corrected the manuscript files that shipped in v1.1 (2026-07-27), which contained an intermediate v4 build rather than the final v4 build completed 2026-07-29. See CHANGELOG_v1.1_to_v1.2.md.</p>\n<p>Contents:<br>- data/trades.csv (190 rows, 7 columns): closed paper-trades over 29 March - 12 April 2026 UTC.<br>- data/rejection_outcomes.csv (4,874 rows): post-rejection follow-up price samples across six anonymised filter categories.<br>- data/scanner_2026-04-09.csv + scanner_2026-04-10.csv: two days of paired scanner observation logs.<br>- figures/: four SVG figures (architecture, PnL by hour, equity curve, filter effectiveness).<br>- manuscript/: v4 Markdown source, HTML rendering and PDF.<br>- audit.py: reproduction script that prints every headline number from the deposited CSVs.<br>- PROVENANCE.md: per-filter event and sample counts.<br>- README, LICENSE (CC-BY-4.0), checksums, changelogs.</p>\n<p>Change from v1.0: the exitReason column of trades.csv is removed in v1.1 (it embedded per-tier threshold values that are the subject of a pending U.S. provisional patent application); the seven remaining columns are cell-for-cell identical to v1.0. The three other data files are byte-identical to v1.0. All headline numbers in the manuscript reproduce from the v1.1 files by direct arithmetic; audit.py verifies this. The v1.0 record remains permanently archived under its own version DOI (10.5281/zenodo.20043302), as with any Zenodo version.</p>\n<p>DOIs: concept DOI 10.5281/zenodo.20043301 resolves to the latest published version; v1.0 version DOI 10.5281/zenodo.20043302 is the permanent identifier for the original 2026-05-05 unredacted deposit; v1.1 version DOI 10.5281/zenodo.21636182; v1.2 version DOI 10.5281/zenodo.21780072 (superseded by v1.3); the v1.3 version DOI is assigned by Zenodo on publication of this version.</p>\n<p>Companion preprints: SSRN 6564803, arXiv 2606.08232.</p>\n<p>Competing interests: the trading system is the subject of a pending U.S. provisional patent application (filed 2026-06-25, Micro Entity). Data and manuscript releases do not restrict re-use under the deposit's CC-BY-4.0 licence.</p>\n<p>Keywords: autonomous trading, memecoin, decentralised exchange, market microstructure, time-of-day effects, counterfactual evaluation, reject inference, fragility, Solana.</p>\n<p>JEL: G11, G12, G14, G17.</p>",
+      "access_right": "open",
+      "creators": [
+        {
+          "name": "Kamat, Arati Uday",
+          "affiliation": null,
+          "orcid": "0009-0000-4781-312X"
+        }
+      ],
+      "keywords": [
+        "algorithmic trading",
+        "memecoin",
+        "counterfactual evaluation",
+        "Solana",
+        "post-rejection sampling",
+        "decentralised exchange",
+        "market microstructure",
+        "time-of-day effects",
+        "reject inference",
+        "fragility"
+      ],
+      "related_identifiers": [
+        {
+          "identifier": "https://ssrn.com/abstract=6564803",
+          "relation": "isSupplementTo",
+          "resource_type": "publication-preprint",
+          "scheme": "url"
+        },
+        {
+          "identifier": "10.48550/arXiv.2606.08232",
+          "relation": "isSupplementTo",
+          "resource_type": "publication-preprint",
+          "scheme": "doi"
+        },
+        {
+          "identifier": "10.2139/ssrn.6564803",
+          "relation": "isSupplementTo",
+          "scheme": "doi"
+        },
+        {
+          "identifier": "10.5281/zenodo.19670718",
+          "relation": "isSupplementTo",
+          "scheme": "doi"
+        }
+      ],
+      "version": "v1.3",
+      "language": "eng",
+      "resource_type": {
+        "title": "Dataset",
+        "type": "dataset"
+      },
+      "alternate_identifiers": [
+        {
+          "identifier": "https://ssrn.com/abstract=6564803"
+        }
+      ],
+      "license": {
+        "id": "cc-by-4.0"
+      },
+      "relations": {
+        "version": [
+          {
+            "index": 3,
+            "is_last": true,
+            "parent": {
+              "pid_type": "recid",
+              "pid_value": "20043301"
+            }
+          }
+        ]
+      }
+    },
+    "title": "Hour-Aware Adaptive Risk Management for Autonomous Memecoin Trading: Companion Dataset + Manuscript Bundle",
+    "links": {
+      "self": "https://zenodo.org/api/records/23017853",
+      "self_html": "https://zenodo.org/records/23017853",
+      "preview_html": "https://zenodo.org/records/23017853?preview=1",
+      "doi": "https://doi.org/10.5281/zenodo.23017853",
+      "self_doi": "https://doi.org/10.5281/zenodo.23017853",
+      "self_doi_html": "https://zenodo.org/doi/10.5281/zenodo.23017853",
+      "reserve_doi": "https://zenodo.org/api/records/23017853/draft/pids/doi",
+      "parent": "https://zenodo.org/api/records/20043301",
+      "parent_html": "https://zenodo.org/records/20043301",
+      "parent_doi": "https://doi.org/10.5281/zenodo.20043301",
+      "parent_doi_html": "https://zenodo.org/doi/10.5281/zenodo.20043301",
+      "self_iiif_manifest": "https://zenodo.org/api/iiif/record:23017853/manifest",
+      "self_iiif_sequence": "https://zenodo.org/api/iiif/record:23017853/sequence/default",
+      "files": "https://zenodo.org/api/records/23017853/files",
+      "media_files": "https://zenodo.org/api/records/23017853/media-files",
+      "latest": "https://zenodo.org/api/records/23017853/versions/latest",
+      "latest_html": "https://zenodo.org/records/23017853/latest",
+      "versions": "https://zenodo.org/api/records/23017853/versions",
+      "draft": "https://zenodo.org/api/records/23017853/draft",
+      "access_links": "https://zenodo.org/api/records/23017853/access/links",
+      "access_grants": "https://zenodo.org/api/records/23017853/access/grants",
+      "access_users": "https://zenodo.org/api/records/23017853/access/users",
+      "access_request": "https://zenodo.org/api/records/23017853/access/request",
+      "access": "https://zenodo.org/api/records/23017853/access",
+      "communities": "https://zenodo.org/api/records/23017853/communities",
+      "communities-suggestions": "https://zenodo.org/api/records/23017853/communities-suggestions",
+      "request_deletion": "https://zenodo.org/api/records/23017853/request-deletion",
+      "file_modification": "https://zenodo.org/api/records/23017853/file-modification",
+      "quota_increase": "https://zenodo.org/api/records/23017853/quota-increase",
+      "requests": "https://zenodo.org/api/records/23017853/requests"
+    },
+    "updated": "2026-09-29T00:33:26.736439+00:00",
+    "recid": "23017853",
+    "revision": 6,
+    "files": [
+      {
+        "id": "b645bb53-39a8-46ff-b81f-b128c344d03a",
+        "key": "Kamat_HourAware_2026_ZenodoBundle_v1.3.zip",
+        "size": 598290,
+        "checksum": "md5:e9b04d1ac6aa7b0e0a636cf12a11c8a8",
+        "links": {
+          "self": "https://zenodo.org/api/records/23017853/files/Kamat_HourAware_2026_ZenodoBundle_v1.3.zip/content"
+        }
+      }
+    ],
+    "swh": {},
+    "owners": [
+      {
+        "id": "1618083"
+      }
+    ],
+    "status": "published",
+    "stats": {
+      "downloads": 647,
+      "unique_downloads": 601,
+      "views": 567,
+      "unique_views": 540,
+      "version_downloads": 30,
+      "version_unique_downloads": 29,
+      "version_unique_views": 49,
+      "version_views": 51
+    },
+    "state": "done",
+    "submitted": true
+  }
+}

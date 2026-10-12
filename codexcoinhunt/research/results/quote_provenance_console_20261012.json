@@ -1,0 +1,78 @@
+{
+  "id": "QUOTE-PROVENANCE-0.1",
+  "completed_at_utc": "2026-10-12T08:30:17.781330+00:00",
+  "same_five_buys_reaudited_not_new_market_observations": true,
+  "new_read_only_account_response_count": 1,
+  "current_accounts_decoded": 6,
+  "buy_transactions_audited": 5,
+  "mechanism_counts": {
+    "stablecoin_disposal_with_routed_wsol": 3,
+    "native_sol_quote_account_input": 1,
+    "other_mint_disposal_with_routed_wsol": 1
+  },
+  "event_quote_outflow_disagreements": 2,
+  "role_relations": [
+    {
+      "kind": "shared_or_distinct_quote_route_source",
+      "source_account": "2rDB8Srhx2DPCCAxgqkS13mu9FeamCuGWgua1KfwQLXX",
+      "source_token_owner": "3KFCgJ5R3zshW8hTDbzjSrrKSRYmKvsMfhc4Vo4iddxD",
+      "buyers": [
+        "6KBtrzj3Rxew41MD5ydL3AiB7WwTjLtFUKsSEf9yaJfD"
+      ],
+      "owner_current_program": "pAMMBay6oceH9fJKBRHGP5D4bD4sWpmSwMn52FMfXEA",
+      "current_program_owned_data_account": true,
+      "current_role_available_at_utc": "2026-10-12T08:23:45.524501+00:00",
+      "historical_service_role_verified": false,
+      "classify_as_same_person_or_initial_funder": false
+    },
+    {
+      "kind": "shared_or_distinct_quote_route_source",
+      "source_account": "5pVN5XZB8cYBjNLFrsBCPWkCQBan5K5Mq2dWGzwPgGJV",
+      "source_token_owner": "8ekCy2jHHUbW2yeNGFWYJT9Hm9FW7SvZcZK66dSZCDiF",
+      "buyers": [
+        "CSx2gDhH9nw6vqknJkrHVCaWWDDr6sLbRvtJkiUieRFZ",
+        "FXh9XcdM38anfSjMjqvPsj7zk2ttzJbwtDCzDhR6YHcn"
+      ],
+      "owner_current_program": "TessVdML9pBGgG9yGks7o4HewRaXVAMuoVj4x83GLQH",
+      "current_program_owned_data_account": true,
+      "current_role_available_at_utc": "2026-10-12T08:23:45.524501+00:00",
+      "historical_service_role_verified": false,
+      "classify_as_same_person_or_initial_funder": false
+    },
+    {
+      "kind": "shared_or_distinct_quote_route_source",
+      "source_account": "8ncU5YW1CQwvr4gs7buH57bW58e86TDau4STrCJBuz8z",
+      "source_token_owner": "GMCJvYGf5Ex2ARiMquaBDqU6iKM8uiEQkB8jCnoNfHpC",
+      "buyers": [
+        "8i8WsSj27j998Z7fqjw4JLeBBo7FkAPfqoNKEhYzXttG"
+      ],
+      "owner_current_program": "goonuddtQRrWqqn5nFyczVKaie28f3kDkHWkHtURSLE",
+      "current_program_owned_data_account": true,
+      "current_role_available_at_utc": "2026-10-12T08:23:45.524501+00:00",
+      "historical_service_role_verified": false,
+      "classify_as_same_person_or_initial_funder": false
+    },
+    {
+      "kind": "shared_fee_payer",
+      "fee_payer": "AgmLJBMDCqWynYnQiPCuj9ewsNNsBJXyzoUhD9LJzN51",
+      "buyers": [
+        "CSx2gDhH9nw6vqknJkrHVCaWWDDr6sLbRvtJkiUieRFZ",
+        "FXh9XcdM38anfSjMjqvPsj7zk2ttzJbwtDCzDhR6YHcn"
+      ],
+      "same_owner_or_shared_initial_funder_verified": false
+    }
+  ],
+  "strategy_closed_positions_added": 0,
+  "matched_net_account_comparisons_added": 0,
+  "recoverable_usd_profit_outcomes_added": 0,
+  "independent_clusters_verified": 0,
+  "initial_funding_roots_verified": 0,
+  "opportunity_frequency_or_calendar_timeout_estimate": null,
+  "limits": [
+    "Current state cannot be inserted into original historical eligibility.",
+    "Stablecoin disposal is not proven fresh fiat inflow; other-token disposal is not proven profitable rotation.",
+    "Shared fee payers or routing vaults do not certify a common owner.",
+    "Transfer totals are exact account movements, not independently reconciled USD fills or all execution costs.",
+    "Original sample, missing social/US/exit/funding/conversion proof and unmatched controls remain explicit."
+  ]
+}

@@ -1,0 +1,34 @@
+{
+  "requested_at_utc": "2026-10-12T11:25:40.234768+00:00",
+  "received_at_utc": "2026-10-12T11:25:46.130612+00:00",
+  "url": "https://api.dexscreener.com/orders/v1/solana/2j5SaS7xy776qCBpyPQbZjyQSAtKiFgrwjfErthnW2ZM",
+  "http_status": 200,
+  "response": {
+    "orders": [
+      {
+        "chainId": "solana",
+        "tokenAddress": "2j5SaS7xy776qCBpyPQbZjyQSAtKiFgrwjfErthnW2ZM",
+        "type": "communityTakeover",
+        "status": "approved",
+        "paymentTimestamp": 1791523933817
+      },
+      {
+        "chainId": "solana",
+        "tokenAddress": "2j5SaS7xy776qCBpyPQbZjyQSAtKiFgrwjfErthnW2ZM",
+        "type": "tokenProfile",
+        "status": "approved",
+        "paymentTimestamp": 1791341064958
+      }
+    ],
+    "boosts": [
+      {
+        "chainId": "solana",
+        "tokenAddress": "2j5SaS7xy776qCBpyPQbZjyQSAtKiFgrwjfErthnW2ZM",
+        "id": "N5VV0mkLfPn2fxFmUB9W",
+        "amount": 10,
+        "paymentTimestamp": 1791754541416
+      }
+    ]
+  },
+  "error": null
+}

@@ -1,0 +1,34 @@
+{
+  "controller_id": "SLR-CONTROLLER-0.1",
+  "frozen_at_utc": "2026-10-12T02:49:12.947202+00:00",
+  "strategy_id": "SLR-0.2",
+  "strategy_sha256": "9bcd83ce0ec71cdae8c410c202bd5a75b1496679e5ddb94ccc7d300e57c3663f",
+  "initial_implementation_sha256": "6580858332f224e853d0f8ac9b15e321f2a34d80c0a2ec4b9685de97b2b1fdfb",
+  "purpose": "Freeze accounting interpretations before adversarial engineering checks; not a new profitability hypothesis or out-of-sample market test",
+  "interpretations": {
+    "session_timezone": "America/Chicago",
+    "calendar_days": "Same local wall-clock time plus 30 calendar days; DST changes elapsed UTC hours",
+    "confirmation": "Two separately received evidence-complete records at least 60 seconds apart, within the existing 300-second discovery/feature budget; identity changes or rejection reset the first observation; dynamic features need later availability than the first observation, not repackaged old values",
+    "failed_exit_retries": "Initial attempt plus at most 2 retries, then unresolved; a retry still needs an external paper result",
+    "session_loss": "Net realized P&L, including cost accruals; gains can offset losses in the same local calendar day",
+    "entry_quota": "Successful paper entry only, never a quote rejection or failed entry",
+    "target": "Strictly more than 100 net recoverable USD; flat, all costs externally asserted verified, before calendar deadline; final permitted closed trade can qualify",
+    "recovery_quantity": "Smallest qualifying supplied exact-size quote; globally minimal token-lot proof remains an adapter dependency",
+    "90_minute_unknown": "Request a fresh valuation rather than inventing a conditional stop fill",
+    "runtime_gaps": "Request exits at next available receipt; record overdue inventory; never backdate fills",
+    "liquidity": "Explicit usable-liquidity basis at entry and same named metric/exact identity thereafter; no comparison of TVL with quote-size depth"
+  },
+  "engineering_fixtures_are_observations": false,
+  "real_orders": 0,
+  "implementation_verified_at_utc": "2026-10-12T03:04:16.040585+00:00",
+  "final_implementation_sha256": "2ff51f8619eb5524dbc70fedd7a1e80fcd4294a2f419f47ae1de52f9c9bd3b78",
+  "ledger_sha256": "f42f587100be1e1654bbeea60f0f0235ec2a6b52b991ece5782612a3777f7f60",
+  "engineering_tests_passed": 100,
+  "development_corrections": [
+    "Fix display of obsolete valuation request after a fresh exit quote",
+    "Correct 30th-trade fixture to respect same-mint first-check cooldown",
+    "Require new dynamic feature availability for confirmation",
+    "Match exact pool liquidity using a declared comparable metric",
+    "Preserve post-target standdown after a subsequently discovered cost"
+  ]
+}

@@ -1,0 +1,31 @@
+{
+  "id": "PROMOTION-HANDOFF-0.1",
+  "frozen_at_utc": "2026-10-12T11:24:42.503671Z",
+  "status": "not_promoted_future_untouched_cohort_only",
+  "development_token_excluded": "2j5SaS7xy776qCBpyPQbZjyQSAtKiFgrwjfErthnW2ZM",
+  "candidate_first_observed_after_utc": "2026-10-12T11:24:42.503671Z",
+  "mechanism": "paid visibility seeds awareness; exact-mint attention and qualified buying persist after conservative promotion end",
+  "promotion_end_gate": {
+    "minimum_hours_after_latest_exact_boost_payment": 25,
+    "no_newer_exact_paid_order": true,
+    "direct_snapshots": 2,
+    "minimum_seconds_between_snapshots": 600,
+    "positive_active_boost_field_allowed": false,
+    "target_in_top_or_latest_boost_list_allowed": false,
+    "bounded_list_absence_alone_is_sufficient": false,
+    "ambiguous_state": "reject"
+  },
+  "attention_and_buyer_gates": {
+    "exact_mint_author_copy_clusters_10m_min": 15,
+    "new_audience_fraction_min": 0.60,
+    "new_communities_min": 2,
+    "exact_mint_agreement_fraction_min": 0.80,
+    "qualified_new_to_mint_seasoned_independent_buyer_clusters_min": 8
+  },
+  "retained_requirements": "All SLR-0.2 US, asset, safety, seller, quote, capacity, cost, confirmation and campaign-controller gates and exits remain unchanged.",
+  "controls": ["SLR-0.2", "active_boost_attention", "plain_attention", "momentum", "matched_random"],
+  "matching": ["token age", "liquidity", "venue", "narrative", "market regime", "paid-visibility history"],
+  "account": {"starting_usd": 50, "target": "strictly_more_than_100_recoverable_usd_after_all_costs", "same_controller_and_exits_for_all_arms": true},
+  "promotion_requirements_unchanged": {"closed_positions": 150, "market_regimes": 3, "full_campaigns": 30},
+  "current_results": {"eligible_signals": 0, "closed_positions": 0, "matched_net_account_comparisons": 0, "completed_campaigns": 0}
+}

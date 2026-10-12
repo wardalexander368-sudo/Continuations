@@ -1,0 +1,159 @@
+{
+  "status": "retrospective chronological mark-path stress test; no executable fills",
+  "config_sha256": "b6708572299902ce63ff59c8bb5a09d74f42009a3e590f2204f724b553d7101c",
+  "source_quality": {
+    "raw_rows": 716762,
+    "source_events": 18237,
+    "source_mints": 4635,
+    "events_with_usable_initial_pool": 17694,
+    "excluded_samples": {
+      "missing_or_invalid_time_price_liquidity": 16721,
+      "unidentified_pool": 6329
+    },
+    "different_pool_samples_excluded": 3184,
+    "compact_file": "memecoin_research/data/red_reject_compact.csv.gz"
+  },
+  "source_reference": "https://zenodo.org/records/22967373",
+  "unmatched_revival_signals": 0,
+  "unmatched_momentum_signals": 1598,
+  "periods": {
+    "development": {
+      "revival": {
+        "signal_attempts": 0,
+        "unique_signal_events": 0,
+        "unique_signal_mints": 0,
+        "observed_mark_paths": 0,
+        "missing_entry_marks": 0,
+        "entry_capacity_gate_failures": 0,
+        "censored_exits": 0,
+        "observed_only_mean_net_mark_return": null,
+        "observed_only_median_net_mark_return": null,
+        "observed_only_positive_fraction": null,
+        "observed_only_net_mark_2x_fraction": null,
+        "mean_including_explicit_zero_recovery_stress": null,
+        "executable_trades": 0
+      },
+      "plain_momentum": {
+        "signal_attempts": 1464,
+        "unique_signal_events": 1464,
+        "unique_signal_mints": 955,
+        "observed_mark_paths": 1016,
+        "missing_entry_marks": 152,
+        "entry_capacity_gate_failures": 63,
+        "censored_exits": 233,
+        "observed_only_mean_net_mark_return": -0.1191284096828174,
+        "observed_only_median_net_mark_return": -0.20627007238019474,
+        "observed_only_positive_fraction": 0.2234251968503937,
+        "observed_only_net_mark_2x_fraction": 0.011811023622047244,
+        "mean_including_explicit_zero_recovery_stress": -0.24287580500236117,
+        "executable_trades": 0
+      },
+      "matched_random": {
+        "signal_attempts": 0,
+        "unique_signal_events": 0,
+        "unique_signal_mints": 0,
+        "observed_mark_paths": 0,
+        "missing_entry_marks": 0,
+        "entry_capacity_gate_failures": 0,
+        "censored_exits": 0,
+        "observed_only_mean_net_mark_return": null,
+        "observed_only_median_net_mark_return": null,
+        "observed_only_positive_fraction": null,
+        "observed_only_net_mark_2x_fraction": null,
+        "mean_including_explicit_zero_recovery_stress": null,
+        "executable_trades": 0
+      },
+      "momentum_matched_random": {
+        "signal_attempts": 440,
+        "unique_signal_events": 328,
+        "unique_signal_mints": 305,
+        "observed_mark_paths": 382,
+        "missing_entry_marks": 23,
+        "entry_capacity_gate_failures": 16,
+        "censored_exits": 19,
+        "observed_only_mean_net_mark_return": -0.09822621083074197,
+        "observed_only_median_net_mark_return": -0.15269884294138059,
+        "observed_only_positive_fraction": 0.24345549738219896,
+        "observed_only_net_mark_2x_fraction": 0.007853403141361256,
+        "mean_including_explicit_zero_recovery_stress": -0.12909314537707922,
+        "executable_trades": 0
+      },
+      "calendar_days": 53.0
+    },
+    "chronological_holdout": {
+      "revival": {
+        "signal_attempts": 0,
+        "unique_signal_events": 0,
+        "unique_signal_mints": 0,
+        "observed_mark_paths": 0,
+        "missing_entry_marks": 0,
+        "entry_capacity_gate_failures": 0,
+        "censored_exits": 0,
+        "observed_only_mean_net_mark_return": null,
+        "observed_only_median_net_mark_return": null,
+        "observed_only_positive_fraction": null,
+        "observed_only_net_mark_2x_fraction": null,
+        "mean_including_explicit_zero_recovery_stress": null,
+        "executable_trades": 0
+      },
+      "plain_momentum": {
+        "signal_attempts": 912,
+        "unique_signal_events": 912,
+        "unique_signal_mints": 571,
+        "observed_mark_paths": 588,
+        "missing_entry_marks": 144,
+        "entry_capacity_gate_failures": 53,
+        "censored_exits": 127,
+        "observed_only_mean_net_mark_return": -0.12999721480501814,
+        "observed_only_median_net_mark_return": -0.20782426585516023,
+        "observed_only_positive_fraction": 0.19047619047619047,
+        "observed_only_net_mark_2x_fraction": 0.011904761904761904,
+        "mean_including_explicit_zero_recovery_stress": -0.22461129952027797,
+        "executable_trades": 0
+      },
+      "matched_random": {
+        "signal_attempts": 0,
+        "unique_signal_events": 0,
+        "unique_signal_mints": 0,
+        "observed_mark_paths": 0,
+        "missing_entry_marks": 0,
+        "entry_capacity_gate_failures": 0,
+        "censored_exits": 0,
+        "observed_only_mean_net_mark_return": null,
+        "observed_only_median_net_mark_return": null,
+        "observed_only_positive_fraction": null,
+        "observed_only_net_mark_2x_fraction": null,
+        "mean_including_explicit_zero_recovery_stress": null,
+        "executable_trades": 0
+      },
+      "momentum_matched_random": {
+        "signal_attempts": 345,
+        "unique_signal_events": 240,
+        "unique_signal_mints": 216,
+        "observed_mark_paths": 299,
+        "missing_entry_marks": 15,
+        "entry_capacity_gate_failures": 12,
+        "censored_exits": 19,
+        "observed_only_mean_net_mark_return": -0.11855923707055778,
+        "observed_only_median_net_mark_return": -0.15063813865857523,
+        "observed_only_positive_fraction": 0.2140468227424749,
+        "observed_only_net_mark_2x_fraction": 0.0,
+        "mean_including_explicit_zero_recovery_stress": -0.15838280877377947,
+        "executable_trades": 0
+      },
+      "calendar_days": 23.0
+    }
+  },
+  "limitations": [
+    "No independent social-author or buyer-wallet information",
+    "No mint-control or liquidity-custody checks",
+    "Aggregator marks are not executable bids or swap simulations",
+    "Historical recorded sample times are not measured end-to-end decision receipt times",
+    "A selected follow-up-observability universe, not all launched or rejected tokens",
+    "Counterfactual mark replay cannot establish a captured account doubling or validate full SLR",
+    "Controls are matched by contemporaneous availability, venue, filter and liquidity bucket, not unobserved narrative or regime",
+    "Observed-only averages have survivorship/censoring bias; zero-recovery figures are explicitly hypothetical stress bounds",
+    "Signals from repeated events/mints are correlated and may compete for the same $50 position slot",
+    "No autonomous account-doubling result can be inferred from per-event mark returns"
+  ]
+}

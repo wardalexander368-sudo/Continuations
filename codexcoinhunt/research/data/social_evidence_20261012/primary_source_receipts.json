@@ -1,0 +1,36 @@
+{
+  "received_at_utc": "2026-10-12T11:26:00Z",
+  "sources": [
+    {
+      "id": "S45",
+      "publisher": "DEX Screener",
+      "urls": [
+        "https://docs.dexscreener.com/privacy/boosting-terms-and-conditions",
+        "https://docs.dexscreener.com/boosting",
+        "https://docs.dexscreener.com/api/reference"
+      ],
+      "verified_points": [
+        "Boosts apply to one token address on one chain and all pairs where it is base token.",
+        "Boosts enhance visibility and Trending Score for a limited 12 to 24 hours.",
+        "Boosting does not guarantee trending rank.",
+        "The API documents exact-token paid orders and top/latest boost lists."
+      ],
+      "web_refs": ["turn63search0", "turn63search1", "turn63search2"]
+    },
+    {
+      "id": "S46",
+      "publisher": "Bluesky / AT Protocol",
+      "urls": [
+        "https://docs.bsky.app/docs/api/app-bsky-feed-get-author-feed",
+        "https://github.com/bluesky-social/atproto/blob/main/lexicons/app/bsky/feed/searchPosts.json"
+      ],
+      "verified_points": [
+        "Most public app.bsky GET requests may be sent to public.api.bsky.app without authentication.",
+        "searchPosts accepts q, sort, since, until, limit and cursor.",
+        "A cursor may not allow traversal of all results and hitsTotal can be rounded or truncated.",
+        "Implementations may require authentication."
+      ],
+      "web_refs": ["turn63search3", "turn63search4"]
+    }
+  ]
+}

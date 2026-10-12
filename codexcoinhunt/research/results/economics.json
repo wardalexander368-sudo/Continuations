@@ -1,0 +1,399 @@
+{
+  "status": "hypothetical arithmetic, no observed trading probabilities",
+  "fee_model": "percentage costs approximated as deductions; obtain actual account deltas/size-specific quotes for fills; pool rates can change between entry and exit",
+  "fixed_costs_slippage_and_data_costs_are_assumptions": true,
+  "rent_note": "refundable rent not charged as an expense here; must be funded separately and excluded from withdrawable target until reclaimed",
+  "campaign_model_limits": "IID full-position terminal outcomes; no elapsed time, daily standdowns, or full runner exit logic; cannot certify strategy performance",
+  "fees": [
+    {
+      "name": "PumpPortal Local + conservative 1.25% pool",
+      "buy_rate": 0.0175,
+      "sell_rate": 0.0175,
+      "buy_slippage": 0.005,
+      "sell_slippage": 0.005,
+      "buy_fixed_usd": 0.02,
+      "sell_fixed_usd": 0.02,
+      "allocated_data_usd": 0.05,
+      "budget_usd": 7,
+      "gross_break_even": 1.059967618381268,
+      "gross_for_net_position_2x": 2.116915385997917,
+      "net_proceeds_if_gross_price_2x_usd": 13.225687657365626,
+      "net_proceeds_if_gross_price_3x_usd": 19.84853148604844
+    },
+    {
+      "name": "PumpPortal Lightning + conservative 1.25% pool",
+      "buy_rate": 0.0225,
+      "sell_rate": 0.0225,
+      "buy_slippage": 0.005,
+      "sell_slippage": 0.005,
+      "buy_fixed_usd": 0.02,
+      "sell_fixed_usd": 0.02,
+      "allocated_data_usd": 0.05,
+      "budget_usd": 7,
+      "gross_break_even": 1.070839010023276,
+      "gross_for_net_position_2x": 2.138627196656172,
+      "net_proceeds_if_gross_price_2x_usd": 13.091214541665627,
+      "net_proceeds_if_gross_price_3x_usd": 19.646821812498445
+    },
+    {
+      "name": "PumpPortal Local + verified 0.30% pool",
+      "buy_rate": 0.008,
+      "sell_rate": 0.008,
+      "buy_slippage": 0.005,
+      "sell_slippage": 0.005,
+      "buy_fixed_usd": 0.02,
+      "sell_fixed_usd": 0.02,
+      "allocated_data_usd": 0.05,
+      "budget_usd": 7,
+      "gross_break_even": 1.0397630304746979,
+      "gross_for_net_position_2x": 2.0765637731132855,
+      "net_proceeds_if_gross_price_2x_usd": 13.483076747775998,
+      "net_proceeds_if_gross_price_3x_usd": 20.234615121664
+    },
+    {
+      "name": "Alpaca taker; listed assets only",
+      "buy_rate": 0.0025,
+      "sell_rate": 0.0025,
+      "buy_slippage": 0.0025,
+      "sell_slippage": 0.0025,
+      "buy_fixed_usd": 0,
+      "sell_fixed_usd": 0,
+      "allocated_data_usd": 0,
+      "budget_usd": 7,
+      "gross_break_even": 1.0100628138726766,
+      "gross_for_net_position_2x": 2.020125627745353,
+      "net_proceeds_if_gross_price_2x_usd": 13.860524125546878,
+      "net_proceeds_if_gross_price_3x_usd": 20.790786188320315
+    }
+  ],
+  "sensitivity": [
+    {
+      "assumed_p_win": 0.2,
+      "assumed_p_total_loss": 0.0,
+      "assumed_winner_net_multiple": 1.5,
+      "assumed_normal_loser_net_multiple": 0.8,
+      "target_hit_fraction": 4.798132904766848e-05,
+      "stop_hit_fraction": 0.7288195239846427,
+      "30_trade_timeout_fraction": 0.2711324946863112
+    },
+    {
+      "assumed_p_win": 0.3,
+      "assumed_p_total_loss": 0.0,
+      "assumed_winner_net_multiple": 1.5,
+      "assumed_normal_loser_net_multiple": 0.8,
+      "target_hit_fraction": 0.0051644192521542245,
+      "stop_hit_fraction": 0.2938106905016246,
+      "30_trade_timeout_fraction": 0.70102489024622
+    },
+    {
+      "assumed_p_win": 0.4,
+      "assumed_p_total_loss": 0.0,
+      "assumed_winner_net_multiple": 1.5,
+      "assumed_normal_loser_net_multiple": 0.8,
+      "target_hit_fraction": 0.0795451181486671,
+      "stop_hit_fraction": 0.06694842857596432,
+      "30_trade_timeout_fraction": 0.8535064532753686
+    },
+    {
+      "assumed_p_win": 0.5,
+      "assumed_p_total_loss": 0.0,
+      "assumed_winner_net_multiple": 1.5,
+      "assumed_normal_loser_net_multiple": 0.8,
+      "target_hit_fraction": 0.37386928498744965,
+      "stop_hit_fraction": 0.009948860853910446,
+      "30_trade_timeout_fraction": 0.6161818541586399
+    },
+    {
+      "assumed_p_win": 0.2,
+      "assumed_p_total_loss": 0.05,
+      "assumed_winner_net_multiple": 1.5,
+      "assumed_normal_loser_net_multiple": 0.8,
+      "target_hit_fraction": 2.727659232603105e-05,
+      "stop_hit_fraction": 0.8811919522667538,
+      "30_trade_timeout_fraction": 0.11878077114092016
+    },
+    {
+      "assumed_p_win": 0.3,
+      "assumed_p_total_loss": 0.05,
+      "assumed_winner_net_multiple": 1.5,
+      "assumed_normal_loser_net_multiple": 0.8,
+      "target_hit_fraction": 0.0028303203219344607,
+      "stop_hit_fraction": 0.5951630957221903,
+      "30_trade_timeout_fraction": 0.4020065839558727
+    },
+    {
+      "assumed_p_win": 0.4,
+      "assumed_p_total_loss": 0.05,
+      "assumed_winner_net_multiple": 1.5,
+      "assumed_normal_loser_net_multiple": 0.8,
+      "target_hit_fraction": 0.0446569986111867,
+      "stop_hit_fraction": 0.3123858129845517,
+      "30_trade_timeout_fraction": 0.6429571884042605
+    },
+    {
+      "assumed_p_win": 0.5,
+      "assumed_p_total_loss": 0.05,
+      "assumed_winner_net_multiple": 1.5,
+      "assumed_normal_loser_net_multiple": 0.8,
+      "target_hit_fraction": 0.23086470875302348,
+      "stop_hit_fraction": 0.14071290919304288,
+      "30_trade_timeout_fraction": 0.6284223820539342
+    },
+    {
+      "assumed_p_win": 0.2,
+      "assumed_p_total_loss": 0.1,
+      "assumed_winner_net_multiple": 1.5,
+      "assumed_normal_loser_net_multiple": 0.8,
+      "target_hit_fraction": 1.5591402489772004e-05,
+      "stop_hit_fraction": 0.9508206703103954,
+      "30_trade_timeout_fraction": 0.04916373828711564
+    },
+    {
+      "assumed_p_win": 0.3,
+      "assumed_p_total_loss": 0.1,
+      "assumed_winner_net_multiple": 1.5,
+      "assumed_normal_loser_net_multiple": 0.8,
+      "target_hit_fraction": 0.0015639572913076435,
+      "stop_hit_fraction": 0.7828096227685927,
+      "30_trade_timeout_fraction": 0.21562641994009904
+    },
+    {
+      "assumed_p_win": 0.4,
+      "assumed_p_total_loss": 0.1,
+      "assumed_winner_net_multiple": 1.5,
+      "assumed_normal_loser_net_multiple": 0.8,
+      "target_hit_fraction": 0.025427225724484654,
+      "stop_hit_fraction": 0.5360212719909933,
+      "30_trade_timeout_fraction": 0.4385515022845228
+    },
+    {
+      "assumed_p_win": 0.5,
+      "assumed_p_total_loss": 0.1,
+      "assumed_winner_net_multiple": 1.5,
+      "assumed_normal_loser_net_multiple": 0.8,
+      "target_hit_fraction": 0.14333096971822754,
+      "stop_hit_fraction": 0.31713403477205393,
+      "30_trade_timeout_fraction": 0.539534995509719
+    },
+    {
+      "assumed_p_win": 0.2,
+      "assumed_p_total_loss": 0.0,
+      "assumed_winner_net_multiple": 2.0,
+      "assumed_normal_loser_net_multiple": 0.8,
+      "target_hit_fraction": 0.08096854745185228,
+      "stop_hit_fraction": 0.3577205265196021,
+      "30_trade_timeout_fraction": 0.5613109260285472
+    },
+    {
+      "assumed_p_win": 0.3,
+      "assumed_p_total_loss": 0.0,
+      "assumed_winner_net_multiple": 2.0,
+      "assumed_normal_loser_net_multiple": 0.8,
+      "target_hit_fraction": 0.45060036597508707,
+      "stop_hit_fraction": 0.10048493497232666,
+      "30_trade_timeout_fraction": 0.44891469905258496
+    },
+    {
+      "assumed_p_win": 0.4,
+      "assumed_p_total_loss": 0.0,
+      "assumed_winner_net_multiple": 2.0,
+      "assumed_normal_loser_net_multiple": 0.8,
+      "target_hit_fraction": 0.8395915505020874,
+      "stop_hit_fraction": 0.022884454281880337,
+      "30_trade_timeout_fraction": 0.13752399521603204
+    },
+    {
+      "assumed_p_win": 0.5,
+      "assumed_p_total_loss": 0.0,
+      "assumed_winner_net_multiple": 2.0,
+      "assumed_normal_loser_net_multiple": 0.8,
+      "target_hit_fraction": 0.9791367948055267,
+      "stop_hit_fraction": 0.004490852355957031,
+      "30_trade_timeout_fraction": 0.016372352838516235
+    },
+    {
+      "assumed_p_win": 0.2,
+      "assumed_p_total_loss": 0.05,
+      "assumed_winner_net_multiple": 2.0,
+      "assumed_normal_loser_net_multiple": 0.8,
+      "target_hit_fraction": 0.04909816098384552,
+      "stop_hit_fraction": 0.5838428454792532,
+      "30_trade_timeout_fraction": 0.3670589935369019
+    },
+    {
+      "assumed_p_win": 0.3,
+      "assumed_p_total_loss": 0.05,
+      "assumed_winner_net_multiple": 2.0,
+      "assumed_normal_loser_net_multiple": 0.8,
+      "target_hit_fraction": 0.3142380478563972,
+      "stop_hit_fraction": 0.2723130143638937,
+      "30_trade_timeout_fraction": 0.41344893777970676
+    },
+    {
+      "assumed_p_win": 0.4,
+      "assumed_p_total_loss": 0.05,
+      "assumed_winner_net_multiple": 2.0,
+      "assumed_normal_loser_net_multiple": 0.8,
+      "target_hit_fraction": 0.688919102814105,
+      "stop_hit_fraction": 0.11476974757655513,
+      "30_trade_timeout_fraction": 0.19631114960933896
+    },
+    {
+      "assumed_p_win": 0.5,
+      "assumed_p_total_loss": 0.05,
+      "assumed_winner_net_multiple": 2.0,
+      "assumed_normal_loser_net_multiple": 0.8,
+      "target_hit_fraction": 0.9049877673419562,
+      "stop_hit_fraction": 0.05065360364533829,
+      "30_trade_timeout_fraction": 0.04435862901270539
+    },
+    {
+      "assumed_p_win": 0.2,
+      "assumed_p_total_loss": 0.1,
+      "assumed_winner_net_multiple": 2.0,
+      "assumed_normal_loser_net_multiple": 0.8,
+      "target_hit_fraction": 0.030642696658573842,
+      "stop_hit_fraction": 0.7434060420453004,
+      "30_trade_timeout_fraction": 0.22595126129612667
+    },
+    {
+      "assumed_p_win": 0.3,
+      "assumed_p_total_loss": 0.1,
+      "assumed_winner_net_multiple": 2.0,
+      "assumed_normal_loser_net_multiple": 0.8,
+      "target_hit_fraction": 0.22215606730777668,
+      "stop_hit_fraction": 0.4398874421219191,
+      "30_trade_timeout_fraction": 0.3379564905703039
+    },
+    {
+      "assumed_p_win": 0.4,
+      "assumed_p_total_loss": 0.1,
+      "assumed_winner_net_multiple": 2.0,
+      "assumed_normal_loser_net_multiple": 0.8,
+      "target_hit_fraction": 0.5565640536979496,
+      "stop_hit_fraction": 0.2277861049724213,
+      "30_trade_timeout_fraction": 0.21564984132962953
+    },
+    {
+      "assumed_p_win": 0.5,
+      "assumed_p_total_loss": 0.1,
+      "assumed_winner_net_multiple": 2.0,
+      "assumed_normal_loser_net_multiple": 0.8,
+      "target_hit_fraction": 0.8113241705856077,
+      "stop_hit_fraction": 0.11658430829495825,
+      "30_trade_timeout_fraction": 0.07209152111943457
+    },
+    {
+      "assumed_p_win": 0.2,
+      "assumed_p_total_loss": 0.0,
+      "assumed_winner_net_multiple": 3.0,
+      "assumed_normal_loser_net_multiple": 0.8,
+      "target_hit_fraction": 0.5836457053763926,
+      "stop_hit_fraction": 0.21685735587080213,
+      "30_trade_timeout_fraction": 0.19949693875280652
+    },
+    {
+      "assumed_p_win": 0.3,
+      "assumed_p_total_loss": 0.0,
+      "assumed_winner_net_multiple": 3.0,
+      "assumed_normal_loser_net_multiple": 0.8,
+      "target_hit_fraction": 0.8975018052317254,
+      "stop_hit_fraction": 0.06414360542451229,
+      "30_trade_timeout_fraction": 0.038354589343761736
+    },
+    {
+      "assumed_p_win": 0.4,
+      "assumed_p_total_loss": 0.0,
+      "assumed_winner_net_multiple": 3.0,
+      "assumed_normal_loser_net_multiple": 0.8,
+      "target_hit_fraction": 0.9797876800798688,
+      "stop_hit_fraction": 0.01736728962486098,
+      "30_trade_timeout_fraction": 0.002845030295270275
+    },
+    {
+      "assumed_p_win": 0.5,
+      "assumed_p_total_loss": 0.0,
+      "assumed_winner_net_multiple": 3.0,
+      "assumed_normal_loser_net_multiple": 0.8,
+      "target_hit_fraction": 0.9959818758070469,
+      "stop_hit_fraction": 0.003937169909477234,
+      "30_trade_timeout_fraction": 8.095428347587585e-05
+    },
+    {
+      "assumed_p_win": 0.2,
+      "assumed_p_total_loss": 0.05,
+      "assumed_winner_net_multiple": 3.0,
+      "assumed_normal_loser_net_multiple": 0.8,
+      "target_hit_fraction": 0.47120692293051913,
+      "stop_hit_fraction": 0.35162771947260824,
+      "30_trade_timeout_fraction": 0.177165357596873
+    },
+    {
+      "assumed_p_win": 0.3,
+      "assumed_p_total_loss": 0.05,
+      "assumed_winner_net_multiple": 3.0,
+      "assumed_normal_loser_net_multiple": 0.8,
+      "target_hit_fraction": 0.8031200632129359,
+      "stop_hit_fraction": 0.14993012332159242,
+      "30_trade_timeout_fraction": 0.04694981346546946
+    },
+    {
+      "assumed_p_win": 0.4,
+      "assumed_p_total_loss": 0.05,
+      "assumed_winner_net_multiple": 3.0,
+      "assumed_normal_loser_net_multiple": 0.8,
+      "target_hit_fraction": 0.9266545862797518,
+      "stop_hit_fraction": 0.06806167973465718,
+      "30_trade_timeout_fraction": 0.005283733985590469
+    },
+    {
+      "assumed_p_win": 0.5,
+      "assumed_p_total_loss": 0.05,
+      "assumed_winner_net_multiple": 3.0,
+      "assumed_normal_loser_net_multiple": 0.8,
+      "target_hit_fraction": 0.9668298262315531,
+      "stop_hit_fraction": 0.032896809443527714,
+      "30_trade_timeout_fraction": 0.0002733643249194777
+    },
+    {
+      "assumed_p_win": 0.2,
+      "assumed_p_total_loss": 0.1,
+      "assumed_winner_net_multiple": 3.0,
+      "assumed_normal_loser_net_multiple": 0.8,
+      "target_hit_fraction": 0.3775539788340051,
+      "stop_hit_fraction": 0.4737193597700203,
+      "30_trade_timeout_fraction": 0.14872666139597598
+    },
+    {
+      "assumed_p_win": 0.3,
+      "assumed_p_total_loss": 0.1,
+      "assumed_winner_net_multiple": 3.0,
+      "assumed_normal_loser_net_multiple": 0.8,
+      "target_hit_fraction": 0.7119654187182948,
+      "stop_hit_fraction": 0.2358687552305384,
+      "30_trade_timeout_fraction": 0.05216582605116714
+    },
+    {
+      "assumed_p_win": 0.4,
+      "assumed_p_total_loss": 0.1,
+      "assumed_winner_net_multiple": 3.0,
+      "assumed_normal_loser_net_multiple": 0.8,
+      "target_hit_fraction": 0.8710711018163972,
+      "stop_hit_fraction": 0.12075790226248624,
+      "30_trade_timeout_fraction": 0.008170995921116224
+    },
+    {
+      "assumed_p_win": 0.5,
+      "assumed_p_total_loss": 0.1,
+      "assumed_winner_net_multiple": 3.0,
+      "assumed_normal_loser_net_multiple": 0.8,
+      "target_hit_fraction": 0.9345911918459578,
+      "stop_hit_fraction": 0.06475663099494293,
+      "30_trade_timeout_fraction": 0.0006521771590998032
+    }
+  ],
+  "campaign_confirmation": {
+    "27_of_30_wilson_lower": 0.7437891742081592,
+    "26_of_30_wilson_lower": 0.703186733179637
+  }
+}

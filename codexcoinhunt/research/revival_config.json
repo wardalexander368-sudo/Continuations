@@ -1,0 +1,51 @@
+{
+  "challenger_id": "REV-0.1",
+  "name": "Capacity-Adjusted Revival",
+  "mode": "retrospective_price_path_stress_test",
+  "not_a_trade_eligibility_certification": true,
+  "hypothesis": "A previously rejected token that replenishes liquidity while short-term buying returns may outperform indiscriminate momentum; a size-specific cost gate can replace an arbitrary large liquidity floor for a $7 allocation.",
+  "source": "RED-REJECT-2026-v2 v2.3, Zenodo record 22967373",
+  "source_expected_md5": "66b83aab945cc6566ba85ba4434d0cbd",
+  "development_start": "2026-04-11T00:00:00Z",
+  "development_end": "2026-06-03T00:00:00Z",
+  "chronological_holdout_start": "2026-06-24T00:00:00Z",
+  "chronological_holdout_end": "2026-07-17T00:00:00Z",
+  "selection": {
+    "reject_reasons": ["downtrend_24h", "multi_tf_fade", "h6_sellers_dominating"],
+    "dexes": ["pumpswap", "raydium"],
+    "minimum_minutes_after_rejection": 10,
+    "maximum_minutes_after_rejection": 360,
+    "maximum_gap_from_previous_sample_minutes": 30,
+    "minimum_current_liquidity_usd": 2000,
+    "minimum_liquidity_multiple_vs_previous": 1.2,
+    "maximum_hour_price_change_percent": -10,
+    "minimum_previous_5m_price_change_percent": -1,
+    "maximum_previous_5m_price_change_percent": 0,
+    "minimum_current_5m_price_change_percent": 2,
+    "maximum_current_5m_price_change_percent": 15,
+    "minimum_current_price_multiple_vs_previous": 1,
+    "maximum_current_price_multiple_vs_previous": 1.15,
+    "position_budget_usd": 7,
+    "maximum_modeled_roundtrip_loss_fraction": 0.06
+  },
+  "replay": {
+    "entry_latency_seconds": 5,
+    "maximum_next_entry_sample_wait_minutes": 30,
+    "hold_minutes": 60,
+    "maximum_exit_sample_delay_minutes": 30,
+    "ordinary_position_stop_net_multiple": 0.8,
+    "fees_case": "PumpPortal Local + conservative ordinary-pool fee, assumed slippage/fixed/data costs",
+    "unobserved_exit": "Report as censored; additionally report an explicit zero-recovery stress case",
+    "matched_control_seed": 20261012,
+    "matched_control_max_quote_age_minutes": 5,
+    "same_mint_reentry_cooldown_hours": 24
+  },
+  "limitations": [
+    "No independent social-author or buyer-wallet information",
+    "No mint-control or liquidity-custody checks",
+    "Aggregator marks are not executable bids or swap simulations",
+    "Historical recorded sample times are not measured end-to-end decision receipt times",
+    "A selected follow-up-observability universe, not all launched or rejected tokens",
+    "Counterfactual mark replay cannot establish a captured account doubling or validate full SLR"
+  ]
+}

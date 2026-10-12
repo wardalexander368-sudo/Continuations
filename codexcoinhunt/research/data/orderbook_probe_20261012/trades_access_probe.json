@@ -1,0 +1,20 @@
+{
+  "requested_at_utc": "2026-10-12T01:39:11.537435+00:00",
+  "received_at_utc": "2026-10-12T01:39:15.283546+00:00",
+  "url": "https://data.alpaca.markets/v1beta3/crypto/us/trades?symbols=DOGE%2FUSD%2CBONK%2FUSD%2CWIF%2FUSD%2CPEPE%2FUSD&start=2026-10-12T01%3A20%3A00Z&end=2026-10-12T01%3A35%3A00Z&limit=10000",
+  "http_status": 200,
+  "body": {
+    "next_page_token": null,
+    "trades": {
+      "PEPE/USD": [
+        {
+          "i": 453791496399373803,
+          "p": 4.17e-06,
+          "s": 464550.666978703,
+          "t": "2026-10-12T01:30:03.231109315Z",
+          "tks": "S"
+        }
+      ]
+    }
+  }
+}

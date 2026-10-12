@@ -1,0 +1,142 @@
+{
+  "id": "SOCIAL-COVERAGE-0.1-AUDIT",
+  "completed_at_utc": "2026-10-12T11:27:55.243974+00:00",
+  "exact_identity": {
+    "chain": "solana",
+    "mint": "2j5SaS7xy776qCBpyPQbZjyQSAtKiFgrwjfErthnW2ZM",
+    "pool": "Fe7bpDYCs74GqiCUF14HwgUMToPKV1d9mDYVX5BTohFr",
+    "name": "Claudia",
+    "symbol": "CLAUDIA"
+  },
+  "social_search": {
+    "planned_queries": 3,
+    "completed_responses": 2,
+    "successful_responses": 0,
+    "source_status": "unavailable",
+    "unique_posts": 0,
+    "unique_author_dids": 0,
+    "descriptive_author_copy_clusters": 0,
+    "descriptive_meme_family_clusters": 0,
+    "descriptive_exact_mint_clusters": 0,
+    "descriptive_mint_agreement_fraction": null,
+    "history_complete": false,
+    "decision_time_available": false,
+    "zero_results_proves_quiet": false,
+    "community_clusters_verified": 0,
+    "issues": [
+      {
+        "query_id": "exact_mint",
+        "reason": "source_response_unavailable",
+        "http_status": 403,
+        "received_at_utc": "2026-10-12T11:25:44.025793+00:00"
+      },
+      {
+        "query_id": "name_chain",
+        "reason": "source_response_unavailable",
+        "http_status": 403,
+        "received_at_utc": "2026-10-12T11:25:47.290520+00:00"
+      }
+    ]
+  },
+  "paid_visibility": {
+    "exact_paid_endpoint": {
+      "available": true,
+      "received_at_utc": "2026-10-12T11:25:46.130612+00:00",
+      "orders": [
+        {
+          "chainId": "solana",
+          "tokenAddress": "2j5SaS7xy776qCBpyPQbZjyQSAtKiFgrwjfErthnW2ZM",
+          "type": "communityTakeover",
+          "status": "approved",
+          "paymentTimestamp": 1791523933817,
+          "payment_at_utc": "2026-10-09T05:32:13.817000+00:00"
+        },
+        {
+          "chainId": "solana",
+          "tokenAddress": "2j5SaS7xy776qCBpyPQbZjyQSAtKiFgrwjfErthnW2ZM",
+          "type": "tokenProfile",
+          "status": "approved",
+          "paymentTimestamp": 1791341064958,
+          "payment_at_utc": "2026-10-07T02:44:24.958000+00:00"
+        }
+      ],
+      "boosts": [
+        {
+          "chainId": "solana",
+          "tokenAddress": "2j5SaS7xy776qCBpyPQbZjyQSAtKiFgrwjfErthnW2ZM",
+          "id": "N5VV0mkLfPn2fxFmUB9W",
+          "amount": 10,
+          "paymentTimestamp": 1791754541416,
+          "payment_at_utc": "2026-10-11T21:35:41.416000+00:00"
+        }
+      ]
+    },
+    "direct_current_context": {
+      "exact_pair_response_at_utc": "2026-10-12T11:25:46.111875+00:00",
+      "exact_mint_pair_rows": 10,
+      "canonical_pair_rows": 1,
+      "top_list_target_rows": 0,
+      "latest_list_target_rows": 0,
+      "bounded_list_absence_proves_no_boost": false,
+      "positive_active_boost_pair_rows": 0,
+      "deduplicated_profile_urls": [
+        "https://claudia.gallery/",
+        "https://useclaudia.xyz/",
+        "https://x.com/claudia_onchain"
+      ],
+      "top_list_target_received_at_utc": "2026-10-12T11:25:50.614294+00:00",
+      "latest_list_target_received_at_utc": "2026-10-12T11:25:54.295894+00:00"
+    },
+    "pre_buy_active_snapshots": [
+      {
+        "evidence": "results/quote_probe_20261012_pass1/dex_evidence.json",
+        "received_at_utc": "2026-10-12T01:27:52.819Z",
+        "active_boosts": 10
+      },
+      {
+        "evidence": "results/quote_probe_20261012_pass2/dex_evidence.json",
+        "received_at_utc": "2026-10-12T01:28:19.951Z",
+        "active_boosts": 10
+      },
+      {
+        "evidence": "results/quote_probe_20261012_pass3/dex_evidence.json",
+        "received_at_utc": "2026-10-12T01:28:59.332Z",
+        "active_boosts": 10
+      },
+      {
+        "evidence": "results/quote_probe_20261012_pass4/dex_evidence.json",
+        "received_at_utc": "2026-10-12T01:29:36.246Z",
+        "active_boosts": 10
+      },
+      {
+        "evidence": "results/quote_probe_20261012_pass5/dex_evidence.json",
+        "received_at_utc": "2026-10-12T01:30:33.787Z",
+        "active_boosts": 10
+      },
+      {
+        "evidence": "results/quote_probe_20261012_pass6/dex_evidence.json",
+        "received_at_utc": "2026-10-12T01:31:44.115Z",
+        "active_boosts": 10
+      }
+    ],
+    "first_sample_buy_at_utc": "2026-10-12T01:42:16+00:00",
+    "last_active_snapshot_to_first_buy_seconds": 631.885,
+    "latest_boost_payment_to_first_buy_seconds": 14794.584,
+    "paid_visibility_confounder_verified": true,
+    "paid_only_push_verified": false,
+    "boost_caused_buys_verified": false,
+    "bounded_list_absence_proves_no_boost": false
+  },
+  "interpretation": {
+    "organic_attention_verified": false,
+    "historical_slr_eligibility_promoted": false,
+    "attention_control_available": false,
+    "same_five_development_buys_not_new_opportunities": 5,
+    "opportunity_frequency_estimate": null,
+    "closed_strategy_positions_added": 0,
+    "matched_net_account_comparisons_added": 0,
+    "recoverable_usd_profit_outcomes_added": 0,
+    "doubling_campaigns_added": 0,
+    "note": "Paid-visibility chronology disqualifies this sample as evidence of independently verified organic attention. It does not establish causation or profitability."
+  }
+}
