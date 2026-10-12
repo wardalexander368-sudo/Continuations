@@ -1,6 +1,34 @@
-# TARTAR
+# TarTrade (TARTAR)
 
 [Resolant connected-project map](CONNECTED_PROJECTS.md) · [CoinHunt Mac continuation](codexcoinhunt/MAC_CONTINUATION.md) · [Northstar handoff](handoff/northstar.md)
+
+A fully automated, paper-only trading agent that tests strategies against every real cost and keeps only
+what makes money on venues a US person can use. **Start with the board, [`handoff/STATUS.md`](handoff/STATUS.md)**,
+and the plan, [`handoff/plan-2026-10-12.md`](handoff/plan-2026-10-12.md). Rules for ChatGPT/Codex are in
+[`AGENTS.md`](AGENTS.md). This repository is public: never commit keys.
+
+## Where things live
+
+| Path | What it is | Who changes it |
+|---|---|---|
+| `tartar/autotrade/` | The trading agent: strategies, risk books, paper ledger, Alpaca paper mirror | "Continue TARTAR handoff session" lane |
+| `tartar/` (rest) | The candle predictor, chain feeds, `tartar profit` / `watch` / `train` CLI | Claude lanes |
+| `autotrade/` | The live paper book: `state.json`, `journal.jsonl`, `trades.jsonl`, `equity.jsonl`, `REPORT.md`, `health.json`, `changes.jsonl`, `alpaca_fills.jsonl`, `HALT` (kill switch). `config.json` sets strategies; `search/` holds the weekly search | **The hourly bot only** (config by the agent lane) |
+| `handoff/STATUS.md` | The board: where we stand, active lanes, log | Every lane, small edits |
+| `handoff/README.md` | Index of every topic document, review and archive | |
+| `handoff/preregistration/` | Frozen test protocols, one folder per test (dated addenda only) | Nobody edits; `tests/test_prereg_frozen.py` checks |
+| `handoff/experiments/` | Research and scoring scripts (also run by the Actions) | Research lanes |
+| `handoff/data/` | Recorded research data and collector output | Collectors and research lanes |
+| `handoff/reviews/` | Dated reviews and audits | |
+| `handoff/archive/` | Retired documents, old board history, the 10-09 predictor snapshot | Nobody |
+| `codexcoinhunt/` | AJ's CodexCoinHunt memecoin research (imported by Codex; separate, not wired into the agent) | ChatGPT lane |
+| `tests/` | `pytest` suite for `tartar/` and the agent | Everyone |
+| `.github/workflows/` | `autotrade` (hourly), `health`, `paper-tests`, `perps-ctx`, `hl-book`, `hl-testnet`, `pumpflow-paper`, weekly `autotrade-search` and `final-scores`, `tests`. `recorder` and `pumpflow-live` are disabled | Ask first; no always-on jobs |
+
+Research scripts and data stay under `handoff/` because the frozen preregistrations, the scorers and the
+Actions name those paths; moving them would break the scored tests.
+
+## The candle predictor
 
 A live agent that watches the candle chart of any Solana token, including tokens
 launched minutes ago, and predicts each candle's closing price. Every prediction

@@ -103,6 +103,11 @@ Lanes as of 2026-10-12 (all paper only). Owner thread names are the project's th
 
 ## Log (newest first)
 
+* **2026-10-12 ~19:50 UTC, Codex review and layout thread** (`reviews/codex-review-2026-10-12.md`, `plan-2026-10-12.md`).
+  Codex's CodexCoinHunt import landed as a separate archive (SLR-0.2 has zero verified trades; not wired in).
+  Frozen preregistrations pinned by SHA-256 (`tests/test_prereg_frozen.py`). Retired docs and old board history
+  moved to `archive/`; repo maps in `README.md` and `handoff/README.md`.
+
 * **2026-10-12 ~00:20 UTC, overall-review thread: draft live rule for US strategies** (`live-rule-us.md`, not
   adopted). Only `us_capit` eligible; start gate after 3 paper crash days; $100/trade, $250 loss stop; scale after
   10 live crash days. Needs AJ's go, a funded Alpaca live account and a live route (not built).

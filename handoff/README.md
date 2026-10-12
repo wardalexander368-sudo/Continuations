@@ -1,0 +1,33 @@
+# handoff/: what each document is
+
+The board is [`STATUS.md`](STATUS.md): read it first. The plan is [`plan-2026-10-12.md`](plan-2026-10-12.md).
+The repository map is in the top-level [`README.md`](../README.md).
+
+## Current topic documents
+
+| Document | What it covers |
+|---|---|
+| [`STATUS.md`](STATUS.md) | The board: where we stand, active lanes, recent log |
+| [`plan-2026-10-12.md`](plan-2026-10-12.md) | Implementation plan, in order, with owners |
+| [`autotrade.md`](autotrade.md) | The hourly paper-trading agent (`tartar/autotrade/`), its strategies and risk books |
+| [`edge-hunt.md`](edge-hunt.md) | Every strategy family tested, with results (§K-§N are the US work) |
+| [`live-rule-us.md`](live-rule-us.md) | DRAFT go-live rule for `us_capit` on Alpaca (not adopted) |
+| [`hl-costs.md`](hl-costs.md) | Hyperliquid execution costs from the `hl-book` collector |
+| [`profitability.md`](profitability.md) | `tartar profit` and the pump.fun-phase cost findings |
+| [`candle-prediction-agent.md`](candle-prediction-agent.md) | The candle predictor (`tartar watch`) |
+| [`jevtrader.md`](jevtrader.md) | AJ's separate jevtrader and how it relates |
+| [`codexcoinhunt.md`](codexcoinhunt.md) | The CodexCoinHunt import (ChatGPT lane), `../codexcoinhunt/` |
+| [`northstar.md`](northstar.md), [`connected-external.md`](connected-external.md) | Codex's notes on AJ's other projects (links only) |
+
+## Folders
+
+| Folder | What it holds |
+|---|---|
+| `preregistration/` | Frozen test protocols. Never edit; add a dated `ADDENDUM-*` file. `FROZEN.sha256` pins them (`tests/test_prereg_frozen.py`) |
+| `reviews/` | Dated reviews and audits; the newest are `codex-review-2026-10-12.md` and `overall-2026-10-11.md` |
+| `experiments/` | Research and scoring scripts; some are run by the Actions (`final_scores.py`, `pumpflow_paper.py`, `jlp_paper.py`, `edge-hunt/perps/*`) |
+| `data/` | Research data and collector output (`data/README.md`) |
+| `live/` | The retired fast loop's policy and reviews (10-09) |
+| `archive/` | Retired documents and board history; nothing there is current |
+
+Scripts and data stay in `handoff/` because frozen registrations and workflows name these paths.
