@@ -25,7 +25,15 @@ HEALTH_MIN_FILLS = 5             # round trips before health judges the measured
 
 def _rows(root: Path) -> list[dict]:
     p = Path(root) / "alpaca_fills.jsonl"
-    return [json.loads(x) for x in p.read_text().splitlines() if x.strip()] if p.exists() else []
+    out = []
+    for x in (p.read_text().splitlines() if p.exists() else []):
+        try:
+            r = json.loads(x)
+        except ValueError:  # a damaged line is skipped, never fatal: this module only reports
+            continue
+        if isinstance(r, dict):
+            out.append(r)
+    return out
 
 
 def _median(xs: list[float]) -> float:
@@ -83,6 +91,13 @@ def gate(rows: list[dict]) -> dict:
 
 def health_items(root: Path) -> list[dict]:
     """Measured Alpaca paper cost against the rule: yellow above 0.50%/side, red above 0.60%, after 5 round trips."""
+    try:
+        return _health_items(root)
+    except Exception as exc:  # noqa: BLE001 - the gate must never break the health run
+        return [{"check": "Alpaca paper cost", "level": "yellow", "detail": f"could not read the fills: {type(exc).__name__}: {exc}"[:300]}]
+
+
+def _health_items(root: Path) -> list[dict]:
     trips = round_trips(_rows(root))
     if len(trips) < HEALTH_MIN_FILLS:
         return [{"check": "Alpaca paper cost", "level": "green",
@@ -97,7 +112,14 @@ def health_items(root: Path) -> list[dict]:
 
 
 def report_lines(root: Path) -> list[str]:
-    """One REPORT line: where the adopted live rule's gate stands."""
+    """One REPORT line: where the adopted live rule's gate stands. Never raises (the hourly run must not break)."""
+    try:
+        return _report_lines(root)
+    except Exception as exc:  # noqa: BLE001
+        return ["", f"**Live rule gate:** could not be computed ({type(exc).__name__}: {exc})"[:300] + "."]
+
+
+def _report_lines(root: Path) -> list[str]:
     g = gate(_rows(root))
     head = (f"**Live rule gate** (`handoff/live-rule-us.md`, us_capit, judged on `{g['strategy']}`'s Alpaca paper fills): "
             f"{g['crash_days']}/{MIN_CRASH_DAYS} crash days, {g['trades']}/{MIN_TRADES} trades")

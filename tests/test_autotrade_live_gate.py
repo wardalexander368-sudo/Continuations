@@ -73,3 +73,12 @@ def test_report_line(tmp_path):
     lines = lg.report_lines(tmp_path)
     assert "Paper side met" in lines[1] and "AJ's go" in lines[1]
     assert lines[2].startswith("Coin cost screen")
+
+
+def test_damaged_fills_never_raise(tmp_path):
+    (tmp_path / "alpaca_fills.jsonl").write_text('{"event": "sell"\nnot json\n[1, 2]\n')
+    assert lg.health_items(tmp_path)[0]["check"] == "Alpaca paper cost"
+    assert "Live rule gate" in lg.report_lines(tmp_path)[1]
+    write(tmp_path, [{"event": "sell", "measured_side_cost": "x", "position": "p", "strategy": "us_capit_fast", "at": T0}])
+    assert lg.health_items(tmp_path)[0]["level"] in ("green", "yellow")
+    assert "Live rule gate" in lg.report_lines(tmp_path)[1]
