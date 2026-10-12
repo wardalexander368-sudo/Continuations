@@ -11,8 +11,8 @@
 - [x] Audit 47 prior-day signatures with 40 new bodies; four buyers already bought the target and supplied 97.21% of sampled buy notional.
 - [x] Reconcile 17 token closures including 15 transient/owned WSOL releases; preserve failed/unknown funding cases.
 - [x] Freeze future new-versus-returning participation comparison; no payoff or strategy promotion.
-- [ ] Import the package on the Mac; verify actual local path and tools.
-- [ ] Read actual Claude files/findings and record provenance before incorporating them.
+- [x] Verify desktop v5 in the Mac repository checkout: 379 original files, 161 research checks and nine installer checks; preserve earlier local receipts.
+- [ ] Complete actual Northstar source/model/result review; bounded TARTAR handoff/agent/scoreboard inspection supplies navigation only.
 - [ ] Verify meaningful funding/service/creator ancestry and first-target participation.
 - [ ] Apply first-participation rejection before costly ancestry work on later candidate cohorts; trace carried-in quote-token capital and verified creation/service roles.
 - [ ] Connect complete social, safety, exact-size quote and net fill/fee/FX evidence.
@@ -34,3 +34,6 @@ Do not check an empirical task complete because a synthetic fixture passes or a 
 - [x] Pass 152 distinct research checks and retain raw social/DEX responses and UTC clocks at the social increment.
 - [x] Reconcile eight unique PumpSwap events, five exact buy outflows and protocol-fee suballocations; pass 161 distinct research checks.
 - [ ] Establish authorized continuous exact-mint social coverage and prospectively join post, buyer, paid-visibility and exact-size quote clocks.
+
+- [x] Link CoinHunt, Northstar, TARTAR/TarTrade and external JevTrader in the connected-project map with explicit source/evaluation boundaries.
+- [ ] Supply Northstar exact source and any additional connected-project public-export scope.

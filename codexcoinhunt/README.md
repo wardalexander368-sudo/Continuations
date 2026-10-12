@@ -1,5 +1,8 @@
 # CodexCoinHunt — Resolant Labs research project
 
+**Mac update, 2026-10-12:** v5 is verified locally in `~/Projects/CodexCoinHunt/continuations/codexcoinhunt`. Read [MAC_CONTINUATION.md](MAC_CONTINUATION.md) for current paths, retained Mac evidence and validation. The cloud-preparation instructions below are historical.
+
+
 This is the complete available Codex memecoin research copy, prepared for `~/Projects/CodexCoinHunt` on the user's Mac. It includes source code, saved public evidence, hashes, tests, reports, failed hypotheses and prior versions. Claude's unshared work and a verbatim phone-chat export are not included.
 
 Start with `PROJECT_HANDOFF.md`, `AGENTS.md` and the shared project/task/decision notes. For phone-to-desktop setup, read `Mac_Desktop_Handoff.md`. The complete current kit is under `research/`; its own README lists commands and limitations.

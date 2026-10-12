@@ -1,5 +1,8 @@
 # Project handoff — complete available Codex research
 
+**Mac update, 2026-10-12:** v5 is verified locally in `~/Projects/CodexCoinHunt/continuations/codexcoinhunt`. Read [MAC_CONTINUATION.md](MAC_CONTINUATION.md) for current paths, retained Mac evidence and validation. The cloud-preparation instructions below are historical.
+
+
 Prepared October 12, 2026. Preferred Mac directory: `~/Projects/CodexCoinHunt`. The cloud session prepared this package but did not write to the Mac. See `Mac_Desktop_Handoff.md` and `install_codexcoinhunt.py`.
 
 ## Objective and authorization

@@ -1,0 +1,128 @@
+{
+  "schema_version": 1,
+  "recorded_at_utc": "2026-10-12T18:09:17.979689+00:00",
+  "repository": "wardalexander368-sudo/Continuations",
+  "branch": "codex/codexcoinhunt-import-20261012",
+  "runtime_integration_enabled": false,
+  "projects": [
+    {
+      "id": "codexcoinhunt",
+      "name": "CodexCoinHunt / Resolant Second-Look Relay",
+      "source_status": "v5 source and Mac evidence verified",
+      "source_paths": [
+        "codexcoinhunt/",
+        "codexcoinhunt/MAC_CONTINUATION.md"
+      ],
+      "target": "full-account net recoverable USD, $50 to strictly over $100",
+      "strategy_sha256": "9bcd83ce0ec71cdae8c410c202bd5a75b1496679e5ddb94ccc7d300e57c3663f"
+    },
+    {
+      "id": "northstar",
+      "name": "Northstar / Resolant forecasting",
+      "source_status": "shared specification only; exact repository/model artifacts missing",
+      "source_paths": [
+        "handoff/northstar.md"
+      ],
+      "target": "next finalized five-minute candle; V1 control vs research V2 and persistence"
+    },
+    {
+      "id": "tartar-predictor",
+      "name": "TARTAR / TarTrade predictor",
+      "source_status": "repository implementation and historical handoff inspected in bounded scope",
+      "source_paths": [
+        "handoff/candle-prediction-agent.md",
+        "tartar/agent.py",
+        "tartar/scoreboard.py"
+      ],
+      "target": "candle-close forecast error, confidence calibration and coverage"
+    },
+    {
+      "id": "tartrade-paper",
+      "name": "TarTrade paper execution and risk",
+      "source_status": "existing repository lane, reference only",
+      "source_paths": [
+        "handoff/autotrade.md",
+        "tartar/autotrade/"
+      ],
+      "target": "venue-eligible costed paper-account outcomes"
+    },
+    {
+      "id": "tartrade-research",
+      "name": "TarTrade profitability and edge research",
+      "source_status": "existing repository lane, reference only",
+      "source_paths": [
+        "handoff/profitability.md",
+        "handoff/edge-hunt.md",
+        "handoff/preregistration/"
+      ],
+      "target": "registered costed research comparisons"
+    },
+    {
+      "id": "jevtrader",
+      "name": "JevTrader / jev-paper-loop",
+      "source_status": "public repository identity and existing handoff; sealed results not read or imported",
+      "source_paths": [
+        "handoff/jevtrader.md"
+      ],
+      "repository_url": "https://github.com/AJW9991/jevtrader",
+      "target": "separate sealed forward-only paired paper evaluation"
+    },
+    {
+      "id": "slowlane",
+      "name": "SlowLane / Sieve",
+      "source_status": "local working overview inspected; external reference only",
+      "source_paths": [
+        "handoff/connected-external.md"
+      ],
+      "mac_project_directory": "~/Projects/slowlane",
+      "target": "separate registered daily spot evaluation"
+    },
+    {
+      "id": "livedesk",
+      "name": "LiveDesk",
+      "source_status": "local working rules inspected; external reference only",
+      "source_paths": [
+        "handoff/connected-external.md"
+      ],
+      "mac_project_directory": "~/Projects/livedesk",
+      "target": "operator-controlled execution and risk; no activation from this branch"
+    },
+    {
+      "id": "jev-tooling",
+      "name": "JEV tooling",
+      "source_status": "local working overview inspected; external reference only",
+      "source_paths": [
+        "handoff/connected-external.md"
+      ],
+      "mac_project_directory": "~/Projects/JEV",
+      "target": "reading and typed judgments under project-specific contracts"
+    },
+    {
+      "id": "ai-server",
+      "name": "AI Server Build",
+      "source_status": "local overview inspected; external reference only",
+      "source_paths": [
+        "handoff/connected-external.md"
+      ],
+      "mac_project_directory": "~/Projects/AI-Server-Build",
+      "target": "prospective project-hosting infrastructure"
+    },
+    {
+      "id": "cmem",
+      "name": "CMem context archive",
+      "source_status": "local inventory available; private payload not imported",
+      "source_paths": [
+        "handoff/connected-external.md"
+      ],
+      "mac_project_directory": "~/Projects/CMem",
+      "target": "retained project context and artifacts"
+    }
+  ],
+  "excluded_projects": [
+    "Crypto Trading System and code/archive derivatives",
+    "Retired second-brain copies and backup bundles"
+  ],
+  "pending_sources": [
+    "Northstar exact repository, commits and public-safe artifacts"
+  ]
+}

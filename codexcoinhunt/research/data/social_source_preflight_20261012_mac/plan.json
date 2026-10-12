@@ -1,0 +1,34 @@
+{
+  "id": "MAC-SOCIAL-SOURCE-PREFLIGHT-0.1",
+  "frozen_at_utc": "2026-10-12T12:55:47.497829+00:00",
+  "purpose": "Bounded source-access diagnostic from the Mac; fixed development token remains excluded from forward eligibility. No continuous coverage or strategy signal is inferred.",
+  "source": "https://public.api.bsky.app/xrpc/app.bsky.feed.searchPosts",
+  "queries": [
+    {
+      "id": "exact_mint",
+      "q": "2j5SaS7xy776qCBpyPQbZjyQSAtKiFgrwjfErthnW2ZM"
+    },
+    {
+      "id": "name_chain",
+      "q": "CLAUDIA Solana"
+    }
+  ],
+  "interval": {
+    "since": "2026-10-11T12:55:47.497829+00:00",
+    "until": "2026-10-12T12:55:47.497829+00:00"
+  },
+  "bounds": {
+    "limit_per_page": 25,
+    "maximum_pages_per_query": 1,
+    "maximum_consecutive_errors": 2,
+    "timeout_seconds": 8
+  },
+  "maximum_requests": 2,
+  "classification": "source-access diagnostic only; development data",
+  "missing_data_rule": "A failed or empty bounded search does not prove zero attention or complete history.",
+  "cost_and_authority": {
+    "paid_data_usd": 0,
+    "authentication_used": false,
+    "orders_or_wallet_actions": false
+  }
+}

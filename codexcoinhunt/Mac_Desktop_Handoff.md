@@ -1,5 +1,8 @@
 # Continue CodexCoinHunt on your Mac
 
+**Mac update, 2026-10-12:** v5 is verified locally in `~/Projects/CodexCoinHunt/continuations/codexcoinhunt`. Read [MAC_CONTINUATION.md](MAC_CONTINUATION.md) for current paths, retained Mac evidence and validation. The cloud-preparation instructions below are historical.
+
+
 Prepared October 12, 2026. The phone/cloud work is packaged as `CodexCoinHunt.zip`. This session has not written to your Mac. The installer uses your Mac's home directory when you run it there.
 
 ## 1. Open this conversation on desktop

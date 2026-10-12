@@ -1,5 +1,7 @@
 # TARTAR
 
+[Resolant connected-project map](CONNECTED_PROJECTS.md) · [CoinHunt Mac continuation](codexcoinhunt/MAC_CONTINUATION.md) · [Northstar handoff](handoff/northstar.md)
+
 A live agent that watches the candle chart of any Solana token, including tokens
 launched minutes ago, and predicts each candle's closing price. Every prediction
 comes with a confidence you can check: the agent scores itself on every candle

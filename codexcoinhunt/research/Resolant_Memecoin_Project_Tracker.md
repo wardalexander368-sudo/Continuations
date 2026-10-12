@@ -354,3 +354,8 @@ For the five original buys, instruction-aware gross debit matches exact quote-ac
 Nine new tests bring the suite to **161 distinct passing engineering checks**. The forensic plan explicitly discloses that the discrepancies and exploratory event fields were inspected first; this is not preregistered or out-of-sample return evidence. No new market observation, qualified strategy entry, close, matched control outcome, opportunity-rate estimate or doubled campaign was added. SLR-0.2 and its hash remain unchanged.
 
 **Next:** use the corrected gross-debit contract in future joined social/buyer/quote receipts. The dominant research dependency remains authorized continuous exact-mint social coverage and a later untouched, fully costed cohort; Raydium quotes, authenticated fills/FX/conversion and complete control outcomes also remain open.
+
+
+## Mac repository continuation — October 12, 2026
+
+Desktop v5 / research v11 is now verified locally in `~/Projects/CodexCoinHunt/continuations/codexcoinhunt`: 379 original source files, 161 research tests and nine installer tests. Earlier Mac receipts and the two bounded HTTP-403 social responses are retained; coverage is unknown and no additional empirical outcome is added. See `../MAC_CONTINUATION.md`, `../MAC_CONTINUITY.json` and `../../CONNECTED_PROJECTS.md`. Original release documents and historical local notes remain preserved. SLR-0.2 rules/hash and cloud D48–D50 are unchanged. Actual Northstar artifacts are still missing; forecasting and profit conclusions remain separate.

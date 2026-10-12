@@ -4,7 +4,7 @@ Project: CodexCoinHunt for Resolant Labs. Scope: US-executable spot memecoin **p
 
 Read PROJECT_HANDOFF.md and the current research tracker before starting. The user authorizes autonomous reversible research; real orders, funding, paid subscriptions, private keys and person-directed messages remain outside scope. Retain all raw evidence, dates, missing/rejected cases, costs, controls and chronological separation.
 
-Preferred local folder: ~/Projects/CodexCoinHunt. Installed Codex research lives under codex-research/current; previous imports are preserved. Cloud exports and local files are separate until actually imported. Claude work is unreviewed until its source files/results are read.
+Preferred local folder: ~/Projects/CodexCoinHunt. Canonical Git work now lives in ~/Projects/CodexCoinHunt/continuations/codexcoinhunt on the existing Codex branch. The installer-managed codex-research/current is a refreshed convenience copy; earlier imports are preserved. Desktop v5 source is locally verified. Read MAC_CONTINUATION.md and ../CONNECTED_PROJECTS.md. Northstar artifacts remain missing; only the linked TARTAR handoff and bounded agent/scoreboard source were inspected.
 
 Northstar's five-minute prediction accuracy versus persistence is a separate evaluation; do not report it as memecoin account profitability.
 

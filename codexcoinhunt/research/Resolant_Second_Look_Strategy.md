@@ -386,3 +386,8 @@ The explanatory plan discloses that the discrepancy and exploratory fields were 
 - **S47:** [Official Pump AMM IDL](https://github.com/pump-fun/pump-public-docs/blob/main/idl/pump_amm.json), pinned content SHA-256 `b7d8c57a4d9c4dd0109a9ab893052352333252d4eedced10ac091d4d66cab89b`, refreshed October 12, 2026.
 - **S48:** [Official PumpSwap program documentation](https://github.com/pump-fun/pump-public-docs/blob/main/docs/PUMP_SWAP_README.md) and [creator-fee documentation](https://github.com/pump-fun/pump-public-docs/blob/main/docs/PUMP_SWAP_CREATOR_FEE_README.md), checked October 12, 2026.
 - **S49:** [Official trade-v3 fee-routing documentation](https://github.com/pump-fun/pump-public-docs/blob/main/docs/instructions/TRADE_V3.md), checked October 12, 2026.
+
+
+## Mac repository continuation — October 12, 2026
+
+Desktop v5 / research v11 is now verified locally in `~/Projects/CodexCoinHunt/continuations/codexcoinhunt`: 379 original source files, 161 research tests and nine installer tests. Earlier Mac receipts and the two bounded HTTP-403 social responses are retained; coverage is unknown and no additional empirical outcome is added. See `../MAC_CONTINUATION.md`, `../MAC_CONTINUITY.json` and `../../CONNECTED_PROJECTS.md`. Original release documents and historical local notes remain preserved. SLR-0.2 rules/hash and cloud D48–D50 are unchanged. Actual Northstar artifacts are still missing; forecasting and profit conclusions remain separate.

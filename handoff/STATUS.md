@@ -69,6 +69,7 @@ the Log). Owner thread names are the project's thread titles.
   `codex/*` branches and opens PRs into `main`; rules in `AGENTS.md`. Claude reviews each PR before it lands;
   approved PRs are merged by Claude. Claims: none yet (the PR description proposes one).
   Proposed import: `codex/codexcoinhunt-import-20261012` preserves the complete available CodexCoinHunt project and evidence under `codexcoinhunt/`; no strategy integration or existing lane takeover (`handoff/codexcoinhunt.md`).
+  Mac continuation: verified v5 locally, retain dated Mac receipts and add the Northstar/connected-project map on the same Codex PR (`CONNECTED_PROJECTS.md`); source gaps and separate evaluation boundaries remain explicit.
 * **Continue TARTAR handoff session:** owns `autotrade/` and `tartar/autotrade/` (the hourly agent).
   Next: the system audit's sections 1-2 (`handoff/reviews/system-audit-2026-10-10.md`).
 * **Alpaca paper route (thread "Alpaca api key added"):** owns `tartar/autotrade/alpaca.py`. `us_capit` and
