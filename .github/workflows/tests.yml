@@ -1,4 +1,4 @@
-# The full offline test suite, on code changes only (bot data commits use GITHUB_TOKEN and don't trigger it).
+# The full offline test suite, on code and preregistration changes only (bot data commits use GITHUB_TOKEN and don't trigger it).
 # Paper only: no secrets, nothing signed. Added by the 2026-10-10 system audit (handoff/reviews/system-audit-2026-10-10.md).
 name: tests
 
@@ -9,11 +9,13 @@ on:
       - "tartar/**"
       - "tests/**"
       - "pyproject.toml"
+      - "handoff/preregistration/**"
   pull_request:
     paths:
       - "tartar/**"
       - "tests/**"
       - "pyproject.toml"
+      - "handoff/preregistration/**"
   workflow_dispatch: {}
 
 permissions:
