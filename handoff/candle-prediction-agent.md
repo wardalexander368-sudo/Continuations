@@ -5,7 +5,7 @@
 
 This document lets a new Claude session continue the work without the previous
 conversation. Everything here was true when it was written (2026-10-08, ~20:30
-UTC). The code is in this repository; `handoff/code/` holds a snapshot copy of
+UTC). The code is in this repository; `handoff/archive/predictor-snapshot-2026-10-09/` holds a snapshot copy of
 every source file. `handoff/data/` holds the real data recorded so far (the exact
 snapshot v1 was trained on).
 
@@ -1129,8 +1129,8 @@ reviewers' scripts are in the session scratchpad (not persisted).
 ## 15. Full code
 
 Every source file is in the repo (authoritative) and copied to
-`handoff/code/` with the same paths (`handoff/code/tartar/...`,
-`handoff/code/tests/...`, `pyproject.toml`, `README.md`). Installed model:
+`handoff/archive/predictor-snapshot-2026-10-09/` with the same paths (`handoff/archive/predictor-snapshot-2026-10-09/tartar/...`,
+`handoff/archive/predictor-snapshot-2026-10-09/tests/...`, `pyproject.toml`, `README.md`). Installed model:
 `tartar/models/trades-60s.{txt,json,report.json}` (v1; the 8.9 MB `.txt` is not
-duplicated under `handoff/code/`). Size: ~7,850 lines of Python across 36
+duplicated under `handoff/archive/predictor-snapshot-2026-10-09/`). Size: ~7,850 lines of Python across 36
 modules and 9 test files.

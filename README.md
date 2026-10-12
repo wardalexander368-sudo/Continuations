@@ -180,7 +180,7 @@ tartar review --hours 6                 # results, counterfactuals, scorer calib
 ```
 
 The policy (`data/policy.json`) is bounded and paper-only by construction.
-See `handoff/slow-loop.md`.
+See `handoff/archive/slow-loop.md`.
 
 ## What the numbers mean
 
