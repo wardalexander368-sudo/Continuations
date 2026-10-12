@@ -65,6 +65,9 @@ session) is the only one that pushes to `main` (AJ, 2026-10-10 20:47 UTC).
 Lanes as of 2026-10-10 23:30 UTC (all paper only; the old claims were cleared by the system audit, see
 the Log). Owner thread names are the project's thread titles.
 
+* **ChatGPT lane (Codex, thread "ChatGPT lane setup", from 2026-10-12):** AJ's ChatGPT works only on
+  `codex/*` branches and opens PRs into `main`; rules in `AGENTS.md`. Claude reviews each PR before it lands;
+  approved PRs are merged by Claude. Claims: none yet (the PR description proposes one).
 * **Continue TARTAR handoff session:** owns `autotrade/` and `tartar/autotrade/` (the hourly agent).
   Next: the system audit's sections 1-2 (`handoff/reviews/system-audit-2026-10-10.md`).
 * **Alpaca paper route (thread "Alpaca api key added"):** owns `tartar/autotrade/alpaca.py`. `us_capit` and
