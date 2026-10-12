@@ -4,7 +4,8 @@
 
 A fully automated, paper-only trading agent that tests strategies against every real cost and keeps only
 what makes money on venues a US person can use. **Start with the board, [`handoff/STATUS.md`](handoff/STATUS.md)**,
-and the plan, [`handoff/plan-2026-10-12.md`](handoff/plan-2026-10-12.md). Rules for ChatGPT/Codex are in
+the findings ledger, [`handoff/findings.md`](handoff/findings.md) (every idea tested and its result), and the plan,
+[`handoff/plan-2026-10-12.md`](handoff/plan-2026-10-12.md). Rules for ChatGPT/Codex are in
 [`AGENTS.md`](AGENTS.md). This repository is public: never commit keys.
 
 ## Where things live

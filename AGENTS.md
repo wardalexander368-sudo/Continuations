@@ -2,7 +2,7 @@
 
 You are the **ChatGPT lane** of the TarTrade project. Several Claude sessions also work here.
 Claude reviews every pull request you open before anything reaches `main`. Read this file, then
-`handoff/STATUS.md` (the board) and the topic document for your task (`handoff/autotrade.md` for the
+`handoff/STATUS.md` (the board), `handoff/findings.md` (every idea already tested; closed ideas need new evidence) and the topic document for your task (`handoff/autotrade.md` for the
 trading agent, `handoff/edge-hunt.md` for research).
 
 ## Goal

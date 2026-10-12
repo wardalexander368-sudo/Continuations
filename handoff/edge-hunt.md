@@ -1,11 +1,9 @@
 # Edge hunt: new strategy families
 
-**Status: resumed 2026-10-09 17:32 UTC** (on hold 13:25–17:32). A1 is pre-registered and running as a
-paper forward test (`handoff/preregistration/jlp-hedged/SPEC.md`, `handoff/experiments/jlp_paper.py`).
-Predictor session, branch `claude/solana-candle-predictor-s95qjr`. Everything here is
-**exploratory**. Nothing is pre-registered, and every number below was seen before any rule
-was fixed. Treat them as reasons to test, not as results. No real-money code was written and
-no Jev calls were made.
+**Status (2026-10-12):** the hunt is stood down. The sections below were written as each family was tested
+(newest US work is §K-§N); several rules were later pre-registered and now paper trade. For the current status of
+every idea in one table, read [`findings.md`](findings.md). The 10-09 note that "nothing here is pre-registered"
+no longer holds: each section says whether its rule was registered.
 
 ## Why
 
@@ -563,7 +561,7 @@ data added since F. Untested angles after §3.9-3.25 and F (one judge, three len
 **Nothing pre-registered from I.** The one pump.fun line still open is F1's powered forward test
 (`preregistration/who-trades-forward/`, scored after 2026-10-19).
 
-## What looks worth doing when the hunt resumes
+## What looked worth doing when the hunt resumed (10-09, historical; current order in `plan-2026-10-12.md` G)
 
 1. Pre-register and start the **hedged-JLP 90-day paper forward test** (A1). It needs only an
    hourly poller of free endpoints, about one HTTP call per source per hour. Run the
@@ -573,7 +571,7 @@ data added since F. Untested angles after §3.9-3.25 and F (one judge, three len
 3. Close in profitability §1: seconds-scale SOL microstructure at our latency, intraday
    seasonality and the LST leverage loop (when the hunt is written up as §3.17).
 
-## Resume: the angle briefs
+## Resume: the angle briefs (10-09, historical: C, D and E were all run since, see `findings.md`)
 
 Each angle gets the hard constraints from `handoff/STATUS.md` (no real money, no Jev,
 jevtrader untouched, no private RPC, no deception), the closed list, and the measured costs.

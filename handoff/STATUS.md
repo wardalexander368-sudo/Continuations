@@ -1,6 +1,6 @@
 # STATUS: read this first
 
-> **WHERE WE STAND (2026-10-12 ~19:45 UTC, layout review; update this block, don't append to it).**
+> **WHERE WE STAND (2026-10-12 ~22:00 UTC, full overview; update this block, don't append to it).**
 > * **Rule:** only US-expressible strategies can go live (AJ, 10-11). Hyperliquid and Jupiter are paper research only.
 > * **Nothing is profitable yet on a venue a US person can use.** US candidates in paper from 10-12: `us_capit`
 >   (capitulation bounce; also `us_capit_fast`, `us_capit~wide`), `us_volspike`, mirrored to an Alpaca **paper**
@@ -8,7 +8,8 @@
 > * **US costs:** Coinbase 0.90% taker / 0.50% maker since 2026-09-16; Alpaca ~0.39%/side (the first live US
 >   route if one is approved). Details `reviews/gap-review-2026-10-11.md`.
 > * **Live rule:** `live-rule-us.md` is a DRAFT (us_capit only, $100/trade); nothing goes live without AJ's words.
-> * **Plan:** `plan-2026-10-12.md` lists the next steps in order. **Map of the repo:** `README.md` and `handoff/README.md`.
+> * **Every finding (Claude and Codex) in one table:** `findings.md`. Check it before proposing an idea.
+> * **Plan:** `plan-2026-10-12.md` (section G is the order of work). **Map of the repo:** `README.md` and `handoff/README.md`.
 > * **Paper tests running:** see *Active*. Every registered test is scored by a routine and/or the weekly
 >   `final-scores` Action (`experiments/final_scores.py`), which writes `RESULT-auto-<date>.md` when one is due.
 > * **History** (pump.fun phase Queue/Blockers, older Log, *Recent results*): `archive/STATUS-history-to-2026-10-10.md`.
@@ -42,20 +43,19 @@ session) is the only one that pushes to `main` (AJ, 2026-10-10 20:47 UTC).
 
 Lanes as of 2026-10-12 (all paper only). Owner thread names are the project's thread titles.
 
-* **Codex review and project layout (from 2026-10-12):** reviewed everything Codex added, wrote
-  `plan-2026-10-12.md`, and tidied the layout (retired docs to `archive/`, this board slimmed, maps in
-  `README.md` and `handoff/README.md`).
+* **Full project overview and alignment (from 2026-10-12 ~21:30 UTC):** one findings ledger (`findings.md`), board,
+  plan and topic docs brought into line. Done when it lands; then the ledger is kept by whoever lands a result.
 * **Overall improvement review:** draft live rule `live-rule-us.md` waits on AJ to adopt or edit it.
 
-* **ChatGPT lane (Codex, thread "ChatGPT lane setup", from 2026-10-12):** AJ's ChatGPT works only on
+* **ChatGPT lane (Codex, thread "ChatGPT lane with Claude review", from 2026-10-12):** AJ's ChatGPT works only on
   `codex/*` branches and opens PRs into `main`; rules in `AGENTS.md`. Claude reviews each PR before it lands;
   approved PRs are merged by Claude.
   Landed 2026-10-12 (reviewed by Claude): the CodexCoinHunt import under `codexcoinhunt/` (paper-only memecoin
   research archive, not wired into the agent; `handoff/codexcoinhunt.md`, review `reviews/codex-review-2026-10-12.md`)
-  and the connected-project map `CONNECTED_PROJECTS.md`.
+  and the connected-project map `CONNECTED_PROJECTS.md`. Suggested next claims: `plan-2026-10-12.md` section E.
 * **Continue TARTAR handoff session:** owns `autotrade/` and `tartar/autotrade/` (the hourly agent).
-  Agent spec pass done 10-11 (separate hl/us risk books, error-halt retry, per-book drawdown stops).
-* **Alpaca paper route (thread "Alpaca api key added"):** owns `tartar/autotrade/alpaca.py`. `us_capit` and
+  Agent spec pass done 10-11 (separate hl/us risk books, error-halt retry, per-book drawdown stops). Next: plan A1, A2.
+* **Alpaca paper route (thread "Alpaca paper trading route"):** owns `tartar/autotrade/alpaca.py`. `us_capit` and
   `us_volspike` entries/exits also go as market orders to an Alpaca **paper** account (paper endpoint only; no live
   Alpaca route), fills in `autotrade/alpaca_fills.jsonl` and trade meta `alpaca` (measured cost per side vs the
   assumed 0.39%). AJ's paper key secrets work (key check passed 10-11 17:20 UTC); `us_capit_fast` is mirrored too.
@@ -73,35 +73,38 @@ Lanes as of 2026-10-12 (all paper only). Owner thread names are the project's th
 * **Pumpflow forward test (E1): still collecting; scoring owned by "Continue Jev cost handoff session"
   (one-shot routine 2027-04-09 06:00 UTC).** It does not depend on the disabled
   `pumpflow-live`: `pumpflow-paper.yml` records DefiLlama's daily revenue plus the HL PUMP mid (one small commit a
-  day) and is running. Scored after 2027-04-08 with `pumpflow_paper.py evaluate --final`.
+  day) and is running. Scored after 2027-04-08 with `pumpflow_paper.py evaluate --final`. Expect a fail: at
+  DefiLlama's ~25 h publish delay the backtest has no edge (`edge-hunt.md` E1 "publish delay"); the agent's
+  `pumpflow` strategy is disabled for that reason.
+* **Done threads (no lane):** Codex review and project layout (10-12), Trade timing and exits, What we may have
+  missed, Lightweight agent optimizations, Full system audit, Check collectors against terms, Move project into
+  Continuations, Import old account's memory.
 
 ## Rules that hold across sessions
 
-* **Background processes die when a session goes idle.** On 2026-10-08 the
-  predictor session's container was suspended ~12 min after its last turn:
-  the recorder was killed, files on disk survived, and the local HTTPS
-  proxy came back on a new port (a process still running would get
-  `ConnectionRefusedError` to `127.0.0.1:<old port>` until restarted).
-  Whoever owns the live fast loop must keep its session active (a `/loop`
-  wake every ~5–10 min that checks the process and restarts it) or accept
-  gaps; restart, don't wait, after any `ConnectionRefusedError` to
-  127.0.0.1.
-
-* **Weekly usage limit (user, 2026-10-09 13:15 UTC):** at ~95% of the weekly token limit,
-  dump everything to the repo with a complete summary, update this board with every task not
-  finished, then keep working until the limit. Sessions can't see the meter, so checkpoint
-  continuously: push after every unit, and keep your *Active* line saying what is in flight.
-* Judge every model and strategy by `tartar profit` on the **latest**
-  launches. Pick thresholds on validation only, and quote 90% intervals by
-  token.
-* No real-money trading code without the user's explicit request.
-* **No Jev calls from TARTAR** (user, 2026-10-09): no shadow mode, no `jev` scorer, no new
-  batch asks. Cached answers in `handoff/data/jev/` may be read offline. Asking the user again
-  needs new evidence, not a new idea.
-* Never trade the v1 model's expected return: it loses ~43% per trade on test
-  launches (see `profitability.md` §3.2).
+* **US-only** (AJ, 10-11): only venues a US person may use can go live. Hyperliquid and Jupiter stay paper research
+  (`us_only: true` in `autotrade/config.json`).
+* **Paper only.** Real orders, real SOL or a funded live account need AJ's go in words. One session holds the
+  wallet at a time (now: "Real-money cost test, fresh key", no spending).
+* **Pre-registered tests are frozen** (`preregistration/FROZEN.sha256`); add a dated `ADDENDUM-*` file instead.
+* **No always-on or self-restarting Actions**; nothing scheduled more often than hourly
+  (`reviews/tos-check-2026-10-10.md`).
+* **Lightweight work** (AJ, 10-11): small cheap steps; big data pulls or grids only where a task needs them.
+* **Count every real cost** (fees, spread, slippage, latency) and judge results in account dollars.
+* **No Jev calls from TARTAR** (AJ, 10-09; Jev stays off). Cached answers in `handoff/data/jev/` may be read offline.
+* **Weekly usage limit:** near the limit, checkpoint everything to the repo and leave each unfinished task on this
+  board.
+* Pump.fun-phase rules (the live fast loop, `tartar profit` on latest launches, the v1 model) are in
+  `archive/STATUS-history-to-2026-10-10.md`; that lane is closed.
 
 ## Log (newest first)
+
+* **2026-10-12 ~22:00 UTC, full overview thread** (`findings.md`). Every idea Claude or Codex tested is in one
+  ledger with its status, after-cost evidence and source. Claude's and Codex's numbers agree (Alpaca, PumpPortal
+  and PumpSwap costs; memecoin entries no better than random). Fixed: the plan's scoring calendar (now matches
+  `final_scores.py`, incl. cde 2027-10-19), its done privacy item, stale thread names and lanes here, the stale
+  status header in `edge-hunt.md`, the agent's strategy table in `autotrade.md`. Plan section G sets the order:
+  AJ's live-rule decision, then A1/A2, no new research lanes until a trigger fires.
 
 * **2026-10-12 ~19:50 UTC, Codex review and layout thread** (`reviews/codex-review-2026-10-12.md`, `plan-2026-10-12.md`).
   Codex's CodexCoinHunt import landed as a separate archive (SLR-0.2 has zero verified trades; not wired in).

@@ -1,6 +1,6 @@
 # handoff/: what each document is
 
-The board is [`STATUS.md`](STATUS.md): read it first. The plan is [`plan-2026-10-12.md`](plan-2026-10-12.md).
+The board is [`STATUS.md`](STATUS.md): read it first. Every finding is in [`findings.md`](findings.md). The plan is [`plan-2026-10-12.md`](plan-2026-10-12.md).
 The repository map is in the top-level [`README.md`](../README.md).
 
 ## Current topic documents
@@ -8,6 +8,7 @@ The repository map is in the top-level [`README.md`](../README.md).
 | Document | What it covers |
 |---|---|
 | [`STATUS.md`](STATUS.md) | The board: where we stand, active lanes, recent log |
+| [`findings.md`](findings.md) | **Findings ledger:** every idea Claude or Codex tested, status, evidence after costs, where it lives |
 | [`plan-2026-10-12.md`](plan-2026-10-12.md) | Implementation plan, in order, with owners |
 | [`autotrade.md`](autotrade.md) | The hourly paper-trading agent (`tartar/autotrade/`), its strategies and risk books |
 | [`edge-hunt.md`](edge-hunt.md) | Every strategy family tested, with results (§K-§N are the US work) |

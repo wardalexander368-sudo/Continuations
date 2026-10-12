@@ -1253,3 +1253,33 @@ Nothing here is current; the live board is `handoff/STATUS.md`. Paths were updat
   same-block sniping, which a public RPC can't reach. Set up this board and
   landed everything on `main`. Recording is blocked by the network policy.
   Next for me: queue item 2 on the existing data.
+
+## Pump.fun-phase rules removed from the board on 2026-10-12 (full overview thread)
+
+Kept verbatim for reference; the lane they governed is closed.
+
+
+* **Background processes die when a session goes idle.** On 2026-10-08 the
+  predictor session's container was suspended ~12 min after its last turn:
+  the recorder was killed, files on disk survived, and the local HTTPS
+  proxy came back on a new port (a process still running would get
+  `ConnectionRefusedError` to `127.0.0.1:<old port>` until restarted).
+  Whoever owns the live fast loop must keep its session active (a `/loop`
+  wake every ~5–10 min that checks the process and restarts it) or accept
+  gaps; restart, don't wait, after any `ConnectionRefusedError` to
+  127.0.0.1.
+
+* **Weekly usage limit (user, 2026-10-09 13:15 UTC):** at ~95% of the weekly token limit,
+  dump everything to the repo with a complete summary, update this board with every task not
+  finished, then keep working until the limit. Sessions can't see the meter, so checkpoint
+  continuously: push after every unit, and keep your *Active* line saying what is in flight.
+* Judge every model and strategy by `tartar profit` on the **latest**
+  launches. Pick thresholds on validation only, and quote 90% intervals by
+  token.
+* No real-money trading code without the user's explicit request.
+* **No Jev calls from TARTAR** (user, 2026-10-09): no shadow mode, no `jev` scorer, no new
+  batch asks. Cached answers in `handoff/data/jev/` may be read offline. Asking the user again
+  needs new evidence, not a new idea.
+* Never trade the v1 model's expected return: it loses ~43% per trade on test
+  launches (see `profitability.md` §3.2).
+

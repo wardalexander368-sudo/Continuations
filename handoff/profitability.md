@@ -12,7 +12,7 @@ one that looked good on the validation launches lost on the later (test)
 launches, or its 90% interval spans zero. Treat the dashboard's "predicted
 close" and confidence as measurement, not as trade signals.
 
-Where each family stands (2026-10-09):
+Where each family stands (2026-10-09; every project finding, incl. the later US work, is in `findings.md`):
 
 | Family | Status | Where |
 |---|---|---|
@@ -22,7 +22,7 @@ Where each family stands (2026-10-09):
 | Longer holds (10–45 min) on screened launches | closed, loses | §3.14 |
 | Copy-trading wallets whose buys paid off | closed, loses | §3.15 |
 | Graduated tokens in their first hour on PumpSwap (fees 1.20–1.25%/side, §3.13) | closed, loses (pre-registered, 264 pools) | §3.16 |
-| Established memecoins: dip buying | rolling forward test, scored 2026-10-30 | §3.11 |
+| Established memecoins: dip buying | closed for real money (agent paper −5.2%/trade, 10-12); the registered forward test is still scored 2026-10-30 | §3.11 |
 | Predictor v3.1 candle calls + P(rug), held to the candle close (1m, 5m) | closed, loses (pre-registered, 108 trades) | §3.20 |
 | Smarter exits, regime gating and cheaper execution on launch buys | best: skip flags + TP +100%, Jupiter, 0.02 SOL: −2.9% [−4.1, −1.6]; still loses | §3.21 |
 | Picking movers from early flow, wallets, holders, curve shape, the creator, the name | movers predictable (AUC 0.88) but they collapse; small creator buys beat buy-all by ~2–4 points, still −2.2% on test | §3.22 |
