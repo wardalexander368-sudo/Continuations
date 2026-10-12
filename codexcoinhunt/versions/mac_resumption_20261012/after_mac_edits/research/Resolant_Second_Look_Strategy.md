@@ -374,7 +374,7 @@ This is a development finding and future preregistration, not a promotion. The c
 
 ## Mac continuation — 2026-10-12 07:59:03 CDT
 
-The complete archive was installed at `/Users/alexanderward/Projects/CodexCoinHunt/codex-research/current`. All **356** manifest files matched before local continuity updates. The Mac passed **152 distinct research engineering tests** and **nine installer tests**; these are not profitability evidence. The three original loose handoff/report/tracker documents matched their archive copies. The original ZIPs and loose documents remain the historical transfer record.
+The complete archive was installed at `~/Projects/CodexCoinHunt/codex-research/current`. All **356** manifest files matched before local continuity updates. The Mac passed **152 distinct research engineering tests** and **nine installer tests**; these are not profitability evidence. The three original loose handoff/report/tracker documents matched their archive copies. The original ZIPs and loose documents remain the historical transfer record.
 
 `MAC-SOCIAL-SOURCE-PREFLIGHT-0.1` froze at **2026-10-12T12:55:47.497829+00:00** before two free unauthenticated public searches. Both returned **HTTP 403**, received at **2026-10-12T12:55:59.302854+00:00** and **2026-10-12T12:55:59.421837+00:00**. The collector stopped at its two-error bound. Social history and coverage remain **unknown**; this adds no post-count, quiet-period, eligibility or performance observation. The fixed Claudia episode remains excluded from the future challenger.
 

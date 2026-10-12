@@ -2,7 +2,7 @@
 
 Updated 2026-10-12 07:59:03 CDT / 2026-10-12T12:59:03.575417+00:00.
 
-The project is installed at `/Users/alexanderward/Projects/CodexCoinHunt/codex-research/current` and can be continued from this chat.
+The project is installed at `~/Projects/CodexCoinHunt/codex-research/current` and can be continued from this chat.
 
 - Verified every one of the 356 files in the imported manifest.
 - Passed all 152 research engineering tests and nine installer tests.
@@ -17,4 +17,4 @@ The current search API's [official schema](https://github.com/bluesky-social/atp
 
 Northstar's five-minute V1/V2 forecast evaluation remains a separate project. Actual Claude findings/code have not been integrated. Research stays paper-only; no continuous monitoring job was started.
 
-[Import and check receipt](/Users/alexanderward/Documents/Codex/2026-10-12/pick-up-our-resolant-coin-hunt/outputs/continuation-verification.json) · [Research test log](/Users/alexanderward/Documents/Codex/2026-10-12/pick-up-our-resolant-coin-hunt/outputs/research-tests.txt) · [Installer test log](/Users/alexanderward/Documents/Codex/2026-10-12/pick-up-our-resolant-coin-hunt/outputs/installer-tests.txt) · [Frozen social-source plan](/Users/alexanderward/Documents/Codex/2026-10-12/pick-up-our-resolant-coin-hunt/outputs/social-source-preflight/plan.json) · [Raw source responses](/Users/alexanderward/Documents/Codex/2026-10-12/pick-up-our-resolant-coin-hunt/outputs/social-source-preflight/raw.jsonl)
+[Import and check receipt](~/Documents/Codex/2026-10-12/pick-up-our-resolant-coin-hunt/outputs/continuation-verification.json) · [Research test log](~/Documents/Codex/2026-10-12/pick-up-our-resolant-coin-hunt/outputs/research-tests.txt) · [Installer test log](~/Documents/Codex/2026-10-12/pick-up-our-resolant-coin-hunt/outputs/installer-tests.txt) · [Frozen social-source plan](~/Documents/Codex/2026-10-12/pick-up-our-resolant-coin-hunt/outputs/social-source-preflight/plan.json) · [Raw source responses](~/Documents/Codex/2026-10-12/pick-up-our-resolant-coin-hunt/outputs/social-source-preflight/raw.jsonl)

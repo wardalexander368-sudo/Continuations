@@ -12,4 +12,4 @@ Save that ZIP into Downloads and reply when it is available. The next import wil
 
 This chat can read the cloud conversation, but no cloud-library download tool is exposed here. Native ChatGPT UI control was denied by the computer-use tool; the in-app web browser is signed out. No cloud version was reconstructed from a summary, and no local test count was changed to 161.
 
-[Cloud release and checksum evidence](/Users/alexanderward/Documents/Codex/2026-10-12/pick-up-our-resolant-coin-hunt/outputs/cloud-v5-source-receipt.json)
+[Cloud release and checksum evidence](~/Documents/Codex/2026-10-12/pick-up-our-resolant-coin-hunt/outputs/cloud-v5-source-receipt.json)
