@@ -511,6 +511,10 @@ the Log). Owner thread names are the project's thread titles.
 
 ## Log (newest first)
 
+* **2026-10-12 ~00:20 UTC, overall-review thread: draft live rule for US strategies** (`live-rule-us.md`, not
+  adopted). Only `us_capit` eligible; start gate after 3 paper crash days; $100/trade, $250 loss stop; scale after
+  10 live crash days. Needs AJ's go, a funded Alpaca live account and a live route (not built).
+
 * **2026-10-11 ~20:40 UTC, overall-review thread** (`reviews/overall-2026-10-11.md`). No US registration can
   clear its CI bar in 52 weeks (too few independent events), so AJ needs a go-live-small rule. CAPIT holds on 10
   extra US coins (+4.52%/trade, CI spans zero, mostly the same crash days); VOLSPIKE does not (−0.30%). New paper
