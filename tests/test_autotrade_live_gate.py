@@ -5,7 +5,7 @@ import json
 from tartar.autotrade import live_gate as lg
 
 DAY = 86400.0
-T0 = 1_790_000_000.0  # 2026-09-21
+T0 = 1_791_800_000.0  # 2026-10-12 10:13 UTC, inside the forward window
 
 
 def trip(pos, day, sym="BTC/USD", cost=0.004, net=0.02, strategy="us_capit_fast", gap=10.0):
@@ -88,3 +88,24 @@ def test_random_entry_control_line():
     assert "no priced us_capit trades yet" in lg.control_line(None)
     st = {"strategies": {"us_capit": {"verdict": {"stats": {"excess": 0.031, "excess_lo": -0.01, "excess_hi": 0.07, "excess_n": 9}}}}}
     assert "+3.10%/trade [-1.00, +7.00] over 9 paper trades" in lg.control_line(st)
+
+
+def test_gate_rejects_bad_inputs():
+    """Codex review 2026-10-13: each of these used to report the paper side as met."""
+    import copy
+    three = [r for d in range(3) for r in trip(f"p{d}", d)]
+    dup = three + [copy.deepcopy(r) for r in three if r["event"] == "sell"] * 2
+    orphans = [r for r in rows_for(3, 3) if r["event"] == "sell"]
+    old = [dict(r, at=r["at"] - 30 * DAY, paper_at=r.get("paper_at", r["at"]) - 30 * DAY) for r in rows_for(3, 3)]
+    nan = [dict(r, **{k: float("nan") for k in lg.NUMERIC}) if r["event"] == "sell" else r for r in rows_for(3, 3)]
+    missing = [{k: v for k, v in r.items() if k not in ("entry_gap_bps", "exit_gap_bps")} for r in rows_for(3, 3)]
+    for rows in (dup, orphans, old, nan, missing):
+        g = lg.gate(rows)
+        assert not g["met"] and g["rejected"], g
+    assert lg.gate(dup)["trades"] == 3
+
+
+def test_fill_ignores_non_finite_price():
+    from tartar.autotrade.alpaca import _fill
+    assert _fill({"status": "filled", "filled_qty": "1", "filled_avg_price": "NaN"}) is None
+    assert _fill({"status": "filled", "filled_qty": "1", "filled_avg_price": "100"}) == (1.0, 100.0)

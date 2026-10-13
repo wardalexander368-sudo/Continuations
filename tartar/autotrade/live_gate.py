@@ -10,6 +10,7 @@ go in words, a funded Alpaca live account and a live route, none of which exists
 from __future__ import annotations
 
 import json
+import math
 import time
 from pathlib import Path
 
@@ -21,6 +22,8 @@ STOP_COST = 0.0060               # per side: the rule's cost stop; health goes r
 MAX_GAP_BPS = 50                 # no fill more than 0.5% from the paper book's price
 MIN_COIN_FILLS = 3               # round trips before a coin's own cost is judged
 HEALTH_MIN_FILLS = 5             # round trips before health judges the measured cost
+WINDOW_START = 1_791_763_200     # 2026-10-12 00:00 UTC: the rule's forward window; earlier entries never count
+NUMERIC = ("measured_side_cost", "alpaca_net_return", "entry_gap_bps", "exit_gap_bps")
 
 
 def _rows(root: Path) -> list[dict]:
@@ -42,17 +45,36 @@ def _median(xs: list[float]) -> float:
     return s[n // 2] if n % 2 else (s[n // 2 - 1] + s[n // 2]) / 2
 
 
-def round_trips(rows: list[dict], strategy: str | None = None) -> list[dict]:
-    """Closed Alpaca round trips (``sell`` rows with a measured cost), each with ``day``: its buy's UTC date."""
-    buys = {r.get("position"): r for r in rows if r.get("event") == "buy"}
-    out = []
+def _finite(x) -> bool:
+    return isinstance(x, (int, float)) and not isinstance(x, bool) and math.isfinite(x)
+
+
+def round_trips(rows: list[dict], strategy: str | None = None, rejected: list | None = None) -> list[dict]:
+    """Closed Alpaca round trips, each with ``day``: its buy's UTC date. A sell counts once per position, only with a
+    matching buy (same position and strategy) entered inside the forward window and finite cost, return and gaps.
+    Anything else is appended to ``rejected`` (Codex review 2026-10-13: these inputs used to satisfy the gate)."""
+    buys = {}
+    for r in rows:
+        if r.get("event") == "buy":
+            buys.setdefault(r.get("position"), r)
+    out, seen = [], set()
     for r in rows:
         if r.get("event") != "sell" or "measured_side_cost" not in r:
             continue
         if strategy is not None and r.get("strategy") != strategy:
             continue
-        b = buys.get(r.get("position"))
-        at = (b or {}).get("paper_at") or (b or {}).get("at") or r.get("at")
+        pos = r.get("position")
+        b = buys.get(pos)
+        at = (b or {}).get("paper_at") or (b or {}).get("at")
+        why = ("duplicate sell" if pos in seen else
+               "no matching buy" if b is None or b.get("strategy") != r.get("strategy") or not _finite(at) else
+               "entered before the window" if at < WINDOW_START else
+               "missing or non-finite value" if not all(_finite(r.get(k)) for k in NUMERIC) else None)
+        if why:
+            if rejected is not None:
+                rejected.append({"position": pos, "why": why})
+            continue
+        seen.add(pos)
         out.append({**r, "day": time.strftime("%Y-%m-%d", time.gmtime(at))})
     return out
 
@@ -68,16 +90,20 @@ def coin_screen(trips: list[dict]) -> dict[str, dict]:
 
 def gate(rows: list[dict]) -> dict:
     """The paper side of the start gate (items 2-4 of the rule); item 1 (AJ, funded account, live route) is never checked here."""
-    trips = round_trips(rows, GATE_STRATEGY)
+    rejected: list[dict] = []
+    trips = round_trips(rows, GATE_STRATEGY, rejected)
     days = sorted({r["day"] for r in trips})
-    out = {"strategy": GATE_STRATEGY, "trades": len(trips), "crash_days": len(days), "coins": coin_screen(trips)}
+    out = {"strategy": GATE_STRATEGY, "trades": len(trips), "crash_days": len(days), "coins": coin_screen(trips),
+           "rejected": rejected}
     unmet = []
+    if rejected:  # unresolved records keep the gate unmet until someone looks at them
+        unmet.append(f"{len(rejected)} fill record(s) rejected ({', '.join(sorted({x['why'] for x in rejected}))})")
     if len(days) < MIN_CRASH_DAYS or len(trips) < MIN_TRADES:
         unmet.append(f"{len(days)}/{MIN_CRASH_DAYS} crash days, {len(trips)}/{MIN_TRADES} trades")
     if trips:
         out["mean_net"] = sum(r["alpaca_net_return"] for r in trips) / len(trips)
         out["median_cost"] = _median([r["measured_side_cost"] for r in trips])
-        out["max_gap_bps"] = max(max(abs(r.get("entry_gap_bps") or 0), abs(r.get("exit_gap_bps") or 0)) for r in trips)
+        out["max_gap_bps"] = max(max(abs(r["entry_gap_bps"]), abs(r["exit_gap_bps"])) for r in trips)
         if out["mean_net"] <= MIN_MEAN_NET:
             unmet.append(f"mean net {100 * out['mean_net']:+.2f}% is not above {100 * MIN_MEAN_NET:.1f}%")
         if out["median_cost"] > MAX_MEDIAN_COST:

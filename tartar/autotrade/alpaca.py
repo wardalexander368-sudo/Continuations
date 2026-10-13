@@ -112,7 +112,8 @@ def symbol(asset: str) -> str:
 def _fill(order: dict) -> tuple[float, float] | None:
     if order.get("status") != "filled" and not float(order.get("filled_qty") or 0):
         return None
-    return float(order["filled_qty"]), float(order["filled_avg_price"])
+    qty, price = float(order["filled_qty"]), float(order.get("filled_avg_price") or "nan")
+    return (qty, price) if math.isfinite(qty) and math.isfinite(price) and qty > 0 and price > 0 else None
 
 
 class AlpacaMirror:
