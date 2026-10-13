@@ -10,7 +10,7 @@ Pre-specified before any result was seen:
 * Signal on day t's close: return_t / stdev(returns t-60..t-1) <= -Z AND volume_t >= V x median(volume t-20..t-1).
 * Trade: buy at day t+1's open, sell at day t+H's close (H trading days after the signal), 5 bp/side.
 * Family: Z in {2, 2.5, 3} x V in {1.5, 2} x H in {1, 3, 5} = 18 rules. The rule is picked on TRAIN only.
-* Splits by signal date: train 2005-01-01..2016-12-31, validation 2017..2021, test 2022-01-01..end.
+* Splits by signal date (bars are fetched from 2003 so the 60-day stdev is warm by 2005): train 2005-01-01..2016-12-31, validation 2017..2021, test 2022-01-01..end.
 * Control: the same ETF entered at every day within +-60 trading days of the signal, same hold and cost (exact
   mean); excess = trade - control. CIs: 90% bootstrap over signal DAYS (crash days hit many ETFs at once).
 * Pass (for paper registration): picked rule's excess and net both > 0 on validation AND test, test excess CI lower > 0.
