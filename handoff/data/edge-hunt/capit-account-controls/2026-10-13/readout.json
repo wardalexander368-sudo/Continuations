@@ -1,0 +1,1302 @@
+{
+  "analysis_id": "capit-cash-account-controls-20261013",
+  "status": "complete",
+  "protocol": {
+    "analysis_id": "capit-cash-account-controls-20261013",
+    "locked_at_utc": "2026-10-13T03:31:39.023068+00:00",
+    "base_commit": "22062631c563fcad874c6ead29275f8f28b2a5c7",
+    "classification": "exploratory diagnostic of already explored history, not a new registered or untouched test",
+    "cohort": "71 fixed accepted 60-minute CAPIT opportunities and 22 full11 episodes from the existing robustness analysis; later entry may reject an opportunity, never add a new signal",
+    "window": "2023-01-01 through 2026-10-10 exclusive",
+    "starting_cash_usd": 1500,
+    "stake_cash_debit_usd": 100,
+    "max_open_original_stakes_usd": 1100,
+    "one_position_per_coin": true,
+    "hold_hours": 24,
+    "entry_delays_hours": [
+      1,
+      2
+    ],
+    "entry_timestamp": "hourly candle close at signal_index+delay+1; exit close 24 hours later",
+    "primary_line": "snapshot_screened_8, delay2 hourly 120-minute proxy, effective side budget0.0039",
+    "universes": {
+      "study_11": [
+        "BTC",
+        "ETH",
+        "SOL",
+        "XRP",
+        "DOGE",
+        "ADA",
+        "AVAX",
+        "LINK",
+        "LTC",
+        "BCH",
+        "DOT"
+      ],
+      "snapshot_screened_8": [
+        "BTC",
+        "ETH",
+        "SOL",
+        "XRP",
+        "DOGE",
+        "ADA",
+        "LINK",
+        "DOT"
+      ]
+    },
+    "taker_fee_fraction": 0.0025,
+    "effective_side_budgets": [
+      0.0039,
+      0.005
+    ],
+    "friction_fraction": "effective_side_budget minus taker_fee; buy at close*(1+friction), sell at close*(1-friction), fee charged once on received crypto and once on received USD",
+    "cash_equations": "entry debit100; quantity=100/(entry_close*(1+friction))*(1-fee); exit_credit=quantity*exit_close*(1-friction)*(1-fee); realized_net=exit_credit-100",
+    "idle_cash_yield": 0,
+    "reinvestment": "fixed100 cash debits; gains/losses stay in cash, no stake scaling, borrowing or added funding",
+    "realized_loss_stop_usd": 250,
+    "loss_stop_interpretation": "cumulative net realized account P&L<=-250, not drawdown or sum of losing trades; diagnostic assumption, not an operational clarification",
+    "mean_stop": {
+      "completed_signal_utc_days": 5,
+      "mean_closed_net_return_below": -0.038
+    },
+    "stop_behavior": "after all exits at a timestamp, halt new entries permanently; already held positions keep scheduled24h exits; no restart or forced liquidation",
+    "timestamp_ties": "all exits before entries; compare stops after exit batch; entry priority fixed study_11 coin order then original cohort_id, never price/return",
+    "missing_prices": "no fills imputed; full11 joint control support requires finite positive entry and exit for both delays; zero shift must remain or analysis is non-evaluable",
+    "controls": "independent uniform common shift per fixed full11 episode within+-360hours; each shift preserves every member offset; same shift vector across all8 lines; shifted episodes may collide and both accounts apply same busy/cash/cap/stop rules",
+    "control_draws": 10000,
+    "control_seed": 61013,
+    "shift_support": "endpoint availability only; include zero and actual signals; no outcome filtering",
+    "control_summary": "full-account P&L reference quantiles/mean and share at least actual; not a null p-value or confidence interval for strategy profitability",
+    "drawdown": "closed-P&L drawdown only; no intratrade marks or maximum mark-to-market loss claim",
+    "capital_comparison": "full-window account return and CAGR-equivalent cash hurdle on1500; no chosen external yield assumption",
+    "not_modelled": [
+      "dynamic historical coin-cost eligibility",
+      "actual Alpaca fills/fee activities",
+      "intrahour liquidity and price gaps",
+      "account asset rounding",
+      "taxes/data/subscriptions",
+      "future registered score or unmatched-order stops",
+      "unknown actual funding and route readiness"
+    ],
+    "output_policy": "report all8 lines and all control-account rejections/halts; no winning line selection"
+  },
+  "provenance": {
+    "cache_manifest_sha256": "dc9fc1a691933ef97584f61b8b62f95724d50157e22a00800b3796a40992d4e7",
+    "source_cohort_analysis_sha256": "a293b0ff5a2de8c1edf8b30e23971035a792f9c99b66d80abe1135e0056dce45",
+    "numpy_version": "2.5.4",
+    "protocol_sha256": "de993555d9aeb0621eb06c4b5ceb2d5653050d2f086e3b0407a84f3355b16cd9",
+    "cohort_sha256": "3b8209549c3af7105440b322a151a32c5506f03aa662a81b13004e64a4b968e2"
+  },
+  "episode_support": [
+    {
+      "episode_id": 0,
+      "count": 709,
+      "support_sha256_le_int32": "258bb3fa72445abc983f31a5a60a5abf8d5a5bb3cf9c9f51c52824e89238559d"
+    },
+    {
+      "episode_id": 1,
+      "count": 721,
+      "support_sha256_le_int32": "7c5fa526023b5732c9cf28a0b9736c5f717d57119ef5ea0b4c1a07585f4d09d5"
+    },
+    {
+      "episode_id": 2,
+      "count": 721,
+      "support_sha256_le_int32": "7c5fa526023b5732c9cf28a0b9736c5f717d57119ef5ea0b4c1a07585f4d09d5"
+    },
+    {
+      "episode_id": 3,
+      "count": 721,
+      "support_sha256_le_int32": "7c5fa526023b5732c9cf28a0b9736c5f717d57119ef5ea0b4c1a07585f4d09d5"
+    },
+    {
+      "episode_id": 4,
+      "count": 721,
+      "support_sha256_le_int32": "7c5fa526023b5732c9cf28a0b9736c5f717d57119ef5ea0b4c1a07585f4d09d5"
+    },
+    {
+      "episode_id": 5,
+      "count": 721,
+      "support_sha256_le_int32": "7c5fa526023b5732c9cf28a0b9736c5f717d57119ef5ea0b4c1a07585f4d09d5"
+    },
+    {
+      "episode_id": 6,
+      "count": 721,
+      "support_sha256_le_int32": "7c5fa526023b5732c9cf28a0b9736c5f717d57119ef5ea0b4c1a07585f4d09d5"
+    },
+    {
+      "episode_id": 7,
+      "count": 721,
+      "support_sha256_le_int32": "7c5fa526023b5732c9cf28a0b9736c5f717d57119ef5ea0b4c1a07585f4d09d5"
+    },
+    {
+      "episode_id": 8,
+      "count": 721,
+      "support_sha256_le_int32": "7c5fa526023b5732c9cf28a0b9736c5f717d57119ef5ea0b4c1a07585f4d09d5"
+    },
+    {
+      "episode_id": 9,
+      "count": 721,
+      "support_sha256_le_int32": "7c5fa526023b5732c9cf28a0b9736c5f717d57119ef5ea0b4c1a07585f4d09d5"
+    },
+    {
+      "episode_id": 10,
+      "count": 721,
+      "support_sha256_le_int32": "7c5fa526023b5732c9cf28a0b9736c5f717d57119ef5ea0b4c1a07585f4d09d5"
+    },
+    {
+      "episode_id": 11,
+      "count": 721,
+      "support_sha256_le_int32": "7c5fa526023b5732c9cf28a0b9736c5f717d57119ef5ea0b4c1a07585f4d09d5"
+    },
+    {
+      "episode_id": 12,
+      "count": 721,
+      "support_sha256_le_int32": "7c5fa526023b5732c9cf28a0b9736c5f717d57119ef5ea0b4c1a07585f4d09d5"
+    },
+    {
+      "episode_id": 13,
+      "count": 721,
+      "support_sha256_le_int32": "7c5fa526023b5732c9cf28a0b9736c5f717d57119ef5ea0b4c1a07585f4d09d5"
+    },
+    {
+      "episode_id": 14,
+      "count": 721,
+      "support_sha256_le_int32": "7c5fa526023b5732c9cf28a0b9736c5f717d57119ef5ea0b4c1a07585f4d09d5"
+    },
+    {
+      "episode_id": 15,
+      "count": 721,
+      "support_sha256_le_int32": "7c5fa526023b5732c9cf28a0b9736c5f717d57119ef5ea0b4c1a07585f4d09d5"
+    },
+    {
+      "episode_id": 16,
+      "count": 687,
+      "support_sha256_le_int32": "67356f85c2f6dd2f166d6ba9d922a4eafcff58e1eecf91c677991bf0c5aee06b"
+    },
+    {
+      "episode_id": 17,
+      "count": 721,
+      "support_sha256_le_int32": "7c5fa526023b5732c9cf28a0b9736c5f717d57119ef5ea0b4c1a07585f4d09d5"
+    },
+    {
+      "episode_id": 18,
+      "count": 721,
+      "support_sha256_le_int32": "7c5fa526023b5732c9cf28a0b9736c5f717d57119ef5ea0b4c1a07585f4d09d5"
+    },
+    {
+      "episode_id": 19,
+      "count": 709,
+      "support_sha256_le_int32": "1e9164c2c1dec2994349726d76e43e23c51fca7e341b6f6884fb7d04085c870b"
+    },
+    {
+      "episode_id": 20,
+      "count": 721,
+      "support_sha256_le_int32": "7c5fa526023b5732c9cf28a0b9736c5f717d57119ef5ea0b4c1a07585f4d09d5"
+    },
+    {
+      "episode_id": 21,
+      "count": 721,
+      "support_sha256_le_int32": "7c5fa526023b5732c9cf28a0b9736c5f717d57119ef5ea0b4c1a07585f4d09d5"
+    }
+  ],
+  "shared_shift_matrix_sha256_le_int32": "ff049fc8d3004f059bad60a1aa66e9e0498d23efcfccd5a60620cec2e605d23f",
+  "summaries": [
+    {
+      "line": "study_11:delay1:side0.0039",
+      "universe": "study_11",
+      "delay_hours": 1,
+      "side_budget": 0.0039,
+      "actual": {
+        "candidates": 71,
+        "executed": 71,
+        "rejected": {},
+        "terminal_cash_usd": 1757.4149582198622,
+        "net_pnl_usd": 257.41495821986257,
+        "minimum_cash_usd": 699.7935217547001,
+        "peak_open_original_stakes_usd": 800,
+        "closed_pnl_drawdown_usd": 77.29611079219022,
+        "completed_signal_days": 25,
+        "halt_reason": null,
+        "halt_index": null,
+        "mean_closed_net_return": 0.036255627918290505,
+        "account_return": 0.17160997214657506,
+        "full_window_cagr_equivalent": 0.04287319275645518
+      },
+      "control_reference": {
+        "draws": 10000,
+        "mean_net_usd": -78.12651124169082,
+        "net_usd_q05_q50_q95": [
+          -196.0437643602689,
+          -76.79024062879475,
+          27.721986052827816
+        ],
+        "actual_minus_control_mean_usd": 335.5414694615534,
+        "share_controls_at_least_actual": 0.0,
+        "mean_executed": 65.584,
+        "halt_counts": {
+          "mean_after_completed_days": 1154,
+          "none": 8768,
+          "cumulative_net_loss": 78
+        },
+        "rejected_totals": {
+          "halted": 53265,
+          "coin_busy": 895
+        }
+      }
+    },
+    {
+      "line": "study_11:delay1:side0.005",
+      "universe": "study_11",
+      "delay_hours": 1,
+      "side_budget": 0.005,
+      "actual": {
+        "candidates": 71,
+        "executed": 71,
+        "rejected": {},
+        "terminal_cash_usd": 1741.2463741641968,
+        "net_pnl_usd": 241.2463741641968,
+        "minimum_cash_usd": 692.5419273800719,
+        "peak_open_original_stakes_usd": 800,
+        "closed_pnl_drawdown_usd": 80.4226311189089,
+        "completed_signal_days": 25,
+        "halt_reason": null,
+        "halt_index": null,
+        "mean_closed_net_return": 0.033978362558337576,
+        "account_return": 0.16083091610946454,
+        "full_window_cagr_equivalent": 0.040321409363280436
+      },
+      "control_reference": {
+        "draws": 10000,
+        "mean_net_usd": -91.09928538828005,
+        "net_usd_q05_q50_q95": [
+          -204.63197279116662,
+          -88.50120891968297,
+          12.009175814398194
+        ],
+        "actual_minus_control_mean_usd": 332.34565955247683,
+        "share_controls_at_least_actual": 0.0,
+        "mean_executed": 64.7471,
+        "halt_counts": {
+          "mean_after_completed_days": 1344,
+          "none": 8558,
+          "cumulative_net_loss": 98
+        },
+        "rejected_totals": {
+          "halted": 61641,
+          "coin_busy": 888
+        }
+      }
+    },
+    {
+      "line": "study_11:delay2:side0.0039",
+      "universe": "study_11",
+      "delay_hours": 2,
+      "side_budget": 0.0039,
+      "actual": {
+        "candidates": 71,
+        "executed": 71,
+        "rejected": {},
+        "terminal_cash_usd": 1688.7959596604162,
+        "net_pnl_usd": 188.7959596604157,
+        "minimum_cash_usd": 675.3039820500128,
+        "peak_open_original_stakes_usd": 800,
+        "closed_pnl_drawdown_usd": 103.7068467702301,
+        "completed_signal_days": 25,
+        "halt_reason": null,
+        "halt_index": null,
+        "mean_closed_net_return": 0.026590980233861364,
+        "account_return": 0.1258639731069438,
+        "full_window_cagr_equivalent": 0.03192173136973131
+      },
+      "control_reference": {
+        "draws": 10000,
+        "mean_net_usd": -77.85292564910654,
+        "net_usd_q05_q50_q95": [
+          -194.08414684233665,
+          -76.16445642136642,
+          26.83052403232679
+        ],
+        "actual_minus_control_mean_usd": 266.64888530952226,
+        "share_controls_at_least_actual": 0.0003,
+        "mean_executed": 65.4176,
+        "halt_counts": {
+          "mean_after_completed_days": 1180,
+          "none": 8737,
+          "cumulative_net_loss": 83
+        },
+        "rejected_totals": {
+          "halted": 54925,
+          "coin_busy": 899
+        }
+      }
+    },
+    {
+      "line": "study_11:delay2:side0.005",
+      "universe": "study_11",
+      "delay_hours": 2,
+      "side_budget": 0.005,
+      "actual": {
+        "candidates": 71,
+        "executed": 71,
+        "rejected": {},
+        "terminal_cash_usd": 1672.7781720532753,
+        "net_pnl_usd": 172.7781720532752,
+        "minimum_cash_usd": 668.106205651324,
+        "peak_open_original_stakes_usd": 800,
+        "closed_pnl_drawdown_usd": 106.99508615285227,
+        "completed_signal_days": 25,
+        "halt_reason": null,
+        "halt_index": null,
+        "mean_closed_net_return": 0.02433495381032045,
+        "account_return": 0.1151854480355168,
+        "full_window_cagr_equivalent": 0.02931838180920776
+      },
+      "control_reference": {
+        "draws": 10000,
+        "mean_net_usd": -90.59693145304732,
+        "net_usd_q05_q50_q95": [
+          -202.6609415953709,
+          -87.55320574192446,
+          11.113465226378262
+        ],
+        "actual_minus_control_mean_usd": 263.3751035063225,
+        "share_controls_at_least_actual": 0.0003,
+        "mean_executed": 64.5249,
+        "halt_counts": {
+          "mean_after_completed_days": 1380,
+          "none": 8514,
+          "cumulative_net_loss": 106
+        },
+        "rejected_totals": {
+          "halted": 63858,
+          "coin_busy": 893
+        }
+      }
+    },
+    {
+      "line": "snapshot_screened_8:delay1:side0.0039",
+      "universe": "snapshot_screened_8",
+      "delay_hours": 1,
+      "side_budget": 0.0039,
+      "actual": {
+        "candidates": 50,
+        "executed": 50,
+        "rejected": {},
+        "terminal_cash_usd": 1712.9235121983168,
+        "net_pnl_usd": 212.92351219831744,
+        "minimum_cash_usd": 920.1491918736085,
+        "peak_open_original_stakes_usd": 600,
+        "closed_pnl_drawdown_usd": 49.29126811255367,
+        "completed_signal_days": 22,
+        "halt_reason": null,
+        "halt_index": null,
+        "mean_closed_net_return": 0.04258470243966349,
+        "account_return": 0.14194900813221162,
+        "full_window_cagr_equivalent": 0.03580910744274668
+      },
+      "control_reference": {
+        "draws": 10000,
+        "mean_net_usd": -55.765298814455235,
+        "net_usd_q05_q50_q95": [
+          -141.40732626254984,
+          -54.198284198327364,
+          21.43381984613198
+        ],
+        "actual_minus_control_mean_usd": 268.6888110127727,
+        "share_controls_at_least_actual": 0.0,
+        "mean_executed": 46.0011,
+        "halt_counts": {
+          "mean_after_completed_days": 1294,
+          "none": 8705,
+          "cumulative_net_loss": 1
+        },
+        "rejected_totals": {
+          "halted": 39800,
+          "coin_busy": 189
+        }
+      }
+    },
+    {
+      "line": "snapshot_screened_8:delay1:side0.005",
+      "universe": "snapshot_screened_8",
+      "delay_hours": 1,
+      "side_budget": 0.005,
+      "actual": {
+        "candidates": 50,
+        "executed": 50,
+        "rejected": {},
+        "terminal_cash_usd": 1701.4676418333368,
+        "net_pnl_usd": 201.467641833337,
+        "minimum_cash_usd": 915.2702134513268,
+        "peak_open_original_stakes_usd": 600,
+        "closed_pnl_drawdown_usd": 51.38053643998482,
+        "completed_signal_days": 22,
+        "halt_reason": null,
+        "halt_index": null,
+        "mean_closed_net_return": 0.0402935283666674,
+        "account_return": 0.13431176122222468,
+        "full_window_cagr_equivalent": 0.033968415943873564
+      },
+      "control_reference": {
+        "draws": 10000,
+        "mean_net_usd": -64.80100637006164,
+        "net_usd_q05_q50_q95": [
+          -147.83020208805496,
+          -61.67759152488303,
+          10.304349632312947
+        ],
+        "actual_minus_control_mean_usd": 266.26864820339864,
+        "share_controls_at_least_actual": 0.0,
+        "mean_executed": 45.3402,
+        "halt_counts": {
+          "mean_after_completed_days": 1511,
+          "none": 8488,
+          "cumulative_net_loss": 1
+        },
+        "rejected_totals": {
+          "halted": 46414,
+          "coin_busy": 184
+        }
+      }
+    },
+    {
+      "line": "snapshot_screened_8:delay2:side0.0039",
+      "universe": "snapshot_screened_8",
+      "delay_hours": 2,
+      "side_budget": 0.0039,
+      "actual": {
+        "candidates": 50,
+        "executed": 50,
+        "rejected": {},
+        "terminal_cash_usd": 1653.2888069350727,
+        "net_pnl_usd": 153.28880693507273,
+        "minimum_cash_usd": 891.9955484156776,
+        "peak_open_original_stakes_usd": 600,
+        "closed_pnl_drawdown_usd": 66.38508587116546,
+        "completed_signal_days": 22,
+        "halt_reason": null,
+        "halt_index": null,
+        "mean_closed_net_return": 0.030657761387014544,
+        "account_return": 0.10219253795671515,
+        "full_window_cagr_equivalent": 0.02612597628022728
+      },
+      "control_reference": {
+        "draws": 10000,
+        "mean_net_usd": -55.71996518131194,
+        "net_usd_q05_q50_q95": [
+          -140.67446717825086,
+          -54.14755098095555,
+          21.072439390347206
+        ],
+        "actual_minus_control_mean_usd": 209.00877211638468,
+        "share_controls_at_least_actual": 0.0001,
+        "mean_executed": 45.9927,
+        "halt_counts": {
+          "mean_after_completed_days": 1301,
+          "none": 8699
+        },
+        "rejected_totals": {
+          "halted": 39886,
+          "coin_busy": 187
+        }
+      }
+    },
+    {
+      "line": "snapshot_screened_8:delay2:side0.005",
+      "universe": "snapshot_screened_8",
+      "delay_hours": 2,
+      "side_budget": 0.005,
+      "actual": {
+        "candidates": 50,
+        "executed": 50,
+        "rejected": {},
+        "terminal_cash_usd": 1641.9639892224382,
+        "net_pnl_usd": 141.96398922243824,
+        "minimum_cash_usd": 887.1784401683567,
+        "peak_open_original_stakes_usd": 600,
+        "closed_pnl_drawdown_usd": 68.65654802399816,
+        "completed_signal_days": 22,
+        "halt_reason": null,
+        "halt_index": null,
+        "mean_closed_net_return": 0.028392797844487647,
+        "account_return": 0.0946426594816255,
+        "full_window_cagr_equivalent": 0.024258219483805687
+      },
+      "control_reference": {
+        "draws": 10000,
+        "mean_net_usd": -64.68464937024207,
+        "net_usd_q05_q50_q95": [
+          -146.85422108378248,
+          -61.86233624666985,
+          9.711748637535303
+        ],
+        "actual_minus_control_mean_usd": 206.6486385926803,
+        "share_controls_at_least_actual": 0.0001,
+        "mean_executed": 45.2576,
+        "halt_counts": {
+          "mean_after_completed_days": 1544,
+          "none": 8456
+        },
+        "rejected_totals": {
+          "halted": 47238,
+          "coin_busy": 186
+        }
+      }
+    }
+  ],
+  "full_output_sha256": "8a52d9eb005c30ac33331fd24045c2b669326cd5706533efb25d893c911db5f0",
+  "implementation_sha256": "6c88c9c12d6719cd56fd3217e7787f9980e57f557a9282ba79a364291921aebb",
+  "primary_actual_trace": [
+    {
+      "event": "entry",
+      "cohort_id": 0,
+      "at_index": 1467,
+      "quantity": 1325.6660265726466,
+      "cash_usd": 1400
+    },
+    {
+      "event": "exit",
+      "cohort_id": 0,
+      "at_index": 1491,
+      "credit_usd": 101.22957361188216,
+      "cash_usd": 1501.2295736118822,
+      "net_usd": 1.2295736118821594
+    },
+    {
+      "event": "entry",
+      "cohort_id": 3,
+      "at_index": 3737,
+      "quantity": 1497.2274949146047,
+      "cash_usd": 1401.2295736118822
+    },
+    {
+      "event": "exit",
+      "cohort_id": 3,
+      "at_index": 3761,
+      "credit_usd": 104.09926964905077,
+      "cash_usd": 1505.328843260933,
+      "net_usd": 4.099269649050768
+    },
+    {
+      "event": "entry",
+      "cohort_id": 4,
+      "at_index": 3845,
+      "quantity": 405.415324528566,
+      "cash_usd": 1405.328843260933
+    },
+    {
+      "event": "entry",
+      "cohort_id": 8,
+      "at_index": 3846,
+      "quantity": 7.079640741767495,
+      "cash_usd": 1305.328843260933
+    },
+    {
+      "event": "entry",
+      "cohort_id": 7,
+      "at_index": 3846,
+      "quantity": 23.268055416180488,
+      "cash_usd": 1205.328843260933
+    },
+    {
+      "event": "entry",
+      "cohort_id": 9,
+      "at_index": 3847,
+      "quantity": 19.45898519958364,
+      "cash_usd": 1105.328843260933
+    },
+    {
+      "event": "exit",
+      "cohort_id": 4,
+      "at_index": 3869,
+      "credit_usd": 107.17797453436984,
+      "cash_usd": 1212.5068177953028,
+      "net_usd": 7.177974534369838
+    },
+    {
+      "event": "exit",
+      "cohort_id": 7,
+      "at_index": 3870,
+      "credit_usd": 103.34798842316273,
+      "cash_usd": 1315.8548062184655,
+      "net_usd": 3.3479884231627324
+    },
+    {
+      "event": "exit",
+      "cohort_id": 8,
+      "at_index": 3870,
+      "credit_usd": 109.94153622801211,
+      "cash_usd": 1425.7963424464776,
+      "net_usd": 9.941536228012112
+    },
+    {
+      "event": "exit",
+      "cohort_id": 9,
+      "at_index": 3871,
+      "credit_usd": 99.99773927770413,
+      "cash_usd": 1525.7940817241818,
+      "net_usd": -0.002260722295872597
+    },
+    {
+      "event": "entry",
+      "cohort_id": 11,
+      "at_index": 5489,
+      "quantity": 0.0035647342402164903,
+      "cash_usd": 1425.7940817241818
+    },
+    {
+      "event": "entry",
+      "cohort_id": 12,
+      "at_index": 5489,
+      "quantity": 0.057254349798923236,
+      "cash_usd": 1325.7940817241818
+    },
+    {
+      "event": "entry",
+      "cohort_id": 16,
+      "at_index": 5495,
+      "quantity": 196.58682699164925,
+      "cash_usd": 1225.7940817241818
+    },
+    {
+      "event": "entry",
+      "cohort_id": 14,
+      "at_index": 5495,
+      "quantity": 1631.622362598995,
+      "cash_usd": 1125.7940817241818
+    },
+    {
+      "event": "exit",
+      "cohort_id": 11,
+      "at_index": 5513,
+      "credit_usd": 92.29549679479996,
+      "cash_usd": 1218.0895785189816,
+      "net_usd": -7.704503205200041
+    },
+    {
+      "event": "exit",
+      "cohort_id": 12,
+      "at_index": 5513,
+      "credit_usd": 94.7334824122696,
+      "cash_usd": 1312.8230609312511,
+      "net_usd": -5.266517587730405
+    },
+    {
+      "event": "exit",
+      "cohort_id": 14,
+      "at_index": 5519,
+      "credit_usd": 102.76548989357158,
+      "cash_usd": 1415.5885508248227,
+      "net_usd": 2.7654898935715835
+    },
+    {
+      "event": "exit",
+      "cohort_id": 16,
+      "at_index": 5519,
+      "credit_usd": 99.12450233394387,
+      "cash_usd": 1514.7130531587666,
+      "net_usd": -0.875497666056134
+    },
+    {
+      "event": "entry",
+      "cohort_id": 17,
+      "at_index": 8822,
+      "quantity": 177.08541375407762,
+      "cash_usd": 1414.7130531587666
+    },
+    {
+      "event": "exit",
+      "cohort_id": 17,
+      "at_index": 8846,
+      "credit_usd": 103.17366971699622,
+      "cash_usd": 1517.8867228757629,
+      "net_usd": 3.1736697169962156
+    },
+    {
+      "event": "entry",
+      "cohort_id": 20,
+      "at_index": 11228,
+      "quantity": 182.83873942119803,
+      "cash_usd": 1417.8867228757629
+    },
+    {
+      "event": "entry",
+      "cohort_id": 19,
+      "at_index": 11228,
+      "quantity": 13.988280471376022,
+      "cash_usd": 1317.8867228757629
+    },
+    {
+      "event": "entry",
+      "cohort_id": 21,
+      "at_index": 11229,
+      "quantity": 6.610295655761408,
+      "cash_usd": 1217.8867228757629
+    },
+    {
+      "event": "exit",
+      "cohort_id": 19,
+      "at_index": 11252,
+      "credit_usd": 83.44937929261411,
+      "cash_usd": 1301.336102168377,
+      "net_usd": -16.55062070738589
+    },
+    {
+      "event": "exit",
+      "cohort_id": 20,
+      "at_index": 11252,
+      "credit_usd": 79.27958199125578,
+      "cash_usd": 1380.6156841596328,
+      "net_usd": -20.72041800874422
+    },
+    {
+      "event": "exit",
+      "cohort_id": 21,
+      "at_index": 11253,
+      "credit_usd": 84.03846664622246,
+      "cash_usd": 1464.6541508058554,
+      "net_usd": -15.96153335377754
+    },
+    {
+      "event": "entry",
+      "cohort_id": 24,
+      "at_index": 12572,
+      "quantity": 198.58561650053556,
+      "cash_usd": 1364.6541508058554
+    },
+    {
+      "event": "entry",
+      "cohort_id": 22,
+      "at_index": 12572,
+      "quantity": 669.3807219721031,
+      "cash_usd": 1264.6541508058554
+    },
+    {
+      "event": "exit",
+      "cohort_id": 22,
+      "at_index": 12596,
+      "credit_usd": 97.27543710558628,
+      "cash_usd": 1361.9295879114416,
+      "net_usd": -2.7245628944137223
+    },
+    {
+      "event": "exit",
+      "cohort_id": 24,
+      "at_index": 12596,
+      "credit_usd": 97.48166866387056,
+      "cash_usd": 1459.411256575312,
+      "net_usd": -2.5183313361294353
+    },
+    {
+      "event": "entry",
+      "cohort_id": 25,
+      "at_index": 12665,
+      "quantity": 0.028700171213741393,
+      "cash_usd": 1359.411256575312
+    },
+    {
+      "event": "exit",
+      "cohort_id": 25,
+      "at_index": 12689,
+      "credit_usd": 103.55354640813997,
+      "cash_usd": 1462.964802983452,
+      "net_usd": 3.5535464081399653
+    },
+    {
+      "event": "entry",
+      "cohort_id": 26,
+      "at_index": 12981,
+      "quantity": 0.0016580871168729236,
+      "cash_usd": 1362.964802983452
+    },
+    {
+      "event": "exit",
+      "cohort_id": 26,
+      "at_index": 13005,
+      "credit_usd": 102.24521934860239,
+      "cash_usd": 1465.2100223320545,
+      "net_usd": 2.24521934860239
+    },
+    {
+      "event": "entry",
+      "cohort_id": 32,
+      "at_index": 13228,
+      "quantity": 247.7258026278753,
+      "cash_usd": 1365.2100223320545
+    },
+    {
+      "event": "entry",
+      "cohort_id": 30,
+      "at_index": 13228,
+      "quantity": 1032.2336293955302,
+      "cash_usd": 1265.2100223320545
+    },
+    {
+      "event": "entry",
+      "cohort_id": 29,
+      "at_index": 13228,
+      "quantity": 299.58058717795086,
+      "cash_usd": 1165.2100223320545
+    },
+    {
+      "event": "entry",
+      "cohort_id": 31,
+      "at_index": 13228,
+      "quantity": 19.323093159392563,
+      "cash_usd": 1065.2100223320545
+    },
+    {
+      "event": "exit",
+      "cohort_id": 29,
+      "at_index": 13252,
+      "credit_usd": 103.99702508987417,
+      "cash_usd": 1169.2070474219286,
+      "net_usd": 3.997025089874171
+    },
+    {
+      "event": "exit",
+      "cohort_id": 30,
+      "at_index": 13252,
+      "credit_usd": 108.67167671758244,
+      "cash_usd": 1277.878724139511,
+      "net_usd": 8.671676717582443
+    },
+    {
+      "event": "exit",
+      "cohort_id": 31,
+      "at_index": 13252,
+      "credit_usd": 108.75007410696801,
+      "cash_usd": 1386.628798246479,
+      "net_usd": 8.750074106968015
+    },
+    {
+      "event": "exit",
+      "cohort_id": 32,
+      "at_index": 13252,
+      "credit_usd": 105.3667501691986,
+      "cash_usd": 1491.9955484156776,
+      "net_usd": 5.366750169198596
+    },
+    {
+      "event": "entry",
+      "cohort_id": 34,
+      "at_index": 13971,
+      "quantity": 0.04303165915132436,
+      "cash_usd": 1391.9955484156776
+    },
+    {
+      "event": "entry",
+      "cohort_id": 33,
+      "at_index": 13971,
+      "quantity": 24.82196492316687,
+      "cash_usd": 1291.9955484156776
+    },
+    {
+      "event": "entry",
+      "cohort_id": 35,
+      "at_index": 13973,
+      "quantity": 11.129669858845661,
+      "cash_usd": 1191.9955484156776
+    },
+    {
+      "event": "entry",
+      "cohort_id": 38,
+      "at_index": 13976,
+      "quantity": 0.0018876355194298554,
+      "cash_usd": 1091.9955484156776
+    },
+    {
+      "event": "entry",
+      "cohort_id": 36,
+      "at_index": 13976,
+      "quantity": 331.48267965613536,
+      "cash_usd": 991.9955484156776
+    },
+    {
+      "event": "entry",
+      "cohort_id": 40,
+      "at_index": 13980,
+      "quantity": 1203.607361487055,
+      "cash_usd": 891.9955484156776
+    },
+    {
+      "event": "exit",
+      "cohort_id": 33,
+      "at_index": 13995,
+      "credit_usd": 107.45591971072297,
+      "cash_usd": 999.4514681264005,
+      "net_usd": 7.455919710722966
+    },
+    {
+      "event": "exit",
+      "cohort_id": 34,
+      "at_index": 13995,
+      "credit_usd": 106.86806198195838,
+      "cash_usd": 1106.319530108359,
+      "net_usd": 6.868061981958377
+    },
+    {
+      "event": "exit",
+      "cohort_id": 35,
+      "at_index": 13997,
+      "credit_usd": 111.9273161000298,
+      "cash_usd": 1218.246846208389,
+      "net_usd": 11.927316100029799
+    },
+    {
+      "event": "exit",
+      "cohort_id": 36,
+      "at_index": 14000,
+      "credit_usd": 107.6753038164623,
+      "cash_usd": 1325.9221500248511,
+      "net_usd": 7.6753038164623035
+    },
+    {
+      "event": "exit",
+      "cohort_id": 38,
+      "at_index": 14000,
+      "credit_usd": 103.45311874053179,
+      "cash_usd": 1429.375268765383,
+      "net_usd": 3.4531187405317922
+    },
+    {
+      "event": "exit",
+      "cohort_id": 40,
+      "at_index": 14004,
+      "credit_usd": 113.98108723866518,
+      "cash_usd": 1543.3563560040482,
+      "net_usd": 13.981087238665182
+    },
+    {
+      "event": "entry",
+      "cohort_id": 41,
+      "at_index": 17269,
+      "quantity": 333.636606500096,
+      "cash_usd": 1443.3563560040482
+    },
+    {
+      "event": "exit",
+      "cohort_id": 41,
+      "at_index": 17293,
+      "credit_usd": 107.45106675177462,
+      "cash_usd": 1550.8074227558227,
+      "net_usd": 7.4510667517746185
+    },
+    {
+      "event": "entry",
+      "cohort_id": 43,
+      "at_index": 17720,
+      "quantity": 0.029603792580419185,
+      "cash_usd": 1450.8074227558227
+    },
+    {
+      "event": "exit",
+      "cohort_id": 43,
+      "at_index": 17744,
+      "credit_usd": 97.5604441897018,
+      "cash_usd": 1548.3678669455244,
+      "net_usd": -2.4395558102982022
+    },
+    {
+      "event": "entry",
+      "cohort_id": 49,
+      "at_index": 18339,
+      "quantity": 0.039385923488950036,
+      "cash_usd": 1448.3678669455244
+    },
+    {
+      "event": "entry",
+      "cohort_id": 51,
+      "at_index": 18339,
+      "quantity": 44.071562355839596,
+      "cash_usd": 1348.3678669455244
+    },
+    {
+      "event": "entry",
+      "cohort_id": 47,
+      "at_index": 18339,
+      "quantity": 425.50425133134837,
+      "cash_usd": 1248.3678669455244
+    },
+    {
+      "event": "entry",
+      "cohort_id": 44,
+      "at_index": 18339,
+      "quantity": 150.7879885508154,
+      "cash_usd": 1148.3678669455244
+    },
+    {
+      "event": "entry",
+      "cohort_id": 50,
+      "at_index": 18339,
+      "quantity": 5.617241596834639,
+      "cash_usd": 1048.3678669455244
+    },
+    {
+      "event": "entry",
+      "cohort_id": 48,
+      "at_index": 18339,
+      "quantity": 22.978211127259208,
+      "cash_usd": 948.3678669455244
+    },
+    {
+      "event": "exit",
+      "cohort_id": 44,
+      "at_index": 18363,
+      "credit_usd": 119.0939313763524,
+      "cash_usd": 1067.4617983218768,
+      "net_usd": 19.0939313763524
+    },
+    {
+      "event": "exit",
+      "cohort_id": 47,
+      "at_index": 18363,
+      "credit_usd": 119.3212030609944,
+      "cash_usd": 1186.7830013828711,
+      "net_usd": 19.321203060994407
+    },
+    {
+      "event": "exit",
+      "cohort_id": 48,
+      "at_index": 18363,
+      "credit_usd": 115.24448631647529,
+      "cash_usd": 1302.0274876993465,
+      "net_usd": 15.244486316475289
+    },
+    {
+      "event": "exit",
+      "cohort_id": 49,
+      "at_index": 18363,
+      "credit_usd": 110.38012330126259,
+      "cash_usd": 1412.407611000609,
+      "net_usd": 10.380123301262586
+    },
+    {
+      "event": "exit",
+      "cohort_id": 50,
+      "at_index": 18363,
+      "credit_usd": 116.94849426652375,
+      "cash_usd": 1529.3561052671328,
+      "net_usd": 16.948494266523753
+    },
+    {
+      "event": "exit",
+      "cohort_id": 51,
+      "at_index": 18363,
+      "credit_usd": 119.54364753197727,
+      "cash_usd": 1648.89975279911,
+      "net_usd": 19.54364753197727
+    },
+    {
+      "event": "entry",
+      "cohort_id": 52,
+      "at_index": 18875,
+      "quantity": 0.001116514382866823,
+      "cash_usd": 1548.89975279911
+    },
+    {
+      "event": "exit",
+      "cohort_id": 52,
+      "at_index": 18899,
+      "credit_usd": 98.47600619929985,
+      "cash_usd": 1647.37575899841,
+      "net_usd": -1.523993800700154
+    },
+    {
+      "event": "entry",
+      "cohort_id": 54,
+      "at_index": 19856,
+      "quantity": 0.0666420544698762,
+      "cash_usd": 1547.37575899841
+    },
+    {
+      "event": "entry",
+      "cohort_id": 56,
+      "at_index": 19856,
+      "quantity": 56.45256176631831,
+      "cash_usd": 1447.37575899841
+    },
+    {
+      "event": "entry",
+      "cohort_id": 53,
+      "at_index": 19856,
+      "quantity": 725.6541504820328,
+      "cash_usd": 1347.37575899841
+    },
+    {
+      "event": "exit",
+      "cohort_id": 53,
+      "at_index": 19880,
+      "credit_usd": 109.73954034583608,
+      "cash_usd": 1457.115299344246,
+      "net_usd": 9.739540345836076
+    },
+    {
+      "event": "exit",
+      "cohort_id": 54,
+      "at_index": 19880,
+      "credit_usd": 103.98202965877627,
+      "cash_usd": 1561.0973290030224,
+      "net_usd": 3.98202965877627
+    },
+    {
+      "event": "exit",
+      "cohort_id": 56,
+      "at_index": 19880,
+      "credit_usd": 105.34051901345626,
+      "cash_usd": 1666.4378480164787,
+      "net_usd": 5.340519013456259
+    },
+    {
+      "event": "entry",
+      "cohort_id": 57,
+      "at_index": 24334,
+      "quantity": 42.25620211117323,
+      "cash_usd": 1566.4378480164787
+    },
+    {
+      "event": "entry",
+      "cohort_id": 58,
+      "at_index": 24335,
+      "quantity": 506.485713309954,
+      "cash_usd": 1466.4378480164787
+    },
+    {
+      "event": "entry",
+      "cohort_id": 61,
+      "at_index": 24336,
+      "quantity": 5.5910723639800555,
+      "cash_usd": 1366.4378480164787
+    },
+    {
+      "event": "entry",
+      "cohort_id": 60,
+      "at_index": 24336,
+      "quantity": 33.663584061057335,
+      "cash_usd": 1266.4378480164787
+    },
+    {
+      "event": "entry",
+      "cohort_id": 62,
+      "at_index": 24339,
+      "quantity": 0.000886078119591414,
+      "cash_usd": 1166.4378480164787
+    },
+    {
+      "event": "entry",
+      "cohort_id": 63,
+      "at_index": 24339,
+      "quantity": 0.5384062766156893,
+      "cash_usd": 1066.4378480164787
+    },
+    {
+      "event": "exit",
+      "cohort_id": 57,
+      "at_index": 24358,
+      "credit_usd": 100.98183957141522,
+      "cash_usd": 1167.419687587894,
+      "net_usd": 0.9818395714152217
+    },
+    {
+      "event": "exit",
+      "cohort_id": 58,
+      "at_index": 24359,
+      "credit_usd": 93.58196644363446,
+      "cash_usd": 1261.0016540315285,
+      "net_usd": -6.418033556365543
+    },
+    {
+      "event": "exit",
+      "cohort_id": 60,
+      "at_index": 24360,
+      "credit_usd": 98.85355619419059,
+      "cash_usd": 1359.855210225719,
+      "net_usd": -1.1464438058094117
+    },
+    {
+      "event": "exit",
+      "cohort_id": 61,
+      "at_index": 24360,
+      "credit_usd": 93.95386748116793,
+      "cash_usd": 1453.809077706887,
+      "net_usd": -6.046132518832067
+    },
+    {
+      "event": "exit",
+      "cohort_id": 62,
+      "at_index": 24363,
+      "credit_usd": 97.78608093962362,
+      "cash_usd": 1551.5951586465105,
+      "net_usd": -2.2139190603763836
+    },
+    {
+      "event": "exit",
+      "cohort_id": 63,
+      "at_index": 24363,
+      "credit_usd": 95.04457049376052,
+      "cash_usd": 1646.6397291402711,
+      "net_usd": -4.955429506239483
+    },
+    {
+      "event": "entry",
+      "cohort_id": 66,
+      "at_index": 27165,
+      "quantity": 85.87856301118086,
+      "cash_usd": 1546.6397291402711
+    },
+    {
+      "event": "exit",
+      "cohort_id": 66,
+      "at_index": 27189,
+      "credit_usd": 124.65462527386224,
+      "cash_usd": 1671.2943544141333,
+      "net_usd": 24.654625273862237
+    },
+    {
+      "event": "entry",
+      "cohort_id": 68,
+      "at_index": 29976,
+      "quantity": 0.001490417231299468,
+      "cash_usd": 1571.2943544141333
+    },
+    {
+      "event": "exit",
+      "cohort_id": 68,
+      "at_index": 30000,
+      "credit_usd": 93.90675243854888,
+      "cash_usd": 1665.2011068526822,
+      "net_usd": -6.093247561451122
+    },
+    {
+      "event": "entry",
+      "cohort_id": 69,
+      "at_index": 30028,
+      "quantity": 591.1605058556004,
+      "cash_usd": 1565.2011068526822
+    },
+    {
+      "event": "exit",
+      "cohort_id": 69,
+      "at_index": 30052,
+      "credit_usd": 88.2107859318912,
+      "cash_usd": 1653.4118927845734,
+      "net_usd": -11.789214068108805
+    },
+    {
+      "event": "entry",
+      "cohort_id": 70,
+      "at_index": 31296,
+      "quantity": 131.41232880827,
+      "cash_usd": 1553.4118927845734
+    },
+    {
+      "event": "exit",
+      "cohort_id": 70,
+      "at_index": 31320,
+      "credit_usd": 99.87691415049933,
+      "cash_usd": 1653.2888069350727,
+      "net_usd": -0.12308584950066859
+    }
+  ],
+  "compact_policy": "All8 scalar/control summaries and support counts/hashes; only primary trace retained. Full output retains all actual traces, supports and80,000 controls."
+}

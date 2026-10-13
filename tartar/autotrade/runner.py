@@ -9,7 +9,7 @@ import traceback
 from pathlib import Path
 
 from . import lifecycle, live_gate
-from .alpaca import make_mirror, report_lines as alpaca_report
+from .alpaca import make_mirror, reconcile_safe as reconcile_alpaca, report_lines as alpaca_report
 from .broker import LiveBroker, LiveNotAllowed, PaperBroker, make_broker
 from .core import Context, Intent
 from .ledger import Ledger
@@ -203,6 +203,9 @@ def run_once(root: Path = ROOT, now: float | None = None, strategies: dict | Non
     summary["new_halts"] = [c for c in ledger.changes()[n_changes:] if c.get("kind") == "halt"]
     if wallet is not None:
         record_wallet(wallet, now)
+    rec = reconcile_alpaca(mirror, ledger.positions, now)  # paper account vs book (alpaca.py; health reads it)
+    if rec is not None:
+        ledger.state.setdefault("alpaca", {})["reconcile"] = rec
     ledger.state["last_run"] = {k: v for k, v in summary.items() if k != "changes"}
     ledger._append("equity.jsonl", {
         "t": now, "realized_usd": round(sum(t.pnl_usd for t in ledger.trades()), 4),

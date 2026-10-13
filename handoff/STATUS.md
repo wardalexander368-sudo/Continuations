@@ -54,6 +54,7 @@ Lanes as of 2026-10-12 (all paper only). Owner thread names are the project's th
   `codex/*` branches and opens PRs into `main`; rules in `AGENTS.md`. Claude reviews each PR before it lands;
   approved PRs land on main through the coordinator's bundle push. A twice-daily routine (01:07/13:07 UTC) checks for new
   `codex/*` work; open Codex PRs are watched.
+  Proposed claim: CAPIT chronological cash-account controls on the existing fixed cohort; locked costs/delays/stops and matched full-account references (`codex/capit-account-controls`; review `reviews/capit-account-controls-2026-10-13.md`).
   Landed 2026-10-13 (reviewed by Claude): PR #4 US paper-evidence audit (`reviews/us-paper-evidence-2026-10-13.md`;
   its gate-input defects fixed in `live_gate.py` in the same landing), PR #5 CAPIT replication + whole-episode
   robustness (`reviews/capit-robustness-2026-10-13.md`), PR #6 CDE contract sizing (`reviews/cde-capit-economics-2026-10-13.md`).
@@ -61,6 +62,7 @@ Lanes as of 2026-10-12 (all paper only). Owner thread names are the project's th
   research archive, not wired into the agent; `handoff/codexcoinhunt.md`, review `reviews/codex-review-2026-10-12.md`)
   and the connected-project map `CONNECTED_PROJECTS.md`. Suggested next claims: `plan-2026-10-12.md` section E.
   Proposed claim 2026-10-13: CAPIT feed-coverage diagnostic (`reviews/capit-feed-integrity-2026-10-13.md`); synthetic missing-data/cursor evidence only; owner implementation unchanged.
+  Proposed claim 2026-10-13: CDE cost-documentation addendum (`reviews/cde-cost-documentation-2026-10-13.md`); dated exchange fees, retail/REST units unresolved; docs only.
 * **Continue TARTAR handoff session:** owns `autotrade/` and `tartar/autotrade/` (the hourly agent).
   Agent spec pass done 10-11 (separate hl/us risk books, error-halt retry, per-book drawdown stops). Next: plan A1, A2.
 * **Alpaca paper route (thread "Alpaca paper trading route"):** owns `tartar/autotrade/alpaca.py`. `us_capit` and
@@ -106,6 +108,16 @@ Lanes as of 2026-10-12 (all paper only). Owner thread names are the project's th
   `archive/STATUS-history-to-2026-10-10.md`; that lane is closed.
 
 ## Log (newest first)
+
+* **2026-10-13 ~06:30 UTC, thread "Perfect trading system vs ours": AJ "approved for all"** (the review's three gaps).
+  (1) Hourly Alpaca account-vs-book check: `alpaca.reconcile`, state `alpaca.reconcile`, health "Alpaca account vs book"
+  (red on any mismatch or an order open >1 h), REPORT line. (2) US ETF capitulation study: **fails** (validation 2017-21
+  negative; `findings.md` §3). (3) Always-on box software `tartar/autotrade/box.py` + setup `box.md` (paper, second Alpaca
+  paper account, results on branch `box-data`); AJ is setting up the server.
+
+* **2026-10-13 ~05:45 UTC, thread "Perfect trading system vs ours": ideal small-US system vs ours** (`reviews/perfect-system-2026-10-13.md`).
+  Machinery is close to ideal; the gap is edges (one candidate, ~6 events/yr). Top gaps: test US stocks/ETFs on Alpaca
+  (commission-free; added to `findings.md` §7), reconcile the Alpaca paper account with the book each run. No code changed.
 
 * **2026-10-13 ~01:30 UTC, thread "Tune the agent for profitability": Coinbase US perp book at us_capit fills**
   (`tartar/autotrade/cde_book.py`, config `cde_book` on `us_capit`, `us_capit_fast`). Each fresh entry/exit records the

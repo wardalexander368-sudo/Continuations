@@ -36,6 +36,11 @@ class FakeHttp:
             return FakeResp(200, {"quotes": {s: {"bp": self.px[s] * 0.9995, "ap": self.px[s] * 1.0005}}})
         if path.startswith("/v2/assets/"):
             return FakeResp(200, {"min_trade_increment": "0.000001"})
+        if path == "/v2/positions":
+            return FakeResp(200, [{"symbol": k, "qty": str(v), "asset_class": "crypto", "current_price": str(self.px[k[:-3] + "/USD"])}
+                                  for k, v in self.held.items() if abs(v) > 1e-12])
+        if path == "/v2/orders" and method == "GET":
+            return FakeResp(200, list(getattr(self, "open", [])))
         if path.startswith("/v2/positions/"):
             sym = path.rsplit("/", 1)[1]
             return FakeResp(200, {"qty": str(self.held[sym])}) if self.held.get(sym) else FakeResp(404, {"message": "no position"})
@@ -148,3 +153,43 @@ def test_config_mirrors_only_us_spot_pattern_strategies():
     cfg = json.loads(open("autotrade/config.json").read())
     for name in cfg["alpaca_paper"]["strategies"]:
         assert cfg["strategies"][name]["kind"] == "coinbase_pattern", name
+
+
+def test_account_matches_book_every_run_and_a_stray_holding_turns_health_red(tmp_path):
+    s, http, client = setup(tmp_path)
+    seen = []
+    for h in range(H0 + 190, H0 + 240):
+        run_once(tmp_path, now=h * 3600 + 1200, strategies={"c": s}, alpaca=client)
+        rec = json.loads((tmp_path / "state.json").read_text())["alpaca"]["reconcile"]
+        seen.append((bool(Ledger(tmp_path).positions), rec["ok"]))
+    assert (True, True) in seen and all(ok for _, ok in seen)  # matched while holding and after the sell
+    now = (H0 + 240) * 3600
+    assert alpaca.health_items(tmp_path, now)[0]["level"] == "green"
+    http.held["ETHUSD"] = 2.0  # something the book never bought
+    http.px["ETH/USD"] = 2000.0
+    run_once(tmp_path, now=now + 1200, strategies={"c": s}, alpaca=client)
+    (item,) = alpaca.health_items(tmp_path, now + 1300)
+    assert item["level"] == "red" and "ETHUSD" in item["detail"]
+    assert "**differs**" in (tmp_path / "REPORT.md").read_text()
+
+
+def test_an_order_open_for_hours_is_stuck(tmp_path):
+    s, http, client = setup(tmp_path)
+    http.open = [{"symbol": "BTCUSD", "side": "sell", "client_order_id": "x", "submitted_at": "2020-01-01T00:00:00Z"}]
+    rec = alpaca.reconcile(client, [], 0.0025, 1.7e9)
+    assert rec["ok"] is False and rec["stuck_orders"][0]["client_order_id"] == "x"
+
+
+def test_a_failed_check_is_reported_not_raised(tmp_path):
+    class Broken:
+        cfg = {"taker_fee": 0.0025}
+
+        def ready(self, now, quiet=False):
+            return True
+
+        @property
+        def client(self):
+            raise RuntimeError("boom")
+
+    rec = alpaca.reconcile_safe(Broken(), [], 1.0)
+    assert rec["ok"] is None and "boom" in rec["error"]
