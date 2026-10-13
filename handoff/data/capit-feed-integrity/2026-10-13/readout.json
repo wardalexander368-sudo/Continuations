@@ -1,0 +1,1302 @@
+{
+  "fixture": {
+    "coins": [
+      "BTC",
+      "ETH"
+    ],
+    "crash_hour": 500200,
+    "delay_15m_bars": 2,
+    "first_now": 1800728400,
+    "hours": 260,
+    "initial_done_hour": 500199,
+    "missing_entry_bar_start": 1800724500,
+    "price_pattern": "deterministic 11-bar gentle oscillation; optional 100-to-60 crash then 63",
+    "recovery_now": 1800732000,
+    "start_hour": 500000
+  },
+  "has_named_capit_or_coinbase_coverage_input": false,
+  "health_error_detection_control": {
+    "check_agent_items": [
+      {
+        "check": "Agent: strategy errors",
+        "detail": "us_capit x1 (synthetic diagnostic error)",
+        "level": "yellow"
+      }
+    ],
+    "constructed_strategy_errors": 1
+  },
+  "health_input_inventory": [
+    {
+      "format": "csv_last_t_dir",
+      "max_age_seconds": 32400,
+      "name": "HL 1h candles (wick test)",
+      "path": "handoff/data/edge-hunt/hl-1h"
+    },
+    {
+      "format": "jsonl_t_dir",
+      "max_age_seconds": 32400,
+      "name": "HL OI/funding snapshots",
+      "path": "handoff/data/edge-hunt/hl-ctx"
+    },
+    {
+      "format": "jsonl_t",
+      "max_age_seconds": 32400,
+      "name": "JLP snapshots",
+      "path": "handoff/data/jlp-paper/snapshots.jsonl"
+    },
+    {
+      "format": "cohort_name",
+      "max_age_seconds": 100800,
+      "name": "dip cohorts",
+      "path": "handoff/preregistration/dip-rolling"
+    },
+    {
+      "format": "jsonl_t",
+      "max_age_seconds": 194400,
+      "name": "pumpflow snapshots",
+      "path": "handoff/data/pumpflow-paper/snapshots.jsonl"
+    }
+  ],
+  "kind": "offline_synthetic_capit_feed_integrity",
+  "limitations": [
+    "Synthetic restoration is stipulated; HTTP 404 alone does not prove transient failure or delisting.",
+    "Missing entry candles are explicitly skipped by the current implementation; the probe does not change that contract.",
+    "check_agent receives constructed recent/no-error state; no claim that all production health checks are green.",
+    "No production outage, missed trade, cost, return, profitability, or registered verdict is measured.",
+    "No runner persistence, position handling, risk checks, Alpaca mirror, or order execution is tested.",
+    "The original-cursor comparison is an offline completeness diagnostic, not authority for historical replay orders."
+  ],
+  "scenarios": [
+    {
+      "counterfactual_only_signal_keys": [],
+      "first": {
+        "check_agent_items": [
+          {
+            "check": "Agent",
+            "detail": "no halts, no strategy errors, no orphans, no closed twins yet",
+            "level": "green"
+          }
+        ],
+        "done_hour_after": 500200,
+        "done_hour_before": 500199,
+        "http_requests": [
+          {
+            "coin": "BTC",
+            "end_inclusive": 1800276300,
+            "start": 1800007200,
+            "status_code": 200,
+            "wire_rows": 300
+          },
+          {
+            "coin": "BTC",
+            "end_inclusive": 1800546300,
+            "start": 1800277200,
+            "status_code": 200,
+            "wire_rows": 300
+          },
+          {
+            "coin": "BTC",
+            "end_inclusive": 1800727200,
+            "start": 1800547200,
+            "status_code": 200,
+            "wire_rows": 201
+          },
+          {
+            "coin": "ETH",
+            "end_inclusive": 1800276300,
+            "start": 1800007200,
+            "status_code": 200,
+            "wire_rows": 300
+          },
+          {
+            "coin": "ETH",
+            "end_inclusive": 1800546300,
+            "start": 1800277200,
+            "status_code": 200,
+            "wire_rows": 300
+          },
+          {
+            "coin": "ETH",
+            "end_inclusive": 1800727200,
+            "start": 1800547200,
+            "status_code": 200,
+            "wire_rows": 201
+          }
+        ],
+        "now": 1800728400,
+        "open_intents": [
+          {
+            "at": 1800725400.0,
+            "coin": "BTC",
+            "key": "BTC:500200",
+            "price": 63.0
+          },
+          {
+            "at": 1800725400.0,
+            "coin": "ETH",
+            "key": "ETH:500200",
+            "price": 63.0
+          }
+        ],
+        "other_intent_count": 0,
+        "source_mode": "complete",
+        "state_keys": [
+          "control_due",
+          "done_hour"
+        ],
+        "step_exception": null
+      },
+      "interpretation": "diagnostic information difference; not an executable late trade or observed production loss",
+      "mode": "complete",
+      "original_cursor_counterfactual": {
+        "check_agent_items": [
+          {
+            "check": "Agent",
+            "detail": "no halts, no strategy errors, no orphans, no closed twins yet",
+            "level": "green"
+          }
+        ],
+        "done_hour_after": 500201,
+        "done_hour_before": 500199,
+        "http_requests": [
+          {
+            "coin": "BTC",
+            "end_inclusive": 1800276300,
+            "start": 1800007200,
+            "status_code": 200,
+            "wire_rows": 300
+          },
+          {
+            "coin": "BTC",
+            "end_inclusive": 1800546300,
+            "start": 1800277200,
+            "status_code": 200,
+            "wire_rows": 300
+          },
+          {
+            "coin": "BTC",
+            "end_inclusive": 1800730800,
+            "start": 1800547200,
+            "status_code": 200,
+            "wire_rows": 205
+          },
+          {
+            "coin": "ETH",
+            "end_inclusive": 1800276300,
+            "start": 1800007200,
+            "status_code": 200,
+            "wire_rows": 300
+          },
+          {
+            "coin": "ETH",
+            "end_inclusive": 1800546300,
+            "start": 1800277200,
+            "status_code": 200,
+            "wire_rows": 300
+          },
+          {
+            "coin": "ETH",
+            "end_inclusive": 1800730800,
+            "start": 1800547200,
+            "status_code": 200,
+            "wire_rows": 205
+          }
+        ],
+        "now": 1800732000,
+        "open_intents": [
+          {
+            "at": 1800725400.0,
+            "coin": "BTC",
+            "key": "BTC:500200",
+            "price": 63.0
+          },
+          {
+            "at": 1800725400.0,
+            "coin": "ETH",
+            "key": "ETH:500200",
+            "price": 63.0
+          }
+        ],
+        "other_intent_count": 0,
+        "source_mode": "complete",
+        "state_keys": [
+          "control_due",
+          "done_hour"
+        ],
+        "step_exception": null
+      },
+      "recovery": {
+        "check_agent_items": [
+          {
+            "check": "Agent",
+            "detail": "no halts, no strategy errors, no orphans, no closed twins yet",
+            "level": "green"
+          }
+        ],
+        "done_hour_after": 500201,
+        "done_hour_before": 500200,
+        "http_requests": [
+          {
+            "coin": "BTC",
+            "end_inclusive": 1800279900,
+            "start": 1800010800,
+            "status_code": 200,
+            "wire_rows": 300
+          },
+          {
+            "coin": "BTC",
+            "end_inclusive": 1800549900,
+            "start": 1800280800,
+            "status_code": 200,
+            "wire_rows": 300
+          },
+          {
+            "coin": "BTC",
+            "end_inclusive": 1800730800,
+            "start": 1800550800,
+            "status_code": 200,
+            "wire_rows": 201
+          },
+          {
+            "coin": "ETH",
+            "end_inclusive": 1800279900,
+            "start": 1800010800,
+            "status_code": 200,
+            "wire_rows": 300
+          },
+          {
+            "coin": "ETH",
+            "end_inclusive": 1800549900,
+            "start": 1800280800,
+            "status_code": 200,
+            "wire_rows": 300
+          },
+          {
+            "coin": "ETH",
+            "end_inclusive": 1800730800,
+            "start": 1800550800,
+            "status_code": 200,
+            "wire_rows": 201
+          }
+        ],
+        "now": 1800732000,
+        "open_intents": [],
+        "other_intent_count": 0,
+        "source_mode": "complete",
+        "state_keys": [
+          "control_due",
+          "done_hour"
+        ],
+        "step_exception": null
+      }
+    },
+    {
+      "counterfactual_only_signal_keys": [
+        "BTC:500200"
+      ],
+      "first": {
+        "check_agent_items": [
+          {
+            "check": "Agent",
+            "detail": "no halts, no strategy errors, no orphans, no closed twins yet",
+            "level": "green"
+          }
+        ],
+        "done_hour_after": 500200,
+        "done_hour_before": 500199,
+        "http_requests": [
+          {
+            "coin": "BTC",
+            "end_inclusive": 1800276300,
+            "start": 1800007200,
+            "status_code": 404,
+            "wire_rows": 0
+          },
+          {
+            "coin": "ETH",
+            "end_inclusive": 1800276300,
+            "start": 1800007200,
+            "status_code": 200,
+            "wire_rows": 300
+          },
+          {
+            "coin": "ETH",
+            "end_inclusive": 1800546300,
+            "start": 1800277200,
+            "status_code": 200,
+            "wire_rows": 300
+          },
+          {
+            "coin": "ETH",
+            "end_inclusive": 1800727200,
+            "start": 1800547200,
+            "status_code": 200,
+            "wire_rows": 201
+          }
+        ],
+        "now": 1800728400,
+        "open_intents": [
+          {
+            "at": 1800725400.0,
+            "coin": "ETH",
+            "key": "ETH:500200",
+            "price": 63.0
+          }
+        ],
+        "other_intent_count": 0,
+        "source_mode": "transient_404",
+        "state_keys": [
+          "control_due",
+          "done_hour"
+        ],
+        "step_exception": null
+      },
+      "interpretation": "diagnostic information difference; not an executable late trade or observed production loss",
+      "mode": "transient_404",
+      "original_cursor_counterfactual": {
+        "check_agent_items": [
+          {
+            "check": "Agent",
+            "detail": "no halts, no strategy errors, no orphans, no closed twins yet",
+            "level": "green"
+          }
+        ],
+        "done_hour_after": 500201,
+        "done_hour_before": 500199,
+        "http_requests": [
+          {
+            "coin": "BTC",
+            "end_inclusive": 1800276300,
+            "start": 1800007200,
+            "status_code": 200,
+            "wire_rows": 300
+          },
+          {
+            "coin": "BTC",
+            "end_inclusive": 1800546300,
+            "start": 1800277200,
+            "status_code": 200,
+            "wire_rows": 300
+          },
+          {
+            "coin": "BTC",
+            "end_inclusive": 1800730800,
+            "start": 1800547200,
+            "status_code": 200,
+            "wire_rows": 205
+          },
+          {
+            "coin": "ETH",
+            "end_inclusive": 1800276300,
+            "start": 1800007200,
+            "status_code": 200,
+            "wire_rows": 300
+          },
+          {
+            "coin": "ETH",
+            "end_inclusive": 1800546300,
+            "start": 1800277200,
+            "status_code": 200,
+            "wire_rows": 300
+          },
+          {
+            "coin": "ETH",
+            "end_inclusive": 1800730800,
+            "start": 1800547200,
+            "status_code": 200,
+            "wire_rows": 205
+          }
+        ],
+        "now": 1800732000,
+        "open_intents": [
+          {
+            "at": 1800725400.0,
+            "coin": "BTC",
+            "key": "BTC:500200",
+            "price": 63.0
+          },
+          {
+            "at": 1800725400.0,
+            "coin": "ETH",
+            "key": "ETH:500200",
+            "price": 63.0
+          }
+        ],
+        "other_intent_count": 0,
+        "source_mode": "complete",
+        "state_keys": [
+          "control_due",
+          "done_hour"
+        ],
+        "step_exception": null
+      },
+      "recovery": {
+        "check_agent_items": [
+          {
+            "check": "Agent",
+            "detail": "no halts, no strategy errors, no orphans, no closed twins yet",
+            "level": "green"
+          }
+        ],
+        "done_hour_after": 500201,
+        "done_hour_before": 500200,
+        "http_requests": [
+          {
+            "coin": "BTC",
+            "end_inclusive": 1800279900,
+            "start": 1800010800,
+            "status_code": 200,
+            "wire_rows": 300
+          },
+          {
+            "coin": "BTC",
+            "end_inclusive": 1800549900,
+            "start": 1800280800,
+            "status_code": 200,
+            "wire_rows": 300
+          },
+          {
+            "coin": "BTC",
+            "end_inclusive": 1800730800,
+            "start": 1800550800,
+            "status_code": 200,
+            "wire_rows": 201
+          },
+          {
+            "coin": "ETH",
+            "end_inclusive": 1800279900,
+            "start": 1800010800,
+            "status_code": 200,
+            "wire_rows": 300
+          },
+          {
+            "coin": "ETH",
+            "end_inclusive": 1800549900,
+            "start": 1800280800,
+            "status_code": 200,
+            "wire_rows": 300
+          },
+          {
+            "coin": "ETH",
+            "end_inclusive": 1800730800,
+            "start": 1800550800,
+            "status_code": 200,
+            "wire_rows": 201
+          }
+        ],
+        "now": 1800732000,
+        "open_intents": [],
+        "other_intent_count": 0,
+        "source_mode": "complete",
+        "state_keys": [
+          "control_due",
+          "done_hour"
+        ],
+        "step_exception": null
+      }
+    },
+    {
+      "counterfactual_only_signal_keys": [
+        "BTC:500200"
+      ],
+      "first": {
+        "check_agent_items": [
+          {
+            "check": "Agent",
+            "detail": "no halts, no strategy errors, no orphans, no closed twins yet",
+            "level": "green"
+          }
+        ],
+        "done_hour_after": 500200,
+        "done_hour_before": 500199,
+        "http_requests": [
+          {
+            "coin": "BTC",
+            "end_inclusive": 1800276300,
+            "start": 1800007200,
+            "status_code": 200,
+            "wire_rows": 0
+          },
+          {
+            "coin": "BTC",
+            "end_inclusive": 1800546300,
+            "start": 1800277200,
+            "status_code": 200,
+            "wire_rows": 0
+          },
+          {
+            "coin": "BTC",
+            "end_inclusive": 1800727200,
+            "start": 1800547200,
+            "status_code": 200,
+            "wire_rows": 0
+          },
+          {
+            "coin": "ETH",
+            "end_inclusive": 1800276300,
+            "start": 1800007200,
+            "status_code": 200,
+            "wire_rows": 300
+          },
+          {
+            "coin": "ETH",
+            "end_inclusive": 1800546300,
+            "start": 1800277200,
+            "status_code": 200,
+            "wire_rows": 300
+          },
+          {
+            "coin": "ETH",
+            "end_inclusive": 1800727200,
+            "start": 1800547200,
+            "status_code": 200,
+            "wire_rows": 201
+          }
+        ],
+        "now": 1800728400,
+        "open_intents": [
+          {
+            "at": 1800725400.0,
+            "coin": "ETH",
+            "key": "ETH:500200",
+            "price": 63.0
+          }
+        ],
+        "other_intent_count": 0,
+        "source_mode": "transient_200_empty",
+        "state_keys": [
+          "control_due",
+          "done_hour"
+        ],
+        "step_exception": null
+      },
+      "interpretation": "diagnostic information difference; not an executable late trade or observed production loss",
+      "mode": "transient_200_empty",
+      "original_cursor_counterfactual": {
+        "check_agent_items": [
+          {
+            "check": "Agent",
+            "detail": "no halts, no strategy errors, no orphans, no closed twins yet",
+            "level": "green"
+          }
+        ],
+        "done_hour_after": 500201,
+        "done_hour_before": 500199,
+        "http_requests": [
+          {
+            "coin": "BTC",
+            "end_inclusive": 1800276300,
+            "start": 1800007200,
+            "status_code": 200,
+            "wire_rows": 300
+          },
+          {
+            "coin": "BTC",
+            "end_inclusive": 1800546300,
+            "start": 1800277200,
+            "status_code": 200,
+            "wire_rows": 300
+          },
+          {
+            "coin": "BTC",
+            "end_inclusive": 1800730800,
+            "start": 1800547200,
+            "status_code": 200,
+            "wire_rows": 205
+          },
+          {
+            "coin": "ETH",
+            "end_inclusive": 1800276300,
+            "start": 1800007200,
+            "status_code": 200,
+            "wire_rows": 300
+          },
+          {
+            "coin": "ETH",
+            "end_inclusive": 1800546300,
+            "start": 1800277200,
+            "status_code": 200,
+            "wire_rows": 300
+          },
+          {
+            "coin": "ETH",
+            "end_inclusive": 1800730800,
+            "start": 1800547200,
+            "status_code": 200,
+            "wire_rows": 205
+          }
+        ],
+        "now": 1800732000,
+        "open_intents": [
+          {
+            "at": 1800725400.0,
+            "coin": "BTC",
+            "key": "BTC:500200",
+            "price": 63.0
+          },
+          {
+            "at": 1800725400.0,
+            "coin": "ETH",
+            "key": "ETH:500200",
+            "price": 63.0
+          }
+        ],
+        "other_intent_count": 0,
+        "source_mode": "complete",
+        "state_keys": [
+          "control_due",
+          "done_hour"
+        ],
+        "step_exception": null
+      },
+      "recovery": {
+        "check_agent_items": [
+          {
+            "check": "Agent",
+            "detail": "no halts, no strategy errors, no orphans, no closed twins yet",
+            "level": "green"
+          }
+        ],
+        "done_hour_after": 500201,
+        "done_hour_before": 500200,
+        "http_requests": [
+          {
+            "coin": "BTC",
+            "end_inclusive": 1800279900,
+            "start": 1800010800,
+            "status_code": 200,
+            "wire_rows": 300
+          },
+          {
+            "coin": "BTC",
+            "end_inclusive": 1800549900,
+            "start": 1800280800,
+            "status_code": 200,
+            "wire_rows": 300
+          },
+          {
+            "coin": "BTC",
+            "end_inclusive": 1800730800,
+            "start": 1800550800,
+            "status_code": 200,
+            "wire_rows": 201
+          },
+          {
+            "coin": "ETH",
+            "end_inclusive": 1800279900,
+            "start": 1800010800,
+            "status_code": 200,
+            "wire_rows": 300
+          },
+          {
+            "coin": "ETH",
+            "end_inclusive": 1800549900,
+            "start": 1800280800,
+            "status_code": 200,
+            "wire_rows": 300
+          },
+          {
+            "coin": "ETH",
+            "end_inclusive": 1800730800,
+            "start": 1800550800,
+            "status_code": 200,
+            "wire_rows": 201
+          }
+        ],
+        "now": 1800732000,
+        "open_intents": [],
+        "other_intent_count": 0,
+        "source_mode": "complete",
+        "state_keys": [
+          "control_due",
+          "done_hour"
+        ],
+        "step_exception": null
+      }
+    },
+    {
+      "counterfactual_only_signal_keys": [
+        "BTC:500200"
+      ],
+      "first": {
+        "check_agent_items": [
+          {
+            "check": "Agent",
+            "detail": "no halts, no strategy errors, no orphans, no closed twins yet",
+            "level": "green"
+          }
+        ],
+        "done_hour_after": 500200,
+        "done_hour_before": 500199,
+        "http_requests": [
+          {
+            "coin": "BTC",
+            "end_inclusive": 1800276300,
+            "start": 1800007200,
+            "status_code": 200,
+            "wire_rows": 300
+          },
+          {
+            "coin": "BTC",
+            "end_inclusive": 1800546300,
+            "start": 1800277200,
+            "status_code": 200,
+            "wire_rows": 300
+          },
+          {
+            "coin": "BTC",
+            "end_inclusive": 1800727200,
+            "start": 1800547200,
+            "status_code": 200,
+            "wire_rows": 200
+          },
+          {
+            "coin": "ETH",
+            "end_inclusive": 1800276300,
+            "start": 1800007200,
+            "status_code": 200,
+            "wire_rows": 300
+          },
+          {
+            "coin": "ETH",
+            "end_inclusive": 1800546300,
+            "start": 1800277200,
+            "status_code": 200,
+            "wire_rows": 300
+          },
+          {
+            "coin": "ETH",
+            "end_inclusive": 1800727200,
+            "start": 1800547200,
+            "status_code": 200,
+            "wire_rows": 201
+          }
+        ],
+        "now": 1800728400,
+        "open_intents": [
+          {
+            "at": 1800725400.0,
+            "coin": "ETH",
+            "key": "ETH:500200",
+            "price": 63.0
+          }
+        ],
+        "other_intent_count": 0,
+        "source_mode": "missing_entry_bar",
+        "state_keys": [
+          "control_due",
+          "done_hour"
+        ],
+        "step_exception": null
+      },
+      "interpretation": "diagnostic information difference; not an executable late trade or observed production loss",
+      "mode": "missing_entry_bar",
+      "original_cursor_counterfactual": {
+        "check_agent_items": [
+          {
+            "check": "Agent",
+            "detail": "no halts, no strategy errors, no orphans, no closed twins yet",
+            "level": "green"
+          }
+        ],
+        "done_hour_after": 500201,
+        "done_hour_before": 500199,
+        "http_requests": [
+          {
+            "coin": "BTC",
+            "end_inclusive": 1800276300,
+            "start": 1800007200,
+            "status_code": 200,
+            "wire_rows": 300
+          },
+          {
+            "coin": "BTC",
+            "end_inclusive": 1800546300,
+            "start": 1800277200,
+            "status_code": 200,
+            "wire_rows": 300
+          },
+          {
+            "coin": "BTC",
+            "end_inclusive": 1800730800,
+            "start": 1800547200,
+            "status_code": 200,
+            "wire_rows": 205
+          },
+          {
+            "coin": "ETH",
+            "end_inclusive": 1800276300,
+            "start": 1800007200,
+            "status_code": 200,
+            "wire_rows": 300
+          },
+          {
+            "coin": "ETH",
+            "end_inclusive": 1800546300,
+            "start": 1800277200,
+            "status_code": 200,
+            "wire_rows": 300
+          },
+          {
+            "coin": "ETH",
+            "end_inclusive": 1800730800,
+            "start": 1800547200,
+            "status_code": 200,
+            "wire_rows": 205
+          }
+        ],
+        "now": 1800732000,
+        "open_intents": [
+          {
+            "at": 1800725400.0,
+            "coin": "BTC",
+            "key": "BTC:500200",
+            "price": 63.0
+          },
+          {
+            "at": 1800725400.0,
+            "coin": "ETH",
+            "key": "ETH:500200",
+            "price": 63.0
+          }
+        ],
+        "other_intent_count": 0,
+        "source_mode": "complete",
+        "state_keys": [
+          "control_due",
+          "done_hour"
+        ],
+        "step_exception": null
+      },
+      "recovery": {
+        "check_agent_items": [
+          {
+            "check": "Agent",
+            "detail": "no halts, no strategy errors, no orphans, no closed twins yet",
+            "level": "green"
+          }
+        ],
+        "done_hour_after": 500201,
+        "done_hour_before": 500200,
+        "http_requests": [
+          {
+            "coin": "BTC",
+            "end_inclusive": 1800279900,
+            "start": 1800010800,
+            "status_code": 200,
+            "wire_rows": 300
+          },
+          {
+            "coin": "BTC",
+            "end_inclusive": 1800549900,
+            "start": 1800280800,
+            "status_code": 200,
+            "wire_rows": 300
+          },
+          {
+            "coin": "BTC",
+            "end_inclusive": 1800730800,
+            "start": 1800550800,
+            "status_code": 200,
+            "wire_rows": 201
+          },
+          {
+            "coin": "ETH",
+            "end_inclusive": 1800279900,
+            "start": 1800010800,
+            "status_code": 200,
+            "wire_rows": 300
+          },
+          {
+            "coin": "ETH",
+            "end_inclusive": 1800549900,
+            "start": 1800280800,
+            "status_code": 200,
+            "wire_rows": 300
+          },
+          {
+            "coin": "ETH",
+            "end_inclusive": 1800730800,
+            "start": 1800550800,
+            "status_code": 200,
+            "wire_rows": 201
+          }
+        ],
+        "now": 1800732000,
+        "open_intents": [],
+        "other_intent_count": 0,
+        "source_mode": "complete",
+        "state_keys": [
+          "control_due",
+          "done_hour"
+        ],
+        "step_exception": null
+      }
+    },
+    {
+      "counterfactual_only_signal_keys": [],
+      "first": {
+        "check_agent_items": [
+          {
+            "check": "Agent",
+            "detail": "no halts, no strategy errors, no orphans, no closed twins yet",
+            "level": "green"
+          }
+        ],
+        "done_hour_after": 500200,
+        "done_hour_before": 500199,
+        "http_requests": [
+          {
+            "coin": "BTC",
+            "end_inclusive": 1800276300,
+            "start": 1800007200,
+            "status_code": 200,
+            "wire_rows": 300
+          },
+          {
+            "coin": "BTC",
+            "end_inclusive": 1800546300,
+            "start": 1800277200,
+            "status_code": 200,
+            "wire_rows": 300
+          },
+          {
+            "coin": "BTC",
+            "end_inclusive": 1800727200,
+            "start": 1800547200,
+            "status_code": 200,
+            "wire_rows": 201
+          },
+          {
+            "coin": "ETH",
+            "end_inclusive": 1800276300,
+            "start": 1800007200,
+            "status_code": 200,
+            "wire_rows": 300
+          },
+          {
+            "coin": "ETH",
+            "end_inclusive": 1800546300,
+            "start": 1800277200,
+            "status_code": 200,
+            "wire_rows": 300
+          },
+          {
+            "coin": "ETH",
+            "end_inclusive": 1800727200,
+            "start": 1800547200,
+            "status_code": 200,
+            "wire_rows": 201
+          }
+        ],
+        "now": 1800728400,
+        "open_intents": [],
+        "other_intent_count": 0,
+        "source_mode": "no_signal",
+        "state_keys": [
+          "done_hour"
+        ],
+        "step_exception": null
+      },
+      "interpretation": "diagnostic information difference; not an executable late trade or observed production loss",
+      "mode": "no_signal",
+      "original_cursor_counterfactual": {
+        "check_agent_items": [
+          {
+            "check": "Agent",
+            "detail": "no halts, no strategy errors, no orphans, no closed twins yet",
+            "level": "green"
+          }
+        ],
+        "done_hour_after": 500201,
+        "done_hour_before": 500199,
+        "http_requests": [
+          {
+            "coin": "BTC",
+            "end_inclusive": 1800276300,
+            "start": 1800007200,
+            "status_code": 200,
+            "wire_rows": 300
+          },
+          {
+            "coin": "BTC",
+            "end_inclusive": 1800546300,
+            "start": 1800277200,
+            "status_code": 200,
+            "wire_rows": 300
+          },
+          {
+            "coin": "BTC",
+            "end_inclusive": 1800730800,
+            "start": 1800547200,
+            "status_code": 200,
+            "wire_rows": 205
+          },
+          {
+            "coin": "ETH",
+            "end_inclusive": 1800276300,
+            "start": 1800007200,
+            "status_code": 200,
+            "wire_rows": 300
+          },
+          {
+            "coin": "ETH",
+            "end_inclusive": 1800546300,
+            "start": 1800277200,
+            "status_code": 200,
+            "wire_rows": 300
+          },
+          {
+            "coin": "ETH",
+            "end_inclusive": 1800730800,
+            "start": 1800547200,
+            "status_code": 200,
+            "wire_rows": 205
+          }
+        ],
+        "now": 1800732000,
+        "open_intents": [],
+        "other_intent_count": 0,
+        "source_mode": "no_signal",
+        "state_keys": [
+          "done_hour"
+        ],
+        "step_exception": null
+      },
+      "recovery": {
+        "check_agent_items": [
+          {
+            "check": "Agent",
+            "detail": "no halts, no strategy errors, no orphans, no closed twins yet",
+            "level": "green"
+          }
+        ],
+        "done_hour_after": 500201,
+        "done_hour_before": 500200,
+        "http_requests": [
+          {
+            "coin": "BTC",
+            "end_inclusive": 1800279900,
+            "start": 1800010800,
+            "status_code": 200,
+            "wire_rows": 300
+          },
+          {
+            "coin": "BTC",
+            "end_inclusive": 1800549900,
+            "start": 1800280800,
+            "status_code": 200,
+            "wire_rows": 300
+          },
+          {
+            "coin": "BTC",
+            "end_inclusive": 1800730800,
+            "start": 1800550800,
+            "status_code": 200,
+            "wire_rows": 201
+          },
+          {
+            "coin": "ETH",
+            "end_inclusive": 1800279900,
+            "start": 1800010800,
+            "status_code": 200,
+            "wire_rows": 300
+          },
+          {
+            "coin": "ETH",
+            "end_inclusive": 1800549900,
+            "start": 1800280800,
+            "status_code": 200,
+            "wire_rows": 300
+          },
+          {
+            "coin": "ETH",
+            "end_inclusive": 1800730800,
+            "start": 1800550800,
+            "status_code": 200,
+            "wire_rows": 201
+          }
+        ],
+        "now": 1800732000,
+        "open_intents": [],
+        "other_intent_count": 0,
+        "source_mode": "no_signal",
+        "state_keys": [
+          "done_hour"
+        ],
+        "step_exception": null
+      }
+    },
+    {
+      "counterfactual_only_signal_keys": [],
+      "first": {
+        "check_agent_items": [
+          {
+            "check": "Agent",
+            "detail": "no halts, no strategy errors, no orphans, no closed twins yet",
+            "level": "green"
+          }
+        ],
+        "done_hour_after": 500200,
+        "done_hour_before": 500199,
+        "http_requests": [
+          {
+            "coin": "BTC",
+            "end_inclusive": 1800276300,
+            "start": 1800007200,
+            "status_code": 404,
+            "wire_rows": 0
+          },
+          {
+            "coin": "ETH",
+            "end_inclusive": 1800276300,
+            "start": 1800007200,
+            "status_code": 200,
+            "wire_rows": 300
+          },
+          {
+            "coin": "ETH",
+            "end_inclusive": 1800546300,
+            "start": 1800277200,
+            "status_code": 200,
+            "wire_rows": 300
+          },
+          {
+            "coin": "ETH",
+            "end_inclusive": 1800727200,
+            "start": 1800547200,
+            "status_code": 200,
+            "wire_rows": 201
+          }
+        ],
+        "now": 1800728400,
+        "open_intents": [
+          {
+            "at": 1800725400.0,
+            "coin": "ETH",
+            "key": "ETH:500200",
+            "price": 63.0
+          }
+        ],
+        "other_intent_count": 0,
+        "source_mode": "intentional_unavailable",
+        "state_keys": [
+          "control_due",
+          "done_hour"
+        ],
+        "step_exception": null
+      },
+      "interpretation": "diagnostic information difference; not an executable late trade or observed production loss",
+      "mode": "intentional_unavailable",
+      "original_cursor_counterfactual": {
+        "check_agent_items": [
+          {
+            "check": "Agent",
+            "detail": "no halts, no strategy errors, no orphans, no closed twins yet",
+            "level": "green"
+          }
+        ],
+        "done_hour_after": 500201,
+        "done_hour_before": 500199,
+        "http_requests": [
+          {
+            "coin": "BTC",
+            "end_inclusive": 1800276300,
+            "start": 1800007200,
+            "status_code": 404,
+            "wire_rows": 0
+          },
+          {
+            "coin": "ETH",
+            "end_inclusive": 1800276300,
+            "start": 1800007200,
+            "status_code": 200,
+            "wire_rows": 300
+          },
+          {
+            "coin": "ETH",
+            "end_inclusive": 1800546300,
+            "start": 1800277200,
+            "status_code": 200,
+            "wire_rows": 300
+          },
+          {
+            "coin": "ETH",
+            "end_inclusive": 1800730800,
+            "start": 1800547200,
+            "status_code": 200,
+            "wire_rows": 205
+          }
+        ],
+        "now": 1800732000,
+        "open_intents": [
+          {
+            "at": 1800725400.0,
+            "coin": "ETH",
+            "key": "ETH:500200",
+            "price": 63.0
+          }
+        ],
+        "other_intent_count": 0,
+        "source_mode": "intentional_unavailable",
+        "state_keys": [
+          "control_due",
+          "done_hour"
+        ],
+        "step_exception": null
+      },
+      "recovery": {
+        "check_agent_items": [
+          {
+            "check": "Agent",
+            "detail": "no halts, no strategy errors, no orphans, no closed twins yet",
+            "level": "green"
+          }
+        ],
+        "done_hour_after": 500201,
+        "done_hour_before": 500200,
+        "http_requests": [
+          {
+            "coin": "BTC",
+            "end_inclusive": 1800279900,
+            "start": 1800010800,
+            "status_code": 404,
+            "wire_rows": 0
+          },
+          {
+            "coin": "ETH",
+            "end_inclusive": 1800279900,
+            "start": 1800010800,
+            "status_code": 200,
+            "wire_rows": 300
+          },
+          {
+            "coin": "ETH",
+            "end_inclusive": 1800549900,
+            "start": 1800280800,
+            "status_code": 200,
+            "wire_rows": 300
+          },
+          {
+            "coin": "ETH",
+            "end_inclusive": 1800730800,
+            "start": 1800550800,
+            "status_code": 200,
+            "wire_rows": 201
+          }
+        ],
+        "now": 1800732000,
+        "open_intents": [],
+        "other_intent_count": 0,
+        "source_mode": "intentional_unavailable",
+        "state_keys": [
+          "control_due",
+          "done_hour"
+        ],
+        "step_exception": null
+      }
+    }
+  ],
+  "schema_version": 1,
+  "scope": "real _get/step and check_agent only; no runner, positions, broker, network, or bot-book disk access"
+}

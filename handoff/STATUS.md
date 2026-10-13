@@ -60,6 +60,7 @@ Lanes as of 2026-10-12 (all paper only). Owner thread names are the project's th
   Landed 2026-10-12 (reviewed by Claude): the CodexCoinHunt import under `codexcoinhunt/` (paper-only memecoin
   research archive, not wired into the agent; `handoff/codexcoinhunt.md`, review `reviews/codex-review-2026-10-12.md`)
   and the connected-project map `CONNECTED_PROJECTS.md`. Suggested next claims: `plan-2026-10-12.md` section E.
+  Proposed claim 2026-10-13: CAPIT feed-coverage diagnostic (`reviews/capit-feed-integrity-2026-10-13.md`); synthetic missing-data/cursor evidence only; owner implementation unchanged.
 * **Continue TARTAR handoff session:** owns `autotrade/` and `tartar/autotrade/` (the hourly agent).
   Agent spec pass done 10-11 (separate hl/us risk books, error-halt retry, per-book drawdown stops). Next: plan A1, A2.
 * **Alpaca paper route (thread "Alpaca paper trading route"):** owns `tartar/autotrade/alpaca.py`. `us_capit` and
