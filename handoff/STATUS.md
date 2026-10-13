@@ -52,14 +52,14 @@ Lanes as of 2026-10-12 (all paper only). Owner thread names are the project's th
 
 * **ChatGPT lane (Codex, thread "ChatGPT lane with Claude review", from 2026-10-12):** AJ's ChatGPT works only on
   `codex/*` branches and opens PRs into `main`; rules in `AGENTS.md`. Claude reviews each PR before it lands;
-  approved PRs are merged by Claude.
-  Proposed claim `codex/capit-route-robustness`: fixed CAPIT cost-screen/whole-episode diagnostic, verified
-  reusable 21-coin cache rebuild and model account dollars (`reviews/capit-robustness-2026-10-13.md`).
+  approved PRs land on main through the coordinator's bundle push. A twice-daily routine (01:07/13:07 UTC) checks for new
+  `codex/*` work; open Codex PRs are watched.
+  Landed 2026-10-13 (reviewed by Claude): PR #4 US paper-evidence audit (`reviews/us-paper-evidence-2026-10-13.md`;
+  its gate-input defects fixed in `live_gate.py` in the same landing), PR #5 CAPIT replication + whole-episode
+  robustness (`reviews/capit-robustness-2026-10-13.md`), PR #6 CDE contract sizing (`reviews/cde-capit-economics-2026-10-13.md`).
   Landed 2026-10-12 (reviewed by Claude): the CodexCoinHunt import under `codexcoinhunt/` (paper-only memecoin
   research archive, not wired into the agent; `handoff/codexcoinhunt.md`, review `reviews/codex-review-2026-10-12.md`)
   and the connected-project map `CONNECTED_PROJECTS.md`. Suggested next claims: `plan-2026-10-12.md` section E.
-  Proposed Codex PR `codex/us-evidence-audit`: offline gate-integrity reproductions and paper-cost evidence
-  review (`reviews/us-paper-evidence-2026-10-13.md`); gate fixes stay with the live-rule owner.
 * **Continue TARTAR handoff session:** owns `autotrade/` and `tartar/autotrade/` (the hourly agent).
   Agent spec pass done 10-11 (separate hl/us risk books, error-halt retry, per-book drawdown stops). Next: plan A1, A2.
 * **Alpaca paper route (thread "Alpaca paper trading route"):** owns `tartar/autotrade/alpaca.py`. `us_capit` and

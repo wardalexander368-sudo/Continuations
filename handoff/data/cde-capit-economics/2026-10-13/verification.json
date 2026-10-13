@@ -1,0 +1,153 @@
+{
+  "schema_version": 1,
+  "public_only": true,
+  "collection_kind": "one bounded point snapshot; not CAPIT crash/fill cohort",
+  "requests": 12,
+  "hashes_verified": 12,
+  "book_count": 11,
+  "product_list_count": 100,
+  "product_list_pagination": {
+    "prev_cursor": "",
+    "next_cursor": "",
+    "has_next": false,
+    "has_prev": false
+  },
+  "request_window_utc": [
+    "2026-10-13T02:02:05.144767+00:00",
+    "2026-10-13T02:02:07.075976+00:00"
+  ],
+  "maximum_book_age_seconds_at_receipt": 1.624175,
+  "analysis_body_sha256": "f5bcaeb42c69f326ffe859a4f893a63b70de2e949f827f9fe49d99adfed02914",
+  "files": [
+    {
+      "body_file": "ADA-book.json",
+      "receipt_file": "ADA-book.receipt.json",
+      "body_sha256": "163c39c68cfb3c550eb679115957f86b0cf00ceb041413955dbc8457f078dbe2",
+      "body_bytes": 268,
+      "http_status": 200,
+      "request_started_at": "2026-10-13T02:02:06.153443+00:00",
+      "request_completed_at": "2026-10-13T02:02:06.316029+00:00",
+      "book_time": "2026-10-13T02:02:05.865612Z",
+      "book_age_seconds_at_receipt": 0.450417
+    },
+    {
+      "body_file": "AVAX-book.json",
+      "receipt_file": "AVAX-book.receipt.json",
+      "body_sha256": "2c6a6e9636354bdc4c37bafb7aaa525af285ac08ace3b188dedf42c513025401",
+      "body_bytes": 264,
+      "http_status": 200,
+      "request_started_at": "2026-10-13T02:02:06.316431+00:00",
+      "request_completed_at": "2026-10-13T02:02:06.442846+00:00",
+      "book_time": "2026-10-13T02:02:04.818671Z",
+      "book_age_seconds_at_receipt": 1.624175
+    },
+    {
+      "body_file": "BCH-book.json",
+      "receipt_file": "BCH-book.receipt.json",
+      "body_sha256": "796acca6811a7d609c69ccd12a0824a1b6e918860bab337abb20303f9665853d",
+      "body_bytes": 266,
+      "http_status": 200,
+      "request_started_at": "2026-10-13T02:02:06.756269+00:00",
+      "request_completed_at": "2026-10-13T02:02:06.931460+00:00",
+      "book_time": "2026-10-13T02:02:06.533348Z",
+      "book_age_seconds_at_receipt": 0.398112
+    },
+    {
+      "body_file": "BTC-book.json",
+      "receipt_file": "BTC-book.receipt.json",
+      "body_sha256": "90445fd03506a2f46f01ad345cea6a600fe430c914916f3224b59edfd4664c77",
+      "body_bytes": 259,
+      "http_status": 200,
+      "request_started_at": "2026-10-13T02:02:05.406585+00:00",
+      "request_completed_at": "2026-10-13T02:02:05.545514+00:00",
+      "book_time": "2026-10-13T02:02:05.097355Z",
+      "book_age_seconds_at_receipt": 0.448159
+    },
+    {
+      "body_file": "DOGE-book.json",
+      "receipt_file": "DOGE-book.receipt.json",
+      "body_sha256": "1237cf91fcafc976f554ee2f2d06e58fe59afd9196c0de690ac0a7e380e68b74",
+      "body_bytes": 271,
+      "http_status": 200,
+      "request_started_at": "2026-10-13T02:02:05.982863+00:00",
+      "request_completed_at": "2026-10-13T02:02:06.152791+00:00",
+      "book_time": "2026-10-13T02:02:05.910600Z",
+      "book_age_seconds_at_receipt": 0.242191
+    },
+    {
+      "body_file": "DOT-book.json",
+      "receipt_file": "DOT-book.receipt.json",
+      "body_sha256": "85ef49dffecd4c1bf9588fd77decf222396f1026c852f710f61fccbaf6051909",
+      "body_bytes": 265,
+      "http_status": 200,
+      "request_started_at": "2026-10-13T02:02:06.933968+00:00",
+      "request_completed_at": "2026-10-13T02:02:07.075976+00:00",
+      "book_time": "2026-10-13T02:02:06.408823Z",
+      "book_age_seconds_at_receipt": 0.667153
+    },
+    {
+      "body_file": "ETH-book.json",
+      "receipt_file": "ETH-book.receipt.json",
+      "body_sha256": "29579d04848e5f92512fa0f8eb11cdd1091a47f83d78834e674b2e2c3ea3ce74",
+      "body_bytes": 261,
+      "http_status": 200,
+      "request_started_at": "2026-10-13T02:02:05.547842+00:00",
+      "request_completed_at": "2026-10-13T02:02:05.694427+00:00",
+      "book_time": "2026-10-13T02:02:04.904951Z",
+      "book_age_seconds_at_receipt": 0.789476
+    },
+    {
+      "body_file": "LINK-book.json",
+      "receipt_file": "LINK-book.receipt.json",
+      "body_sha256": "7eedeb3b0f60c79e3b86f54dc82157d6a696adcebbbe62a5bec7fb5a2ad31c35",
+      "body_bytes": 263,
+      "http_status": 200,
+      "request_started_at": "2026-10-13T02:02:06.443226+00:00",
+      "request_completed_at": "2026-10-13T02:02:06.559124+00:00",
+      "book_time": "2026-10-13T02:02:05.920953Z",
+      "book_age_seconds_at_receipt": 0.638171
+    },
+    {
+      "body_file": "LTC-book.json",
+      "receipt_file": "LTC-book.receipt.json",
+      "body_sha256": "a4ef3adfb3c37d2d71784f0a3f06f54f311f958ebef60e73c19f676498e5fd26",
+      "body_bytes": 260,
+      "http_status": 200,
+      "request_started_at": "2026-10-13T02:02:06.559553+00:00",
+      "request_completed_at": "2026-10-13T02:02:06.754344+00:00",
+      "book_time": "2026-10-13T02:02:06.424203Z",
+      "book_age_seconds_at_receipt": 0.330141
+    },
+    {
+      "body_file": "SOL-book.json",
+      "receipt_file": "SOL-book.receipt.json",
+      "body_sha256": "10ebbeb7165d85aa0b64092366fb5c6e0bc0e5b87e120ca80429925d2b573b97",
+      "body_bytes": 265,
+      "http_status": 200,
+      "request_started_at": "2026-10-13T02:02:05.694954+00:00",
+      "request_completed_at": "2026-10-13T02:02:05.836410+00:00",
+      "book_time": "2026-10-13T02:02:04.709354Z",
+      "book_age_seconds_at_receipt": 1.127056
+    },
+    {
+      "body_file": "XRP-book.json",
+      "receipt_file": "XRP-book.receipt.json",
+      "body_sha256": "757ab633d90901e84c8dfbe3422a7253321d3a3b7fa0f9a68f6c89413ab435f9",
+      "body_bytes": 266,
+      "http_status": 200,
+      "request_started_at": "2026-10-13T02:02:05.838752+00:00",
+      "request_completed_at": "2026-10-13T02:02:05.981890+00:00",
+      "book_time": "2026-10-13T02:02:05.686291Z",
+      "book_age_seconds_at_receipt": 0.295599
+    },
+    {
+      "body_file": "products.json",
+      "receipt_file": "products.receipt.json",
+      "body_sha256": "d4fb5b58a00c22a1e5c63b2717e5ce1c75a581e4e9c2f24aa74dd676308d8ffd",
+      "body_bytes": 282189,
+      "http_status": 200,
+      "request_started_at": "2026-10-13T02:02:05.144767+00:00",
+      "request_completed_at": "2026-10-13T02:02:05.400790+00:00"
+    }
+  ]
+}
