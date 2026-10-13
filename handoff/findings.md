@@ -5,9 +5,9 @@ lives. Written 2026-10-12 by the "Full project overview and alignment" thread fr
 backtests). When a result changes, update its row here and the topic document; the topic document holds the detail.
 
 **Bottom line (2026-10-12):** nothing is proven profitable on a venue a US person can use. One US rule
-(`us_capit`) is the go-live candidate under a draft rule AJ has not adopted; three more US lines collect paper
-evidence. Every non-US line is research only (AJ, 2026-10-11) and can never go live. Costs, not ideas, decide
-almost every result: a rule needs moves of a day or more to pay US spot fees.
+(`us_capit`) is the go-live candidate under live rule v2 adopted by AJ on 10-12; three more US lines collect paper
+evidence. Funding and a live route still need separate authorization. Every non-US line is research only
+(AJ, 2026-10-11) and can never go live. Costs, not ideas, decide almost every result: a rule needs moves of a day or more to pay US spot fees.
 
 Status words: **paper (US)** = forward test on a US-usable venue, could go live; **paper (research)** = forward
 test on a non-US venue, can never go live; **closed** = tested and failed after costs; **untested** = idea only.
@@ -25,8 +25,8 @@ CIs are 90% unless stated. "Test" means the untouched last split of a backtest.
 | Weekly search, US "cde" family | Coinbase US perps | 95 momentum rules, shared Bonferroni M=189: first run no survivor (best penalised bound −0.20%) | runs Wednesdays | `autotrade.md` "Self improvement", `autotrade/search/REPORT.md` |
 
 **Why none can be "proven" in a year:** CAPIT sees ~6 crash days a year and cde's 52-week CI half-width is
-~±1.7%/week, so no US registration can clear its 90% bar inside 52 weeks. Going live depends on the draft
-go-live-small rule (`live-rule-us.md`), which is AJ's decision.
+~±1.7%/week, so no US registration can clear its 90% bar inside 52 weeks. Going live depends on the adopted
+go-live-small rule (`live-rule-us.md`), including separate authorization for funding and a live route.
 
 ## 2. Non-US venues, paper research only (never live: Hyperliquid and Jupiter bar US persons)
 
@@ -99,6 +99,12 @@ Paper-only memecoin research under `codexcoinhunt/`; not wired into the agent. R
 | PumpPortal fees | Lightning 1%/side; round trip ~3.07% measured | Local 0.5%, Lightning 1% | Agree |
 | PumpSwap pool fees | 0.30-1.25%/side, tiered by market cap (`profitability.md` §3.13) | 45-50 bp on one larger token's events; fee-aware quotes must not be charged twice | Agree (larger cap = lower tier); our decoder already counts each fee once |
 | Memecoin entries vs random | Dip: excess over random −0.84% [−2.91, +0.96] | Momentum ≈ random ≈ −12% | Agree: no selection skill after costs |
+
+**Evidence review, 2026-10-13 (Codex):** five synthetic input-integrity cases falsely satisfy the paper gate
+(duplicate sells, orphan sells, pre-window pairs, NaN values, absent gaps); no actual bad fills observed.
+Alpaca simulated fill gaps plus configured fees are a paper cost proxy, not measured live cost.
+Owner follow-up and exact reproductions: [`reviews/us-paper-evidence-2026-10-13.md`](reviews/us-paper-evidence-2026-10-13.md).
+No strategy score, eligibility threshold or trading authorization changed.
 
 No contradiction between the two lanes' findings. Codex's methods worth keeping (hash-pinned configs, matched
 random controls, measured over modelled cost, unknown ≠ zero, account-dollar returns) are in the plan.
