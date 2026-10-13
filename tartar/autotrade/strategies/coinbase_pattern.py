@@ -35,6 +35,7 @@ from datetime import date, datetime, timezone
 
 import numpy as np
 
+from .. import cde_book
 from ..core import Context, CostModel, Intent, Trade, Verdict
 
 CB = "https://api.exchange.coinbase.com"
@@ -215,7 +216,21 @@ class CoinbasePattern:
                     if x:
                         intents.append(x)
         ctx.state["done_hour"] = h_max
+        if self.cfg.get("cde_book"):
+            self.snap_cde(ctx, intents, now)
         return intents
+
+    def snap_cde(self, ctx: Context, intents: list[Intent], now: int) -> None:
+        """Coinbase US perp top of book at each fresh entry and exit (cde_book.py; reporting only)."""
+        coin_of = {p.id: p.asset for p in ctx.positions}
+        http = self.cfg.get("_cde_http") or ctx.http
+        for it in intents:
+            if now - it.at > 3600:  # a catch-up booking: today's book says nothing about that hour
+                continue
+            coin = it.asset if it.kind == "open" else coin_of.get(it.position_id) or it.meta.get("key", "").split(":")[0]
+            snap = cde_book.snapshot(http, coin, now) if coin else None
+            if snap:
+                it.meta["cde_entry" if it.kind == "open" else "cde_exit"] = snap
 
     def price_controls(self, ctx: Context, now: int) -> None:
         """Price the random-entry control of each signal whose +-15-day window has closed (reporting only: a failure
@@ -277,6 +292,10 @@ class CoinbasePattern:
         for venue, c in self.venue_costs.items():  # same fills, each venue's cost per side (additive, as the scorer)
             stats[f"mean_net_{venue}"] = v = float(np.mean(gross)) - 2 * float(c)
             summary += f"; {v * 100:+.2f}% at {venue} ({float(c) * 100:.2f}%/side)"
+        cde = [t.meta[k]["half_spread_bps"] for t in trades for k in ("cde_entry", "cde_exit") if t.meta.get(k)]
+        if cde:
+            stats.update(cde_half_spread_bps=float(np.median(cde)), cde_sides=len(cde))
+            summary += f"; Coinbase US perp half-spread at our fills median {stats['cde_half_spread_bps']:.1f} bp over {len(cde)} sides (fees not included)"
         ctl = (state or {}).get("controls") or {}
         ex = defaultdict(list)  # costs cancel: the control pays the same cost per side
         for t, g in zip(trades, gross):

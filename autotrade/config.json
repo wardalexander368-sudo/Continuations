@@ -155,7 +155,9 @@
         "coinbase_taker": 0.0091,
         "coinbase_maker": 0.005,
         "alpaca": 0.0039
-      }
+      },
+      "cde_book": true,
+      "cde_book_note": "cde_book.py: each fresh entry/exit records the same coin's Coinbase US perp (-20DEC30-CDE) top of book in the trade meta (half-spread, contract size), to see whether perps beat Alpaca's ~0.39%/side in crash hours. Reporting only."
     },
     "us_capit_fast": {
       "kind": "coinbase_pattern",
@@ -170,7 +172,8 @@
         "coinbase_maker": 0.005,
         "alpaca": 0.0039
       },
-      "delay_bars": 1
+      "delay_bars": 1,
+      "cde_book": true
     },
     "us_capit~wide": {
       "kind": "coinbase_pattern",

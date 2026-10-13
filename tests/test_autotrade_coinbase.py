@@ -131,3 +131,45 @@ def test_random_entry_control_is_priced_after_its_window_and_reported_as_excess(
     assert v.stats["excess"] == pytest.approx(t.exit_price / t.entry_price - 1 - data["controls"][key])
     assert "excess over random entries" in v.reason
     assert "excess" not in s.evaluate([t, t], t.exit_at, {}).stats  # no control yet: nothing claimed
+
+
+def test_cde_book_snapshot_rides_on_fresh_entries_and_exits(tmp_path):
+    from tartar.autotrade import cde_book
+
+    rows = bars(260, 200)
+
+    def get(ctx, coin, t0, t1):
+        return [r for r in rows if t0 <= r[0] < t1]
+
+    class R:
+        def __init__(self, body):
+            self.body = body
+
+        def json(self):
+            return self.body
+
+    class Http:
+        def get(self, url, params=None):
+            if url.endswith("/products"):
+                return R({"products": [{"product_id": "BIP-20DEC30-CDE",
+                                        "future_product_details": {"contract_root_unit": "BTC", "contract_size": "0.01"}}]})
+            return R({"pricebook": {"bids": [{"price": "99.9", "size": "4"}], "asks": [{"price": "100.1", "size": "5"}]}})
+
+    cde_book._PRODUCTS.clear()
+    (tmp_path / "config.json").write_text(json.dumps({"mode": "paper", "strategies": {"c": {"kind": "coinbase_pattern"}}}))
+    s = CoinbasePattern("c", {"_get": get, "_cde_http": Http(), "cde_book": True, "rule": "capit", "coins": ["BTC"],
+                              "start": "2000-01-01", "end": "2100-01-01"})
+    for h in range(H0 + 190, H0 + 240):
+        run_once(tmp_path, now=h * 3600 + 1200, strategies={"c": s})
+    (t,) = Ledger(tmp_path).trades()
+    assert t.meta["cde_entry"]["half_spread_bps"] == 10.0 and t.meta["cde_entry"]["contract_usd"] == 1.0
+    assert t.meta["cde_exit"]["product"] == "BIP-20DEC30-CDE"
+    v = s.evaluate([t, t], t.exit_at, {})
+    assert v.stats["cde_sides"] == 4 and "perp half-spread at our fills median 10.0 bp" in v.reason
+
+    class Broken:
+        def get(self, *a, **k):
+            raise RuntimeError("down")
+
+    cde_book._PRODUCTS.clear()
+    assert cde_book.snapshot(Broken(), "BTC") is None  # never raises

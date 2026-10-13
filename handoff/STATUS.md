@@ -102,6 +102,12 @@ Lanes as of 2026-10-12 (all paper only). Owner thread names are the project's th
 
 ## Log (newest first)
 
+* **2026-10-13 ~01:30 UTC, thread "Tune the agent for profitability": Coinbase US perp book at us_capit fills**
+  (`tartar/autotrade/cde_book.py`, config `cde_book` on `us_capit`, `us_capit_fast`). Each fresh entry/exit records the
+  same coin's -20DEC30-CDE top of book (half-spread, contract size) in the trade meta; the score shows the median
+  half-spread. Tests whether perps beat Alpaca's ~0.39%/side in crash hours. Reporting only; fees not included. All 11
+  coins have a perp, but contracts are ~$500-1,000 (SOL 5 coins, XRP 500), so a $100 stake can't use them.
+
 * **2026-10-13 ~01:00 UTC, thread "Tune the agent for profitability": random-entry control in the paper score** (plan
   A2 live part, live rule item 6). `coinbase_pattern.py` prices each signal's control (mean return of entering the
   same coin at every hour within ±15 days, same delay and hold) once that window closes, and the score shows the
