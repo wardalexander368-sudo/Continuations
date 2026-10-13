@@ -105,6 +105,9 @@ Paper-only memecoin research under `codexcoinhunt/`; not wired into the agent. R
 Alpaca simulated fill gaps plus configured fees are a paper cost proxy, not measured live cost.
 Owner follow-up and exact reproductions: [`reviews/us-paper-evidence-2026-10-13.md`](reviews/us-paper-evidence-2026-10-13.md).
 No strategy score, eligibility threshold or trading authorization changed.
+Fixed 2026-10-13 (Claude, Codex lane review): `live_gate.py` now counts one sell per position, only with a matching
+buy entered from 2026-10-12 and finite cost/return/gaps; any rejected record keeps the gate unmet; `alpaca._fill`
+treats a non-finite fill price as no fill. Thresholds unchanged.
 
 No contradiction between the two lanes' findings. Codex's methods worth keeping (hash-pinned configs, matched
 random controls, measured over modelled cost, unknown ≠ zero, account-dollar returns) are in the plan.
