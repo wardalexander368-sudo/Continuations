@@ -12,9 +12,9 @@
     "passed": 424,
     "skipped": 1,
     "subtests_passed": 9,
-    "seconds": 80.73,
+    "seconds": 80.26,
     "tested_base_commit": "223a27fae671ee0a8757433d6c7359c83ce3c300",
-    "log_sha256": "81ff3ab926022015f5f503fe2f90c272dfff3bc5c76402b83a9ce31077dbfda7"
+    "log_sha256": "d0e9b9b8850b1dbf38a042165ec4e4f43918c66ac469ac790c0d7e33a79a3391"
   },
   "deterministic_replay": {
     "byte_identical": true,
@@ -23,8 +23,8 @@
   "report_clarification": "UTC signal-day labels are candle-start days; code and locked protocol/input/output bytes unchanged.",
   "focused_tests": {
     "passed": 29,
-    "seconds": 0.17,
-    "test_source_sha256": "e34a2716b33cebb151b42fa9a1c7765db76c300636eb34a4679b70a12d18cf46"
+    "seconds": 0.32,
+    "test_source_sha256": "af477489cfee07b68bb5030998db55209ce66976192f89e0d9b950b10379acae"
   },
   "adversarial_review": {
     "material_defect_reproduced": false,
@@ -46,5 +46,13 @@
       "real execution/fees/rounding/risk"
     ]
   },
-  "public_compact_scalar_and_primary_trace_match_local": true
+  "public_compact_scalar_and_primary_trace_match_local": true,
+  "initial_ci_failure_and_repair": {
+    "run": "https://github.com/wardalexander368-sudo/Continuations/actions/runs/38344146482",
+    "failed_test": "test_changed_cohort_cli_fails_before_loading_cache",
+    "cause": "sparse checkout excludes handoff/data, which the new test incorrectly depended on",
+    "repair": "temporary protocol byte fixture and its expected hash; real cohort hash/CLI/error remain exercised",
+    "independent_codebase_review": "confirmed cause and endorsed test-only fix",
+    "research_code_or_locked_input_or_outcome_or_workflow_changed": false
+  }
 }

@@ -1,4 +1,5 @@
 import importlib.util
+import hashlib
 import json
 from pathlib import Path
 import sys
@@ -147,7 +148,9 @@ def test_changed_protocol_cli_fails_before_loading_cache(tmp_path, monkeypatch, 
 
 
 def test_changed_cohort_cli_fails_before_loading_cache(tmp_path, monkeypatch, capsys):
-    locked = PATH.parents[3] / 'data/edge-hunt/capit-account-controls/2026-10-13/protocol.json'
+    # CI deliberately excludes handoff/data; isolate the cohort guard with local bytes.
+    locked = tmp_path / 'protocol.json'; locked.write_bytes(b'{}\n')
+    monkeypatch.setattr(m, 'LOCKED_PROTOCOL_SHA256', hashlib.sha256(locked.read_bytes()).hexdigest())
     cohort = tmp_path / 'cohort.json'; cohort.write_text('{"trades":[]}')
     monkeypatch.setattr(sys, 'argv', ['tool', '--protocol', str(locked), '--cache', str(tmp_path / 'none'),
                                     '--cohort', str(cohort), '--output', str(tmp_path / 'result')])
