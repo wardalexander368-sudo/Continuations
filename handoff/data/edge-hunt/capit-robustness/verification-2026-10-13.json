@@ -1,0 +1,37 @@
+{
+  "analysis_id": "capit-route-robustness-20261013",
+  "status": "verified",
+  "all_four_prespecified_lines_reported": true,
+  "cache_verification_file": "Coinbase-Cache-Verification-20261013.json",
+  "cache_verified_files": 2353,
+  "cache_validated_chunks": 2331,
+  "protocol_sha256": "84a0bd1aadd944a5e8a9fbc865a6c770cb404f1f01ff8dad1e035a96a1115aed",
+  "full_result_sha256": "a293b0ff5a2de8c1edf8b30e23971035a792f9c99b66d80abe1135e0056dce45",
+  "replay_byte_identical": true,
+  "final_suite": {
+    "passed": 364,
+    "skipped": 1,
+    "subtests_passed": 9,
+    "seconds": 79.88,
+    "stdout_sha256": "f566da5fb069560ee42b84b5e523efadd22538e11a834064649de9479e6acf99"
+  },
+  "initial_suite": {
+    "passed": 361,
+    "skipped": 1,
+    "subtests_passed": 9,
+    "seconds": 81.86
+  },
+  "new_targeted_tests": {
+    "diagnostic": 24,
+    "downloader": 13
+  },
+  "independent_synthetic_review": "no reproduced deviation; in-memory index/control/bootstrap/LOO/concurrency oracles and nine malformed-cache checks",
+  "independent_readout_review": "summaries, episode-bootstrap CIs, all LOO rows, dollars/exposure recalculated with no discrepancy",
+  "limits": "development history; all four absolute net intervals cross zero; no live profitability verdict",
+  "source_hashes": {
+    "handoff/experiments/edge-hunt/patterns/capit_robustness.py": "6b7e7a49ca50c8b86abaa214c53d644a42ca8fb8cbd6d29d3a2ccef8776dcfc3",
+    "handoff/experiments/edge-hunt/patterns/rebuild_capit_cache.py": "b6910228dc078a686777306c5b06c727b879a43cc99fc829cc8e829744afff68",
+    "tests/test_capit_robustness.py": "1e52b0b4771526bab913539770b670de1cd85b29b1c191993cd402f7b0a9e223",
+    "tests/test_rebuild_capit_cache.py": "fbdb457a8efa4b7bcaf8eca1a5bdeee771736ff58e48263cea365573cd3a0503"
+  }
+}

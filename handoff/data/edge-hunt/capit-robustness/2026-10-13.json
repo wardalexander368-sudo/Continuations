@@ -1,0 +1,2029 @@
+{
+  "analysis_id": "capit-route-robustness-20261013",
+  "status": "complete",
+  "classification": "exploratory robustness of previously explored history; not untouched forward validation",
+  "method": {
+    "rule": "existing CAPIT Z=4 H=24",
+    "hold_hours": 24,
+    "episode_gap_hours": 72,
+    "common_shift_window_hours": 360,
+    "cost_formula": "gross - 2 * cost_per_side; additive proxy, not observed Alpaca fills",
+    "entry_index": "h+1",
+    "exit_index": "h+25",
+    "entry_close_hour": "h+2",
+    "exit_close_hour": "h+26",
+    "support": "full11 common finite-positive endpoints, including zero and actual signals",
+    "screen": "static AVAX/BCH/LTC exclusion using prior quote snapshot; not dynamic historical eligibility",
+    "bootstrap": "fixed full11 episode universe; empty subset clusters have zero sums/counts; undefined draws reported and excluded only from conditional quantiles",
+    "cash": "fixed $100 per trade, no reinvestment, stops, borrowing or control-account simulation"
+  },
+  "summaries": [
+    {
+      "universe": "study_11",
+      "cost_per_side": 0.0039,
+      "trades": 71,
+      "represented_episodes": 22,
+      "full_11_episodes": 22,
+      "mean_gross": 0.044376566974797305,
+      "mean_model_net": 0.0365765669747973,
+      "mean_control_model_net": -0.012040697106037225,
+      "mean_excess": 0.04861726408083452,
+      "net_episode_bootstrap": {
+        "mean": 0.0365765669747973,
+        "ci90": [
+          -0.0026534002778265584,
+          0.07673105092549981
+        ],
+        "requested_draws": 10000,
+        "draws_generated": 10000,
+        "defined_draws": 10000,
+        "undefined_draws": 0,
+        "seed": 1,
+        "resampling_episodes": 22,
+        "interval_condition": "quantiles over draws with nonzero trade count"
+      },
+      "excess_episode_bootstrap": {
+        "mean": 0.04861726408083452,
+        "ci90": [
+          0.009468346210549504,
+          0.0897435344302319
+        ],
+        "requested_draws": 10000,
+        "draws_generated": 10000,
+        "defined_draws": 10000,
+        "undefined_draws": 0,
+        "seed": 1,
+        "resampling_episodes": 22,
+        "interval_condition": "quantiles over draws with nonzero trade count"
+      },
+      "leave_one_episode_out": [
+        {
+          "omitted_episode_id": 0,
+          "removed_trades": 2,
+          "remaining_trades": 69,
+          "mean_model_net": 0.03732252211788188,
+          "mean_excess": 0.049355272265555784
+        },
+        {
+          "omitted_episode_id": 1,
+          "removed_trades": 2,
+          "remaining_trades": 69,
+          "mean_model_net": 0.03703193105501229,
+          "mean_excess": 0.049175699828078845
+        },
+        {
+          "omitted_episode_id": 2,
+          "removed_trades": 6,
+          "remaining_trades": 65,
+          "mean_model_net": 0.035407655879836186,
+          "mean_excess": 0.04801589755235392
+        },
+        {
+          "omitted_episode_id": 3,
+          "removed_trades": 7,
+          "remaining_trades": 64,
+          "mean_model_net": 0.04483198358246525,
+          "mean_excess": 0.05672370394434348
+        },
+        {
+          "omitted_episode_id": 4,
+          "removed_trades": 1,
+          "remaining_trades": 70,
+          "mean_model_net": 0.036960023204494125,
+          "mean_excess": 0.049020124135898534
+        },
+        {
+          "omitted_episode_id": 5,
+          "removed_trades": 4,
+          "remaining_trades": 67,
+          "mean_model_net": 0.0459142828875419,
+          "mean_excess": 0.057655593910033116
+        },
+        {
+          "omitted_episode_id": 6,
+          "removed_trades": 3,
+          "remaining_trades": 68,
+          "mean_model_net": 0.03872802930822337,
+          "mean_excess": 0.05073622451351647
+        },
+        {
+          "omitted_episode_id": 7,
+          "removed_trades": 1,
+          "remaining_trades": 70,
+          "mean_model_net": 0.036526898835944226,
+          "mean_excess": 0.04856790327489357
+        },
+        {
+          "omitted_episode_id": 8,
+          "removed_trades": 1,
+          "remaining_trades": 70,
+          "mean_model_net": 0.036623823436301335,
+          "mean_excess": 0.04864321676439972
+        },
+        {
+          "omitted_episode_id": 9,
+          "removed_trades": 6,
+          "remaining_trades": 65,
+          "mean_model_net": 0.03463864287562171,
+          "mean_excess": 0.04737129976054992
+        },
+        {
+          "omitted_episode_id": 10,
+          "removed_trades": 8,
+          "remaining_trades": 63,
+          "mean_model_net": 0.031966214150596375,
+          "mean_excess": 0.043695448097390406
+        },
+        {
+          "omitted_episode_id": 11,
+          "removed_trades": 1,
+          "remaining_trades": 70,
+          "mean_model_net": 0.0355145060782649,
+          "mean_excess": 0.047582068445251646
+        },
+        {
+          "omitted_episode_id": 12,
+          "removed_trades": 2,
+          "remaining_trades": 69,
+          "mean_model_net": 0.03849471349570062,
+          "mean_excess": 0.05061284502543965
+        },
+        {
+          "omitted_episode_id": 13,
+          "removed_trades": 8,
+          "remaining_trades": 63,
+          "mean_model_net": 0.015477674752694601,
+          "mean_excess": 0.02687103313575573
+        },
+        {
+          "omitted_episode_id": 14,
+          "removed_trades": 1,
+          "remaining_trades": 70,
+          "mean_model_net": 0.03704230500223613,
+          "mean_excess": 0.04907500357814605
+        },
+        {
+          "omitted_episode_id": 15,
+          "removed_trades": 4,
+          "remaining_trades": 67,
+          "mean_model_net": 0.03265402965688474,
+          "mean_excess": 0.04483859259459942
+        },
+        {
+          "omitted_episode_id": 16,
+          "removed_trades": 8,
+          "remaining_trades": 63,
+          "mean_model_net": 0.04576645319944936,
+          "mean_excess": 0.05794297738278716
+        },
+        {
+          "omitted_episode_id": 17,
+          "removed_trades": 1,
+          "remaining_trades": 70,
+          "mean_model_net": 0.036178302149328496,
+          "mean_excess": 0.04826060598766747
+        },
+        {
+          "omitted_episode_id": 18,
+          "removed_trades": 1,
+          "remaining_trades": 70,
+          "mean_model_net": 0.03408442788960223,
+          "mean_excess": 0.046061242367855526
+        },
+        {
+          "omitted_episode_id": 19,
+          "removed_trades": 1,
+          "remaining_trades": 70,
+          "mean_model_net": 0.036805828909201393,
+          "mean_excess": 0.048685580817682865
+        },
+        {
+          "omitted_episode_id": 20,
+          "removed_trades": 2,
+          "remaining_trades": 69,
+          "mean_model_net": 0.038725089673459806,
+          "mean_excess": 0.050610757993013566
+        },
+        {
+          "omitted_episode_id": 21,
+          "removed_trades": 1,
+          "remaining_trades": 70,
+          "mean_model_net": 0.03719169617362793,
+          "mean_excess": 0.04926883360649289
+        }
+      ],
+      "weakest_residual": {
+        "mean_model_net": {
+          "omitted_episode_id": 13,
+          "removed_trades": 8,
+          "remaining_trades": 63,
+          "mean_model_net": 0.015477674752694601,
+          "mean_excess": 0.02687103313575573
+        },
+        "mean_excess": {
+          "omitted_episode_id": 13,
+          "removed_trades": 8,
+          "remaining_trades": 63,
+          "mean_model_net": 0.015477674752694601,
+          "mean_excess": 0.02687103313575573
+        }
+      },
+      "fixed_stake_usd": 100.0,
+      "realized_model_net_usd": 259.6936255210608,
+      "peak_concurrent_positions": 8,
+      "peak_open_notional_usd": 800.0
+    },
+    {
+      "universe": "study_11",
+      "cost_per_side": 0.005,
+      "trades": 71,
+      "represented_episodes": 22,
+      "full_11_episodes": 22,
+      "mean_gross": 0.044376566974797305,
+      "mean_model_net": 0.0343765669747973,
+      "mean_control_model_net": -0.014240697106037226,
+      "mean_excess": 0.04861726408083452,
+      "net_episode_bootstrap": {
+        "mean": 0.0343765669747973,
+        "ci90": [
+          -0.004853400277826565,
+          0.07453105092549978
+        ],
+        "requested_draws": 10000,
+        "draws_generated": 10000,
+        "defined_draws": 10000,
+        "undefined_draws": 0,
+        "seed": 1,
+        "resampling_episodes": 22,
+        "interval_condition": "quantiles over draws with nonzero trade count"
+      },
+      "excess_episode_bootstrap": {
+        "mean": 0.04861726408083452,
+        "ci90": [
+          0.009468346210549504,
+          0.0897435344302319
+        ],
+        "requested_draws": 10000,
+        "draws_generated": 10000,
+        "defined_draws": 10000,
+        "undefined_draws": 0,
+        "seed": 1,
+        "resampling_episodes": 22,
+        "interval_condition": "quantiles over draws with nonzero trade count"
+      },
+      "leave_one_episode_out": [
+        {
+          "omitted_episode_id": 0,
+          "removed_trades": 2,
+          "remaining_trades": 69,
+          "mean_model_net": 0.03512252211788189,
+          "mean_excess": 0.049355272265555784
+        },
+        {
+          "omitted_episode_id": 1,
+          "removed_trades": 2,
+          "remaining_trades": 69,
+          "mean_model_net": 0.0348319310550123,
+          "mean_excess": 0.049175699828078845
+        },
+        {
+          "omitted_episode_id": 2,
+          "removed_trades": 6,
+          "remaining_trades": 65,
+          "mean_model_net": 0.03320765587983618,
+          "mean_excess": 0.04801589755235392
+        },
+        {
+          "omitted_episode_id": 3,
+          "removed_trades": 7,
+          "remaining_trades": 64,
+          "mean_model_net": 0.04263198358246524,
+          "mean_excess": 0.05672370394434348
+        },
+        {
+          "omitted_episode_id": 4,
+          "removed_trades": 1,
+          "remaining_trades": 70,
+          "mean_model_net": 0.03476002320449412,
+          "mean_excess": 0.049020124135898534
+        },
+        {
+          "omitted_episode_id": 5,
+          "removed_trades": 4,
+          "remaining_trades": 67,
+          "mean_model_net": 0.0437142828875419,
+          "mean_excess": 0.057655593910033116
+        },
+        {
+          "omitted_episode_id": 6,
+          "removed_trades": 3,
+          "remaining_trades": 68,
+          "mean_model_net": 0.03652802930822336,
+          "mean_excess": 0.05073622451351647
+        },
+        {
+          "omitted_episode_id": 7,
+          "removed_trades": 1,
+          "remaining_trades": 70,
+          "mean_model_net": 0.03432689883594423,
+          "mean_excess": 0.04856790327489357
+        },
+        {
+          "omitted_episode_id": 8,
+          "removed_trades": 1,
+          "remaining_trades": 70,
+          "mean_model_net": 0.03442382343630134,
+          "mean_excess": 0.04864321676439972
+        },
+        {
+          "omitted_episode_id": 9,
+          "removed_trades": 6,
+          "remaining_trades": 65,
+          "mean_model_net": 0.03243864287562171,
+          "mean_excess": 0.04737129976054992
+        },
+        {
+          "omitted_episode_id": 10,
+          "removed_trades": 8,
+          "remaining_trades": 63,
+          "mean_model_net": 0.02976621415059636,
+          "mean_excess": 0.043695448097390406
+        },
+        {
+          "omitted_episode_id": 11,
+          "removed_trades": 1,
+          "remaining_trades": 70,
+          "mean_model_net": 0.03331450607826489,
+          "mean_excess": 0.047582068445251646
+        },
+        {
+          "omitted_episode_id": 12,
+          "removed_trades": 2,
+          "remaining_trades": 69,
+          "mean_model_net": 0.03629471349570062,
+          "mean_excess": 0.05061284502543965
+        },
+        {
+          "omitted_episode_id": 13,
+          "removed_trades": 8,
+          "remaining_trades": 63,
+          "mean_model_net": 0.0132776747526946,
+          "mean_excess": 0.02687103313575573
+        },
+        {
+          "omitted_episode_id": 14,
+          "removed_trades": 1,
+          "remaining_trades": 70,
+          "mean_model_net": 0.034842305002236125,
+          "mean_excess": 0.04907500357814605
+        },
+        {
+          "omitted_episode_id": 15,
+          "removed_trades": 4,
+          "remaining_trades": 67,
+          "mean_model_net": 0.030454029656884735,
+          "mean_excess": 0.04483859259459942
+        },
+        {
+          "omitted_episode_id": 16,
+          "removed_trades": 8,
+          "remaining_trades": 63,
+          "mean_model_net": 0.04356645319944936,
+          "mean_excess": 0.05794297738278716
+        },
+        {
+          "omitted_episode_id": 17,
+          "removed_trades": 1,
+          "remaining_trades": 70,
+          "mean_model_net": 0.033978302149328496,
+          "mean_excess": 0.04826060598766747
+        },
+        {
+          "omitted_episode_id": 18,
+          "removed_trades": 1,
+          "remaining_trades": 70,
+          "mean_model_net": 0.03188442788960223,
+          "mean_excess": 0.046061242367855526
+        },
+        {
+          "omitted_episode_id": 19,
+          "removed_trades": 1,
+          "remaining_trades": 70,
+          "mean_model_net": 0.034605828909201386,
+          "mean_excess": 0.048685580817682865
+        },
+        {
+          "omitted_episode_id": 20,
+          "removed_trades": 2,
+          "remaining_trades": 69,
+          "mean_model_net": 0.036525089673459805,
+          "mean_excess": 0.050610757993013566
+        },
+        {
+          "omitted_episode_id": 21,
+          "removed_trades": 1,
+          "remaining_trades": 70,
+          "mean_model_net": 0.03499169617362793,
+          "mean_excess": 0.04926883360649289
+        }
+      ],
+      "weakest_residual": {
+        "mean_model_net": {
+          "omitted_episode_id": 13,
+          "removed_trades": 8,
+          "remaining_trades": 63,
+          "mean_model_net": 0.0132776747526946,
+          "mean_excess": 0.02687103313575573
+        },
+        "mean_excess": {
+          "omitted_episode_id": 13,
+          "removed_trades": 8,
+          "remaining_trades": 63,
+          "mean_model_net": 0.0132776747526946,
+          "mean_excess": 0.02687103313575573
+        }
+      },
+      "fixed_stake_usd": 100.0,
+      "realized_model_net_usd": 244.0736255210608,
+      "peak_concurrent_positions": 8,
+      "peak_open_notional_usd": 800.0
+    },
+    {
+      "universe": "snapshot_screened_8",
+      "cost_per_side": 0.0039,
+      "trades": 50,
+      "represented_episodes": 20,
+      "full_11_episodes": 22,
+      "mean_gross": 0.05075524125426801,
+      "mean_model_net": 0.042955241254268015,
+      "mean_control_model_net": -0.012212836819247492,
+      "mean_excess": 0.0551680780735155,
+      "net_episode_bootstrap": {
+        "mean": 0.042955241254268015,
+        "ci90": [
+          -0.0014413429860544225,
+          0.08676709257500674
+        ],
+        "requested_draws": 10000,
+        "draws_generated": 10000,
+        "defined_draws": 10000,
+        "undefined_draws": 0,
+        "seed": 1,
+        "resampling_episodes": 22,
+        "interval_condition": "quantiles over draws with nonzero trade count"
+      },
+      "excess_episode_bootstrap": {
+        "mean": 0.0551680780735155,
+        "ci90": [
+          0.010524126610464592,
+          0.09965051860572233
+        ],
+        "requested_draws": 10000,
+        "draws_generated": 10000,
+        "defined_draws": 10000,
+        "undefined_draws": 0,
+        "seed": 1,
+        "resampling_episodes": 22,
+        "interval_condition": "quantiles over draws with nonzero trade count"
+      },
+      "leave_one_episode_out": [
+        {
+          "omitted_episode_id": 0,
+          "removed_trades": 1,
+          "remaining_trades": 49,
+          "mean_model_net": 0.04355869768634264,
+          "mean_excess": 0.05577340734865532
+        },
+        {
+          "omitted_episode_id": 1,
+          "removed_trades": 1,
+          "remaining_trades": 49,
+          "mean_model_net": 0.0431779513183567,
+          "mean_excess": 0.055405877098373156
+        },
+        {
+          "omitted_episode_id": 2,
+          "removed_trades": 4,
+          "remaining_trades": 46,
+          "mean_model_net": 0.04218892287670187,
+          "mean_excess": 0.05459605406733583
+        },
+        {
+          "omitted_episode_id": 3,
+          "removed_trades": 4,
+          "remaining_trades": 46,
+          "mean_model_net": 0.049747248960784814,
+          "mean_excess": 0.06186741557916525
+        },
+        {
+          "omitted_episode_id": 4,
+          "removed_trades": 1,
+          "remaining_trades": 49,
+          "mean_model_net": 0.04363321289423227,
+          "mean_excess": 0.05587728251937596
+        },
+        {
+          "omitted_episode_id": 5,
+          "removed_trades": 3,
+          "remaining_trades": 47,
+          "mean_model_net": 0.052838098825224,
+          "mean_excess": 0.0648243716016052
+        },
+        {
+          "omitted_episode_id": 6,
+          "removed_trades": 2,
+          "remaining_trades": 48,
+          "mean_model_net": 0.045368003350087616,
+          "mean_excess": 0.057541209521196596
+        },
+        {
+          "omitted_episode_id": 7,
+          "removed_trades": 1,
+          "remaining_trades": 49,
+          "mean_model_net": 0.04301446379630385,
+          "mean_excess": 0.05523125271794029
+        },
+        {
+          "omitted_episode_id": 8,
+          "removed_trades": 1,
+          "remaining_trades": 49,
+          "mean_model_net": 0.043152927511099726,
+          "mean_excess": 0.05533884341723479
+        },
+        {
+          "omitted_episode_id": 9,
+          "removed_trades": 4,
+          "remaining_trades": 46,
+          "mean_model_net": 0.03854990662323522,
+          "mean_excess": 0.05154513460688413
+        },
+        {
+          "omitted_episode_id": 10,
+          "removed_trades": 6,
+          "remaining_trades": 44,
+          "mean_model_net": 0.03871919312104378,
+          "mean_excess": 0.050483162328154904
+        },
+        {
+          "omitted_episode_id": 11,
+          "removed_trades": 1,
+          "remaining_trades": 49,
+          "mean_model_net": 0.04156818842819052,
+          "mean_excess": 0.053822917247023254
+        },
+        {
+          "omitted_episode_id": 12,
+          "removed_trades": 1,
+          "remaining_trades": 49,
+          "mean_model_net": 0.044391991042190417,
+          "mean_excess": 0.05666712757311912
+        },
+        {
+          "omitted_episode_id": 13,
+          "removed_trades": 6,
+          "remaining_trades": 44,
+          "mean_model_net": 0.019619386049373497,
+          "mean_excess": 0.03129310260703682
+        },
+        {
+          "omitted_episode_id": 14,
+          "removed_trades": 1,
+          "remaining_trades": 49,
+          "mean_model_net": 0.043750758319578,
+          "mean_excess": 0.055955681722586706
+        },
+        {
+          "omitted_episode_id": 15,
+          "removed_trades": 3,
+          "remaining_trades": 47,
+          "mean_model_net": 0.03913738555582648,
+          "mean_excess": 0.051530743120515636
+        },
+        {
+          "omitted_episode_id": 16,
+          "removed_trades": 6,
+          "remaining_trades": 44,
+          "mean_model_net": 0.05585707997563283,
+          "mean_excess": 0.06836193395398735
+        },
+        {
+          "omitted_episode_id": 17,
+          "removed_trades": 0,
+          "remaining_trades": 50,
+          "mean_model_net": 0.042955241254268015,
+          "mean_excess": 0.0551680780735155
+        },
+        {
+          "omitted_episode_id": 18,
+          "removed_trades": 1,
+          "remaining_trades": 49,
+          "mean_model_net": 0.03952521958724384,
+          "mean_excess": 0.0516503085650288
+        },
+        {
+          "omitted_episode_id": 19,
+          "removed_trades": 0,
+          "remaining_trades": 50,
+          "mean_model_net": 0.042955241254268015,
+          "mean_excess": 0.0551680780735155
+        },
+        {
+          "omitted_episode_id": 20,
+          "removed_trades": 2,
+          "remaining_trades": 48,
+          "mean_model_net": 0.04630952072857331,
+          "mean_excess": 0.05830667615530125
+        },
+        {
+          "omitted_episode_id": 21,
+          "removed_trades": 1,
+          "remaining_trades": 49,
+          "mean_model_net": 0.04396417427870913,
+          "mean_excess": 0.056232581763082164
+        }
+      ],
+      "weakest_residual": {
+        "mean_model_net": {
+          "omitted_episode_id": 13,
+          "removed_trades": 6,
+          "remaining_trades": 44,
+          "mean_model_net": 0.019619386049373497,
+          "mean_excess": 0.03129310260703682
+        },
+        "mean_excess": {
+          "omitted_episode_id": 13,
+          "removed_trades": 6,
+          "remaining_trades": 44,
+          "mean_model_net": 0.019619386049373497,
+          "mean_excess": 0.03129310260703682
+        }
+      },
+      "fixed_stake_usd": 100.0,
+      "realized_model_net_usd": 214.77620627134007,
+      "peak_concurrent_positions": 6,
+      "peak_open_notional_usd": 600.0
+    },
+    {
+      "universe": "snapshot_screened_8",
+      "cost_per_side": 0.005,
+      "trades": 50,
+      "represented_episodes": 20,
+      "full_11_episodes": 22,
+      "mean_gross": 0.05075524125426801,
+      "mean_model_net": 0.04075524125426802,
+      "mean_control_model_net": -0.01441283681924749,
+      "mean_excess": 0.0551680780735155,
+      "net_episode_bootstrap": {
+        "mean": 0.04075524125426802,
+        "ci90": [
+          -0.003641342986054423,
+          0.0845670925750067
+        ],
+        "requested_draws": 10000,
+        "draws_generated": 10000,
+        "defined_draws": 10000,
+        "undefined_draws": 0,
+        "seed": 1,
+        "resampling_episodes": 22,
+        "interval_condition": "quantiles over draws with nonzero trade count"
+      },
+      "excess_episode_bootstrap": {
+        "mean": 0.0551680780735155,
+        "ci90": [
+          0.010524126610464592,
+          0.09965051860572233
+        ],
+        "requested_draws": 10000,
+        "draws_generated": 10000,
+        "defined_draws": 10000,
+        "undefined_draws": 0,
+        "seed": 1,
+        "resampling_episodes": 22,
+        "interval_condition": "quantiles over draws with nonzero trade count"
+      },
+      "leave_one_episode_out": [
+        {
+          "omitted_episode_id": 0,
+          "removed_trades": 1,
+          "remaining_trades": 49,
+          "mean_model_net": 0.04135869768634264,
+          "mean_excess": 0.05577340734865532
+        },
+        {
+          "omitted_episode_id": 1,
+          "removed_trades": 1,
+          "remaining_trades": 49,
+          "mean_model_net": 0.04097795131835671,
+          "mean_excess": 0.055405877098373156
+        },
+        {
+          "omitted_episode_id": 2,
+          "removed_trades": 4,
+          "remaining_trades": 46,
+          "mean_model_net": 0.03998892287670188,
+          "mean_excess": 0.05459605406733583
+        },
+        {
+          "omitted_episode_id": 3,
+          "removed_trades": 4,
+          "remaining_trades": 46,
+          "mean_model_net": 0.04754724896078481,
+          "mean_excess": 0.06186741557916525
+        },
+        {
+          "omitted_episode_id": 4,
+          "removed_trades": 1,
+          "remaining_trades": 49,
+          "mean_model_net": 0.04143321289423226,
+          "mean_excess": 0.05587728251937596
+        },
+        {
+          "omitted_episode_id": 5,
+          "removed_trades": 3,
+          "remaining_trades": 47,
+          "mean_model_net": 0.050638098825223986,
+          "mean_excess": 0.0648243716016052
+        },
+        {
+          "omitted_episode_id": 6,
+          "removed_trades": 2,
+          "remaining_trades": 48,
+          "mean_model_net": 0.043168003350087615,
+          "mean_excess": 0.057541209521196596
+        },
+        {
+          "omitted_episode_id": 7,
+          "removed_trades": 1,
+          "remaining_trades": 49,
+          "mean_model_net": 0.04081446379630385,
+          "mean_excess": 0.05523125271794029
+        },
+        {
+          "omitted_episode_id": 8,
+          "removed_trades": 1,
+          "remaining_trades": 49,
+          "mean_model_net": 0.04095292751109972,
+          "mean_excess": 0.05533884341723479
+        },
+        {
+          "omitted_episode_id": 9,
+          "removed_trades": 4,
+          "remaining_trades": 46,
+          "mean_model_net": 0.03634990662323523,
+          "mean_excess": 0.05154513460688413
+        },
+        {
+          "omitted_episode_id": 10,
+          "removed_trades": 6,
+          "remaining_trades": 44,
+          "mean_model_net": 0.03651919312104378,
+          "mean_excess": 0.050483162328154904
+        },
+        {
+          "omitted_episode_id": 11,
+          "removed_trades": 1,
+          "remaining_trades": 49,
+          "mean_model_net": 0.03936818842819051,
+          "mean_excess": 0.053822917247023254
+        },
+        {
+          "omitted_episode_id": 12,
+          "removed_trades": 1,
+          "remaining_trades": 49,
+          "mean_model_net": 0.0421919910421904,
+          "mean_excess": 0.05666712757311912
+        },
+        {
+          "omitted_episode_id": 13,
+          "removed_trades": 6,
+          "remaining_trades": 44,
+          "mean_model_net": 0.017419386049373504,
+          "mean_excess": 0.03129310260703682
+        },
+        {
+          "omitted_episode_id": 14,
+          "removed_trades": 1,
+          "remaining_trades": 49,
+          "mean_model_net": 0.04155075831957798,
+          "mean_excess": 0.055955681722586706
+        },
+        {
+          "omitted_episode_id": 15,
+          "removed_trades": 3,
+          "remaining_trades": 47,
+          "mean_model_net": 0.036937385555826485,
+          "mean_excess": 0.051530743120515636
+        },
+        {
+          "omitted_episode_id": 16,
+          "removed_trades": 6,
+          "remaining_trades": 44,
+          "mean_model_net": 0.05365707997563283,
+          "mean_excess": 0.06836193395398735
+        },
+        {
+          "omitted_episode_id": 17,
+          "removed_trades": 0,
+          "remaining_trades": 50,
+          "mean_model_net": 0.04075524125426802,
+          "mean_excess": 0.0551680780735155
+        },
+        {
+          "omitted_episode_id": 18,
+          "removed_trades": 1,
+          "remaining_trades": 49,
+          "mean_model_net": 0.037325219587243844,
+          "mean_excess": 0.0516503085650288
+        },
+        {
+          "omitted_episode_id": 19,
+          "removed_trades": 0,
+          "remaining_trades": 50,
+          "mean_model_net": 0.04075524125426802,
+          "mean_excess": 0.0551680780735155
+        },
+        {
+          "omitted_episode_id": 20,
+          "removed_trades": 2,
+          "remaining_trades": 48,
+          "mean_model_net": 0.04410952072857332,
+          "mean_excess": 0.05830667615530125
+        },
+        {
+          "omitted_episode_id": 21,
+          "removed_trades": 1,
+          "remaining_trades": 49,
+          "mean_model_net": 0.04176417427870913,
+          "mean_excess": 0.056232581763082164
+        }
+      ],
+      "weakest_residual": {
+        "mean_model_net": {
+          "omitted_episode_id": 13,
+          "removed_trades": 6,
+          "remaining_trades": 44,
+          "mean_model_net": 0.017419386049373504,
+          "mean_excess": 0.03129310260703682
+        },
+        "mean_excess": {
+          "omitted_episode_id": 13,
+          "removed_trades": 6,
+          "remaining_trades": 44,
+          "mean_model_net": 0.017419386049373504,
+          "mean_excess": 0.03129310260703682
+        }
+      },
+      "fixed_stake_usd": 100.0,
+      "realized_model_net_usd": 203.7762062713401,
+      "peak_concurrent_positions": 6,
+      "peak_open_notional_usd": 600.0
+    }
+  ],
+  "trades": [
+    {
+      "coin": "DOGE",
+      "signal_index": 1465,
+      "gross_return": 0.021185876082611577,
+      "episode_id": 0,
+      "expected_control_gross": -0.004321067509052925,
+      "gross_excess": 0.025506943591664503,
+      "signal_hour": 466057,
+      "entry_close_hour": 466059,
+      "exit_close_hour": 466083
+    },
+    {
+      "coin": "LTC",
+      "signal_index": 1465,
+      "gross_return": 0.01609635299414669,
+      "episode_id": 0,
+      "expected_control_gross": -0.004708666830090396,
+      "gross_excess": 0.020805019824237086,
+      "signal_hour": 466057,
+      "entry_close_hour": 466059,
+      "exit_close_hour": 466083
+    },
+    {
+      "coin": "BCH",
+      "signal_index": 3735,
+      "gross_return": 0.01749056430083784,
+      "episode_id": 1,
+      "expected_control_gross": 0.0023040285545175994,
+      "gross_excess": 0.015186535746320241,
+      "signal_hour": 468327,
+      "entry_close_hour": 468329,
+      "exit_close_hour": 468353
+    },
+    {
+      "coin": "DOGE",
+      "signal_index": 3735,
+      "gross_return": 0.039842448113922346,
+      "episode_id": 1,
+      "expected_control_gross": -0.0036734777415681936,
+      "gross_excess": 0.043515925855490536,
+      "signal_hour": 468327,
+      "entry_close_hour": 468329,
+      "exit_close_hour": 468353
+    },
+    {
+      "coin": "ADA",
+      "signal_index": 3843,
+      "gross_return": 0.06717927964386883,
+      "episode_id": 2,
+      "expected_control_gross": -0.0056137150792182735,
+      "gross_excess": 0.0727929947230871,
+      "signal_hour": 468435,
+      "entry_close_hour": 468437,
+      "exit_close_hour": 468461
+    },
+    {
+      "coin": "AVAX",
+      "signal_index": 3844,
+      "gross_return": 0.0573248407643312,
+      "episode_id": 2,
+      "expected_control_gross": -0.0009649175041121434,
+      "gross_excess": 0.05828975826844334,
+      "signal_hour": 468436,
+      "entry_close_hour": 468438,
+      "exit_close_hour": 468462
+    },
+    {
+      "coin": "BCH",
+      "signal_index": 3844,
+      "gross_return": 0.04664217187181041,
+      "episode_id": 2,
+      "expected_control_gross": 0.02112493788233552,
+      "gross_excess": 0.02551723398947489,
+      "signal_hour": 468436,
+      "entry_close_hour": 468438,
+      "exit_close_hour": 468462
+    },
+    {
+      "coin": "DOT",
+      "signal_index": 3844,
+      "gross_return": 0.04512508767827916,
+      "episode_id": 2,
+      "expected_control_gross": 9.597098329045438e-06,
+      "gross_excess": 0.04511549057995012,
+      "signal_hour": 468436,
+      "entry_close_hour": 468438,
+      "exit_close_hour": 468462
+    },
+    {
+      "coin": "SOL",
+      "signal_index": 3844,
+      "gross_return": 0.09740714786264904,
+      "episode_id": 2,
+      "expected_control_gross": -0.0030782349800302245,
+      "gross_excess": 0.10048538284267926,
+      "signal_hour": 468436,
+      "entry_close_hour": 468438,
+      "exit_close_hour": 468462
+    },
+    {
+      "coin": "LINK",
+      "signal_index": 3845,
+      "gross_return": 0.028560095200317326,
+      "episode_id": 2,
+      "expected_control_gross": -3.1453232293728e-05,
+      "gross_excess": 0.028591548432611052,
+      "signal_hour": 468437,
+      "entry_close_hour": 468439,
+      "exit_close_hour": 468463
+    },
+    {
+      "coin": "BCH",
+      "signal_index": 5468,
+      "gross_return": -0.1199003273562319,
+      "episode_id": 3,
+      "expected_control_gross": -0.0038838533833800704,
+      "gross_excess": -0.11601647397285184,
+      "signal_hour": 470060,
+      "entry_close_hour": 470062,
+      "exit_close_hour": 470086
+    },
+    {
+      "coin": "BTC",
+      "signal_index": 5487,
+      "gross_return": -0.07223810148533838,
+      "episode_id": 3,
+      "expected_control_gross": -0.003859596737457472,
+      "gross_excess": -0.0683785047478809,
+      "signal_hour": 470079,
+      "entry_close_hour": 470081,
+      "exit_close_hour": 470105
+    },
+    {
+      "coin": "ETH",
+      "signal_index": 5487,
+      "gross_return": -0.04431227963211137,
+      "episode_id": 3,
+      "expected_control_gross": -0.0038169989410202095,
+      "gross_excess": -0.040495280691091165,
+      "signal_hour": 470079,
+      "entry_close_hour": 470081,
+      "exit_close_hour": 470105
+    },
+    {
+      "coin": "BCH",
+      "signal_index": 5493,
+      "gross_return": 0.031151962133304067,
+      "episode_id": 3,
+      "expected_control_gross": -0.003838321256892533,
+      "gross_excess": 0.0349902833901966,
+      "signal_hour": 470085,
+      "entry_close_hour": 470087,
+      "exit_close_hour": 470111
+    },
+    {
+      "coin": "DOGE",
+      "signal_index": 5493,
+      "gross_return": 0.021149499515660253,
+      "episode_id": 3,
+      "expected_control_gross": -0.0048193533894751815,
+      "gross_excess": 0.025968852905135432,
+      "signal_hour": 470085,
+      "entry_close_hour": 470087,
+      "exit_close_hour": 470111
+    },
+    {
+      "coin": "LTC",
+      "signal_index": 5493,
+      "gross_return": -0.01955093936153962,
+      "episode_id": 3,
+      "expected_control_gross": -0.009583040211288894,
+      "gross_excess": -0.009967899150250727,
+      "signal_hour": 470085,
+      "entry_close_hour": 470087,
+      "exit_close_hour": 470111
+    },
+    {
+      "coin": "XRP",
+      "signal_index": 5493,
+      "gross_return": -0.014010507880910628,
+      "episode_id": 3,
+      "expected_control_gross": -0.009418227448921427,
+      "gross_excess": -0.0045922804319892,
+      "signal_hour": 470085,
+      "entry_close_hour": 470087,
+      "exit_close_hour": 470111
+    },
+    {
+      "coin": "XRP",
+      "signal_index": 8820,
+      "gross_return": 0.017534630896019587,
+      "episode_id": 4,
+      "expected_control_gross": -0.002882429330333877,
+      "gross_excess": 0.020417060226353465,
+      "signal_hour": 473412,
+      "entry_close_hour": 473414,
+      "exit_close_hour": 473438
+    },
+    {
+      "coin": "AVAX",
+      "signal_index": 11226,
+      "gross_return": -0.1358921161825727,
+      "episode_id": 5,
+      "expected_control_gross": -0.013134635549272399,
+      "gross_excess": -0.12275748063330029,
+      "signal_hour": 475818,
+      "entry_close_hour": 475820,
+      "exit_close_hour": 475844
+    },
+    {
+      "coin": "DOT",
+      "signal_index": 11226,
+      "gross_return": -0.07226308957161398,
+      "episode_id": 5,
+      "expected_control_gross": -0.009811813144346494,
+      "gross_excess": -0.062451276427267485,
+      "signal_hour": 475818,
+      "entry_close_hour": 475820,
+      "exit_close_hour": 475844
+    },
+    {
+      "coin": "XRP",
+      "signal_index": 11226,
+      "gross_return": -0.08540660972892677,
+      "episode_id": 5,
+      "expected_control_gross": -0.0053630345811142306,
+      "gross_excess": -0.08004357514781255,
+      "signal_hour": 475818,
+      "entry_close_hour": 475820,
+      "exit_close_hour": 475844
+    },
+    {
+      "coin": "LINK",
+      "signal_index": 11227,
+      "gross_return": -0.1545588827715858,
+      "episode_id": 5,
+      "expected_control_gross": -0.008712172746997624,
+      "gross_excess": -0.14584671002458818,
+      "signal_hour": 475819,
+      "entry_close_hour": 475821,
+      "exit_close_hour": 475845
+    },
+    {
+      "coin": "DOGE",
+      "signal_index": 12570,
+      "gross_return": -0.014302098090804849,
+      "episode_id": 6,
+      "expected_control_gross": -0.008147251625488568,
+      "gross_excess": -0.006154846465316281,
+      "signal_hour": 477162,
+      "entry_close_hour": 477164,
+      "exit_close_hour": 477188
+    },
+    {
+      "coin": "LTC",
+      "signal_index": 12570,
+      "gross_return": 0.0011323603422244144,
+      "episode_id": 6,
+      "expected_control_gross": -0.00420427581956836,
+      "gross_excess": 0.005336636161792774,
+      "signal_hour": 477162,
+      "entry_close_hour": 477164,
+      "exit_close_hour": 477188
+    },
+    {
+      "coin": "XRP",
+      "signal_index": 12570,
+      "gross_return": 0.0,
+      "episode_id": 6,
+      "expected_control_gross": -0.0025806931236547785,
+      "gross_excess": 0.0025806931236547785,
+      "signal_hour": 477162,
+      "entry_close_hour": 477164,
+      "exit_close_hour": 477188
+    },
+    {
+      "coin": "ETH",
+      "signal_index": 12663,
+      "gross_return": 0.047853336694512416,
+      "episode_id": 7,
+      "expected_control_gross": -0.004219183802188715,
+      "gross_excess": 0.05207252049670113,
+      "signal_hour": 477255,
+      "entry_close_hour": 477257,
+      "exit_close_hour": 477281
+    },
+    {
+      "coin": "BTC",
+      "signal_index": 12979,
+      "gross_return": 0.041068614669514725,
+      "episode_id": 8,
+      "expected_control_gross": -0.00573196156175607,
+      "gross_excess": 0.0468005762312708,
+      "signal_hour": 477571,
+      "entry_close_hour": 477573,
+      "exit_close_hour": 477597
+    },
+    {
+      "coin": "BCH",
+      "signal_index": 13224,
+      "gross_return": 0.002815681178254259,
+      "episode_id": 9,
+      "expected_control_gross": 0.001058149341545344,
+      "gross_excess": 0.001757531836708915,
+      "signal_hour": 477816,
+      "entry_close_hour": 477818,
+      "exit_close_hour": 477842
+    },
+    {
+      "coin": "LTC",
+      "signal_index": 13224,
+      "gross_return": -0.01625757092763791,
+      "episode_id": 9,
+      "expected_control_gross": 0.0001364073646699591,
+      "gross_excess": -0.01639397829230787,
+      "signal_hour": 477816,
+      "entry_close_hour": 477818,
+      "exit_close_hour": 477842
+    },
+    {
+      "coin": "ADA",
+      "signal_index": 13226,
+      "gross_return": 0.08019740900678607,
+      "episode_id": 9,
+      "expected_control_gross": 0.004748574703899465,
+      "gross_excess": 0.0754488343028866,
+      "signal_hour": 477818,
+      "entry_close_hour": 477820,
+      "exit_close_hour": 477844
+    },
+    {
+      "coin": "DOGE",
+      "signal_index": 13226,
+      "gross_return": 0.12756240042485412,
+      "episode_id": 9,
+      "expected_control_gross": 0.002606498936061462,
+      "gross_excess": 0.12495590148879265,
+      "signal_hour": 477818,
+      "entry_close_hour": 477820,
+      "exit_close_hour": 477844
+    },
+    {
+      "coin": "DOT",
+      "signal_index": 13226,
+      "gross_return": 0.12490102929532854,
+      "episode_id": 9,
+      "expected_control_gross": 0.003860531485656419,
+      "gross_excess": 0.12104049780967212,
+      "signal_hour": 477818,
+      "entry_close_hour": 477820,
+      "exit_close_hour": 477844
+    },
+    {
+      "coin": "XRP",
+      "signal_index": 13226,
+      "gross_return": 0.07300551931761157,
+      "episode_id": 9,
+      "expected_control_gross": 0.007123041159857479,
+      "gross_excess": 0.06588247815775408,
+      "signal_hour": 477818,
+      "entry_close_hour": 477820,
+      "exit_close_hour": 477844
+    },
+    {
+      "coin": "DOT",
+      "signal_index": 13969,
+      "gross_return": 0.04852728150651853,
+      "episode_id": 10,
+      "expected_control_gross": -0.009948353080315006,
+      "gross_excess": 0.05847563458683353,
+      "signal_hour": 478561,
+      "entry_close_hour": 478563,
+      "exit_close_hour": 478587
+    },
+    {
+      "coin": "ETH",
+      "signal_index": 13969,
+      "gross_return": 0.07435022248108147,
+      "episode_id": 10,
+      "expected_control_gross": -0.008513683063696214,
+      "gross_excess": 0.08286390554477768,
+      "signal_hour": 478561,
+      "entry_close_hour": 478563,
+      "exit_close_hour": 478587
+    },
+    {
+      "coin": "LINK",
+      "signal_index": 13971,
+      "gross_return": 0.08546731496488369,
+      "episode_id": 10,
+      "expected_control_gross": -0.009673745128836076,
+      "gross_excess": 0.09514106009371977,
+      "signal_hour": 478563,
+      "entry_close_hour": 478565,
+      "exit_close_hour": 478589
+    },
+    {
+      "coin": "ADA",
+      "signal_index": 13974,
+      "gross_return": 0.083711875405581,
+      "episode_id": 10,
+      "expected_control_gross": -0.006709808385873727,
+      "gross_excess": 0.09042168379145474,
+      "signal_hour": 478566,
+      "entry_close_hour": 478568,
+      "exit_close_hour": 478592
+    },
+    {
+      "coin": "BCH",
+      "signal_index": 13974,
+      "gross_return": 0.07328683349310783,
+      "episode_id": 10,
+      "expected_control_gross": -0.003907844667735371,
+      "gross_excess": 0.0771946781608432,
+      "signal_hour": 478566,
+      "entry_close_hour": 478568,
+      "exit_close_hour": 478592
+    },
+    {
+      "coin": "BTC",
+      "signal_index": 13974,
+      "gross_return": 0.06348607793411531,
+      "episode_id": 10,
+      "expected_control_gross": -0.0034499056449035508,
+      "gross_excess": 0.06693598357901887,
+      "signal_hour": 478566,
+      "entry_close_hour": 478568,
+      "exit_close_hour": 478592
+    },
+    {
+      "coin": "LTC",
+      "signal_index": 13974,
+      "gross_return": 0.08126036484245436,
+      "episode_id": 10,
+      "expected_control_gross": -0.003412715363397846,
+      "gross_excess": 0.08467308020585221,
+      "signal_hour": 478566,
+      "entry_close_hour": 478568,
+      "exit_close_hour": 478592
+    },
+    {
+      "coin": "DOGE",
+      "signal_index": 13978,
+      "gross_return": 0.13537479309529443,
+      "episode_id": 10,
+      "expected_control_gross": -0.007931700545860619,
+      "gross_excess": 0.14330649364115505,
+      "signal_hour": 478570,
+      "entry_close_hour": 478572,
+      "exit_close_hour": 478596
+    },
+    {
+      "coin": "DOGE",
+      "signal_index": 17267,
+      "gross_return": 0.11872082973206566,
+      "episode_id": 11,
+      "expected_control_gross": -0.0023601288395701764,
+      "gross_excess": 0.12108095857163584,
+      "signal_hour": 481859,
+      "entry_close_hour": 481861,
+      "exit_close_hour": 481885
+    },
+    {
+      "coin": "BCH",
+      "signal_index": 17718,
+      "gross_return": -0.02395347763880551,
+      "episode_id": 12,
+      "expected_control_gross": -0.001778268029782591,
+      "gross_excess": -0.022175209609022917,
+      "signal_hour": 482310,
+      "entry_close_hour": 482312,
+      "exit_close_hour": 482336
+    },
+    {
+      "coin": "ETH",
+      "signal_index": 17718,
+      "gross_return": -0.019645498353929147,
+      "episode_id": 12,
+      "expected_control_gross": -0.001360150946867357,
+      "gross_excess": -0.01828534740706179,
+      "signal_hour": 482310,
+      "entry_close_hour": 482312,
+      "exit_close_hour": 482336
+    },
+    {
+      "coin": "ADA",
+      "signal_index": 18337,
+      "gross_return": 0.2714331413947537,
+      "episode_id": 13,
+      "expected_control_gross": -0.008722781504276704,
+      "gross_excess": 0.2801559228990304,
+      "signal_hour": 482929,
+      "entry_close_hour": 482931,
+      "exit_close_hour": 482955
+    },
+    {
+      "coin": "AVAX",
+      "signal_index": 18337,
+      "gross_return": 0.20243266724587317,
+      "episode_id": 13,
+      "expected_control_gross": -0.013916220409605102,
+      "gross_excess": 0.21634888765547827,
+      "signal_hour": 482929,
+      "entry_close_hour": 482931,
+      "exit_close_hour": 482955
+    },
+    {
+      "coin": "BCH",
+      "signal_index": 18337,
+      "gross_return": 0.15050100200400807,
+      "episode_id": 13,
+      "expected_control_gross": -0.010593383560998482,
+      "gross_excess": 0.16109438556500655,
+      "signal_hour": 482929,
+      "entry_close_hour": 482931,
+      "exit_close_hour": 482955
+    },
+    {
+      "coin": "DOGE",
+      "signal_index": 18337,
+      "gross_return": 0.2346532487420694,
+      "episode_id": 13,
+      "expected_control_gross": -0.012438274425996867,
+      "gross_excess": 0.24709152316806626,
+      "signal_hour": 482929,
+      "entry_close_hour": 482931,
+      "exit_close_hour": 482955
+    },
+    {
+      "coin": "DOT",
+      "signal_index": 18337,
+      "gross_return": 0.21368547418967587,
+      "episode_id": 13,
+      "expected_control_gross": -0.009667501752868004,
+      "gross_excess": 0.22335297594254389,
+      "signal_hour": 482929,
+      "entry_close_hour": 482931,
+      "exit_close_hour": 482955
+    },
+    {
+      "coin": "ETH",
+      "signal_index": 18337,
+      "gross_return": 0.12552087933263212,
+      "episode_id": 13,
+      "expected_control_gross": -0.00601599059366966,
+      "gross_excess": 0.13153686992630179,
+      "signal_hour": 482929,
+      "entry_close_hour": 482931,
+      "exit_close_hour": 482955
+    },
+    {
+      "coin": "LINK",
+      "signal_index": 18337,
+      "gross_return": 0.21996852596607797,
+      "episode_id": 13,
+      "expected_control_gross": -0.008276004552568635,
+      "gross_excess": 0.2282445305186466,
+      "signal_hour": 482929,
+      "entry_close_hour": 482931,
+      "exit_close_hour": 482955
+    },
+    {
+      "coin": "XRP",
+      "signal_index": 18337,
+      "gross_return": 0.2660478069157577,
+      "episode_id": 13,
+      "expected_control_gross": -0.005077759595808636,
+      "gross_excess": 0.27112556651156633,
+      "signal_hour": 482929,
+      "entry_close_hour": 482931,
+      "exit_close_hour": 482955
+    },
+    {
+      "coin": "BTC",
+      "signal_index": 18873,
+      "gross_return": 0.01177490505407941,
+      "episode_id": 14,
+      "expected_control_gross": -0.004800594214947908,
+      "gross_excess": 0.01657549926902732,
+      "signal_hour": 483465,
+      "entry_close_hour": 483467,
+      "exit_close_hour": 483491
+    },
+    {
+      "coin": "DOGE",
+      "signal_index": 19854,
+      "gross_return": 0.14110522331567,
+      "episode_id": 15,
+      "expected_control_gross": 0.0018113833176915091,
+      "gross_excess": 0.13929383999797848,
+      "signal_hour": 484446,
+      "entry_close_hour": 484448,
+      "exit_close_hour": 484472
+    },
+    {
+      "coin": "ETH",
+      "signal_index": 19854,
+      "gross_return": 0.07629354955893541,
+      "episode_id": 15,
+      "expected_control_gross": -0.0041115771401082305,
+      "gross_excess": 0.08040512669904365,
+      "signal_hour": 484446,
+      "entry_close_hour": 484448,
+      "exit_close_hour": 484472
+    },
+    {
+      "coin": "LTC",
+      "signal_index": 19854,
+      "gross_return": 0.10861132660977502,
+      "episode_id": 15,
+      "expected_control_gross": -0.002569742279773465,
+      "gross_excess": 0.11118106888954848,
+      "signal_hour": 484446,
+      "entry_close_hour": 484448,
+      "exit_close_hour": 484472
+    },
+    {
+      "coin": "XRP",
+      "signal_index": 19854,
+      "gross_return": 0.11430616871495047,
+      "episode_id": 15,
+      "expected_control_gross": -0.002453841599568528,
+      "gross_excess": 0.116760010314519,
+      "signal_hour": 484446,
+      "entry_close_hour": 484448,
+      "exit_close_hour": 484472
+    },
+    {
+      "coin": "XRP",
+      "signal_index": 24332,
+      "gross_return": -0.05509848904358827,
+      "episode_id": 16,
+      "expected_control_gross": -0.0024004840714360012,
+      "gross_excess": -0.05269800497215227,
+      "signal_hour": 488924,
+      "entry_close_hour": 488926,
+      "exit_close_hour": 488950
+    },
+    {
+      "coin": "DOGE",
+      "signal_index": 24333,
+      "gross_return": -0.05446100449162927,
+      "episode_id": 16,
+      "expected_control_gross": -0.0031863117939372075,
+      "gross_excess": -0.05127469269769207,
+      "signal_hour": 488925,
+      "entry_close_hour": 488927,
+      "exit_close_hour": 488951
+    },
+    {
+      "coin": "AVAX",
+      "signal_index": 24334,
+      "gross_return": 0.035662650602409585,
+      "episode_id": 16,
+      "expected_control_gross": -0.0112772487906009,
+      "gross_excess": 0.046939899393010485,
+      "signal_hour": 488926,
+      "entry_close_hour": 488928,
+      "exit_close_hour": 488952
+    },
+    {
+      "coin": "DOT",
+      "signal_index": 24334,
+      "gross_return": -0.0436444727620261,
+      "episode_id": 16,
+      "expected_control_gross": -0.006190985725961285,
+      "gross_excess": -0.03745348703606481,
+      "signal_hour": 488926,
+      "entry_close_hour": 488928,
+      "exit_close_hour": 488952
+    },
+    {
+      "coin": "LINK",
+      "signal_index": 24334,
+      "gross_return": -0.009037531660142761,
+      "episode_id": 16,
+      "expected_control_gross": -0.0033253556321704396,
+      "gross_excess": -0.005712176027972322,
+      "signal_hour": 488926,
+      "entry_close_hour": 488928,
+      "exit_close_hour": 488952
+    },
+    {
+      "coin": "BTC",
+      "signal_index": 24337,
+      "gross_return": -0.027606755990227994,
+      "episode_id": 16,
+      "expected_control_gross": 0.0009976865292132895,
+      "gross_excess": -0.028604442519441282,
+      "signal_hour": 488929,
+      "entry_close_hour": 488931,
+      "exit_close_hour": 488955
+    },
+    {
+      "coin": "SOL",
+      "signal_index": 24337,
+      "gross_return": -0.07330120226682912,
+      "episode_id": 16,
+      "expected_control_gross": 0.0004771847795156861,
+      "gross_excess": -0.0737783870463448,
+      "signal_hour": 488929,
+      "entry_close_hour": 488931,
+      "exit_close_hour": 488955
+    },
+    {
+      "coin": "LTC",
+      "signal_index": 24349,
+      "gross_return": 0.0035365092573331758,
+      "episode_id": 16,
+      "expected_control_gross": -0.00046295627298413014,
+      "gross_excess": 0.003999465530317306,
+      "signal_hour": 488941,
+      "entry_close_hour": 488943,
+      "exit_close_hour": 488967
+    },
+    {
+      "coin": "BCH",
+      "signal_index": 27041,
+      "gross_return": 0.07225510475761365,
+      "episode_id": 17,
+      "expected_control_gross": -0.0013282258449145228,
+      "gross_excess": 0.07358333060252818,
+      "signal_hour": 491633,
+      "entry_close_hour": 491635,
+      "exit_close_hour": 491659
+    },
+    {
+      "coin": "XRP",
+      "signal_index": 27163,
+      "gross_return": 0.2188263029384525,
+      "episode_id": 18,
+      "expected_control_gross": -0.008712481050911441,
+      "gross_excess": 0.22753878398936395,
+      "signal_hour": 491755,
+      "entry_close_hour": 491757,
+      "exit_close_hour": 491781
+    },
+    {
+      "coin": "BCH",
+      "signal_index": 29597,
+      "gross_return": 0.028328231566510986,
+      "episode_id": 19,
+      "expected_control_gross": -0.015506860934939594,
+      "gross_excess": 0.04383509250145058,
+      "signal_hour": 494189,
+      "entry_close_hour": 494191,
+      "exit_close_hour": 494215
+    },
+    {
+      "coin": "BTC",
+      "signal_index": 29974,
+      "gross_return": -0.03928015019873743,
+      "episode_id": 20,
+      "expected_control_gross": -0.006005180208296658,
+      "gross_excess": -0.03327496999044077,
+      "signal_hour": 494566,
+      "entry_close_hour": 494568,
+      "exit_close_hour": 494592
+    },
+    {
+      "coin": "ADA",
+      "signal_index": 30026,
+      "gross_return": -0.020214782059380987,
+      "episode_id": 20,
+      "expected_control_gross": -0.013173200271136694,
+      "gross_excess": -0.007041581788244293,
+      "signal_hour": 494618,
+      "entry_close_hour": 494620,
+      "exit_close_hour": 494644
+    },
+    {
+      "coin": "DOT",
+      "signal_index": 31294,
+      "gross_return": 0.0013175230566535578,
+      "episode_id": 21,
+      "expected_control_gross": -0.0016898742280953502,
+      "gross_excess": 0.003007397284748908,
+      "signal_hour": 495886,
+      "entry_close_hour": 495888,
+      "exit_close_hour": 495912
+    }
+  ],
+  "limits": [
+    "hourly timing proxy differs from registered 30-minute entry and actual fill latency",
+    "historical screen and costs are proxies; no observed Alpaca execution profitability",
+    "episode bootstrap does not prove episodes statistically independent",
+    "shifted episodes can overlap: controls are not a runnable account",
+    "realized model dollars exclude reinvestment, account stops and idle-capital opportunity cost"
+  ],
+  "provenance": {
+    "protocol_sha256": "84a0bd1aadd944a5e8a9fbc865a6c770cb404f1f01ff8dad1e035a96a1115aed",
+    "full_result_sha256": "a293b0ff5a2de8c1edf8b30e23971035a792f9c99b66d80abe1135e0056dce45",
+    "cache": {
+      "status": "complete",
+      "analysis_ready": true,
+      "manifest_sha256": "dc9fc1a691933ef97584f61b8b62f95724d50157e22a00800b3796a40992d4e7",
+      "coins": 21,
+      "planned_chunks": 2331,
+      "validated_chunks": 2331,
+      "verified_files": 2353,
+      "http_requests_full_run": 2330,
+      "reused_pilot_chunks": 1,
+      "per_coin": {
+        "AAVE": {
+          "rows": 33057,
+          "missing_hours": 15,
+          "sha256": "0c243221874143ad3f5e1f313d24497f4fd4b16d7b22ca32beaec47b54f94450"
+        },
+        "ADA": {
+          "rows": 33057,
+          "missing_hours": 15,
+          "sha256": "093532ee77d3abfa5accb9bca2d204a41832afe2a34dfbf618cfd7b969755386"
+        },
+        "AVAX": {
+          "rows": 33058,
+          "missing_hours": 14,
+          "sha256": "53cae154e253a38d589d121aa9fd0b2c49a39bea6bbad030a6b20d091f754ecd"
+        },
+        "BAT": {
+          "rows": 33044,
+          "missing_hours": 28,
+          "sha256": "fd3dacdd61d760476badc475838abd5b5b85f5422b77711e8ca0319c11ea33e3"
+        },
+        "BCH": {
+          "rows": 33058,
+          "missing_hours": 14,
+          "sha256": "af6fd163e153903e5c18dcf80e0d2e7fd59f672a7f7144db979969b08ba18831"
+        },
+        "BTC": {
+          "rows": 33059,
+          "missing_hours": 13,
+          "sha256": "7a33682826466beb4d0b76210c5c0bce2ff72889598a477b562a936c5df9fd38"
+        },
+        "CRV": {
+          "rows": 33055,
+          "missing_hours": 17,
+          "sha256": "97c9d13302b0707fc7f7548dbff9a771adfda48af3683bf2c257719a298aa7d2"
+        },
+        "DOGE": {
+          "rows": 33057,
+          "missing_hours": 15,
+          "sha256": "fd1fef3aff2c5b559f5fb71b98b46bd9ba9b34b47dca35074e69d3e6509c4afa"
+        },
+        "DOT": {
+          "rows": 33057,
+          "missing_hours": 15,
+          "sha256": "4ccb805c381f5dee8ffda12789e655de0f84760fe50acd055ad1d652586452bb"
+        },
+        "ETH": {
+          "rows": 33059,
+          "missing_hours": 13,
+          "sha256": "7c3c439307d15f62306810fb605b9211f269beb8c06fc767a1676543c2ba7e9c"
+        },
+        "GRT": {
+          "rows": 32983,
+          "missing_hours": 89,
+          "sha256": "926f2f529308929b1070a41c84d87fa447c58be1e4f500239eb08543af74c981"
+        },
+        "LINK": {
+          "rows": 33057,
+          "missing_hours": 15,
+          "sha256": "891d514069634df4a8df2f1aea1b8a31438a5dd59f96e8486a8b4f7c8208a037"
+        },
+        "LTC": {
+          "rows": 33057,
+          "missing_hours": 15,
+          "sha256": "5903ab982bf6379ab1d4f24d8e2544c2c46228fe6117388b03074a07cee3fb09"
+        },
+        "PEPE": {
+          "rows": 16677,
+          "missing_hours": 16395,
+          "sha256": "57d06a564824c586f1055279dad484a7f82bd5b97fce298c054a015811edcf1b"
+        },
+        "SHIB": {
+          "rows": 33057,
+          "missing_hours": 15,
+          "sha256": "80fd1e0b4444521e2453ee832ec0682e2b05d9b5b77c79221264538829a94dbc"
+        },
+        "SOL": {
+          "rows": 33057,
+          "missing_hours": 15,
+          "sha256": "d28448ded1a242fefa3e4bdf3d81faa5d87fbc59f32f3a4901c932bb95c32e92"
+        },
+        "SUSHI": {
+          "rows": 32998,
+          "missing_hours": 74,
+          "sha256": "cc3bc418a257fd2f631b2fa1e0d08ceec96998252eaa6987eae30bfc92fb96b8"
+        },
+        "UNI": {
+          "rows": 33057,
+          "missing_hours": 15,
+          "sha256": "0cd2ad211188dc3ed2a4ee3ac0aaccdf4be78cba457afb7bd5f59b11f465345e"
+        },
+        "XRP": {
+          "rows": 28410,
+          "missing_hours": 4662,
+          "sha256": "5743927b9c63d5a5d964088c146181e7af5eeca9ff4cd34e6eb87797e439b1e2"
+        },
+        "XTZ": {
+          "rows": 33056,
+          "missing_hours": 16,
+          "sha256": "413d0706b4e1a61cc4a5343e5129e70d9b1ee40cb0d65012e5f28a512678f223"
+        },
+        "YFI": {
+          "rows": 32999,
+          "missing_hours": 73,
+          "sha256": "a98063566baba73b03e7c3dfffac10c70246b6d147458292050fdd097f08ba54"
+        }
+      }
+    },
+    "source": {
+      "initial_base_commit": "8c107e75cc361d140f578fc1dde6b60ee4ac3bd8",
+      "latest_main_commit": "273a33da9749b34656d564adb0415a03a4db0c13",
+      "initial_source_file_sha256": "f2ad0dca4e9e66266fc38076dc6d599587b4dd263600e6c033b3e02a48349ccd",
+      "latest_source_file_sha256": "fc621f5caf915c3c953607224057d24b0a19f9247c41da5b0ed540330d12fed6",
+      "signals_and_constants_identical": true,
+      "signals_and_constants_sha256": "2a58c76bc5b0ab4356c99077a4c872ec82049d779fa7eb0dabab9309fb84b64c",
+      "note": "New main adds forward controls and book recording; signals function and COINS/RULES/WIN source are identical. Initial execution is at fixed protocol base; replay after rebase must match."
+    },
+    "baseline_stdout_sha256": {
+      "capit-wide-replication-20261013.txt": "737b48a38127435d388738049baa441ee45cf12ab20e783c50eff1c930073cb2",
+      "capit-random-replication-20261013.txt": "26e0acac1a656a7f6240dda68e093d45fc2a9ed4bb25a8e36c1b70750daba6b1"
+    }
+  },
+  "episodes": [
+    {
+      "episode_id": 0,
+      "trades": 2,
+      "first_signal_index": 1465,
+      "last_signal_index": 1465,
+      "support_count": 711,
+      "valid_shift_hours_sha256": "c898fceec705116e35ce8ef32dfbc45eaf775558622b85f6b297304e56111e0a",
+      "full11_model_net_usd_at_0_39_per_side": 2.1682229076758266,
+      "full11_excess_usd": 4.631196341590159
+    },
+    {
+      "episode_id": 1,
+      "trades": 2,
+      "first_signal_index": 3735,
+      "last_signal_index": 3735,
+      "support_count": 721,
+      "valid_shift_hours_sha256": "8e49d7a5745ee3dd4174e9f7dc54579dce672d2d3c62fba63467f70d44d98b27",
+      "full11_model_net_usd_at_0_39_per_side": 4.173301241476018,
+      "full11_excess_usd": 5.870246160181078
+    },
+    {
+      "episode_id": 2,
+      "trades": 6,
+      "first_signal_index": 3843,
+      "last_signal_index": 3845,
+      "support_count": 721,
+      "valid_shift_hours_sha256": "8e49d7a5745ee3dd4174e9f7dc54579dce672d2d3c62fba63467f70d44d98b27",
+      "full11_model_net_usd_at_0_39_per_side": 29.543862302125596,
+      "full11_excess_usd": 33.07924088362458
+    },
+    {
+      "episode_id": 3,
+      "trades": 7,
+      "first_signal_index": 5468,
+      "last_signal_index": 5493,
+      "support_count": 721,
+      "valid_shift_hours_sha256": "8e49d7a5745ee3dd4174e9f7dc54579dce672d2d3c62fba63467f70d44d98b27",
+      "full11_model_net_usd_at_0_39_per_side": -27.231069406716756,
+      "full11_excess_usd": -17.84913026987318
+    },
+    {
+      "episode_id": 4,
+      "trades": 1,
+      "first_signal_index": 8820,
+      "last_signal_index": 8820,
+      "support_count": 721,
+      "valid_shift_hours_sha256": "8e49d7a5745ee3dd4174e9f7dc54579dce672d2d3c62fba63467f70d44d98b27",
+      "full11_model_net_usd_at_0_39_per_side": 0.9734630896019588,
+      "full11_excess_usd": 2.0417060226353465
+    },
+    {
+      "episode_id": 5,
+      "trades": 4,
+      "first_signal_index": 11226,
+      "last_signal_index": 11227,
+      "support_count": 721,
+      "valid_shift_hours_sha256": "8e49d7a5745ee3dd4174e9f7dc54579dce672d2d3c62fba63467f70d44d98b27",
+      "full11_model_net_usd_at_0_39_per_side": -47.932069825469924,
+      "full11_excess_usd": -41.10990422329685
+    },
+    {
+      "episode_id": 6,
+      "trades": 3,
+      "first_signal_index": 12570,
+      "last_signal_index": 12570,
+      "support_count": 721,
+      "valid_shift_hours_sha256": "8e49d7a5745ee3dd4174e9f7dc54579dce672d2d3c62fba63467f70d44d98b27",
+      "full11_model_net_usd_at_0_39_per_side": -3.6569737748580438,
+      "full11_excess_usd": 0.1762482820131272
+    },
+    {
+      "episode_id": 7,
+      "trades": 1,
+      "first_signal_index": 12663,
+      "last_signal_index": 12663,
+      "support_count": 721,
+      "valid_shift_hours_sha256": "8e49d7a5745ee3dd4174e9f7dc54579dce672d2d3c62fba63467f70d44d98b27",
+      "full11_model_net_usd_at_0_39_per_side": 4.005333669451241,
+      "full11_excess_usd": 5.207252049670113
+    },
+    {
+      "episode_id": 8,
+      "trades": 1,
+      "first_signal_index": 12979,
+      "last_signal_index": 12979,
+      "support_count": 721,
+      "valid_shift_hours_sha256": "8e49d7a5745ee3dd4174e9f7dc54579dce672d2d3c62fba63467f70d44d98b27",
+      "full11_model_net_usd_at_0_39_per_side": 3.3268614669514722,
+      "full11_excess_usd": 4.680057623127079
+    },
+    {
+      "episode_id": 9,
+      "trades": 6,
+      "first_signal_index": 13224,
+      "last_signal_index": 13226,
+      "support_count": 721,
+      "valid_shift_hours_sha256": "8e49d7a5745ee3dd4174e9f7dc54579dce672d2d3c62fba63467f70d44d98b27",
+      "full11_model_net_usd_at_0_39_per_side": 34.54244682951966,
+      "full11_excess_usd": 37.26912653035065
+    },
+    {
+      "episode_id": 10,
+      "trades": 8,
+      "first_signal_index": 13969,
+      "last_signal_index": 13978,
+      "support_count": 721,
+      "valid_shift_hours_sha256": "8e49d7a5745ee3dd4174e9f7dc54579dce672d2d3c62fba63467f70d44d98b27",
+      "full11_model_net_usd_at_0_39_per_side": 58.30647637230366,
+      "full11_excess_usd": 69.90125196036551
+    },
+    {
+      "episode_id": 11,
+      "trades": 1,
+      "first_signal_index": 17267,
+      "last_signal_index": 17267,
+      "support_count": 721,
+      "valid_shift_hours_sha256": "8e49d7a5745ee3dd4174e9f7dc54579dce672d2d3c62fba63467f70d44d98b27",
+      "full11_model_net_usd_at_0_39_per_side": 11.092082973206566,
+      "full11_excess_usd": 12.108095857163583
+    },
+    {
+      "episode_id": 12,
+      "trades": 2,
+      "first_signal_index": 17718,
+      "last_signal_index": 17718,
+      "support_count": 721,
+      "valid_shift_hours_sha256": "8e49d7a5745ee3dd4174e9f7dc54579dce672d2d3c62fba63467f70d44d98b27",
+      "full11_model_net_usd_at_0_39_per_side": -5.919897599273466,
+      "full11_excess_usd": -4.046055701608471
+    },
+    {
+      "episode_id": 13,
+      "trades": 8,
+      "first_signal_index": 18337,
+      "last_signal_index": 18337,
+      "support_count": 721,
+      "valid_shift_hours_sha256": "8e49d7a5745ee3dd4174e9f7dc54579dce672d2d3c62fba63467f70d44d98b27",
+      "full11_model_net_usd_at_0_39_per_side": 162.18427457908479,
+      "full11_excess_usd": 175.89506621866403
+    },
+    {
+      "episode_id": 14,
+      "trades": 1,
+      "first_signal_index": 18873,
+      "last_signal_index": 18873,
+      "support_count": 721,
+      "valid_shift_hours_sha256": "8e49d7a5745ee3dd4174e9f7dc54579dce672d2d3c62fba63467f70d44d98b27",
+      "full11_model_net_usd_at_0_39_per_side": 0.397490505407941,
+      "full11_excess_usd": 1.6575499269027318
+    },
+    {
+      "episode_id": 15,
+      "trades": 4,
+      "first_signal_index": 19854,
+      "last_signal_index": 19854,
+      "support_count": 721,
+      "valid_shift_hours_sha256": "8e49d7a5745ee3dd4174e9f7dc54579dce672d2d3c62fba63467f70d44d98b27",
+      "full11_model_net_usd_at_0_39_per_side": 40.91162681993309,
+      "full11_excess_usd": 44.76400459010896
+    },
+    {
+      "episode_id": 16,
+      "trades": 8,
+      "first_signal_index": 24332,
+      "last_signal_index": 24349,
+      "support_count": 691,
+      "valid_shift_hours_sha256": "644e2059077c6ce048ed9a57f1ab63bf772d16bada567b4c6d36a37e8b8b8683",
+      "full11_model_net_usd_at_0_39_per_side": -28.635029635470076,
+      "full11_excess_usd": -19.858182537633976
+    },
+    {
+      "episode_id": 17,
+      "trades": 1,
+      "first_signal_index": 27041,
+      "last_signal_index": 27041,
+      "support_count": 721,
+      "valid_shift_hours_sha256": "8e49d7a5745ee3dd4174e9f7dc54579dce672d2d3c62fba63467f70d44d98b27",
+      "full11_model_net_usd_at_0_39_per_side": 6.445510475761365,
+      "full11_excess_usd": 7.358333060252818
+    },
+    {
+      "episode_id": 18,
+      "trades": 1,
+      "first_signal_index": 27163,
+      "last_signal_index": 27163,
+      "support_count": 721,
+      "valid_shift_hours_sha256": "8e49d7a5745ee3dd4174e9f7dc54579dce672d2d3c62fba63467f70d44d98b27",
+      "full11_model_net_usd_at_0_39_per_side": 21.10263029384525,
+      "full11_excess_usd": 22.753878398936394
+    },
+    {
+      "episode_id": 19,
+      "trades": 1,
+      "first_signal_index": 29597,
+      "last_signal_index": 29597,
+      "support_count": 711,
+      "valid_shift_hours_sha256": "7ea8dac8a7e0405ed94b25ce8114af511315da846e44ebe4b21faec28f130c2d",
+      "full11_model_net_usd_at_0_39_per_side": 2.0528231566510984,
+      "full11_excess_usd": 4.3835092501450585
+    },
+    {
+      "episode_id": 20,
+      "trades": 2,
+      "first_signal_index": 29974,
+      "last_signal_index": 30026,
+      "support_count": 721,
+      "valid_shift_hours_sha256": "8e49d7a5745ee3dd4174e9f7dc54579dce672d2d3c62fba63467f70d44d98b27",
+      "full11_model_net_usd_at_0_39_per_side": -7.509493225811842,
+      "full11_excess_usd": -4.031655177868506
+    },
+    {
+      "episode_id": 21,
+      "trades": 1,
+      "first_signal_index": 31294,
+      "last_signal_index": 31294,
+      "support_count": 721,
+      "valid_shift_hours_sha256": "8e49d7a5745ee3dd4174e9f7dc54579dce672d2d3c62fba63467f70d44d98b27",
+      "full11_model_net_usd_at_0_39_per_side": -0.6482476943346441,
+      "full11_excess_usd": 0.3007397284748908
+    }
+  ]
+}
