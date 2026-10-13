@@ -54,6 +54,7 @@ Lanes as of 2026-10-12 (all paper only). Owner thread names are the project's th
   `codex/*` branches and opens PRs into `main`; rules in `AGENTS.md`. Claude reviews each PR before it lands;
   approved PRs land on main through the coordinator's bundle push. A twice-daily routine (01:07/13:07 UTC) checks for new
   `codex/*` work; open Codex PRs are watched.
+  Proposed claim: CAPIT chronological cash-account controls on the existing fixed cohort; locked costs/delays/stops and matched full-account references (`codex/capit-account-controls`; review `reviews/capit-account-controls-2026-10-13.md`).
   Landed 2026-10-13 (reviewed by Claude): PR #4 US paper-evidence audit (`reviews/us-paper-evidence-2026-10-13.md`;
   its gate-input defects fixed in `live_gate.py` in the same landing), PR #5 CAPIT replication + whole-episode
   robustness (`reviews/capit-robustness-2026-10-13.md`), PR #6 CDE contract sizing (`reviews/cde-capit-economics-2026-10-13.md`).

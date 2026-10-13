@@ -1,0 +1,58 @@
+{
+  "status": "pass",
+  "accounts_reconciled": 80008,
+  "fraction_oracle_actual_lines": 8,
+  "full_output_bytes": 48349678,
+  "full_output_sha256": "8a52d9eb005c30ac33331fd24045c2b669326cd5706533efb25d893c911db5f0",
+  "protocol_sha256": "de993555d9aeb0621eb06c4b5ceb2d5653050d2f086e3b0407a84f3355b16cd9",
+  "cohort_sha256": "3b8209549c3af7105440b322a151a32c5506f03aa662a81b13004e64a4b968e2",
+  "implementation_sha256": "6c88c9c12d6719cd56fd3217e7787f9980e57f557a9282ba79a364291921aebb",
+  "limits": "Fraction check validates locked fee/cash arithmetic on actual executed trades; it does not validate observed execution costs or the causal control design.",
+  "full_repository_tests": {
+    "passed": 424,
+    "skipped": 1,
+    "subtests_passed": 9,
+    "seconds": 80.26,
+    "tested_base_commit": "223a27fae671ee0a8757433d6c7359c83ce3c300",
+    "log_sha256": "d0e9b9b8850b1dbf38a042165ec4e4f43918c66ac469ac790c0d7e33a79a3391"
+  },
+  "deterministic_replay": {
+    "byte_identical": true,
+    "sha256": "8a52d9eb005c30ac33331fd24045c2b669326cd5706533efb25d893c911db5f0"
+  },
+  "report_clarification": "UTC signal-day labels are candle-start days; code and locked protocol/input/output bytes unchanged.",
+  "focused_tests": {
+    "passed": 29,
+    "seconds": 0.32,
+    "test_source_sha256": "af477489cfee07b68bb5030998db55209ce66976192f89e0d9b950b10379acae"
+  },
+  "adversarial_review": {
+    "material_defect_reproduced": false,
+    "targeted_tests_passed": 8,
+    "independent_checks": [
+      "input/code/full-output hashes",
+      "shared10000-shift-vector matrix",
+      "all control summary statistics and rejection/halt totals",
+      "primary episode concentration",
+      "cash-after-fee funding boundary",
+      "simultaneous realized gain/loss stop boundary"
+    ],
+    "did_not_check": [
+      "cache signal reconstruction",
+      "complete account regeneration",
+      "parent Fraction/all-account/full-suite checks",
+      "new midnight test",
+      "final compacted public JSON",
+      "real execution/fees/rounding/risk"
+    ]
+  },
+  "public_compact_scalar_and_primary_trace_match_local": true,
+  "initial_ci_failure_and_repair": {
+    "run": "https://github.com/wardalexander368-sudo/Continuations/actions/runs/38344146482",
+    "failed_test": "test_changed_cohort_cli_fails_before_loading_cache",
+    "cause": "sparse checkout excludes handoff/data, which the new test incorrectly depended on",
+    "repair": "temporary protocol byte fixture and its expected hash; real cohort hash/CLI/error remain exercised",
+    "independent_codebase_review": "confirmed cause and endorsed test-only fix",
+    "research_code_or_locked_input_or_outcome_or_workflow_changed": false
+  }
+}
