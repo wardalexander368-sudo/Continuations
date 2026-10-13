@@ -108,6 +108,12 @@ Lanes as of 2026-10-12 (all paper only). Owner thread names are the project's th
 
 ## Log (newest first)
 
+* **2026-10-13 ~06:30 UTC, thread "Perfect trading system vs ours": AJ "approved for all"** (the review's three gaps).
+  (1) Hourly Alpaca account-vs-book check: `alpaca.reconcile`, state `alpaca.reconcile`, health "Alpaca account vs book"
+  (red on any mismatch or an order open >1 h), REPORT line. (2) US ETF capitulation study: **fails** (validation 2017-21
+  negative; `findings.md` §3). (3) Always-on box software `tartar/autotrade/box.py` + setup `box.md` (paper, second Alpaca
+  paper account, results on branch `box-data`); AJ is setting up the server.
+
 * **2026-10-13 ~05:45 UTC, thread "Perfect trading system vs ours": ideal small-US system vs ours** (`reviews/perfect-system-2026-10-13.md`).
   Machinery is close to ideal; the gap is edges (one candidate, ~6 events/yr). Top gaps: test US stocks/ETFs on Alpaca
   (commission-free; added to `findings.md` §7), reconcile the Alpaca paper account with the book each run. No code changed.

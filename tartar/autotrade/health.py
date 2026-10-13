@@ -9,6 +9,8 @@ Checks, each green / yellow / red:
 * **Agent:** no agent run in 20 minutes, open orphans and live halts are red; twins whose last closes drift from paper are yellow.
 * **Alpaca paper cost** (live rule, `live_gate.py`): after 5 round trips, median measured cost per side above 0.50% is
   yellow, above 0.60% red.
+* **Alpaca account vs book** (live rule section 5, `alpaca.py`): any crypto holding on the paper account that differs
+  from the book's mirrored positions, or an order open over an hour, is red (in live mode it would write HALT).
 
 Writes ``autotrade/health.json``; the agent's REPORT.md shows it at the top. Exit code 1 while anything is
 red, so the Actions run fails and GitHub notifies the repository owner.
@@ -22,7 +24,7 @@ import time
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
-from . import live_gate
+from . import alpaca, live_gate
 
 REPO = os.environ.get("GITHUB_REPOSITORY") or "wardalexander368-sudo/Continuations"  # moved from StaticPush7217/TARTAR 2026-10-10
 API = f"https://api.github.com/repos/{REPO}"
@@ -212,7 +214,7 @@ def run(root: Path, repo: Path, now: float | None = None, http=None) -> dict:
     if token:
         headers["Authorization"] = f"Bearer {token}"
     http = http or httpx.Client(timeout=30, headers=headers, follow_redirects=True)
-    items = check_workflows(http, now) + (check_recorder(http, now) if CHECK_RECORDER else []) + check_inputs(repo, now) + check_agent(root, now) + live_gate.health_items(root)
+    items = check_workflows(http, now) + (check_recorder(http, now) if CHECK_RECORDER else []) + check_inputs(repo, now) + check_agent(root, now) + live_gate.health_items(root) + alpaca.health_items(root, now)
     levels = [i["level"] for i in items]
     status = "red" if "red" in levels else "yellow" if "yellow" in levels else "green"
     out = {"checked_at": now, "status": status, "items": items}
