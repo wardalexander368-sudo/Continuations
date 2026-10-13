@@ -1,0 +1,79 @@
+{
+  "analysis_id": "capit-cash-account-controls-20261013",
+  "locked_at_utc": "2026-10-13T03:31:39.023068+00:00",
+  "base_commit": "22062631c563fcad874c6ead29275f8f28b2a5c7",
+  "classification": "exploratory diagnostic of already explored history, not a new registered or untouched test",
+  "cohort": "71 fixed accepted 60-minute CAPIT opportunities and 22 full11 episodes from the existing robustness analysis; later entry may reject an opportunity, never add a new signal",
+  "window": "2023-01-01 through 2026-10-10 exclusive",
+  "starting_cash_usd": 1500,
+  "stake_cash_debit_usd": 100,
+  "max_open_original_stakes_usd": 1100,
+  "one_position_per_coin": true,
+  "hold_hours": 24,
+  "entry_delays_hours": [
+    1,
+    2
+  ],
+  "entry_timestamp": "hourly candle close at signal_index+delay+1; exit close 24 hours later",
+  "primary_line": "snapshot_screened_8, delay2 hourly 120-minute proxy, effective side budget0.0039",
+  "universes": {
+    "study_11": [
+      "BTC",
+      "ETH",
+      "SOL",
+      "XRP",
+      "DOGE",
+      "ADA",
+      "AVAX",
+      "LINK",
+      "LTC",
+      "BCH",
+      "DOT"
+    ],
+    "snapshot_screened_8": [
+      "BTC",
+      "ETH",
+      "SOL",
+      "XRP",
+      "DOGE",
+      "ADA",
+      "LINK",
+      "DOT"
+    ]
+  },
+  "taker_fee_fraction": 0.0025,
+  "effective_side_budgets": [
+    0.0039,
+    0.005
+  ],
+  "friction_fraction": "effective_side_budget minus taker_fee; buy at close*(1+friction), sell at close*(1-friction), fee charged once on received crypto and once on received USD",
+  "cash_equations": "entry debit100; quantity=100/(entry_close*(1+friction))*(1-fee); exit_credit=quantity*exit_close*(1-friction)*(1-fee); realized_net=exit_credit-100",
+  "idle_cash_yield": 0,
+  "reinvestment": "fixed100 cash debits; gains/losses stay in cash, no stake scaling, borrowing or added funding",
+  "realized_loss_stop_usd": 250,
+  "loss_stop_interpretation": "cumulative net realized account P&L<=-250, not drawdown or sum of losing trades; diagnostic assumption, not an operational clarification",
+  "mean_stop": {
+    "completed_signal_utc_days": 5,
+    "mean_closed_net_return_below": -0.038
+  },
+  "stop_behavior": "after all exits at a timestamp, halt new entries permanently; already held positions keep scheduled24h exits; no restart or forced liquidation",
+  "timestamp_ties": "all exits before entries; compare stops after exit batch; entry priority fixed study_11 coin order then original cohort_id, never price/return",
+  "missing_prices": "no fills imputed; full11 joint control support requires finite positive entry and exit for both delays; zero shift must remain or analysis is non-evaluable",
+  "controls": "independent uniform common shift per fixed full11 episode within+-360hours; each shift preserves every member offset; same shift vector across all8 lines; shifted episodes may collide and both accounts apply same busy/cash/cap/stop rules",
+  "control_draws": 10000,
+  "control_seed": 61013,
+  "shift_support": "endpoint availability only; include zero and actual signals; no outcome filtering",
+  "control_summary": "full-account P&L reference quantiles/mean and share at least actual; not a null p-value or confidence interval for strategy profitability",
+  "drawdown": "closed-P&L drawdown only; no intratrade marks or maximum mark-to-market loss claim",
+  "capital_comparison": "full-window account return and CAGR-equivalent cash hurdle on1500; no chosen external yield assumption",
+  "not_modelled": [
+    "dynamic historical coin-cost eligibility",
+    "actual Alpaca fills/fee activities",
+    "intrahour liquidity and price gaps",
+    "account asset rounding",
+    "taxes/data/subscriptions",
+    "future registered score or unmatched-order stops",
+    "unknown actual funding and route readiness"
+  ],
+  "output_policy": "report all8 lines and all control-account rejections/halts; no winning line selection"
+}
