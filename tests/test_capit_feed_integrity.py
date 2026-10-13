@@ -151,13 +151,27 @@ def test_cli_is_deterministic_and_portable_without_data_fixtures(tmp_path):
     assert not (sparse / "autotrade").exists()
 
 
-def test_output_refuses_bot_book_paths_and_cli_rejects_unknown_options(tmp_path):
+@pytest.mark.parametrize("component", ("autotrade", "AUTOTRADE", "AutoTrade"))
+def test_output_refuses_bot_book_case_aliases_before_any_write(tmp_path, monkeypatch, component):
+    # The lowercase directory is real; the case alias resolves to it on this
+    # Mac. The write interception makes the same regression meaningful on Linux.
     book = tmp_path / "autotrade"
     book.mkdir()
+    attempted_writes = []
+
+    def forbidden_write(path, *args, **kwargs):
+        attempted_writes.append(str(path))
+        raise AssertionError("output guard allowed a bot-book write attempt")
+
+    monkeypatch.setattr(Path, "write_text", forbidden_write)
     with pytest.raises(SystemExit) as error:
-        probe.main(["--output", str(book / "state.json")])
+        probe.main(["--output", str(tmp_path / component / "state.json")])
     assert error.value.code == 2
+    assert attempted_writes == []
     assert not (book / "state.json").exists()
+
+
+def test_cli_rejects_unknown_options():
     with pytest.raises(SystemExit) as error:
         probe.main(["--network"])
     assert error.value.code == 2

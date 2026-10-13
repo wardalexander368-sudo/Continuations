@@ -227,10 +227,10 @@ def main(argv: list[str] | None = None) -> int:
     args = parser.parse_args(argv)
     result = json.dumps(run_probe(), indent=2, sort_keys=True, allow_nan=False) + "\n"
     if args.output is not None:
-        # Refuse the actual or synthetic-name bot-book directory at every path
-        # level. Resolving also rejects aliases into an autotrade directory.
+        # Resolve symlinks and reject case aliases too: this Mac filesystem
+        # can address the same autotrade directory through AUTOTRADE/AutoTrade.
         output = args.output.resolve()
-        if "autotrade" in output.parts:
+        if any(part.casefold() == "autotrade" for part in output.parts):
             parser.error("--output must be outside every autotrade directory")
         output.write_text(result)
     sys.stdout.write(result)

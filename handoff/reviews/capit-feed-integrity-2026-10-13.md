@@ -76,8 +76,14 @@ Tests exercise wire-field conversion, HTTP/body/gap distinctions, controls, posi
 no client/book access, cache/sleep restoration on success and exceptions, and a sparse code-only CLI checkout.
 The tests pin this diagnostic's fidelity at the reviewed baseline, not a desired permanent trading behavior.
 
-Focused verification: 20 passed, including existing Coinbase regressions. Full repository suite:
-**409 passed, 1 skipped, 9 subtests passed in 80.50s (0:01:20)**. CLI stdout and saved readout are byte-identical. The
+Independent review reproduced a flaw in the diagnostic's first artifact-path guard at revision `6badd16`:
+an uppercase `AUTOTRADE` component bypassed its lowercase check on this case-insensitive Mac. The reviewer
+intercepted every write; no bot file was touched. The guard now compares resolved path components with
+`casefold()`, and lowercase, uppercase and mixed-case regressions reject output before writing. This changes
+only the authored diagnostic's optional artifact guard; trading implementation and readout are unchanged.
+
+Focused verification: 23 passed in 6.84s, including existing Coinbase regressions. Full repository suite:
+**412 passed, 1 skipped, 9 subtests passed in 81.31s (0:01:21)**. CLI stdout and saved readout are byte-identical. The
 [readout](../data/capit-feed-integrity/2026-10-13/readout.json) and
 [verification receipt](../data/capit-feed-integrity/2026-10-13/verification.json) preserve hashes and scope.
 No production omissions, actual HTTP causes, official scorer outcomes, costs, profit, real accounts,
