@@ -168,3 +168,91 @@ Seven deterministic synthetic cohorts ran against the reviewed gate: one complet
 insufficient-three-position control and five false-met cohorts. Full repository verification: **324 passed,
 1 skipped in 81.93 s**. No production gate records, live costs, historical cache returns, passive fill quality,
 Coinbase account tier or sealed Jev outcomes were checked. No profit result or live-order capability was added.
+
+## Supplemental writer-to-reader reproduction, 2026-10-13
+
+The nonfinite case also reproduces through the actual paper adapter, JSON serialization,
+JSON reader, gate report and health reporter at the reviewed commit. A synthetic filled buy
+returns the string `NaN`; eight distinct position IDs span three entry days. The adapter
+writes 56 `NaN` tokens, the reader accepts them, the gate reports **met**, and cost health
+reports **green**. This checks a complete in-memory path rather than supplying constructed
+gate rows alone. It does not establish that the live paper book contains any malformed fill.
+
+Run from the repository root with the development environment. The fake client has no
+network methods or credentials; log and file reads are replaced with memory objects.
+
+```python
+"""Synthetic adapter -> JSON reader -> gate/health reproduction; no files/orders."""
+import json
+from datetime import datetime, timezone
+from types import SimpleNamespace
+
+from tartar.autotrade.alpaca import AlpacaMirror
+from tartar.autotrade import live_gate as lg
+
+
+class FakePaper:
+    def account(self):
+        return {"account_number": "PA-SYNTHETIC", "status": "ACTIVE"}
+
+    def spread_bps(self, sym):
+        return 10.0
+
+    def submit(self, cid, sym, side, **kw):
+        return {"id": cid, "status": "filled", "filled_qty": "1",
+                "filled_avg_price": "NaN" if side == "buy" else "100"}
+
+    def wait_fill(self, order, seconds):
+        return order
+
+    def asset(self, sym):
+        return {"min_trade_increment": ".000001"}
+
+    def position_qty(self, sym):
+        return 1.0
+
+
+mirror = AlpacaMirror({"strategies": ["us_capit_fast"], "taker_fee": .0025,
+                       "fill_wait_s": 0}, FakePaper(), None)
+rows = []
+mirror.log = rows.append
+start = datetime(2026, 10, 12, 10, tzinfo=timezone.utc).timestamp()
+for i in range(8):
+    at = start + (i % 3) * 86400
+    pos = SimpleNamespace(id=f"p{i}", strategy="us_capit_fast", asset="BTC",
+                          notional_usd=100.0, meta={"venue": "coinbase"})
+    mirror.on_open(pos, SimpleNamespace(price=100.0, at=at, meta={}), at)
+    mirror.on_close(pos, SimpleNamespace(net_return=.02, meta={}),
+                    SimpleNamespace(price=100.0, at=at + 86400), at + 86400)
+payload = "".join(json.dumps(r) + "\n" for r in rows)
+
+
+class MemoryFile:
+    def __truediv__(self, name):
+        return self
+
+    def exists(self):
+        return True
+
+    def read_text(self):
+        return payload
+
+
+lg.Path = lambda root: MemoryFile()
+print("nan_tokens_in_writer_json=" + str(payload.count("NaN")))
+g = lg.gate(lg._rows("synthetic-in-memory"))
+print(json.dumps({k: g[k] for k in ("trades", "crash_days", "mean_net",
+                                   "median_cost", "max_gap_bps", "met", "unmet")},
+                 sort_keys=True))
+print(lg.report_lines("synthetic-in-memory")[1])
+print(json.dumps(lg.health_items("synthetic-in-memory"), sort_keys=True))
+```
+
+Observed:
+
+```text
+nan_tokens_in_writer_json=56
+{"crash_days": 3, "max_gap_bps": NaN, "mean_net": NaN, "median_cost": NaN, "met": true, "trades": 8, "unmet": []}
+**Live rule gate** (`handoff/live-rule-us.md`, us_capit, judged on `us_capit_fast`'s Alpaca paper fills): 3/3 crash days, 8/8 trades, mean net +nan% (bar -4.7%), median cost nan%/side (bar 0.50%). **Paper side met**; going live still needs AJ's go, a funded Alpaca live account and a live route.
+[{"check": "Alpaca paper cost", "detail": "median nan%/side over the last 8 round trips (live rule: gate 0.50%, stop 0.60%; assumed 0.39%); coins above 0.50%: BTC/USD", "level": "green"}]
+```
