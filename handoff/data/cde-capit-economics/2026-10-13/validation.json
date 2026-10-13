@@ -1,0 +1,25 @@
+{
+  "schema_version": 1,
+  "base_commit": "f599384b476d9cbded1b090bbce4d08347b61055",
+  "source_sha256": {
+    "handoff/experiments/edge-hunt/cde_contract_economics.py": "f6b672a60f07c7c4e200371737e5b9fa5fa948b3dcf1c51735fb4cfc056a80c1",
+    "tests/test_cde_contract_economics.py": "db97811b63b2bcd9be653fecb80a0c55521bbc96b99cc230fde857c520b8e11f",
+    "handoff/reviews/cde-capit-economics-2026-10-13.md": "31f21e3cda98a38fd2f4efdedc0874f3e6d7d82471e6826f965701e2f56d4f1a"
+  },
+  "full_pytest": {
+    "passed": 356,
+    "skipped": 1,
+    "duration_seconds": 88.57,
+    "log_sha256": "51da4f3e78dbd9872a3cafc8cfa64b551ddc0f05abac7d5c5e7a2482a466bcae"
+  },
+  "snapshot_request_count": 12,
+  "body_hashes_verified": 12,
+  "actual_book_identities_verified": 11,
+  "readout_replay_byte_identical": true,
+  "readout_sha256": "f5bcaeb42c69f326ffe859a4f893a63b70de2e949f827f9fe49d99adfed02914",
+  "adversarial": {
+    "duplicate_multiplier_flaw": "reproduced on initial analyzer; fixed and regression-tested; current reproduction rejects",
+    "actual_raw_responses_duplicate_keys": false,
+    "fees_funding_capacity_capital_profitability_verified": false
+  }
+}
