@@ -80,3 +80,16 @@ def test_a_live_account_key_sends_nothing(tmp_path):
     except RuntimeError as exc:
         assert "paper" in str(exc)
     assert not http.orders
+
+
+def test_after_a_self_halt_the_box_does_nothing_and_repeated_errors_are_throttled(tmp_path):
+    box, http = make(tmp_path)
+    box.halt("test mismatch", 0.0)
+    assert (tmp_path / "HALT").read_text().startswith("auto:")
+    n = len(http.calls)
+    box.step((H0 + 201) * 3600 + 120)
+    assert len(http.calls) == n  # not even an account call
+    for i in range(5):
+        box.log({"event": "error", "at": 100.0 + 60 * i, "error": "same"})
+    box.log({"event": "error", "at": 100.0 + 3700, "error": "same"})
+    assert sum(r["event"] == "error" for r in rows(tmp_path)) == 2

@@ -13,7 +13,9 @@ the hourly runner's account-vs-book check (``alpaca.reconcile``) keeps seeing on
 
 Safety: one position per coin, ``--usd`` per trade (default $100, the live rule's stake), at most ``--max-open``
 open. The file ``<dir>/HALT`` stops new entries (exits still run). Every pass compares the account's crypto holdings
-with the box's open positions; a mismatch or an order open over an hour writes ``HALT`` (live rule section 5).
+with the box's open positions; a mismatch, an order open over an hour or a sell it can't complete writes ``HALT``
+starting "auto:" (live rule section 5), and then the box does nothing at all until a person has looked and removed it.
+Repeated identical errors are logged at most once an hour.
 
 Files in ``<dir>`` (default ``box/``): ``state.json`` (open positions, last hour checked) and ``fills.jsonl``. With
 ``--push`` they are committed hourly to the branch ``box-data`` (never ``main``), so the project can read them.
@@ -74,6 +76,12 @@ class Box:
         tmp.replace(self.root / "state.json")
 
     def log(self, row: dict) -> None:
+        if row.get("event") in ("error", "push_error"):  # the same error at most once an hour (a broken key fails every minute)
+            sig = f"{row['event']}:{row.get('coin', '')}:{row.get('error', '')}"
+            seen = self.__dict__.setdefault("_seen", {})
+            if row["at"] - seen.get(sig, -1e18) < 3600:
+                return
+            seen[sig] = row["at"]
         with (self.root / "fills.jsonl").open("a") as f:
             f.write(json.dumps(row, sort_keys=True) + "\n")
 
@@ -82,7 +90,9 @@ class Box:
         return (f.read_text().strip() or "HALT file present") if f.exists() else None
 
     def halt(self, reason: str, now: float) -> None:
-        (self.root / "HALT").write_text(reason + "\n")
+        if self.halted():  # already halted: one row, not one a minute
+            return
+        (self.root / "HALT").write_text("auto: " + reason + "\n")
         self.log({"event": "halt", "at": now, "reason": reason})
 
     def paper_ok(self) -> bool:
@@ -90,7 +100,12 @@ class Box:
         return str(a.get("account_number", "")).startswith("PA") and a.get("status") == "ACTIVE"
 
     def step(self, now: float) -> None:
-        """One pass: exits that are due, then (once per hour, after it settles) new signals, then the account check."""
+        """One pass: exits that are due, then (once per hour, after it settles) new signals, then the account check.
+        After the box halted itself (a mismatch or an order it could not complete) it does nothing until a person
+        has looked and removed HALT; a HALT written by hand ("by hand: ...", or any text not starting "auto:") only
+        stops new entries."""
+        if (self.halted() or "").startswith("auto:"):
+            return
         if not self.paper_ok():
             raise RuntimeError("the key does not open an active Alpaca paper account; nothing sent")
         for coin, p in list(self.state["open"].items()):
@@ -178,10 +193,19 @@ def push(root: Path, now: float) -> None:
     run = lambda *a: subprocess.run(["git", "-C", str(repo), *a], capture_output=True, text=True)  # noqa: E731
     if run("rev-parse", "--abbrev-ref", "HEAD").stdout.strip() != "box-data":
         raise RuntimeError("the box's checkout must be on branch box-data")
-    run("add", "-f", str(rel / "state.json"), str(rel / "fills.jsonl"))
+    files = [str(rel / f) for f in ("state.json", "fills.jsonl") if (root / f).exists()]
+    if not files:
+        return
+    r = run("add", "-f", *files)
+    if r.returncode:
+        raise RuntimeError(f"git add: {r.stderr.strip()[:200]}")
     if run("diff", "--cached", "--quiet").returncode:
-        run("commit", "-m", f"box: {_iso(now)[:16]} UTC")
-        run("push", "origin", "box-data")
+        r = run("commit", "-m", f"box: {_iso(now)[:16]} UTC")
+        if r.returncode:
+            raise RuntimeError(f"git commit: {r.stderr.strip()[:200]}")
+    r = run("push", "origin", "HEAD:box-data")  # also retries an earlier commit whose push failed; a no-op when current
+    if r.returncode:
+        raise RuntimeError(f"git push: {r.stderr.strip()[:200]}")
 
 
 def main(argv=None) -> None:
@@ -211,7 +235,8 @@ def main(argv=None) -> None:
             try:
                 push(Path(a.dir), now)
                 last_push = now
-            except Exception as exc:  # noqa: BLE001
+            except Exception as exc:  # noqa: BLE001 - try again in 10 minutes
+                last_push = now - 3000
                 box.log({"event": "push_error", "at": now, "error": f"{type(exc).__name__}: {exc}"[:300]})
         if a.cmd == "once":
             return
