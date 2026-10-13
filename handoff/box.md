@@ -6,6 +6,17 @@ the registered CAPIT Z=4 signal and buys on an Alpaca **paper** account at once 
 ~90 min late, which costs about a third of the edge: `reviews/timing-2026-10-11.md`), then sells 24 hours later.
 Paper only; it measures what the box adds. It does not change `us_capit` or the live rule's gate.
 
+## Economic interpretation (2026-10-13)
+
+Approval of the paper box remains as recorded above. Profit payback is unmeasured.
+The retained $100-stake hourly-policy diagnostic supports $1.31-$1.52/month of
+additional historical cost, versus the approximate $5/month dedicated expense
+scenario. This is explored history and shifts both entry and exit; it is not
+measured 90-second fills, a future forecast, or an account replay with recurring
+expenses. Measure paired accounts and actual marginal/shared cost allocation.
+Research utility is a separate reason to operate the already-approved paper box.
+See `reviews/box-fixed-cost-hurdle-2026-10-13.md`.
+
 ## What AJ sets up (once)
 1. **A small Linux server** (any provider; 1 vCPU / 1 GB is plenty) with Python 3.11+ and git.
 2. **A second Alpaca paper account** (Alpaca lets one login hold several paper accounts) and its API key. This is

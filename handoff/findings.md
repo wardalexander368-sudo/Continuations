@@ -11,7 +11,15 @@ evidence. Funding and a live route still need separate authorization. Every non-
 
 Status words: **paper (US)** = forward test on a US-usable venue, could go live; **paper (research)** = forward
 test on a non-US venue, can never go live; **closed** = tested and failed after costs; **untested** = idea only.
-CIs are 90% unless stated. "Test" means the untouched last split of a backtest.
+CIs are 90% unless stated. "Test" names the study's originally held-out last split;
+later outcome-informed reuse is explored evidence, not a fresh holdout.
+
+**Evidence class:** external/unreplicated, hypothesis, synthetic engineering,
+explored-history diagnostic, prospective paper, registered final, or reconciled
+real execution. These labels do not authorize trading. CAPIT's account/episode
+reviews are explored-history diagnostics; its forward test is pending. SLR-0.2
+has zero verified campaigns. See [research governance](research-governance.md)
+for trial/access records, distinct metric units and cost/provenance contracts.
 
 ## 1. US-usable, paper now (the only lines that could go live)
 
