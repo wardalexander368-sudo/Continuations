@@ -1,3 +1,9 @@
+> **2026-10-13: the pump.fun recordings were taken out of the working tree** (`raw/`, `raw-clever/`,
+> `raw-clever2/`, `raw-eager/`, `raw-pred/`, `raw-pumpswap/`, `raw-slots/`, `raw-slots-processed/`,
+> `raw-v3/`, ~660 MB; AJ approved). The memecoin lanes they fed are closed (`handoff/findings.md`), and every
+> Actions checkout carried them. They stay in git history; to rerun an old experiment, restore a
+> directory first, e.g. `git checkout d17ddd0 -- handoff/data/raw-clever`. The notes below describe them as they were.
+
 Snapshot of real pump.fun launches and trades recorded from the Solana chain
 (`tartar record`, public RPC) on 2026-10-08, in the raw format described in
 `tartar/data/rawlog.py`. Hourly files; the newest hour is a partial snapshot of
