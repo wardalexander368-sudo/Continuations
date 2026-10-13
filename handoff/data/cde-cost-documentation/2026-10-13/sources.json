@@ -1,0 +1,519 @@
+{
+  "deliverable": {
+    "file": "handoff/reviews/cde-cost-documentation-2026-10-13.md",
+    "sha256": "3e769757b9eb75d204c3ebc63dff623679a9abc0996dc6156bf2f82a9873f1cf"
+  },
+  "installation_provenance": {
+    "base_commit": "223a27fae671ee0a8757433d6c7359c83ce3c300",
+    "source_receipt_sha256": "609a7cc161e3a5fcbb1f3179afb92076c07ff1da82d181ad987619c047a63158",
+    "source_report_sha256": "e2a41b07a3cb9024e4cce8f2e3a9393b01eec548a57d2d76e7b7fa6832d740a4",
+    "transformations": [
+      "Updated saved report/PDF/receipt paths to repository-relative locations.",
+      "Explicitly states that YAML bytes and HTML bodies are not archived.",
+      "Updated final installed report hash."
+    ]
+  },
+  "official_yaml": {
+    "body_archived": false,
+    "body_archived_in_repository": false,
+    "bytes": 408110,
+    "observed_undocumented_fields": [
+      "L2Level.size",
+      "FutureProductDetails.funding_rate",
+      "PerpetualProductDetails.funding_rate"
+    ],
+    "retrieved_at": "2026-10-13T04:14:28.101505+00:00",
+    "sha256": "e1edecbc619a505853dfa5b7457f5660f0053c596af39d949899bd7993bba4b2",
+    "url": "https://docs.cdp.coinbase.com/api-reference/advanced-trade-api/rest-api/advanced-trade-spec.yaml"
+  },
+  "prepared_at": "2026-10-13T04:23:46.711871+00:00",
+  "roots": [
+    {
+      "advanced_trade_product_id": "BIP-20DEC30-CDE",
+      "dated_exchange_component_usd_for_one_open_and_one_close": "0.20",
+      "dated_exchange_component_usd_per_side_per_contract": "0.10",
+      "dated_roundtrip_component_bps_of_snapshot_entry_notional": {
+        "denominator": 16479,
+        "display_4dp": "2.4273",
+        "numerator": 40000
+      },
+      "exchange_symbol": "BIP",
+      "raw_funding_rate_encoding": "unknown",
+      "raw_size_units": "unknown",
+      "root": "BTC",
+      "snapshot_contract_multiplier_coins": "0.01",
+      "snapshot_one_contract_ask_notional_usd": "823.95"
+    },
+    {
+      "advanced_trade_product_id": "ETP-20DEC30-CDE",
+      "dated_exchange_component_usd_for_one_open_and_one_close": "0.20",
+      "dated_exchange_component_usd_per_side_per_contract": "0.10",
+      "dated_roundtrip_component_bps_of_snapshot_entry_notional": {
+        "denominator": 2463,
+        "display_4dp": "8.1202",
+        "numerator": 20000
+      },
+      "exchange_symbol": "ETP",
+      "raw_funding_rate_encoding": "unknown",
+      "raw_size_units": "unknown",
+      "root": "ETH",
+      "snapshot_contract_multiplier_coins": "0.1",
+      "snapshot_one_contract_ask_notional_usd": "246.3"
+    },
+    {
+      "advanced_trade_product_id": "SLP-20DEC30-CDE",
+      "dated_exchange_component_usd_for_one_open_and_one_close": "0.20",
+      "dated_exchange_component_usd_per_side_per_contract": "0.10",
+      "dated_roundtrip_component_bps_of_snapshot_entry_notional": {
+        "denominator": 10527,
+        "display_4dp": "3.7998",
+        "numerator": 40000
+      },
+      "exchange_symbol": "SLP",
+      "raw_funding_rate_encoding": "unknown",
+      "raw_size_units": "unknown",
+      "root": "SOL",
+      "snapshot_contract_multiplier_coins": "5",
+      "snapshot_one_contract_ask_notional_usd": "526.35"
+    },
+    {
+      "advanced_trade_product_id": "XPP-20DEC30-CDE",
+      "dated_exchange_component_usd_for_one_open_and_one_close": "0.20",
+      "dated_exchange_component_usd_per_side_per_contract": "0.10",
+      "dated_roundtrip_component_bps_of_snapshot_entry_notional": {
+        "denominator": 1353,
+        "display_4dp": "2.9564",
+        "numerator": 4000
+      },
+      "exchange_symbol": "XPP",
+      "raw_funding_rate_encoding": "unknown",
+      "raw_size_units": "unknown",
+      "root": "XRP",
+      "snapshot_contract_multiplier_coins": "500",
+      "snapshot_one_contract_ask_notional_usd": "676.500"
+    },
+    {
+      "advanced_trade_product_id": "DOP-20DEC30-CDE",
+      "dated_exchange_component_usd_for_one_open_and_one_close": "0.20",
+      "dated_exchange_component_usd_per_side_per_contract": "0.10",
+      "dated_roundtrip_component_bps_of_snapshot_entry_notional": {
+        "denominator": 8279,
+        "display_4dp": "4.8315",
+        "numerator": 40000
+      },
+      "exchange_symbol": "DOP",
+      "raw_funding_rate_encoding": "unknown",
+      "raw_size_units": "unknown",
+      "root": "DOGE",
+      "snapshot_contract_multiplier_coins": "5000",
+      "snapshot_one_contract_ask_notional_usd": "413.95000"
+    },
+    {
+      "advanced_trade_product_id": "ADP-20DEC30-CDE",
+      "dated_exchange_component_usd_for_one_open_and_one_close": "0.20",
+      "dated_exchange_component_usd_per_side_per_contract": "0.10",
+      "dated_roundtrip_component_bps_of_snapshot_entry_notional": {
+        "denominator": 93,
+        "display_4dp": "8.6022",
+        "numerator": 800
+      },
+      "exchange_symbol": "ADP",
+      "raw_funding_rate_encoding": "unknown",
+      "raw_size_units": "unknown",
+      "root": "ADA",
+      "snapshot_contract_multiplier_coins": "1000",
+      "snapshot_one_contract_ask_notional_usd": "232.5000"
+    },
+    {
+      "advanced_trade_product_id": "AVP-20DEC30-CDE",
+      "dated_exchange_component_usd_for_one_open_and_one_close": "0.20",
+      "dated_exchange_component_usd_per_side_per_contract": "0.10",
+      "dated_roundtrip_component_bps_of_snapshot_entry_notional": {
+        "denominator": 1023,
+        "display_4dp": "19.5503",
+        "numerator": 20000
+      },
+      "exchange_symbol": "AVP",
+      "raw_funding_rate_encoding": "unknown",
+      "raw_size_units": "unknown",
+      "root": "AVAX",
+      "snapshot_contract_multiplier_coins": "10",
+      "snapshot_one_contract_ask_notional_usd": "102.30"
+    },
+    {
+      "advanced_trade_product_id": "LNP-20DEC30-CDE",
+      "dated_exchange_component_usd_for_one_open_and_one_close": "0.20",
+      "dated_exchange_component_usd_per_side_per_contract": "0.10",
+      "dated_roundtrip_component_bps_of_snapshot_entry_notional": {
+        "denominator": 12663,
+        "display_4dp": "3.1588",
+        "numerator": 40000
+      },
+      "exchange_symbol": "LNP",
+      "raw_funding_rate_encoding": "unknown",
+      "raw_size_units": "unknown",
+      "root": "LINK",
+      "snapshot_contract_multiplier_coins": "50",
+      "snapshot_one_contract_ask_notional_usd": "633.150"
+    },
+    {
+      "advanced_trade_product_id": "LCP-20DEC30-CDE",
+      "dated_exchange_component_usd_for_one_open_and_one_close": "0.20",
+      "dated_exchange_component_usd_per_side_per_contract": "0.10",
+      "dated_roundtrip_component_bps_of_snapshot_entry_notional": {
+        "denominator": 6119,
+        "display_4dp": "6.5370",
+        "numerator": 40000
+      },
+      "exchange_symbol": "LCP",
+      "raw_funding_rate_encoding": "unknown",
+      "raw_size_units": "unknown",
+      "root": "LTC",
+      "snapshot_contract_multiplier_coins": "5",
+      "snapshot_one_contract_ask_notional_usd": "305.95"
+    },
+    {
+      "advanced_trade_product_id": "BCP-20DEC30-CDE",
+      "dated_exchange_component_usd_for_one_open_and_one_close": "0.20",
+      "dated_exchange_component_usd_per_side_per_contract": "0.10",
+      "dated_roundtrip_component_bps_of_snapshot_entry_notional": {
+        "denominator": 2661,
+        "display_4dp": "7.5160",
+        "numerator": 20000
+      },
+      "exchange_symbol": "BCP",
+      "raw_funding_rate_encoding": "unknown",
+      "raw_size_units": "unknown",
+      "root": "BCH",
+      "snapshot_contract_multiplier_coins": "1",
+      "snapshot_one_contract_ask_notional_usd": "266.1"
+    },
+    {
+      "advanced_trade_product_id": "POP-20DEC30-CDE",
+      "dated_exchange_component_usd_for_one_open_and_one_close": "0.20",
+      "dated_exchange_component_usd_per_side_per_contract": "0.10",
+      "dated_roundtrip_component_bps_of_snapshot_entry_notional": {
+        "denominator": 143,
+        "display_4dp": "17.4825",
+        "numerator": 2500
+      },
+      "exchange_symbol": "POP",
+      "raw_funding_rate_encoding": "unknown",
+      "raw_size_units": "unknown",
+      "root": "DOT",
+      "snapshot_contract_multiplier_coins": "100",
+      "snapshot_one_contract_ask_notional_usd": "114.400"
+    }
+  ],
+  "schema_version": 1,
+  "scope": "public US CDE and CFM documentation only; no current retail all-in rate, capacity or profitability claim",
+  "snapshot_provenance": {
+    "analysis_file_relative_to_repository": "handoff/data/cde-capit-economics/2026-10-13/analysis.json",
+    "analysis_sha256": "f5bcaeb42c69f326ffe859a4f893a63b70de2e949f827f9fe49d99adfed02914",
+    "body_hashes_and_bytes_verified": 12,
+    "requests": [
+      {
+        "body_bytes": 268,
+        "body_file": "handoff/data/cde-capit-economics/2026-10-13/ADA-book.json",
+        "body_sha256": "163c39c68cfb3c550eb679115957f86b0cf00ceb041413955dbc8457f078dbe2",
+        "http_status": 200,
+        "receipt_file": "handoff/data/cde-capit-economics/2026-10-13/ADA-book.receipt.json",
+        "request_completed_at": "2026-10-13T02:02:06.316029+00:00",
+        "request_headers": {
+          "Cache-Control": "no-cache"
+        },
+        "request_method": "GET",
+        "request_started_at": "2026-10-13T02:02:06.153443+00:00",
+        "request_url": "https://api.coinbase.com/api/v3/brokerage/market/product_book?product_id=ADP-20DEC30-CDE&limit=1",
+        "response_age": null,
+        "response_content_type": "application/json; charset=utf-8",
+        "response_date": "Tue, 13 Oct 2026 02:02:06 GMT"
+      },
+      {
+        "body_bytes": 264,
+        "body_file": "handoff/data/cde-capit-economics/2026-10-13/AVAX-book.json",
+        "body_sha256": "2c6a6e9636354bdc4c37bafb7aaa525af285ac08ace3b188dedf42c513025401",
+        "http_status": 200,
+        "receipt_file": "handoff/data/cde-capit-economics/2026-10-13/AVAX-book.receipt.json",
+        "request_completed_at": "2026-10-13T02:02:06.442846+00:00",
+        "request_headers": {
+          "Cache-Control": "no-cache"
+        },
+        "request_method": "GET",
+        "request_started_at": "2026-10-13T02:02:06.316431+00:00",
+        "request_url": "https://api.coinbase.com/api/v3/brokerage/market/product_book?product_id=AVP-20DEC30-CDE&limit=1",
+        "response_age": null,
+        "response_content_type": "application/json; charset=utf-8",
+        "response_date": "Tue, 13 Oct 2026 02:02:06 GMT"
+      },
+      {
+        "body_bytes": 266,
+        "body_file": "handoff/data/cde-capit-economics/2026-10-13/BCH-book.json",
+        "body_sha256": "796acca6811a7d609c69ccd12a0824a1b6e918860bab337abb20303f9665853d",
+        "http_status": 200,
+        "receipt_file": "handoff/data/cde-capit-economics/2026-10-13/BCH-book.receipt.json",
+        "request_completed_at": "2026-10-13T02:02:06.931460+00:00",
+        "request_headers": {
+          "Cache-Control": "no-cache"
+        },
+        "request_method": "GET",
+        "request_started_at": "2026-10-13T02:02:06.756269+00:00",
+        "request_url": "https://api.coinbase.com/api/v3/brokerage/market/product_book?product_id=BCP-20DEC30-CDE&limit=1",
+        "response_age": null,
+        "response_content_type": "application/json; charset=utf-8",
+        "response_date": "Tue, 13 Oct 2026 02:02:07 GMT"
+      },
+      {
+        "body_bytes": 259,
+        "body_file": "handoff/data/cde-capit-economics/2026-10-13/BTC-book.json",
+        "body_sha256": "90445fd03506a2f46f01ad345cea6a600fe430c914916f3224b59edfd4664c77",
+        "http_status": 200,
+        "receipt_file": "handoff/data/cde-capit-economics/2026-10-13/BTC-book.receipt.json",
+        "request_completed_at": "2026-10-13T02:02:05.545514+00:00",
+        "request_headers": {
+          "Cache-Control": "no-cache"
+        },
+        "request_method": "GET",
+        "request_started_at": "2026-10-13T02:02:05.406585+00:00",
+        "request_url": "https://api.coinbase.com/api/v3/brokerage/market/product_book?product_id=BIP-20DEC30-CDE&limit=1",
+        "response_age": null,
+        "response_content_type": "application/json; charset=utf-8",
+        "response_date": "Tue, 13 Oct 2026 02:02:05 GMT"
+      },
+      {
+        "body_bytes": 271,
+        "body_file": "handoff/data/cde-capit-economics/2026-10-13/DOGE-book.json",
+        "body_sha256": "1237cf91fcafc976f554ee2f2d06e58fe59afd9196c0de690ac0a7e380e68b74",
+        "http_status": 200,
+        "receipt_file": "handoff/data/cde-capit-economics/2026-10-13/DOGE-book.receipt.json",
+        "request_completed_at": "2026-10-13T02:02:06.152791+00:00",
+        "request_headers": {
+          "Cache-Control": "no-cache"
+        },
+        "request_method": "GET",
+        "request_started_at": "2026-10-13T02:02:05.982863+00:00",
+        "request_url": "https://api.coinbase.com/api/v3/brokerage/market/product_book?product_id=DOP-20DEC30-CDE&limit=1",
+        "response_age": null,
+        "response_content_type": "application/json; charset=utf-8",
+        "response_date": "Tue, 13 Oct 2026 02:02:06 GMT"
+      },
+      {
+        "body_bytes": 265,
+        "body_file": "handoff/data/cde-capit-economics/2026-10-13/DOT-book.json",
+        "body_sha256": "85ef49dffecd4c1bf9588fd77decf222396f1026c852f710f61fccbaf6051909",
+        "http_status": 200,
+        "receipt_file": "handoff/data/cde-capit-economics/2026-10-13/DOT-book.receipt.json",
+        "request_completed_at": "2026-10-13T02:02:07.075976+00:00",
+        "request_headers": {
+          "Cache-Control": "no-cache"
+        },
+        "request_method": "GET",
+        "request_started_at": "2026-10-13T02:02:06.933968+00:00",
+        "request_url": "https://api.coinbase.com/api/v3/brokerage/market/product_book?product_id=POP-20DEC30-CDE&limit=1",
+        "response_age": null,
+        "response_content_type": "application/json; charset=utf-8",
+        "response_date": "Tue, 13 Oct 2026 02:02:07 GMT"
+      },
+      {
+        "body_bytes": 261,
+        "body_file": "handoff/data/cde-capit-economics/2026-10-13/ETH-book.json",
+        "body_sha256": "29579d04848e5f92512fa0f8eb11cdd1091a47f83d78834e674b2e2c3ea3ce74",
+        "http_status": 200,
+        "receipt_file": "handoff/data/cde-capit-economics/2026-10-13/ETH-book.receipt.json",
+        "request_completed_at": "2026-10-13T02:02:05.694427+00:00",
+        "request_headers": {
+          "Cache-Control": "no-cache"
+        },
+        "request_method": "GET",
+        "request_started_at": "2026-10-13T02:02:05.547842+00:00",
+        "request_url": "https://api.coinbase.com/api/v3/brokerage/market/product_book?product_id=ETP-20DEC30-CDE&limit=1",
+        "response_age": null,
+        "response_content_type": "application/json; charset=utf-8",
+        "response_date": "Tue, 13 Oct 2026 02:02:05 GMT"
+      },
+      {
+        "body_bytes": 263,
+        "body_file": "handoff/data/cde-capit-economics/2026-10-13/LINK-book.json",
+        "body_sha256": "7eedeb3b0f60c79e3b86f54dc82157d6a696adcebbbe62a5bec7fb5a2ad31c35",
+        "http_status": 200,
+        "receipt_file": "handoff/data/cde-capit-economics/2026-10-13/LINK-book.receipt.json",
+        "request_completed_at": "2026-10-13T02:02:06.559124+00:00",
+        "request_headers": {
+          "Cache-Control": "no-cache"
+        },
+        "request_method": "GET",
+        "request_started_at": "2026-10-13T02:02:06.443226+00:00",
+        "request_url": "https://api.coinbase.com/api/v3/brokerage/market/product_book?product_id=LNP-20DEC30-CDE&limit=1",
+        "response_age": null,
+        "response_content_type": "application/json; charset=utf-8",
+        "response_date": "Tue, 13 Oct 2026 02:02:06 GMT"
+      },
+      {
+        "body_bytes": 260,
+        "body_file": "handoff/data/cde-capit-economics/2026-10-13/LTC-book.json",
+        "body_sha256": "a4ef3adfb3c37d2d71784f0a3f06f54f311f958ebef60e73c19f676498e5fd26",
+        "http_status": 200,
+        "receipt_file": "handoff/data/cde-capit-economics/2026-10-13/LTC-book.receipt.json",
+        "request_completed_at": "2026-10-13T02:02:06.754344+00:00",
+        "request_headers": {
+          "Cache-Control": "no-cache"
+        },
+        "request_method": "GET",
+        "request_started_at": "2026-10-13T02:02:06.559553+00:00",
+        "request_url": "https://api.coinbase.com/api/v3/brokerage/market/product_book?product_id=LCP-20DEC30-CDE&limit=1",
+        "response_age": null,
+        "response_content_type": "application/json; charset=utf-8",
+        "response_date": "Tue, 13 Oct 2026 02:02:06 GMT"
+      },
+      {
+        "body_bytes": 265,
+        "body_file": "handoff/data/cde-capit-economics/2026-10-13/SOL-book.json",
+        "body_sha256": "10ebbeb7165d85aa0b64092366fb5c6e0bc0e5b87e120ca80429925d2b573b97",
+        "http_status": 200,
+        "receipt_file": "handoff/data/cde-capit-economics/2026-10-13/SOL-book.receipt.json",
+        "request_completed_at": "2026-10-13T02:02:05.836410+00:00",
+        "request_headers": {
+          "Cache-Control": "no-cache"
+        },
+        "request_method": "GET",
+        "request_started_at": "2026-10-13T02:02:05.694954+00:00",
+        "request_url": "https://api.coinbase.com/api/v3/brokerage/market/product_book?product_id=SLP-20DEC30-CDE&limit=1",
+        "response_age": null,
+        "response_content_type": "application/json; charset=utf-8",
+        "response_date": "Tue, 13 Oct 2026 02:02:05 GMT"
+      },
+      {
+        "body_bytes": 266,
+        "body_file": "handoff/data/cde-capit-economics/2026-10-13/XRP-book.json",
+        "body_sha256": "757ab633d90901e84c8dfbe3422a7253321d3a3b7fa0f9a68f6c89413ab435f9",
+        "http_status": 200,
+        "receipt_file": "handoff/data/cde-capit-economics/2026-10-13/XRP-book.receipt.json",
+        "request_completed_at": "2026-10-13T02:02:05.981890+00:00",
+        "request_headers": {
+          "Cache-Control": "no-cache"
+        },
+        "request_method": "GET",
+        "request_started_at": "2026-10-13T02:02:05.838752+00:00",
+        "request_url": "https://api.coinbase.com/api/v3/brokerage/market/product_book?product_id=XPP-20DEC30-CDE&limit=1",
+        "response_age": null,
+        "response_content_type": "application/json; charset=utf-8",
+        "response_date": "Tue, 13 Oct 2026 02:02:06 GMT"
+      },
+      {
+        "body_bytes": 282189,
+        "body_file": "handoff/data/cde-capit-economics/2026-10-13/products.json",
+        "body_sha256": "d4fb5b58a00c22a1e5c63b2717e5ce1c75a581e4e9c2f24aa74dd676308d8ffd",
+        "http_status": 200,
+        "receipt_file": "handoff/data/cde-capit-economics/2026-10-13/products.receipt.json",
+        "request_completed_at": "2026-10-13T02:02:05.400790+00:00",
+        "request_headers": {
+          "Cache-Control": "no-cache"
+        },
+        "request_method": "GET",
+        "request_started_at": "2026-10-13T02:02:05.144767+00:00",
+        "request_url": "https://api.coinbase.com/api/v3/brokerage/market/products?product_type=FUTURE&limit=250",
+        "response_age": null,
+        "response_content_type": "application/json; charset=utf-8",
+        "response_date": "Tue, 13 Oct 2026 02:02:05 GMT"
+      }
+    ],
+    "verified_at": "2026-10-13T04:23:46.711871+00:00"
+  },
+  "source_pdf": {
+    "bytes": 103371,
+    "effective_trade_date": "2026-01-26",
+    "electronic_market_maker_usd": "0.07",
+    "electronic_nonprofessional_usd": "0.10",
+    "electronic_professional_usd": "0.10",
+    "fee_scope": "CDE exchange component, per side per contract; not CFM retail all-in",
+    "file": "handoff/data/cde-cost-documentation/2026-10-13/CDE-Exchange-Fee-Schedule-20260126.pdf",
+    "latest_schedule_verified": false,
+    "local_hash_verified_at": "2026-10-13T04:23:46.711871+00:00",
+    "market_maker_status_requires_signed_agreement": true,
+    "origin_download_timestamp": null,
+    "sha256": "cf38e39591dab66cb89c9f4601e8aa50486a3b99597a628555c9f64ce8e4a612",
+    "timestamp_limitation": "Original download timestamp was not supplied in a receipt; local verification time is not download time.",
+    "url": "https://assets.ctfassets.net/k3n74unfin40/sgInuF26edJX4v4nUlE29/87f18103cd35feede93f0bb92a5f1065/Fee_Schedule_1.26.2026.pdf",
+    "visual_review": {
+      "basis": "Parent agent reported visual verification of both downloaded pages.",
+      "pages": [
+        1,
+        2
+      ],
+      "reviewer": "coordinating agent"
+    }
+  },
+  "status": "documentation_addendum_with_explicit_unknowns",
+  "unknowns": [
+    "Current US CFM retail all-in fees and tier",
+    "Current applicability of indexed dated exchange schedule",
+    "Retail minimum/additive formula and per-side versus roundtrip application",
+    "CDE Advanced REST book-size units",
+    "CDE Advanced REST funding-rate encoding and final/projected interpretation",
+    "Matched held-period funding cashflows, executable fills and account collateral policy"
+  ],
+  "verification_limits": [
+    "The source HTML pages have no archived body hashes.",
+    "Web observation timestamp approximates when this tool viewed pages; it is not an origin-server fetch timestamp.",
+    "Market References exceeded the web content limit; a direct unauthenticated read returned HTTP403.",
+    "Regional VIP search snippets differed from opened pages and were discarded.",
+    "Global/INTX/Deribit fee schedules and units were not transferred to US CDE.",
+    "No accounts, credentials, orders, CTS or sealed material were accessed."
+  ],
+  "web_document_observations": [
+    {
+      "limitation": "Historical advertisement only; does not establish current retail schedule.",
+      "observed_at_approximate_utc": "2026-10-13T04:21:39Z",
+      "published_date": "2025-07-21",
+      "raw_body_archived": false,
+      "raw_body_sha256": null,
+      "title": "US launch",
+      "url": "https://www.coinbase.com/blog/perpetual-futures-have-arrived-in-the-us"
+    },
+    {
+      "limitation": "Signed funding formula; economic rate expressed as decimal fraction.",
+      "observed_at_approximate_utc": "2026-10-13T04:21:39Z",
+      "published_date": null,
+      "raw_body_archived": false,
+      "raw_body_sha256": null,
+      "title": "US overview",
+      "url": "https://help.coinbase.com/en/coinbase/derivatives/us-perpetual-futures-overview"
+    },
+    {
+      "limitation": "Hourly economic funding and clearing mechanism; not REST encoding.",
+      "observed_at_approximate_utc": "2026-10-13T04:21:39Z",
+      "published_date": null,
+      "raw_body_archived": false,
+      "raw_body_sha256": null,
+      "title": "CDE funding mechanism",
+      "url": "https://help.coinbase.com/en/derivatives/perpetual-style-futures/funding-rate"
+    },
+    {
+      "limitation": "Separate commission/NFA/funding reporting; reconciliation needed.",
+      "observed_at_approximate_utc": "2026-10-13T04:21:39Z",
+      "published_date": null,
+      "raw_body_archived": false,
+      "raw_body_sha256": null,
+      "title": "US statements",
+      "url": "https://help.coinbase.com/en/coinbase/derivatives/us-derivatives-manage-account"
+    },
+    {
+      "limitation": "No documented CDE quantity unit.",
+      "observed_at_approximate_utc": null,
+      "published_date": null,
+      "raw_body_archived": false,
+      "raw_body_sha256": null,
+      "title": "Public book reference",
+      "url": "https://docs.cdp.coinbase.com/api-reference/advanced-trade-api/rest-api/public/get-public-product-book"
+    },
+    {
+      "limitation": "Not readable during this research; latest schedule not verified.",
+      "observed_at_approximate_utc": null,
+      "published_date": null,
+      "raw_body_archived": false,
+      "raw_body_sha256": null,
+      "title": "Current Market References",
+      "url": "https://www.coinbase.com/derivatives/market-references"
+    }
+  ]
+}
