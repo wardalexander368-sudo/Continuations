@@ -53,6 +53,8 @@ Lanes as of 2026-10-12 (all paper only). Owner thread names are the project's th
 * **ChatGPT lane (Codex, thread "ChatGPT lane with Claude review", from 2026-10-12):** AJ's ChatGPT works only on
   `codex/*` branches and opens PRs into `main`; rules in `AGENTS.md`. Claude reviews each PR before it lands;
   approved PRs are merged by Claude.
+  Proposed claim `codex/capit-route-robustness`: fixed CAPIT cost-screen/whole-episode diagnostic, verified
+  reusable 21-coin cache rebuild and model account dollars (`reviews/capit-robustness-2026-10-13.md`).
   Landed 2026-10-12 (reviewed by Claude): the CodexCoinHunt import under `codexcoinhunt/` (paper-only memecoin
   research archive, not wired into the agent; `handoff/codexcoinhunt.md`, review `reviews/codex-review-2026-10-12.md`)
   and the connected-project map `CONNECTED_PROJECTS.md`. Suggested next claims: `plan-2026-10-12.md` section E.
