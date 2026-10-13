@@ -106,6 +106,10 @@ Lanes as of 2026-10-12 (all paper only). Owner thread names are the project's th
 
 ## Log (newest first)
 
+* **2026-10-13 ~05:45 UTC, thread "Perfect trading system vs ours": ideal small-US system vs ours** (`reviews/perfect-system-2026-10-13.md`).
+  Machinery is close to ideal; the gap is edges (one candidate, ~6 events/yr). Top gaps: test US stocks/ETFs on Alpaca
+  (commission-free; added to `findings.md` §7), reconcile the Alpaca paper account with the book each run. No code changed.
+
 * **2026-10-13 ~01:30 UTC, thread "Tune the agent for profitability": Coinbase US perp book at us_capit fills**
   (`tartar/autotrade/cde_book.py`, config `cde_book` on `us_capit`, `us_capit_fast`). Each fresh entry/exit records the
   same coin's -20DEC30-CDE top of book (half-spread, contract size) in the trade meta; the score shows the median
