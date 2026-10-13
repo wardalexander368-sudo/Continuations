@@ -82,3 +82,9 @@ def test_damaged_fills_never_raise(tmp_path):
     write(tmp_path, [{"event": "sell", "measured_side_cost": "x", "position": "p", "strategy": "us_capit_fast", "at": T0}])
     assert lg.health_items(tmp_path)[0]["level"] in ("green", "yellow")
     assert "Live rule gate" in lg.report_lines(tmp_path)[1]
+
+
+def test_random_entry_control_line():
+    assert "no priced us_capit trades yet" in lg.control_line(None)
+    st = {"strategies": {"us_capit": {"verdict": {"stats": {"excess": 0.031, "excess_lo": -0.01, "excess_hi": 0.07, "excess_n": 9}}}}}
+    assert "+3.10%/trade [-1.00, +7.00] over 9 paper trades" in lg.control_line(st)

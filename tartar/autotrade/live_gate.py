@@ -111,10 +111,22 @@ def _health_items(root: Path) -> list[dict]:
                        + (f"; coins above 0.50%: {', '.join(wide)}" if wide else "")}]
 
 
-def report_lines(root: Path) -> list[str]:
-    """One REPORT line: where the adopted live rule's gate stands. Never raises (the hourly run must not break)."""
+def control_line(state: dict | None) -> str:
+    """Rule item 6 (needed before any scaling): ``us_capit``'s paper excess over random entries on the same coin
+    within +-15 days, as scored by coinbase_pattern.py (each trade's control is priced 15 days after its signal)."""
+    st = ((((state or {}).get("strategies") or {}).get("us_capit") or {}).get("verdict") or {}).get("stats") or {}
+    if "excess" not in st:
+        return ("Random-entry control (rule item 6, needed before scaling): no priced us_capit trades yet "
+                "(each is priced 15 days after its signal; backtest +4.85%/trade [+0.98, +8.73]).")
+    return (f"Random-entry control (rule item 6, needed before scaling): us_capit excess over random entries on the same coin "
+            f"{100 * st['excess']:+.2f}%/trade [{100 * st['excess_lo']:+.2f}, {100 * st['excess_hi']:+.2f}] over "
+            f"{st['excess_n']} paper trades (backtest +4.85% [+0.98, +8.73]).")
+
+
+def report_lines(root: Path, state: dict | None = None) -> list[str]:
+    """REPORT lines: where the adopted live rule's gate stands. Never raises (the hourly run must not break)."""
     try:
-        return _report_lines(root)
+        return _report_lines(root) + [control_line(state)]
     except Exception as exc:  # noqa: BLE001
         return ["", f"**Live rule gate:** could not be computed ({type(exc).__name__}: {exc})"[:300] + "."]
 

@@ -105,3 +105,29 @@ def test_a_shadow_line_trades_on_paper_with_its_shadow_flag(tmp_path):
         run_once(tmp_path, now=h * 3600 + 1200, strategies={"c~wide": s})
     (t,) = Ledger(tmp_path).trades()
     assert t.meta["shadow"] is True and t.mode == "paper" and "live" not in t.meta
+
+
+def test_random_entry_control_is_priced_after_its_window_and_reported_as_excess(tmp_path):
+    from tartar.autotrade.strategies.coinbase_pattern import CONTROL
+
+    rows = bars(1000, 500)
+
+    def get(ctx, coin, t0, t1):
+        return [r for r in rows if t0 <= r[0] < t1]
+
+    (tmp_path / "config.json").write_text(json.dumps({"mode": "paper", "strategies": {"c": {"kind": "coinbase_pattern"}}}))
+    s = CoinbasePattern("c", {"_get": get, "rule": "capit", "coins": ["BTC"], "start": "2000-01-01", "end": "2100-01-01"})
+    for h in range(H0 + 490, H0 + 530):
+        run_once(tmp_path, now=h * 3600 + 1200, strategies={"c": s})
+    data = Ledger(tmp_path).strategy("c")["data"]
+    key = f"BTC:{H0 + 500}"
+    assert data["control_due"] == {key: ["BTC", H0 + 500]} and "controls" not in data  # window still open
+    run_once(tmp_path, now=(H0 + 500 + CONTROL + 26) * 3600 + 1200, strategies={"c": s})
+    data = Ledger(tmp_path).strategy("c")["data"]
+    assert key not in data["control_due"] and data["controls"][key] < -0.005  # entries just before the crash lost ~37%
+    t = next(t for t in Ledger(tmp_path).trades() if t.meta["key"] == key)
+    v = s.evaluate([t, t], t.exit_at, data)
+    assert v.decision == "pending" and v.stats["excess_n"] == 2
+    assert v.stats["excess"] == pytest.approx(t.exit_price / t.entry_price - 1 - data["controls"][key])
+    assert "excess over random entries" in v.reason
+    assert "excess" not in s.evaluate([t, t], t.exit_at, {}).stats  # no control yet: nothing claimed

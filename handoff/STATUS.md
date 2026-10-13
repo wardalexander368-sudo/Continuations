@@ -102,6 +102,11 @@ Lanes as of 2026-10-12 (all paper only). Owner thread names are the project's th
 
 ## Log (newest first)
 
+* **2026-10-13 ~01:00 UTC, thread "Tune the agent for profitability": random-entry control in the paper score** (plan
+  A2 live part, live rule item 6). `coinbase_pattern.py` prices each signal's control (mean return of entering the
+  same coin at every hour within ±15 days, same delay and hold) once that window closes, and the score shows the
+  excess over it with a CI by entry day; REPORT adds a "Random-entry control" line under the gate. Reporting only.
+
 * **2026-10-12 ~23:00 UTC, overview thread: live rule v2 adopted, gate built** (AJ: "approved, move forward when
   ready"). `tartar/autotrade/live_gate.py` reads the Alpaca paper fills: REPORT shows the gate (crash days, trades,
   mean net, median cost, coin screen) and health goes yellow above 0.50%/side measured cost, red above 0.60% (plan

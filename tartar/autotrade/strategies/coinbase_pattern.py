@@ -17,6 +17,13 @@ is closed (with hourly runs at ~:20 that is the next run), so the cadence never 
 missing exit candle closes at the next 15-minute close instead (the scorer would drop that trade; rare).
 Scoring follows the registration: mean return per trade > 0 with the 90% bootstrap CI over entry days
 above 0, after the window ends. The official scorer (pattern_forward.py) stays the authority.
+
+Random-entry control (live rule item 6, reporting only; the verdict is unchanged): 15 days after each signal's
+window closes, the agent prices the trade's control, the mean gross return of buying the same coin at every hour
+within +-15 days of the signal with the same entry delay and hold (the "local" control of
+handoff/experiments/edge-hunt/patterns/random_entry.py, as an exact mean instead of random draws). The score shows
+the trades' excess over their controls with a 90% CI bootstrapped over entry days, so a market-wide drift is not
+mistaken for the bounce.
 """
 
 from __future__ import annotations
@@ -35,6 +42,7 @@ COINS = ["BTC", "ETH", "SOL", "XRP", "DOGE", "ADA", "AVAX", "LINK", "LTC", "BCH"
 COST, DELAY, WIN, G = 0.0062, 2, 168, 900
 RULES = {"capit": {"z": 4.0, "hold": 24}, "volspike": {"k": 10.0, "hold": 72}}
 START, END = "2026-10-12", "2027-10-11"
+CONTROL = 15 * 24  # hours either side of the signal hour: the random-entry control's window
 _CACHE: dict[tuple[str, int, int], list] = {}  # one fetch per coin and range per process, shared by both rules
 
 
@@ -80,6 +88,28 @@ def signals(rule: str, C: np.ndarray, V: np.ndarray) -> np.ndarray:
         i = np.arange(WIN, n)
         m[i] = (cs[i] - cs[i - WIN]) / WIN
         return (V >= RULES["volspike"]["k"] * m) & (R >= S)
+
+
+def control_gross(C15: np.ndarray, lo_h: int, h: int, hold: int, delay: int) -> float | None:
+    """Mean gross return of entering at every hour within +-CONTROL of signal hour ``h`` (15m closes from hour
+    ``lo_h``), with the strategy's entry delay and hold. None if fewer than half the hours have both candles."""
+    rets = []
+    for j in range(h - CONTROL, h + CONTROL + 1):
+        e = 4 * (j - lo_h + 1) + delay - 1
+        x = e + 4 * hold
+        if 0 <= e and x < len(C15) and not (np.isnan(C15[e]) or np.isnan(C15[x])):
+            rets.append(C15[x] / C15[e] - 1)
+    return float(np.mean(rets)) if len(rets) >= CONTROL else None
+
+
+def day_ci(by: dict) -> tuple[float, float]:
+    """90% CI of the pooled mean, resampling entry days (trades on one crash day are one bet)."""
+    keys = list(by)
+    s = np.array([sum(by[k]) for k in keys])
+    c = np.array([len(by[k]) for k in keys])
+    pick = np.random.default_rng(1).integers(0, len(keys), (10000, len(keys)))
+    lo, hi = np.percentile(s[pick].sum(axis=1) / c[pick].sum(axis=1), [5, 95])
+    return float(lo), float(hi)
 
 
 class CoinbasePattern:
@@ -133,6 +163,7 @@ class CoinbasePattern:
 
     def step(self, ctx: Context) -> list[Intent]:
         now = int(ctx.now)
+        self.price_controls(ctx, now)
         # the last signal hour whose entry candle (closing 30 min after the hour) is final
         h_max = (now - 60 - self.delay * G) // 3600 - 1
         done = int(ctx.state.setdefault("done_hour", h_max))
@@ -178,12 +209,31 @@ class CoinbasePattern:
                                             "venue": "coinbase", "entry_day": day(h), "rule": self.rule,
                                             "shadow": bool(self.cfg.get("shadow"))}))
                 busy = h + self.hold + 1
+                ctx.state.setdefault("control_due", {})[key] = [coin, h]
                 if exit_t + 60 <= now:  # a late look: the whole hold is in the data
                     x = self.exit_intent(coin, lo_h, C15, exit_t, now, key=key)
                     if x:
                         intents.append(x)
         ctx.state["done_hour"] = h_max
         return intents
+
+    def price_controls(self, ctx: Context, now: int) -> None:
+        """Price the random-entry control of each signal whose +-15-day window has closed (reporting only: a failure
+        is retried for 3 days, then the trade simply has no control; it never stops the strategy)."""
+        due = ctx.state.get("control_due") or {}
+        for key, (coin, h) in list(due.items()):
+            ready = (h + CONTROL + 1 + self.hold) * 3600 + self.delay * G + 60  # the last control exit candle is final
+            if now < ready:
+                continue
+            lo_h, n = h - CONTROL - 1, 2 * CONTROL + self.hold + 3
+            try:
+                m = control_gross(hourly(lo_h, self.get(ctx, coin, lo_h * 3600, (lo_h + n) * 3600), n)[5], lo_h, h, self.hold, self.delay)
+            except Exception:  # noqa: BLE001
+                if now - ready < 3 * 86400:
+                    continue
+                m = None
+            ctx.state.setdefault("controls", {})[key] = m
+            del due[key]
 
     def exit_intent(self, coin, lo_h, C15, exit_t, now, position_id="", key="") -> Intent | None:
         """The close at the 15m bar ending at exit_t (or the next one there is). None while Coinbase has no
@@ -219,18 +269,25 @@ class CoinbasePattern:
         n = len(trades)
         if n < 2:
             return Verdict("pending", n, {"n": n}, f"{n} trade(s); scored after {self.end} (registered)")
-        keys = list(by)
-        s = np.array([sum(by[k]) for k in keys])
-        c = np.array([len(by[k]) for k in keys])
-        pick = np.random.default_rng(1).integers(0, len(keys), (10000, len(keys)))
-        lo, hi = np.percentile(s[pick].sum(axis=1) / c[pick].sum(axis=1), [5, 95])
+        lo, hi = day_ci(by)
         m = float(np.mean([t.net_return for t in trades]))
-        stats = {"n": n, "days": len(keys), "mean_net": m, "lo": float(lo), "hi": float(hi)}
-        summary = f"{n} trades on {len(keys)} days: mean {m * 100:+.2f}%/trade [{lo * 100:+.2f}, {hi * 100:+.2f}]"
+        stats = {"n": n, "days": len(by), "mean_net": m, "lo": lo, "hi": hi}
+        summary = f"{n} trades on {len(by)} days: mean {m * 100:+.2f}%/trade [{lo * 100:+.2f}, {hi * 100:+.2f}]"
         gross = [t.exit_price / t.entry_price - 1 for t in trades]
         for venue, c in self.venue_costs.items():  # same fills, each venue's cost per side (additive, as the scorer)
             stats[f"mean_net_{venue}"] = v = float(np.mean(gross)) - 2 * float(c)
             summary += f"; {v * 100:+.2f}% at {venue} ({float(c) * 100:.2f}%/side)"
+        ctl = (state or {}).get("controls") or {}
+        ex = defaultdict(list)  # costs cancel: the control pays the same cost per side
+        for t, g in zip(trades, gross):
+            if ctl.get(t.meta.get("key")) is not None:
+                ex[t.meta.get("entry_day")].append(g - ctl[t.meta["key"]])
+        k = sum(len(v) for v in ex.values())
+        if k >= 2:
+            e_lo, e_hi = day_ci(ex)
+            stats.update(excess=sum(map(sum, ex.values())) / k, excess_lo=e_lo, excess_hi=e_hi, excess_n=k)
+            summary += (f"; excess over random entries (same coin, +-15 days) {stats['excess'] * 100:+.2f}% "
+                        f"[{e_lo * 100:+.2f}, {e_hi * 100:+.2f}] on {k} trades")
         if datetime.fromtimestamp(now, timezone.utc).date() <= date.fromisoformat(self.end):
             return Verdict("pending", n, stats, f"{summary}; scored after {self.end} (registered)")
         return Verdict("pass" if m > 0 and lo > 0 else "fail", n, stats, summary)
