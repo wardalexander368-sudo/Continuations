@@ -1,0 +1,52 @@
+{
+  "analysis_id": "capit-route-robustness-20261013",
+  "status": "fixed-before-new-data-results",
+  "classification": "robustness diagnostic of previously explored history; not untouched forward validation",
+  "base_commit": "8c107e7",
+  "data": "Coinbase Exchange hourly candles, 2023-01-01 inclusive to 2026-10-10 exclusive; same source/timeframe as wide_coins and random_entry",
+  "rule": "CAPIT Z=4 H=24, use existing signals function and nonoverlap selection",
+  "entry": "close of h+1, exit close of h+25 (60-minute entry proxy, not registered30 or actual live timing)",
+  "universes": {
+    "study_11": [
+      "BTC",
+      "ETH",
+      "SOL",
+      "XRP",
+      "DOGE",
+      "ADA",
+      "AVAX",
+      "LINK",
+      "LTC",
+      "BCH",
+      "DOT"
+    ],
+    "snapshot_screened_8": [
+      "BTC",
+      "ETH",
+      "SOL",
+      "XRP",
+      "DOGE",
+      "ADA",
+      "LINK",
+      "DOT"
+    ]
+  },
+  "screen": "Exclude AVAX/BCH/LTC using already-known Oct11 quote snapshot; this is not a historical dynamic eligibility screen or proof of passing future measured-cost requirements",
+  "cost_per_side": [
+    0.0039,
+    0.005
+  ],
+  "cost_formula": "gross return minus twice cost_per_side, retained for parity with original historical study; additive proxy, not actual fee reconciliation",
+  "episode": "Group successive global signal hours separated by at most72hours, fixed for full11 then apply same episode labels to subset",
+  "matched_control": "One common integer-hour shift per episode, offsets within +-360hours; all required entry/exit closes finite; preserve all episode coin/time offsets; include zero shift and actual signals in control pool, no outcome-based exclusions",
+  "control_expectation": "Enumerate all valid shifts, no Monte Carlo estimate of control mean",
+  "interval": "90% episode bootstrap on sums/counts, 10000 draws, seed1; report trade-weighted mean net and paired excess, leave-one-episode-out",
+  "cash": "$100 fixed independent trade stakes, realized net dollars and peak concurrent open notional; no assumed reinvestment, borrowing or annualization of bootstrap returns",
+  "limits": "Controls are matched mean-return diagnostics, not a runnable competing account because shifted episodes can overlap; historical costs and screen are proxies; whole episodes are not guaranteed statistically independent",
+  "prohibited": "No threshold/hold/exit grid, chosen best-episode deletion, registration edits, bot edits, live orders or new workflow",
+  "fixed_at_utc": "2026-10-13T01:10:57.388363+00:00",
+  "matched_control_support": "Construct valid common shifts on full11 once; screened8 uses same per-episode shift support and episode IDs.",
+  "outcomes_inspected": false,
+  "actual_signal_source_sha256": "f2ad0dca4e9e66266fc38076dc6d599587b4dd263600e6c033b3e02a48349ccd",
+  "bootstrap_empty_episodes": "Both universes use fixed full11 episode list. Generate exactly10000 draws; count undefined zero-count draws and use only defined means for conditional quantiles. Never treat empty draws as zero returns. LOO enumerates full11 IDs including subset-empty episodes."
+}
