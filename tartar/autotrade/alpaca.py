@@ -93,6 +93,12 @@ class AlpacaPaper:
                 return 0.0
             raise
 
+    def positions(self) -> list[dict]:
+        return self._req("GET", "/v2/positions")
+
+    def open_orders(self) -> list[dict]:
+        return self._req("GET", "/v2/orders", params={"status": "open", "limit": 500})
+
     def spread_bps(self, symbol: str) -> float | None:
         q = self._req("GET", "/v1beta3/crypto/us/latest/quotes", base=DATA_URL, params={"symbols": symbol})["quotes"][symbol]
         bid, ask = float(q["bp"]), float(q["ap"])
@@ -231,6 +237,99 @@ class AlpacaMirror:
         self.log({**rec, "sell_id": order["id"], **cmp})
 
 
+RECON_MIN_USD = 1.0      # a holding differing from the book by less than this (or RECON_FRAC of it) is rounding dust
+RECON_FRAC = 0.02
+RECON_ORDER_AGE_S = 3600  # an order still open after an hour is stuck (market orders fill in seconds)
+
+
+def _ts(s: str | None) -> float | None:
+    from datetime import datetime
+
+    try:
+        return datetime.fromisoformat(str(s).replace("Z", "+00:00")).timestamp()
+    except ValueError:
+        return None
+
+
+def reconcile(client: AlpacaPaper, positions, taker_fee: float, now: float) -> dict:
+    """Does the paper account hold exactly what the book's mirrored positions say? (live rule section 5: in live
+    mode an unmatched order or holding must write HALT; on paper it turns health red, so the check is proven first.)
+
+    Expected per symbol: each open book position's filled Alpaca buy, less the fee Alpaca took in coin. Crypto
+    holdings only (the account may later hold other asset classes with their own checks)."""
+    want: dict[str, float] = {}
+    mark: dict[str, float] = {}
+    unconfirmed = []
+    for p in positions:
+        twin = (p.meta or {}).get("alpaca")
+        if not twin:
+            continue
+        key = twin["symbol"].replace("/", "")
+        if "qty" not in twin:  # the buy had not filled when last looked at: can't say what it should hold
+            unconfirmed.append(key)
+            continue
+        want[key] = want.get(key, 0.0) + twin["qty"] * (1 - taker_fee)
+        mark[key] = p.mark_price or twin.get("price_in") or 0.0
+    held, price = {}, {}
+    for r in client.positions():
+        if r.get("asset_class", "crypto") != "crypto":
+            continue
+        key = str(r["symbol"]).replace("/", "")
+        held[key] = float(r["qty"])
+        price[key] = float(r.get("current_price") or 0) or mark.get(key, 0.0)
+    mismatches = []
+    for key in sorted(set(want) | set(held)):
+        if key in unconfirmed:
+            continue
+        w, h = want.get(key, 0.0), held.get(key, 0.0)
+        px = price.get(key) or mark.get(key) or 0.0
+        diff_usd = abs(h - w) * px
+        if diff_usd > max(RECON_MIN_USD, RECON_FRAC * w * px):
+            mismatches.append({"symbol": key, "book_qty": round(w, 9), "held_qty": round(h, 9), "diff_usd": round(diff_usd, 2)})
+    stuck = []
+    for o in client.open_orders():
+        t = _ts(o.get("submitted_at") or o.get("created_at"))
+        if t is None or now - t > RECON_ORDER_AGE_S:
+            stuck.append({"symbol": o.get("symbol"), "side": o.get("side"), "client_order_id": o.get("client_order_id"),
+                          "submitted_at": o.get("submitted_at")})
+    return {"checked_at": now, "ok": not mismatches and not stuck, "mismatches": mismatches, "stuck_orders": stuck,
+            "unconfirmed": sorted(set(unconfirmed)), "symbols": len(set(want) | set(held))}
+
+
+def reconcile_safe(mirror: "AlpacaMirror | None", positions, now: float) -> dict | None:
+    """The runner's call: never raises (the hourly run must not break); a failed check is reported, not hidden."""
+    if mirror is None or not mirror.ready(now, quiet=True):
+        return None
+    try:
+        return reconcile(mirror.client, positions, mirror.cfg["taker_fee"], now)
+    except Exception as exc:  # noqa: BLE001
+        return {"checked_at": now, "ok": None, "error": f"{type(exc).__name__}: {exc}"[:300]}
+
+
+def health_items(root: Path, now: float | None = None) -> list[dict]:
+    """Health check "Alpaca paper account matches book", from state.json (written by the hourly run)."""
+    try:
+        state = json.loads((Path(root) / "state.json").read_text()) if (Path(root) / "state.json").exists() else {}
+        rec = (state.get("alpaca") or {}).get("reconcile")
+        if not rec:
+            return [{"check": "Alpaca account vs book", "level": "green", "detail": "not checked yet (needs the paper keys)"}]
+        if now is not None and now - rec["checked_at"] > 3 * 3600:
+            return [{"check": "Alpaca account vs book", "level": "yellow",
+                     "detail": f"last checked {(now - rec['checked_at']) / 3600:.0f} h ago"}]
+        if rec.get("ok") is None:
+            return [{"check": "Alpaca account vs book", "level": "yellow", "detail": f"could not check: {rec.get('error')}"[:300]}]
+        if not rec["ok"]:
+            bits = [f"{m['symbol']} book {m['book_qty']} vs held {m['held_qty']} (${m['diff_usd']})" for m in rec["mismatches"]]
+            bits += [f"{o['side']} {o['symbol']} open since {o['submitted_at']}" for o in rec["stuck_orders"]]
+            return [{"check": "Alpaca account vs book", "level": "red",
+                     "detail": ("paper account differs from the book (live rule: would write HALT): " + "; ".join(bits))[:400]}]
+        return [{"check": "Alpaca account vs book", "level": "green",
+                 "detail": f"{rec['symbols']} symbol(s) match the book"
+                           + (f"; buys not yet confirmed: {', '.join(rec['unconfirmed'])}" if rec.get("unconfirmed") else "")}]
+    except Exception as exc:  # noqa: BLE001 - never break the health run
+        return [{"check": "Alpaca account vs book", "level": "yellow", "detail": f"could not read state: {type(exc).__name__}: {exc}"[:300]}]
+
+
 def make_mirror(config: dict, env, root=None, journal=None, client=None) -> AlpacaMirror | None:
     cfg = {**ALPACA_DEFAULTS, **(config.get("alpaca_paper") or {})}
     if not cfg["enabled"] or not cfg["strategies"]:
@@ -250,6 +349,10 @@ def report_lines(root: Path, state: dict | None = None) -> list[str]:
     if not rows and not st:
         return []
     head = ["", "## Alpaca paper fills (US spot, paper account; alpaca_fills.jsonl)", ""]
+    rec = (st or {}).get("reconcile")
+    if rec:
+        head.append("Account vs book: " + ("matches" if rec.get("ok") else "could not check" if rec.get("ok") is None else
+                                          f"**differs** ({len(rec.get('mismatches', []))} holding(s), {len(rec.get('stuck_orders', []))} stuck order(s))") + ".")
     if st:
         head.append("Key check this run: " + ("paper account OK" + (f", crypto {st['crypto_status']}" if st.get("crypto_status") else "")
                                              if st.get("ok") else f"not working ({st.get('error')})") + ".")
