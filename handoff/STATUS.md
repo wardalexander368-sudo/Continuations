@@ -56,6 +56,7 @@ Lanes as of 2026-10-12 (all paper only). Owner thread names are the project's th
   `codex/*` work; open Codex PRs are watched.
   Proposed claim 2026-10-13: descriptive wallet evidence summary, offline local chart and exact-mint paper relations (`reviews/wallet-evidence-20261013/`); no trader PnL or strategy validation. Follow-up 2026-10-14: body-receipt availability at 77 Claudia paper rows/39 signal keys (`reviews/wallet-availability-20261014/`); feature computation/use unknown.
   Proposed claim: CAPIT chronological cash-account controls on the existing fixed cohort; locked costs/delays/stops and matched full-account references (`codex/capit-account-controls`; review `reviews/capit-account-controls-2026-10-13.md`).
+  Landed PR #7 (2026-10-13): CAPIT chronological cash-account controls on the existing fixed cohort; locked costs/delays/stops and matched full-account references (`codex/capit-account-controls`; review `reviews/capit-account-controls-2026-10-13.md`).
   Landed 2026-10-13 (reviewed by Claude): PR #4 US paper-evidence audit (`reviews/us-paper-evidence-2026-10-13.md`;
   its gate-input defects fixed in `live_gate.py` in the same landing), PR #5 CAPIT replication + whole-episode
   robustness (`reviews/capit-robustness-2026-10-13.md`), PR #6 CDE contract sizing (`reviews/cde-capit-economics-2026-10-13.md`).
@@ -66,6 +67,9 @@ Lanes as of 2026-10-12 (all paper only). Owner thread names are the project's th
   Proposed claim 2026-10-13: CDE cost-documentation addendum (`reviews/cde-cost-documentation-2026-10-13.md`); dated exchange fees, retail/REST units unresolved; docs only.
   Proposed claim 2026-10-13: paper box evidence audit, synthetic execution evidence and prospective comparison protocol (`reviews/box-evidence-audit-2026-10-13.md`, `reviews/box-execution-evidence-2026-10-13.md`, `codex/box-evidence-audit`); docs only, 19 offline cases/98 diagnostic outcomes, tested valued residuals caught and halted; no production occurrence or profitability claim; Alpaca/agent owner implementation unchanged.
   Proposed claim 2026-10-13: CDE retail evidence follow-up (`reviews/cde-retail-evidence-2026-10-13.md`); AVAX/DOT $100 threshold receipts, fee dating and unresolved REST units; public evidence/docs only. Follow-up 2026-10-14: acquired CFTC fee attachments, funding-example arithmetic errors and current schema limits (`reviews/cde-primary-source-followup-2026-10-14.md`); CFM charges/REST units still unresolved.
+  Landed PR #9 (2026-10-13): CAPIT feed-coverage diagnostic (`reviews/capit-feed-integrity-2026-10-13.md`); synthetic missing-data/cursor evidence only; owner implementation unchanged.
+  Landed PR #8 (2026-10-13): CDE cost-documentation addendum (`reviews/cde-cost-documentation-2026-10-13.md`); dated exchange fees, retail/REST units unresolved; docs only.
+  Proposed implementation 2026-10-13 (Alex: "build those improvements"): offline trial/access ledger, evidence/metric/cost contracts and current governance documentation (`codex/research-evidence-controls`); frozen rules unchanged.
 * **Continue TARTAR handoff session:** owns `autotrade/` and `tartar/autotrade/` (the hourly agent).
   Agent spec pass done 10-11 (separate hl/us risk books, error-halt retry, per-book drawdown stops). Next: plan A1, A2.
 * **Alpaca paper route (thread "Alpaca paper trading route"):** owns `tartar/autotrade/alpaca.py`. `us_capit` and

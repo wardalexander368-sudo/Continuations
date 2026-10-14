@@ -13,3 +13,11 @@ D41–D43: keep event amounts, token transfers, native reserves/refunds and reco
 D44–D47: reject the fixed episode as independently verified organic attention because paid visibility was active shortly before buying; do not infer causation. Failed social access stays unknown, never zero. De-duplicate exact-token DEX context rather than counting pools/list rows as attention trials. Test paid-to-organic persistence only later with conservative promotion-end evidence and all execution/account controls.
 
 D48–D50: choose PumpSwap gross/net event fields by exact instruction, require exact LP + protocol + creator decomposition and reject unknown/truncated schemas. Treat buyback, cashback, holder rewards and accumulators as routing/suballocation unless exact evidence makes them additive. Count pool economics once; retain PumpPortal service, network/priority, rent, data and conversion costs separately when applicable.
+
+2026-10-13 research-control implementation: Alex asked to build the reviewed
+improvements. Add trial/outcome-access records and executable/observation receipts,
+explicit evidence/metric/cost contracts and current documentation. Supporting
+files: `../../handoff/research-governance.md` and its dated review. These controls
+do not create investment labels or alter SLR-0.2. Falsify an implementation claim
+if records can silently discard attempts, treat missing evidence as zero, clear
+original observation gaps, or report scoring source drift as valid.

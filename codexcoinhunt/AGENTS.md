@@ -21,3 +21,10 @@ Current release: 161 distinct research engineering checks; no validated SLR clos
 Current quote-role finding: three original buys use USDC/USDT disposal and routing, one another-mint disposal and one native input. Complete official-IDL decoding explains the two formerly unknown approximately 0.45% gaps as exact LP + protocol + creator components. Gross/net roles reverse between `buy_v2` and `buy_exact_quote_in` variants; choose by exact instruction and verify account movement. Do not double-charge embedded pool economics or protocol suballocations such as buyback. Shared route sources/fee payers are not human owners. Current source snapshots cannot qualify historical entries.
 
 Current social finding: the fixed Claudia episode had an exact 10-unit paid boost purchased about four hours before sampled buying and still active 631.885 seconds before the first buy. This is a confounder, not causal proof; reject it as organic-rediscovery evidence. Public social requests failed with HTTP 403, so coverage is unknown rather than quiet. Use PROMOTION-HANDOFF-0.1 only later with conservative promotion-end evidence, direct coverage and every existing SLR/campaign/control gate.
+
+Research implementation addendum (2026-10-13): use `../handoff/research-governance.md`
+and its offline trial/access ledger for every proposed variant or model. Log all
+manual/prompt revisions and outcome access using public-safe hashes; keep final
+evaluation outcomes out of development prompts. Outcome-informed revisions require
+a new version and later evidence. This changes research records, not SLR-0.2's
+configuration/hash, gates or the archived engineering check counts.

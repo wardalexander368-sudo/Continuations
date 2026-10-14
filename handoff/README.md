@@ -11,8 +11,10 @@ The repository map is in the top-level [`README.md`](../README.md).
 | [`findings.md`](findings.md) | **Findings ledger:** every idea Claude or Codex tested, status, evidence after costs, where it lives |
 | [`plan-2026-10-12.md`](plan-2026-10-12.md) | Implementation plan, in order, with owners |
 | [`autotrade.md`](autotrade.md) | The hourly paper-trading agent (`tartar/autotrade/`), its strategies and risk books |
+| [`research-governance.md`](research-governance.md) | Trial/access ledger, evidence classes, metric/cost contracts and future optimization boundaries |
+| [`research-evidence-usage.md`](research-evidence-usage.md) | Offline ledger and metric/cost validation commands |
 | [`edge-hunt.md`](edge-hunt.md) | Every strategy family tested, with results (§K-§N are the US work) |
-| [`live-rule-us.md`](live-rule-us.md) | DRAFT go-live rule for `us_capit` on Alpaca (not adopted) |
+| [`live-rule-us.md`](live-rule-us.md) | v2 adopted 2026-10-12; capped execution measurement still requires its gate and separate authorization |
 | [`hl-costs.md`](hl-costs.md) | Hyperliquid execution costs from the `hl-book` collector |
 | [`profitability.md`](profitability.md) | `tartar profit` and the pump.fun-phase cost findings |
 | [`candle-prediction-agent.md`](candle-prediction-agent.md) | The candle predictor (`tartar watch`) |

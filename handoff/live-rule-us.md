@@ -14,6 +14,14 @@ and Codex) and `plan-2026-10-12.md` section G.
 order route that is not built (today `tartar/autotrade/alpaca.py` refuses any non-paper host). The registrations
 and their scoring are unchanged.
 
+## Evidence interpretation (2026-10-13 implementation clarification)
+
+The frozen venue-cost addendum retains its original registered-pass language.
+This later adopted operating policy deliberately describes a separate capped
+execution measurement before a registered verdict. It is not a statistical pass,
+proof of alpha, funding authority or an amendment of frozen scoring. Paper fills
+are simulator evidence; proxy costs and complete real account debits are distinct.
+
 ## Why a rule, not a test result
 No US registration can clear its 90% bar inside 52 weeks: CAPIT fires on ~6 crash days a year, and cde's weekly
 CI is ~±1.7%. So going live is a sizing decision with a hard loss limit. Stage 1 measures real execution; it is not
@@ -37,7 +45,7 @@ Every line in `findings.md` is judged against this, so later candidates don't ne
 
 | Line | Eligible? | Why (detail in `findings.md`) |
 |---|---|---|
-| `us_capit` | **yes** | Meets 1-4 and 5; 6 is pending (plan A2) and is required before scaling (section 6) |
+| `us_capit` | **yes** | Meets 1-4 and 5; item 6 reporting is built, sufficient priced forward evidence is pending and required before scaling (section 6) |
 | `us_capit_fast` | no, research | Same rule booked sooner; tells us what an always-on machine would add |
 | `us_capit~wide` | no, research | Its 10 coins have Alpaca meme/alt spreads (Codex measured ~0.5%/side on PEPE-type books); mostly the same crash days, so little new evidence |
 | `us_volspike` | no | Fails item 3 (−0.30%/trade on the 10 extra coins) |
@@ -96,8 +104,15 @@ All must hold before doubling to $200 a trade; never above $500 a trade without 
 * **The live account is up in dollars** after every cost (Codex's lesson: summed trade percentages are not account
   growth).
 * Paper `us_capit` beats random entries on the same coins and hold (plan A2), point estimate above zero.
-* At $200+ a trade, revisit the always-on machine (~$5/month): faster entries are worth about +1 to +2 points a
-  trade (`reviews/timing-2026-10-11.md`), more than the box costs once trades are this size.
+* At $200+ a trade, review the always-on machine using actual additional account
+  benefit less marginal expenses. Earlier timing estimates do not guarantee
+  payback. Saved $100-stake hourly-policy models support only $1.31-$1.52/month
+  of extra cost under fixed historical assumptions; an extra $5/month exceeds
+  their modeled advantage. Both entry and exit shift; no actual box latency,
+  expense-inclusive account replay, forecast or linear stake scaling is implied.
+  Shared/sunk infrastructure and research utility need separate allocation.
+  See `reviews/box-fixed-cost-hurdle-2026-10-13.md`. Existing scaling gates above
+  and separate authority are unchanged.
 
 ## 7. Honest expectations
 CAPIT fires on about 6 crash days and ~16 trades a year, fewer after the coin screen. At $100/trade and +2-3% net
