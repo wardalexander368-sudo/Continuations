@@ -43,7 +43,7 @@ def test_capit_buys_30_min_after_the_crash_hour_and_sells_24_h_later(tmp_path):
     assert v.stats["mean_net_alpaca"] == pytest.approx(-2 * 0.0039, abs=1e-6) and "at alpaca" in v.reason
 
 
-def test_exit_waits_for_its_candle_and_a_delisted_pair_does_not_raise(tmp_path):
+def test_exit_waits_for_its_candle_and_an_unavailable_pair_does_not_raise(tmp_path):
     rows = bars(260, 200)
     cut = (H0 + 225) * 3600  # Coinbase stops publishing after this (the exit candle comes later)
 
@@ -71,6 +71,155 @@ def test_exit_waits_for_its_candle_and_a_delisted_pair_does_not_raise(tmp_path):
 
     gone = CoinbasePattern("g", {"rule": "capit", "coins": ["GONE"]})
     assert gone._get(Context(0, [], {}, {}, H()), "GONE", 0, 900 * 10) == []
+
+
+def observation_fixture(rows, *, coins=("BTC", "ETH"), done=None, get=None):
+    from tartar.autotrade.core import Context
+    from tartar.autotrade.observation_coverage import _hour
+    from tartar.autotrade.strategies.coinbase_pattern import day
+
+    signal = H0 + 200
+    start = day(signal)
+    data = {"done_hour": _hour(start) - 1 if done is None else done}
+    strategy = CoinbasePattern("us_capit_fast", {"_get": get or (lambda ctx, coin, t0, t1: [r for r in rows if t0 <= r[0] < t1]),
+        "rule": "capit", "coins": list(coins), "start": start, "end": "2100-01-01", "delay_bars": 1})
+    return strategy, Context((signal + 1) * 3600 + 1260, [], data, {})
+
+
+def test_complete_quiet_inputs_are_observed_without_signal():
+    from tartar.autotrade import observation_coverage as oc
+
+    strategy, ctx = observation_fixture(bars(260, 10000))
+    assert strategy.step(ctx) == []
+    c = ctx.state["coverage"]
+    assert set(r["state"] for r in c["receipts"].values()) == {"observed-no-signal"}
+    assert not c["pending"] and oc.summarize(c, ctx.now)["complete"]
+
+
+@pytest.mark.parametrize("missing, reason", ((H0 + 100, "missing-signal-lookback"), (H0 + 201, "missing-entry-candle")))
+def test_each_coin_retains_missing_lookback_or_entry_without_hiding_the_other(missing, reason):
+    rows = bars(260, 200)
+    deleted = missing * 3600 if reason == "missing-signal-lookback" else missing * 3600
+
+    def get(ctx, coin, t0, t1):
+        return [r for r in rows if t0 <= r[0] < t1 and not (coin == "BTC" and r[0] == deleted)]
+
+    strategy, ctx = observation_fixture(rows, done=H0 + 199, get=get)
+    assert [it.meta["key"] for it in strategy.step(ctx) if it.kind == "open"] == [f"ETH:{H0 + 200}"]
+    c = ctx.state["coverage"]
+    gap = c["receipts"][f"BTC:{H0 + 200}"]
+    assert gap["state"] == "incomplete" and gap["reason"] == reason
+    assert c["receipts"][f"ETH:{H0 + 200}"]["state"] == "signal-intent"
+    assert ctx.state["done_hour"] == H0 + 200
+
+
+def test_gap_recovery_is_persisted_annotation_without_retrospective_intents():
+    from tartar.autotrade import observation_coverage as oc
+
+    rows = bars(260, 200)
+    missing = True
+
+    def get(ctx, coin, t0, t1):
+        return [] if coin == "BTC" and missing else [r for r in rows if t0 <= r[0] < t1]
+
+    strategy, ctx = observation_fixture(rows, done=H0 + 199, get=get)
+    assert [it.asset for it in strategy.step(ctx)] == ["ETH"]
+    # A restart serializes the separate execution cursor and pending receipts.
+    ctx.state = json.loads(json.dumps(ctx.state))
+    original = dict(ctx.state["coverage"]["receipts"][f"BTC:{H0 + 200}"])
+    missing = False
+    assert strategy.step(ctx) == []  # same execution cursor, restored source
+    gap = ctx.state["coverage"]["receipts"][f"BTC:{H0 + 200}"]
+    assert all(gap[k] == v for k, v in original.items())
+    assert gap["recovery"] == {"observed_at": int(ctx.now), "signal": True, "execution": "annotation-only"}
+    assert ctx.state["done_hour"] == H0 + 200 and not ctx.state["coverage"]["pending"]
+    before = json.dumps(ctx.state, sort_keys=True)
+    assert strategy.step(ctx) == [] and json.dumps(ctx.state, sort_keys=True) == before
+    summary = oc.summarize(ctx.state["coverage"], ctx.now)
+    assert summary["incomplete_coin_hours"] == summary["late_recovered_coin_hours"] == 1
+    assert not summary["complete"]
+
+
+def test_http_404_and_successful_empty_body_have_distinct_receipts(monkeypatch):
+    from tartar.autotrade.strategies import coinbase_pattern as cp
+
+    class Response:
+        def __init__(self, code):
+            self.status_code = code
+
+        def json(self):
+            return []
+
+    class Http:
+        def __init__(self, code):
+            self.code = code
+
+        def get(self, *args, **kwargs):
+            return Response(self.code)
+
+    monkeypatch.setattr(cp.time, "sleep", lambda _: None)
+    for code, reason in ((404, "http-unavailable"), (200, "empty-response")):
+        strategy, ctx = observation_fixture([], coins=("BTC",), done=H0 + 199)
+        strategy.get = strategy._get
+        ctx.http = Http(code)
+        assert strategy.step(ctx) == []
+        receipt = ctx.state["coverage"]["receipts"][f"BTC:{H0 + 200}"]
+        assert receipt["state"] == "incomplete" and receipt["reason"] == reason
+        assert receipt["source"]["http_status"] == code
+        assert "delist" not in json.dumps(receipt)
+
+
+def test_legacy_cursor_is_historically_unknown_and_pruning_retains_the_denominator(monkeypatch):
+    from tartar.autotrade import observation_coverage as oc
+
+    strategy, ctx = observation_fixture(bars(260, 10000), done=H0 + 199)
+    strategy.step(ctx)
+    c = ctx.state["coverage"]
+    assert c["legacy_unknown"]["coin_hours"] > 0 and not oc.summarize(c, ctx.now)["complete"]
+
+    strategy, ctx = observation_fixture([], get=lambda *args: [])
+    monkeypatch.setattr(oc, "DETAIL_LIMIT", 3)
+    strategy.step(ctx)
+    c = ctx.state["coverage"]
+    summary = oc.summarize(c, ctx.now)
+    assert len(c["receipts"]) == 3
+    assert c["archived"]["unresolved"] > 0
+    assert summary["unresolved_coin_hours"] == summary["expected_coin_hours"] == c["counts"]["incomplete"]
+    assert not summary["complete"]
+
+
+def test_a_fetch_exception_is_isolated_to_its_coin():
+    rows = bars(260, 200)
+
+    def get(ctx, coin, t0, t1):
+        if coin == "BTC":
+            raise TimeoutError("synthetic")
+        return [r for r in rows if t0 <= r[0] < t1]
+
+    strategy, ctx = observation_fixture(rows, done=H0 + 199, get=get)
+    assert [it.asset for it in strategy.step(ctx)] == ["ETH"]
+    assert ctx.state["coverage"]["receipts"][f"BTC:{H0 + 200}"]["reason"] == "fetch-error:TimeoutError"
+
+
+def test_busy_receipt_is_explicit_and_does_not_claim_a_signal_or_missing_input():
+    from types import SimpleNamespace
+
+    strategy, ctx = observation_fixture([], coins=("BTC",), done=H0 + 199)
+    ctx.positions = [SimpleNamespace(id="already-open", asset="BTC",
+        meta={"signal_hour": H0 + 199, "exit_t": ctx.now + 24 * 3600})]
+    assert strategy.step(ctx) == []
+    receipt = ctx.state["coverage"]["receipts"][f"BTC:{H0 + 200}"]
+    assert receipt["state"] == "busy" and receipt["reason"] == "position-overlap"
+    assert not ctx.state["coverage"]["pending"]
+
+
+def test_volspike_requires_finite_volume_history():
+    rows = bars(260, 10000)
+    rows[100 * 4][5] = float("nan")
+    strategy, ctx = observation_fixture(rows, coins=("BTC",), done=H0 + 199)
+    strategy = CoinbasePattern(strategy.name, {**strategy.cfg, "rule": "volspike"})
+    assert strategy.step(ctx) == []
+    assert ctx.state["coverage"]["receipts"][f"BTC:{H0 + 200}"]["reason"] == "missing-signal-volume"
 
 
 def test_delay_bars_1_books_the_entry_at_the_first_run_after_the_signal(tmp_path):

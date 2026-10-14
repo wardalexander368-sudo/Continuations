@@ -71,12 +71,15 @@ def all_hours():
     return out
 
 
-def test_all_green(tmp_path):
+def test_successful_jobs_do_not_make_unmeasured_paper_inputs_green(tmp_path):
     write_inputs(tmp_path)
     gh = FakeGH({wf: [run_row()] for wf in health.WORKFLOWS}, all_hours())
     h = health.run(tmp_path, tmp_path, now=NOW, http=gh)
-    assert h["status"] == "green", [i for i in h["items"] if i["level"] != "green"]
-    assert "🟢 GREEN" in "\n".join(health.report_lines(tmp_path, NOW))
+    assert h["status"] == "yellow"
+    checks = {i["check"]: i for i in h["items"]}
+    assert checks["Alpaca paper cost"]["paper_cost_evidence"] == "unmeasured"
+    assert checks["Input: Coinbase coverage us_capit_fast"]["coverage_status"] == "unknown"
+    assert "🟡 YELLOW" in "\n".join(health.report_lines(tmp_path, NOW))
 
 
 def test_failed_skipped_gaps_and_stale_are_red(tmp_path):
@@ -98,7 +101,37 @@ def test_agent_halts_orphans_and_drift(tmp_path):
     rows = [{"event": "perp_close", "strategy": "xs", "compare": {"live_minus_paper": -0.05}} for _ in range(4)]
     (tmp_path / "fills.jsonl").write_text("\n".join(json.dumps(r) for r in rows) + "\n")
     items = {i["check"]: i["level"] for i in health.check_agent(tmp_path)}
-    assert items == {"Agent: orphans": "red", "Agent: halts": "red", "Twins: xs": "yellow"}
+    assert items == {"Agent: orphans": "red", "Agent: halts": "red", "Twins: xs": "yellow",
+                     "Input: Coinbase coverage us_capit_fast": "yellow"}
+
+
+def test_coinbase_coverage_health_checks_read_fast_strategy_data(tmp_path):
+    from tartar.autotrade import observation_coverage as oc
+
+    now = t("2026-10-12T03:21:00")
+    start = int(t("2026-10-12T00:00:00")) // 3600
+    data = {}
+    c = oc.initialize(data, done=start - 1, now=int(now), coins=["BTC"],
+                      start="2026-10-12", end="2027-10-11", delay=1, rule="capit")
+    through = (int(now) - 60 - 900) // 3600 - 1
+    for h in range(start, through + 1):
+        oc.record(c, "BTC", h, "observed-no-signal", int(now))
+    oc.finish(c, through)
+
+    def check():
+        (tmp_path / "state.json").write_text(json.dumps({"strategies": {"us_capit_fast": {"data": data}}}))
+        return next(i for i in health.check_agent(tmp_path, now) if i["check"] == "Input: Coinbase coverage us_capit_fast")
+
+    assert check()["level"] == "green"
+    c["checked_at"] = now - 3 * 3600
+    assert check()["level"] == "red"
+    c["checked_at"] = now
+    key = next(iter(c["receipts"]))
+    c["receipts"][key].update(state="incomplete", reason="http-unavailable")
+    c["counts"]["incomplete"] += 1
+    c["counts"]["observed-no-signal"] -= 1
+    c["pending"][key] = c["receipts"][key]["hour"]
+    assert check()["level"] == "red" and "original incomplete" in check()["detail"]
 
 
 def test_halted_and_erroring_strategies_show_in_health(tmp_path):

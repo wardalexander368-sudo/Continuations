@@ -80,12 +80,80 @@ def test_mirror_buys_and_sells_on_the_paper_account_and_records_the_gap(tmp_path
     assert t.mode == "paper" and a["symbol"] == "BTC/USD"
     assert a["entry_gap_bps"] == pytest.approx(10, abs=0.01) and a["exit_gap_bps"] == pytest.approx(10, abs=0.01)
     assert a["measured_side_cost"] == pytest.approx(0.0025 + 0.001, abs=1e-6)
+    assert a["paper_cost_evidence"] == "paper-fill-proxy" and a["fee_basis"] == "configured"
+    assert a["configured_fee_per_side"] == 0.0025 and a["commission_paid_usd"] is None and a["commission_evidence"] == "unknown"
     assert a["spread_in_bps"] == pytest.approx(10, abs=0.1)
     assert http.held["BTCUSD"] == pytest.approx(0, abs=1e-5)  # sold what the buy left after its fee
     rows = [json.loads(x) for x in (tmp_path / "alpaca_fills.jsonl").read_text().splitlines()]
     assert [r["event"] for r in rows] == ["buy", "sell"]
+    assert all(r["paper_cost_evidence"] == "paper-fill-proxy" and r["commission_evidence"] == "unknown" for r in rows)
+    assert all(r["order_status"] == "filled" and r["fill_completion"] == "complete-requested-fill" for r in rows)
+    assert all(r["broker_submitted_at"] is None and r["broker_filled_at"] is None for r in rows)
+    assert all(r["observation_clock_basis"] == "local-run-observation" and r["terminal_inventory_evidence"] == "unknown" for r in rows)
+    assert rows[1]["requested_qty"] == pytest.approx(rows[1]["filled_qty"])
     assert "Alpaca paper fills" in (tmp_path / "REPORT.md").read_text()
     assert all(not u.startswith("https://api.alpaca.markets") for _, u in http.calls)
+
+
+def test_cost_report_labels_legacy_proxy_and_malformed_evidence(tmp_path):
+    legacy = {"event": "sell", "measured_side_cost": 0.004, "entry_gap_bps": 10, "exit_gap_bps": 20,
+              "fee_per_side": 0.0025, "alpaca_net_return": 0.01, "paper_net_return": 0.02}
+    (tmp_path / "alpaca_fills.jsonl").write_text(json.dumps(legacy) + '\nnot json\n[1, 2]\n{"event": "sell"}\n')
+    report = "\n".join(alpaca.report_lines(tmp_path))
+    assert "2 malformed/non-object line(s), 1 unmeasured sell(s)" in report
+    assert "paper_cost_evidence=unmeasured" in report
+    assert "Mean modeled net" not in report and "actual commission paid is unknown" in report
+    assert "Legacy records without completion proof remain unknown" in report
+    assert "unknown receipt(s)" in report and "Terminal paper inventory: unknown" in report
+
+
+def test_returned_order_metadata_preserves_broker_clocks_without_claiming_inventory():
+    order = {"status": "filled", "qty": "2", "filled_qty": "2", "filled_avg_price": "100",
+             "submitted_at": "2026-10-12T10:00:00Z", "filled_at": "2026-10-12T10:00:01Z"}
+    evidence = alpaca._order_evidence(order, alpaca._fill(order))
+    assert evidence["broker_submitted_at"] == order["submitted_at"] and evidence["broker_filled_at"] == order["filled_at"]
+    assert evidence["broker_clock_basis"] == "broker-provided"
+    assert evidence["requested_qty"] == evidence["filled_qty"] == 2
+    assert evidence["fill_completion"] == "complete-requested-fill"
+    assert evidence["terminal_inventory_qty"] is None and evidence["terminal_inventory_evidence"] == "unknown"
+
+
+def test_partial_exit_is_recorded_and_rejected_without_changing_order_flow(tmp_path):
+    from types import SimpleNamespace
+    from tartar.autotrade import live_gate
+
+    class PartialSell(FakeHttp):
+        def request(self, method, url, headers=None, json=None, params=None):
+            response = super().request(method, url, headers=headers, json=json, params=params)
+            if method == "POST" and url.endswith("/v2/orders") and json["side"] == "sell":
+                requested = float(json["qty"])
+                response._body["status"] = "partially_filled"
+                response._body["filled_qty"] = str(requested / 2)
+                self.held[json["symbol"].replace("/", "")] += requested / 2
+            return response
+
+    http = PartialSell({"BTC/USD": 63.0})
+    client = alpaca.AlpacaPaper("id", "secret", http=http, sleep=lambda _: None)
+    mirror = alpaca.AlpacaMirror({**alpaca.ALPACA_DEFAULTS, "strategies": ["us_capit_fast"], "fill_wait_s": 0}, client, tmp_path)
+    at = 1_791_800_000.0
+    pos = SimpleNamespace(id="partial", strategy="us_capit_fast", asset="BTC", notional_usd=200,
+                          meta={"venue": "coinbase", "signal_hour": 1})
+    intent = SimpleNamespace(meta={}, price=63.0, at=at)
+    mirror.on_open(pos, intent, at)
+    trade = SimpleNamespace(net_return=0.0, meta={})
+    mirror.on_close(pos, trade, intent, at + 86400)
+    rows = [json.loads(line) for line in (tmp_path / "alpaca_fills.jsonl").read_text().splitlines()]
+    assert len(http.orders) == 2 and [r["event"] for r in rows] == ["buy", "sell"]
+    sell = rows[1]
+    assert sell["order_status"] == "partially_filled" and sell["fill_completion"] == "partial-or-unfilled"
+    assert sell["filled_qty"] == pytest.approx(sell["requested_qty"] / 2)
+    assert sell["terminal_inventory_evidence"] == "unknown" and http.held["BTCUSD"] > 0
+    rejected = []
+    assert live_gate.round_trips(rows, rejected=rejected) == []
+    assert rejected == [{"position": "partial", "why": "sell partial or unfilled"}]
+    report = "\n".join(alpaca.report_lines(tmp_path))
+    assert "1 partial/unfilled receipt(s)" in report and "0 validated complete requested-fill pair(s)" in report
+    assert "Mean modeled net" not in report
 
 
 def test_a_key_that_is_not_a_paper_account_sends_nothing(tmp_path):
@@ -170,7 +238,24 @@ def test_account_matches_book_every_run_and_a_stray_holding_turns_health_red(tmp
     run_once(tmp_path, now=now + 1200, strategies={"c": s}, alpaca=client)
     (item,) = alpaca.health_items(tmp_path, now + 1300)
     assert item["level"] == "red" and "ETHUSD" in item["detail"]
-    assert "**differs**" in (tmp_path / "REPORT.md").read_text()
+    assert "Terminal paper inventory: unmatched" in (tmp_path / "REPORT.md").read_text()
+
+
+@pytest.mark.parametrize("kind, level", (("missing", "yellow"), ("unconfirmed", "yellow"),
+                                        ("stale", "yellow"), ("mismatch", "red"), ("complete", "green")))
+def test_account_health_cannot_make_unknown_or_unconfirmed_inventory_green(tmp_path, kind, level):
+    now = 1_791_800_000.0
+    rec = {"checked_at": now, "ok": True, "unconfirmed": [], "mismatches": [], "stuck_orders": []}
+    if kind == "unconfirmed":
+        rec["unconfirmed"] = ["BTCUSD"]
+    elif kind == "stale":
+        rec["checked_at"] -= 4 * 3600
+    elif kind == "mismatch":
+        rec["mismatches"] = [{"symbol": "BTCUSD"}]
+    state = {} if kind == "missing" else {"alpaca": {"reconcile": rec}}
+    (tmp_path / "state.json").write_text(json.dumps(state))
+    (item,) = alpaca.health_items(tmp_path, now)
+    assert item["level"] == level and "terminal_inventory_evidence" in item
 
 
 def test_an_order_open_for_hours_is_stuck(tmp_path):

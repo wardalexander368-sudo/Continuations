@@ -1,4 +1,4 @@
-"""Diagnostic fidelity at the current CAPIT baseline, not a prescribed owner fix."""
+"""Diagnostic fidelity against current source; the dated baseline readout stays frozen."""
 
 import importlib.util
 import json
@@ -92,9 +92,14 @@ def test_probe_does_not_create_a_network_client_or_touch_the_bot_book(monkeypatc
     assert len(result["scenarios"]) == 6
     for scenario in result["scenarios"]:
         for field in ("first", "recovery", "original_cursor_counterfactual"):
-            assert scenario[field]["check_agent_items"] == [{
-                "check": "Agent", "level": "green",
-                "detail": "no halts, no strategy errors, no orphans, no closed twins yet"}]
+            items = scenario[field]["check_agent_items"]
+            coverage = {i["check"]: i for i in items}
+            assert set(coverage) == {"Input: Coinbase coverage us_capit", "Input: Coinbase coverage us_capit_fast"}
+            assert coverage["Input: Coinbase coverage us_capit_fast"]["coverage_status"] == "unknown"
+            # The constructed old cursor predates instrumentation. Even complete
+            # restored inputs must not turn that history into green evidence.
+            assert all(i["level"] in ("yellow", "red") for i in items)
+            assert "historically unknown" in coverage["Input: Coinbase coverage us_capit"]["detail"]
     assert result["has_named_capit_or_coinbase_coverage_input"] is False
     assert {i["name"] for i in result["health_input_inventory"]} == set(probe.health.INPUTS)
 
@@ -126,7 +131,7 @@ def test_cache_isolation_restores_prior_entries_and_sleep_even_on_error(monkeypa
 def test_health_harness_detects_a_constructed_strategy_error():
     result = probe.run_probe()["health_error_detection_control"]
     assert result["constructed_strategy_errors"] == 1
-    assert result["check_agent_items"] == [{
+    assert [i for i in result["check_agent_items"] if i["check"] == "Agent: strategy errors"] == [{
         "check": "Agent: strategy errors", "level": "yellow",
         "detail": "us_capit x1 (synthetic diagnostic error)"}]
 

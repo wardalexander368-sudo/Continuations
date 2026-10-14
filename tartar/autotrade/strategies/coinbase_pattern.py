@@ -35,7 +35,7 @@ from datetime import date, datetime, timezone
 
 import numpy as np
 
-from .. import cde_book
+from .. import cde_book, observation_coverage as coverage
 from ..core import Context, CostModel, Intent, Trade, Verdict
 
 CB = "https://api.exchange.coinbase.com"
@@ -45,6 +45,14 @@ RULES = {"capit": {"z": 4.0, "hold": 24}, "volspike": {"k": 10.0, "hold": 72}}
 START, END = "2026-10-12", "2027-10-11"
 CONTROL = 15 * 24  # hours either side of the signal hour: the random-entry control's window
 _CACHE: dict[tuple[str, int, int], list] = {}  # one fetch per coin and range per process, shared by both rules
+
+
+class CandleRows(list):
+    """Keep the list interface, with evidence about an empty HTTP result."""
+
+    def __init__(self, rows=(), *, status: int = 200, source: str = "candles"):
+        super().__init__(rows)
+        self.source = {"http_status": status, "result": source}
 
 
 def day(h: int) -> str:
@@ -57,13 +65,14 @@ def hourly(t0: int, rows: list, n_hours: int):
     a = np.full((n_hours * 4, 5), np.nan)
     for r in rows:
         k = (int(r[0]) - t0 * 3600) // G
-        if 0 <= k < len(a):
+        if int(r[0]) % G == 0 and 0 <= k < len(a):
             a[k] = r[1:6]
+    a[~np.isfinite(a[:, 3]) | (a[:, 3] <= 0), 3] = np.nan
     b = a.reshape(n_hours, 4, 5)
     with np.errstate(all="ignore"), warnings.catch_warnings():
         warnings.simplefilter("ignore", RuntimeWarning)
-        O, Hh, L, C, V = b[:, 0, 0], np.nanmax(b[:, :, 1], 1), np.nanmin(b[:, :, 2], 1), b[:, 3, 3].copy(), np.nansum(b[:, :, 4], 1)
-    bad = np.isnan(b[:, :, 3]).any(1)
+        O, Hh, L, C, V = b[:, 0, 0], np.nanmax(b[:, :, 1], 1), np.nanmin(b[:, :, 2], 1), b[:, 3, 3].copy(), np.sum(b[:, :, 4], 1)
+    bad = (~np.isfinite(b[:, :, 3]) | (b[:, :, 3] <= 0)).any(1)
     O[bad] = Hh[bad] = L[bad] = C[bad] = np.nan
     return O, Hh, L, C, V, a[:, 3]
 
@@ -151,16 +160,41 @@ class CoinbasePattern:
                 if r.status_code == 200:
                     out += [[int(ts), op, hi, lo, cl, v] for ts, lo, hi, op, cl, v in r.json() if t <= ts < e]
                     break
-                if r.status_code == 404:  # the pair is gone (delisted): no candles, not an error that halts both rules
-                    return []
+                if r.status_code == 404:  # unavailable; this status alone cannot establish delisting
+                    return CandleRows(status=404, source="http-unavailable")
                 time.sleep(2 * (i + 1))
             else:
                 r.raise_for_status()
             t = e
             time.sleep(0.25)
         _CACHE.clear() if len(_CACHE) > 64 else None
-        _CACHE[key] = out
-        return out
+        result = CandleRows(out, source="candles" if out else "empty-response")
+        # Keep incomplete responses retryable at the same range too; the cache is
+        # only an optimization shared by rules, never proof that a gap is final.
+        if out and len({row[0] for row in out}) == (t1 - t0) // G:
+            _CACHE[key] = result
+        return result
+
+    def input_reason(self, C, V, C15, i: int, sig: bool) -> str:
+        """The previous 168 returns need 169 preceding closes, plus the signal hour.
+
+        A false comparison with NaN is missing evidence, never an observed no-signal.
+        The formula and registered constants themselves stay in ``signals``.
+        """
+        if i < WIN + 1 or i >= len(C) or not np.isfinite(C[i - WIN - 1:i + 1]).all():
+            return "missing-signal-lookback"
+        with np.errstate(all="ignore"):
+            previous = C[i - WIN:i] / C[i - WIN - 1:i - 1] - 1
+            current = C[i] / C[i - 1] - 1
+            sigma = previous.std()
+        if not np.isfinite(previous).all() or not np.isfinite(current) or not np.isfinite(sigma):
+            return "invalid-signal-returns"
+        if self.rule == "volspike" and (not np.isfinite(V[i - WIN:i + 1]).all() or (V[i - WIN:i + 1] < 0).any()):
+            return "missing-signal-volume"
+        e = 4 * (i + 1) + self.delay - 1
+        if sig and (e >= len(C15) or not np.isfinite(C15[e]) or C15[e] <= 0):
+            return "missing-entry-candle"
+        return ""
 
     def step(self, ctx: Context) -> list[Intent]:
         now = int(ctx.now)
@@ -168,38 +202,65 @@ class CoinbasePattern:
         # the last signal hour whose entry candle (closing 30 min after the hour) is final
         h_max = (now - 60 - self.delay * G) // 3600 - 1
         done = int(ctx.state.setdefault("done_hour", h_max))
+        observed = coverage.initialize(ctx.state, done=done, now=now, coins=self.coins,
+                                       start=self.start, end=self.end, delay=self.delay, rule=self.rule)
         due = [p for p in ctx.positions if p.meta["exit_t"] + 60 <= now]
-        if done >= h_max and not due:
+        if done >= h_max and not due and not observed["pending"]:
             return []
         if day(h_max) < self.start and not ctx.positions:
             ctx.state["done_hour"] = h_max
+            coverage.finish(observed, h_max)
             return []
         lo_h = min([done + 1] + [p.meta["signal_hour"] for p in ctx.positions]) - WIN - 30
         n_hours = now // 3600 + 1 - lo_h
         intents: list[Intent] = []
         for coin in self.coins:
             mine = [p for p in ctx.positions if p.asset == coin]
-            if done >= h_max and not any(p in due for p in mine):
+            pending = coverage.pending_hours(observed, coin, h_max)
+            if done >= h_max and not any(p in due for p in mine) and not pending:
                 continue
-            rows = self.get(ctx, coin, lo_h * 3600, now // G * G)
-            O, Hh, L, C, V, C15 = hourly(lo_h, rows, n_hours)
-            ok15 = np.where(~np.isnan(C15))[0]
+            coin_lo = min([lo_h] + [h - WIN - 1 for h in pending])
+            coin_n = n_hours + lo_h - coin_lo
+            source, fetch_error = {}, ""
+            try:
+                rows = self.get(ctx, coin, coin_lo * 3600, now // G * G)
+                source = getattr(rows, "source", {"result": "candles" if rows else "empty-result"})
+                O, Hh, L, C, V, C15 = hourly(coin_lo, rows, coin_n)
+            except Exception as exc:  # noqa: BLE001 - one coin's missing observations must not hide the others
+                fetch_error = f"fetch-error:{type(exc).__name__}"
+                source = {"result": "fetch-error", "error_type": type(exc).__name__}
+                O, Hh, L, C, V, C15 = hourly(coin_lo, [], coin_n)
+            ok15 = np.where(np.isfinite(C15) & (C15 > 0))[0]
             if len(ok15):
-                self._last[coin] = (float(C15[ok15[-1]]), float(lo_h * 3600 + (ok15[-1] + 1) * G))
+                self._last[coin] = (float(C15[ok15[-1]]), float(coin_lo * 3600 + (ok15[-1] + 1) * G))
             for p in mine:
                 if p.meta["exit_t"] + 60 <= now:
-                    x = self.exit_intent(coin, lo_h, C15, p.meta["exit_t"], now, position_id=p.id)
+                    x = self.exit_intent(coin, coin_lo, C15, p.meta["exit_t"], now, position_id=p.id)
                     if x:
                         intents.append(x)
             sig = signals(self.rule, C, V)
+            for h in pending:
+                i = h - coin_lo
+                if not fetch_error and not self.input_reason(C, V, C15, i, bool(sig[i])):
+                    coverage.recovered(observed, coin, h, now, signal=bool(sig[i]))
             busy = max([p.meta["signal_hour"] + self.hold + 1 for p in mine], default=-1)
             for h in range(done + 1, h_max + 1):
-                i = h - lo_h
-                if h < busy or not sig[i] or not (self.start <= day(h) <= self.end):
+                i = h - coin_lo
+                if not (self.start <= day(h) <= self.end):
+                    coverage.record(observed, coin, h, "outside-window", now)
+                    continue
+                if h < busy:
+                    coverage.record(observed, coin, h, "busy", now, reason="position-overlap")
+                    continue
+                reason = fetch_error or ("http-unavailable" if source.get("http_status") == 404 else
+                                         "empty-response" if not len(rows) else self.input_reason(C, V, C15, i, bool(sig[i])))
+                if reason:
+                    coverage.record(observed, coin, h, "incomplete", now, reason=reason, source=source)
+                    continue
+                if not sig[i]:
+                    coverage.record(observed, coin, h, "observed-no-signal", now)
                     continue
                 e = 4 * (i + 1) + self.delay - 1
-                if np.isnan(C15[e]):
-                    continue  # the scorer skips a trade without its entry candle
                 entry_t = float((h + 1) * 3600 + self.delay * G)
                 exit_t = entry_t + self.hold * 3600
                 key = f"{coin}:{h}"
@@ -210,12 +271,14 @@ class CoinbasePattern:
                                             "venue": "coinbase", "entry_day": day(h), "rule": self.rule,
                                             "shadow": bool(self.cfg.get("shadow"))}))
                 busy = h + self.hold + 1
+                coverage.record(observed, coin, h, "signal-intent", now)
                 ctx.state.setdefault("control_due", {})[key] = [coin, h]
                 if exit_t + 60 <= now:  # a late look: the whole hold is in the data
-                    x = self.exit_intent(coin, lo_h, C15, exit_t, now, key=key)
+                    x = self.exit_intent(coin, coin_lo, C15, exit_t, now, key=key)
                     if x:
                         intents.append(x)
         ctx.state["done_hour"] = h_max
+        coverage.finish(observed, h_max)
         if self.cfg.get("cde_book"):
             self.snap_cde(ctx, intents, now)
         return intents
