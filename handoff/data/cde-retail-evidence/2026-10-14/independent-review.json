@@ -1,0 +1,26 @@
+{
+  "schema_version": 1,
+  "reviewer": "cde_primary_followup_refute (read-only adversarial agent)",
+  "report_sha256": "a7a6630ceeba3816f50126dad415efbe8e0d5883faf25cfecf0a31da165a3a0c",
+  "status": "NO_REMAINING_REPRODUCED_DEFECT_IN_ASSIGNED_CORRECTED_PASSAGES",
+  "checked": [
+    "Three retained bodies and receipt byte counts/SHA256",
+    "AVP/POP table cells and participant footnotes visually",
+    "Rule 305(d) deletions visually",
+    "Effective dates",
+    "First funding example exact arithmetic"
+  ],
+  "reproduced_source_defect": {
+    "command": "python3 -c 'from decimal import Decimal as D; gross=(D(\"101000\")-D(\"100000\"))*D(\"0.01\"); funding=D(\"0.01\")*D(\"100000\")*D(\"0.010\")/100; print(gross, funding, gross-funding, D(\"99\")-(gross-funding))'",
+    "observed": "10.00 0.10000 9.90000 89.10000",
+    "interpretation": "printed inputs imply $9.90 before trading fees; publication says $99; no REST scale inferred"
+  },
+  "suspected_not_reproduced": "Second example also appears inconsistent, but its notional wording is ambiguous; not asserted in report.",
+  "not_checked": [
+    "Actual account category or billing",
+    "Later amendments",
+    "Private statements",
+    "Unretained REST schema bytes",
+    "Other linked sources/strategy outcomes"
+  ]
+}

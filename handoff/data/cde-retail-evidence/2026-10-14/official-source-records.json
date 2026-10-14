@@ -1,0 +1,92 @@
+{
+  "schema_version": 1,
+  "recorded_at": "2026-10-14T05:38:58.935043+00:00",
+  "source_base": "cb8006074b4a2c2bd85a206f8e32e28f5b8ca7a5",
+  "scope": "bounded public source qualification; no market refresh or strategy change",
+  "fee_notices": [
+    {
+      "notice": "2026-46",
+      "filing_url": "https://www.cftc.gov/IndustryOversight/IndustryFilings/TradingOrganizationRules/62316",
+      "pdf": "cde-2026-46.pdf",
+      "effective_trade_date": "2026-08-17",
+      "locators": [
+        "Appendix A page 2 shared AVP/POP fee cells",
+        "page 4 participant definitions"
+      ],
+      "unit": "USD per contract per side",
+      "electronic_AVP_POP_nonprofessional": "0.10",
+      "electronic_AVP_POP_professional": "0.10",
+      "electronic_AVP_POP_market_maker": "0.07",
+      "block_AVP_POP_deleted": "0.05",
+      "block_AVP_POP_added": "0.01",
+      "account_classification_verified": false,
+      "current_cfm_all_in_charge_resolved": false,
+      "latest_exhaustive_schedule_verified": false
+    },
+    {
+      "notice": "2026-59",
+      "filing_url": "https://www.cftc.gov/IndustryOversight/IndustryFilings/TradingOrganizationRules/64179",
+      "pdf": "cde-2026-59.pdf",
+      "effective_date": "2026-10-01",
+      "locator": "Appendix A page 3 Rule 305(d) redline",
+      "parenthetical_market_maker_professional_limitation": "deleted",
+      "customer_NFA_eligibility_verified": false,
+      "current_cfm_commission_resolved": false
+    }
+  ],
+  "agent_schema_acquisition": {
+    "url": "https://docs.cdp.coinbase.com/api-reference/advanced-trade-api/rest-api/advanced-trade-spec.yaml",
+    "started_at": "2026-10-14T05:28:57.611974+00:00",
+    "finished_at": "2026-10-14T05:28:58.173590+00:00",
+    "http_status": 200,
+    "bytes": 408110,
+    "sha256": "e1edecbc619a505853dfa5b7457f5660f0053c596af39d949899bd7993bba4b2",
+    "authentication": "none",
+    "raw_body_retained": false,
+    "provenance": "research agent cde_rest_units_primary acquisition report; hash not locally reverified",
+    "definitions_checked": [
+      "FutureProductDetails.funding_rate",
+      "FutureProductDetails.funding_interval",
+      "L2Level.size"
+    ],
+    "declared_type": "string",
+    "explicit_unit_or_scale_description_found": false,
+    "funding_rate_scale_resolved": false,
+    "book_size_units_resolved": false,
+    "search_exhaustive": false
+  },
+  "parsed_web_sources": [
+    {
+      "url": "https://help.coinbase.com/en/coinbase/derivatives/derivatives-fees",
+      "locator": "scope exclusion before Trading fees",
+      "US_futures_applicable": false
+    },
+    {
+      "url": "https://help.coinbase.com/en/coinbase/derivatives/us-derivatives-manage-account",
+      "locators": [
+        "Read your daily futures statement",
+        "Statement line items",
+        "Futures / Options Confirmations"
+      ]
+    },
+    {
+      "url": "https://docs.cdp.coinbase.com/api-reference/advanced-trade-api/rest-api/public/get-public-product"
+    },
+    {
+      "url": "https://docs.cdp.coinbase.com/api-reference/advanced-trade-api/rest-api/public/get-public-product-book"
+    },
+    {
+      "url": "https://docs.cdp.coinbase.com/coinbase-app/advanced-trade-apis/guides/futures"
+    }
+  ],
+  "parsed_web_acquisition_limits": "Original HTTP bodies, statuses and individual request times unavailable; URLs/locators only.",
+  "empirical_change": {
+    "quotes_refreshed": false,
+    "backtests_run": false,
+    "account_data_accessed": false,
+    "frozen_rules_changed": false,
+    "strategy_cost_assumptions_changed": false,
+    "profitability_established": false,
+    "novelty_established": false
+  }
+}
