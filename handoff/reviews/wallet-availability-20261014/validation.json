@@ -1,0 +1,31 @@
+{
+  "validated_at": "2026-10-14T06:09:03.519257+00:00",
+  "status": "PASS",
+  "base": "69ef6d63fc8008488861b157e15b49042c3849d6",
+  "source_and_count_review": "PASS",
+  "offline_analysis_rerun": "PASS_WITH_ZERO_TIMESTAMP_ISSUES",
+  "malformed_timestamp_probes": "huge integer, inf, -inf, NaN, bool and naive ISO return None; valid epoch/aware ISO agree",
+  "browser": "PASS_HTTP_PREVIEW_WITH_FILE_URL_LIMIT",
+  "network_wallet_requests": 0,
+  "repository_test_evidence": {
+    "existing_wallet_suite": "449 passed, 1 skipped, 9 subtests at base; prior wallet review receipt retained",
+    "fresh_equivalent_source_suite_head": "d979f6c7a151d04560603b4cec6e065e7192d2d2",
+    "fresh_suite": "449 passed, 1 skipped, 9 subtests in 79.97s",
+    "code_test_objects_identical": {
+      "tartar": "b200a5eca28c376bc6d1df5d2874ea599f42f96e",
+      "tests": "b61c0a859216f746cc9720031fb5fce1a0b4349d"
+    },
+    "additional_full_suite_run": false,
+    "meaning": "Repository code/tests are unchanged; analysis has independent source/count checks and UI has browser checks."
+  },
+  "unchanged": [
+    "trading code",
+    "owner books",
+    "workflows",
+    "frozen rules",
+    "strategy and cost assumptions"
+  ],
+  "profitability_established": false,
+  "novelty_established": false,
+  "github_ci": "No new GitHub CI pass claimed; docs/data paths are excluded by existing workflow filters."
+}

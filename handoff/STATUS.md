@@ -54,7 +54,7 @@ Lanes as of 2026-10-12 (all paper only). Owner thread names are the project's th
   `codex/*` branches and opens PRs into `main`; rules in `AGENTS.md`. Claude reviews each PR before it lands;
   approved PRs land on main through the coordinator's bundle push. A twice-daily routine (01:07/13:07 UTC) checks for new
   `codex/*` work; open Codex PRs are watched.
-  Proposed claim 2026-10-13: descriptive wallet evidence summary, offline local chart and exact-mint paper relations (`reviews/wallet-evidence-20261013/`); no trader PnL or strategy validation.
+  Proposed claim 2026-10-13: descriptive wallet evidence summary, offline local chart and exact-mint paper relations (`reviews/wallet-evidence-20261013/`); no trader PnL or strategy validation. Follow-up 2026-10-14: body-receipt availability at 77 Claudia paper rows/39 signal keys (`reviews/wallet-availability-20261014/`); feature computation/use unknown.
   Proposed claim: CAPIT chronological cash-account controls on the existing fixed cohort; locked costs/delays/stops and matched full-account references (`codex/capit-account-controls`; review `reviews/capit-account-controls-2026-10-13.md`).
   Landed 2026-10-13 (reviewed by Claude): PR #4 US paper-evidence audit (`reviews/us-paper-evidence-2026-10-13.md`;
   its gate-input defects fixed in `live_gate.py` in the same landing), PR #5 CAPIT replication + whole-episode
