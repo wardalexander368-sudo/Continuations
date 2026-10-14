@@ -18,4 +18,3 @@ This is a reviewable protocol draft, not a registration or result. Before a late
 **Cost question:** actual marginal infrastructure charge and allocation; no assumed cheap provider, tier or fee basis. Retain all declared scenarios rather than select the profitable one.
 
 **Disposition:** inconclusive if required evidence is absent or uncertainty is unresolved; unfavorable if feasible complete outcomes do not support the claimed improvement. Positive paper results still do not authorize money movement or establish transferable real execution.
-
