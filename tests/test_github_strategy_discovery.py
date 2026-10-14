@@ -196,8 +196,8 @@ def test_tampered_cache_prevents_http_request(tmp_path):
     search = next(value for url, value in state["cache"].items() if "/search/" in url)
     (tmp_path / search["body_path"]).write_bytes(b"tampered")
     before = len(http.calls)
-    result = g.discover(tmp_path, now=NOW + timedelta(days=1), transport=http, queries=["crypto strategy"])
-    assert result["status"] == "FAILED" and "saved hash" in result["error"]
+    with pytest.raises(g.IntakeError, match="shared response bytes are missing or changed"):
+        g.discover(tmp_path, now=NOW + timedelta(days=1), transport=http, queries=["crypto strategy"])
     assert len(http.calls) == before
 
 
@@ -241,8 +241,9 @@ def test_repository_and_search_truncation_are_recorded(tmp_path):
 def test_default_limits_never_exceed_24_requests(tmp_path):
     http = FakeHTTP(names=[f"owner/repo{i}" for i in range(5)])
     result = g.discover(tmp_path, now=NOW, transport=http)
-    assert result["status"] == "COMPLETE" and result["requests_made"] == 24
-    assert len(result["new_candidates"]) == 4 and len(result["coverage"]["queries"]) == 4
+    assert result["status"] == "COMPLETE" and result["requests_made"] == 19
+    assert len(result["new_candidates"]) == 3 and len(result["coverage"]["queries"]) == 4
+    assert result["shared_source_allowance"]["request_remaining"] == 5
 
 
 @pytest.mark.parametrize("field,value", [("private", True), ("fork", True), ("archived", True), ("visibility", "private")])
@@ -351,7 +352,7 @@ def test_oversized_response_is_failed_with_bounded_partial_receipt(tmp_path):
 def test_aggregate_bytes_stop_requests_and_preserve_receipts(tmp_path, monkeypatch):
     monkeypatch.setattr(g, "MAX_RUN_BYTES", 10)
     result = discovery(tmp_path, FakeHTTP())
-    assert result["status"] == "PARTIAL_BYTE_CAP" and result["response_bytes_retained"] == 11
+    assert result["status"] == "PARTIAL_BYTE_CAP" and result["response_bytes_retained"] == 10
     assert len(result["receipts"]) == 1
 
 
@@ -460,3 +461,302 @@ def test_partial_source_is_resumed_before_new_discovery_without_new_identity():
     queue={"old/bot@"+"a"*40:{"repo":"old/bot","pushed_at":"2026-01-01","first_seen_at":"2026-01-01T00:00:00Z","intake_status":"PENDING_SOURCE_SNAPSHOTS"}}
     selected,_=g.select_candidates(found,queue,1)
     assert [name for name,_ in selected]==["old/bot"]
+
+
+def many_source_fixture(count=13, names=None):
+    http = FakeHTTP(names=names)
+    files = {}
+    for index in range(count):
+        path = f"method{index}.py"
+        files[path], entry = blob(path, b"foreign method is inert data\n")
+        http.tree["tree"].append(entry)
+    def contents(url, headers):
+        path = urlsplit(url).path
+        if "/contents/" in path:
+            return g.Response(200, {}, json.dumps(files[path.split("/contents/", 1)[1]]).encode())
+        return None
+    http.response_hook = contents
+    return http
+
+
+def make_legacy(root):
+    """Owned test fixtures only: encode completed schema1 historical receipts."""
+    state = saved_state(root)
+    state["schema"] = 1
+    del state["source_allowance"]
+    (root / "state.json").write_text(json.dumps(state))
+    for run in (root / "runs").iterdir():
+        for path in [run / "summary.json", *run.glob("http-*.json")]:
+            value = json.loads(path.read_bytes())
+            value["schema"] = 1
+            path.write_text(json.dumps(value))
+    return state
+
+
+def test_repeated_distinct_snapshots_share_24h_request_allowance(tmp_path):
+    http = many_source_fixture()
+    assert discovery(tmp_path, http)["requests_made"] == 6
+    results = [g.snapshot(tmp_path, repo="alice/crypto-strategy", commit=SHA, path=f"method{index}.py", now=NOW, transport=http) for index in range(13)]
+    assert [result["status"] for result in results[:9]] == ["COMPLETE"] * 9
+    assert all(result["status"] == "PARTIAL_SHARED_REQUEST_CAP" and result["requests_made"] == 0 for result in results[9:])
+    assert len(http.calls) == 24
+    assert g.status(tmp_path, now=NOW)["shared_source_allowance"]["used_requests"] == 24
+
+
+def test_discovery_and_snapshot_share_cap_and_preserve_guard(tmp_path):
+    http = many_source_fixture(names=[f"owner/repo{index}" for index in range(4)])
+    first = g.discover(tmp_path, now=NOW, transport=http, max_repos=4)
+    assert first["status"] == "COMPLETE" and first["requests_made"] == 24
+    original_guard = saved_state(tmp_path)["last_discovery_started_at"]
+    blocked = g.snapshot(tmp_path, repo="owner/repo0", commit=SHA, path="method0.py", now=NOW + timedelta(hours=1), transport=http)
+    assert blocked["status"] == "PARTIAL_SHARED_REQUEST_CAP" and blocked["requests_made"] == 0
+    assert len(http.calls) == 24 and saved_state(tmp_path)["last_discovery_started_at"] == original_guard
+    assert not blocked["coverage"]["complete"]
+
+
+def test_default_three_repos_leave_five_requests_for_selected_files(tmp_path):
+    http = many_source_fixture(names=[f"owner/repo{index}" for index in range(4)])
+    assert g.discover(tmp_path, now=NOW, transport=http)["requests_made"] == 19
+    results = [g.snapshot(tmp_path, repo="owner/repo0", commit=SHA, path=f"method{index}.py", now=NOW, transport=http) for index in range(3)]
+    assert [value["status"] for value in results] == ["COMPLETE", "COMPLETE", "PARTIAL_SHARED_REQUEST_CAP"]
+    assert [value["requests_made"] for value in results] == [2, 2, 1]
+    assert len(http.calls) == 24
+
+
+def test_shared_bytes_cannot_reset_between_snapshot_invocations(tmp_path, monkeypatch):
+    http = many_source_fixture()
+    discovery(tmp_path, http)
+    initial = g.status(tmp_path, now=NOW)["shared_source_allowance"]["charged_response_bytes"]
+    monkeypatch.setattr(g, "MAX_SOURCE_BYTES", initial + 1000)
+    results = [g.snapshot(tmp_path, repo="alice/crypto-strategy", commit=SHA, path=f"method{index}.py", now=NOW, transport=http) for index in range(4)]
+    assert results[0]["status"] == "COMPLETE"
+    assert any(value["status"] == "PARTIAL_SHARED_BYTE_CAP" for value in results)
+    usage = g.status(tmp_path, now=NOW)["shared_source_allowance"]
+    assert usage["charged_response_bytes"] <= g.MAX_SOURCE_BYTES and usage["byte_remaining"] <= 1
+    count = len(http.calls)
+    assert g.snapshot(tmp_path, repo="alice/crypto-strategy", commit=SHA, path="method12.py", now=NOW, transport=http)["status"] == "PARTIAL_SHARED_BYTE_CAP"
+    assert len(http.calls) == count
+
+
+def test_transport_failure_charges_attempt_and_retains_full_reservation(tmp_path, monkeypatch):
+    http = many_source_fixture()
+    discovery(tmp_path, http)
+    initial = g.status(tmp_path, now=NOW)["shared_source_allowance"]
+    monkeypatch.setattr(g, "MAX_SOURCE_BYTES", initial["charged_response_bytes"] + 400)
+    def failed(*args):
+        raise TimeoutError("injected bounded transport failure")
+    result = g.snapshot(tmp_path, repo="alice/crypto-strategy", commit=SHA, path="method0.py", now=NOW, transport=failed)
+    assert result["status"] == "FAILED" and result["requests_made"] == 1
+    usage = result["shared_source_allowance"]
+    assert usage["used_requests"] == initial["used_requests"] + 1
+    assert usage["charged_response_bytes"] == g.MAX_SOURCE_BYTES and usage["pending_or_failed_requests"] == 1
+    event = saved_state(tmp_path)["source_allowance"]["events"][-1]
+    assert event["outcome"] == "transport_failure" and event["settled_bytes"] is None
+    assert g.snapshot(tmp_path, repo="alice/crypto-strategy", commit=SHA, path="method1.py", now=NOW, transport=http)["status"] == "PARTIAL_SHARED_BYTE_CAP"
+
+
+def test_interruption_leaves_pending_reservation_charged_on_restart(tmp_path):
+    http = many_source_fixture()
+    discovery(tmp_path, http)
+    initial = g.status(tmp_path, now=NOW)["shared_source_allowance"]
+    def interrupted(*args):
+        raise KeyboardInterrupt("injected interruption before response")
+    with pytest.raises(KeyboardInterrupt):
+        g.snapshot(tmp_path, repo="alice/crypto-strategy", commit=SHA, path="method0.py", now=NOW, transport=interrupted)
+    usage = g.status(tmp_path, now=NOW)["shared_source_allowance"]
+    assert usage["used_requests"] == initial["used_requests"] + 1
+    assert usage["charged_response_bytes"] == initial["charged_response_bytes"] + g.MAX_RESPONSE_BYTES + 1
+    assert usage["pending_or_failed_requests"] == 1
+    event = saved_state(tmp_path)["source_allowance"]["events"][-1]
+    assert event["outcome"] == "pending" and event["receipt_path"] is None
+    retry = g.snapshot(tmp_path, repo="alice/crypto-strategy", commit=SHA, path="method0.py", now=NOW, transport=http)
+    assert retry["status"] == "COMPLETE" and retry["shared_source_allowance"]["used_requests"] == initial["used_requests"] + 3
+
+
+def test_shared_window_exact_boundary_and_fractional_time(tmp_path):
+    http = many_source_fixture(names=[f"owner/repo{index}" for index in range(4)])
+    started = NOW + timedelta(microseconds=765432)
+    assert g.discover(tmp_path, now=started, transport=http, max_repos=4)["requests_made"] == 24
+    before = g.snapshot(tmp_path, repo="owner/repo0", commit=SHA, path="method0.py", now=started + timedelta(hours=24) - timedelta(microseconds=1), transport=http)
+    assert before["status"] == "PARTIAL_SHARED_REQUEST_CAP" and len(http.calls) == 24
+    at = g.snapshot(tmp_path, repo="owner/repo0", commit=SHA, path="method0.py", now=started + timedelta(hours=24), transport=http)
+    assert at["status"] == "COMPLETE" and at["shared_source_allowance"]["used_requests"] == 2
+    allowance = saved_state(tmp_path)["source_allowance"]
+    assert allowance["total_attempted_requests"] == 26 and allowance["expired_attempted_requests"] == 24
+
+
+def test_discovery_budget_depletion_does_not_consume_new_guard(tmp_path, monkeypatch):
+    http = many_source_fixture()
+    discovery(tmp_path, http)
+    later = NOW + timedelta(days=1)
+    # Leave a pending later source request while the original discovery expires.
+    with g.state_lock(tmp_path) as root:
+        state = g.load_state(root, NOW)
+        state["source_allowance"]["events"].append({"id": "e" * 32, "requested_at": g.exact_timestamp(NOW + timedelta(hours=1)), "reserved_bytes": g.MAX_RESPONSE_BYTES + 1, "settled_bytes": None, "outcome": "pending", "receipt_path": None})
+        state["source_allowance"]["total_attempted_requests"] += 1
+        state["source_allowance"]["last_observed_at"] = g.exact_timestamp(NOW + timedelta(hours=1))
+        g._write_json(root / "state.json", state)
+    monkeypatch.setattr(g, "MAX_SOURCE_REQUESTS", 1)
+    count = len(http.calls)
+    original = saved_state(tmp_path)["last_discovery_started_at"]
+    result = g.discover(tmp_path, now=later, transport=http, queries=["crypto strategy"])
+    assert result["status"] == "PARTIAL_SHARED_REQUEST_CAP" and result["requests_made"] == 0
+    assert saved_state(tmp_path)["last_discovery_started_at"] == original and len(http.calls) == count
+
+
+def test_migrate_schema1_receipts_preserves_usage_without_http(tmp_path):
+    http = many_source_fixture()
+    discovery(tmp_path, http)
+    g.snapshot(tmp_path, repo="alice/crypto-strategy", commit=SHA, path="method0.py", now=NOW, transport=http)
+    expected = g.status(tmp_path, now=NOW)["shared_source_allowance"]
+    make_legacy(tmp_path)
+    count = len(http.calls)
+    result = g.status(tmp_path, now=NOW)
+    assert result["schema"] == 2 and result["requests_made"] == 0 and len(http.calls) == count
+    assert result["shared_source_allowance"]["used_requests"] == expected["used_requests"] == 8
+    assert result["shared_source_allowance"]["charged_response_bytes"] == expected["charged_response_bytes"]
+    assert result["migration"]["from_schema"] == 1 and result["migration"]["receipts_examined"] == 8
+
+
+def test_migrate_schema1_transport_failure_keeps_conservative_reservation(tmp_path):
+    def failure(*args):
+        raise TimeoutError("offline")
+    result = discovery(tmp_path, failure)
+    assert result["status"] == "FAILED"
+    make_legacy(tmp_path)
+    usage = g.status(tmp_path, now=NOW)["shared_source_allowance"]
+    assert usage["used_requests"] == 1 and usage["charged_response_bytes"] == g.MAX_RESPONSE_BYTES + 1 and usage["pending_or_failed_requests"] == 1
+
+
+@pytest.mark.parametrize("defect", ["missing_body", "changed_body", "missing_receipt", "running_summary", "wrong_count", "future_timestamp"])
+def test_schema1_missing_corrupt_ambiguous_accounting_blocks(tmp_path, defect):
+    http = many_source_fixture()
+    first = discovery(tmp_path, http)
+    make_legacy(tmp_path)
+    run = tmp_path / "runs" / first["run_id"]
+    if defect == "missing_body":
+        (run / "http-01.body").unlink()
+    elif defect == "changed_body":
+        path = run / "http-01.body"
+        content = path.read_bytes()
+        path.write_bytes(b"x" + content[1:])
+    elif defect == "missing_receipt":
+        (run / "http-01.json").unlink()
+    else:
+        path = run / "summary.json"
+        summary = json.loads(path.read_bytes())
+        if defect == "running_summary":
+            summary["status"] = "RUNNING"
+        elif defect == "wrong_count":
+            summary["requests_made"] -= 1
+        else:
+            summary["started_at"] = g.timestamp(NOW + timedelta(days=1))
+        path.write_text(json.dumps(summary))
+    count = len(http.calls)
+    with pytest.raises(g.IntakeError):
+        g.status(tmp_path, now=NOW)
+    assert saved_state(tmp_path)["schema"] == 1 and len(http.calls) == count
+
+
+def test_schema1_over_cap_history_migrates_as_depleted_not_zero(tmp_path, monkeypatch):
+    http = many_source_fixture(names=[f"owner/repo{index}" for index in range(4)])
+    monkeypatch.setattr(g, "MAX_SOURCE_REQUESTS", 26)
+    g.discover(tmp_path, now=NOW, transport=http, max_repos=4)
+    g.snapshot(tmp_path, repo="owner/repo0", commit=SHA, path="method0.py", now=NOW, transport=http)
+    make_legacy(tmp_path)
+    monkeypatch.setattr(g, "MAX_SOURCE_REQUESTS", 24)
+    usage = g.status(tmp_path, now=NOW)["shared_source_allowance"]
+    assert usage["used_requests"] == 26 and usage["request_remaining"] == 0
+    count = len(http.calls)
+    result = g.snapshot(tmp_path, repo="owner/repo0", commit=SHA, path="method1.py", now=NOW, transport=http)
+    assert result["status"] == "PARTIAL_SHARED_REQUEST_CAP" and len(http.calls) == count
+
+
+def test_schema1_migration_inventory_is_bounded(tmp_path, monkeypatch):
+    http = many_source_fixture()
+    discovery(tmp_path, http)
+    g.snapshot(tmp_path, repo="alice/crypto-strategy", commit=SHA, path="method0.py", now=NOW, transport=http)
+    make_legacy(tmp_path)
+    monkeypatch.setattr(g, "MIGRATION_MAX_RUNS", 1)
+    with pytest.raises(g.IntakeError, match="migration bound"):
+        g.status(tmp_path, now=NOW)
+    assert saved_state(tmp_path)["schema"] == 1
+
+
+def test_missing_state_cannot_zero_existing_receipt_history(tmp_path):
+    http = many_source_fixture()
+    discovery(tmp_path, http)
+    (tmp_path / "state.json").unlink()
+    with pytest.raises(g.IntakeError, match="refusing zero allowance"):
+        g.status(tmp_path, now=NOW)
+
+
+def test_schema2_deleted_events_cannot_zero_existing_counters(tmp_path):
+    discovery(tmp_path)
+    state = saved_state(tmp_path)
+    state["source_allowance"]["events"] = []
+    (tmp_path / "state.json").write_text(json.dumps(state))
+    with pytest.raises(g.IntakeError, match="counters disagree"):
+        g.status(tmp_path, now=NOW)
+
+
+def test_schema2_missing_allowance_does_not_use_legacy_zero_default(tmp_path):
+    discovery(tmp_path)
+    state = saved_state(tmp_path)
+    del state["source_allowance"]
+    (tmp_path / "state.json").write_text(json.dumps(state))
+    with pytest.raises(g.IntakeError, match="corrupt intake state"):
+        g.status(tmp_path, now=NOW)
+
+
+def test_backward_clock_cannot_reset_shared_snapshot_allowance(tmp_path):
+    http = many_source_fixture()
+    discovery(tmp_path, http)
+    count = len(http.calls)
+    with pytest.raises(g.IntakeError, match="clock moved backwards"):
+        g.snapshot(tmp_path, repo="alice/crypto-strategy", commit=SHA, path="method0.py", now=NOW - timedelta(seconds=1), transport=http)
+    assert len(http.calls) == count
+
+
+def test_status_cli_is_zero_http_inspection(tmp_path, capsys, monkeypatch):
+    def forbidden(*args):
+        raise AssertionError("status must never attempt HTTP")
+    monkeypatch.setattr(g, "public_get", forbidden)
+    assert g.main(["status", "--state-dir", str(tmp_path)]) == 0
+    result = json.loads(capsys.readouterr().out)
+    assert result["status"] == "SOURCE_ALLOWANCE_STATUS" and result["requests_made"] == 0
+
+
+def test_interruption_before_receipt_save_keeps_full_byte_reservation(tmp_path, monkeypatch):
+    http = many_source_fixture()
+    discovery(tmp_path, http)
+    original = g._write_json
+    def interrupted(path, value):
+        if path.name.startswith("http-"):
+            raise KeyboardInterrupt("injected failure before durable response receipt")
+        return original(path, value)
+    monkeypatch.setattr(g, "_write_json", interrupted)
+    with pytest.raises(KeyboardInterrupt):
+        g.snapshot(tmp_path, repo="alice/crypto-strategy", commit=SHA, path="method0.py", now=NOW, transport=http)
+    monkeypatch.setattr(g, "_write_json", original)
+    event = saved_state(tmp_path)["source_allowance"]["events"][-1]
+    assert event["outcome"] == "pending" and event["settled_bytes"] is None and event["reserved_bytes"] == g.MAX_RESPONSE_BYTES + 1
+    assert g.status(tmp_path, now=NOW)["shared_source_allowance"]["pending_or_failed_requests"] == 1
+
+
+def test_settled_bytes_cannot_be_zeroed_against_saved_response_receipt(tmp_path):
+    discovery(tmp_path)
+    state = saved_state(tmp_path)
+    event = state["source_allowance"]["events"][0]
+    assert event["settled_bytes"] > 0
+    event["settled_bytes"] = 0
+    (tmp_path / "state.json").write_text(json.dumps(state))
+    with pytest.raises(g.IntakeError, match="response byte accounting is corrupt"):
+        g.status(tmp_path, now=NOW)
+
+
+def test_lexically_excluded_state_path_is_rejected_before_dotdot_normalization(tmp_path):
+    path = tmp_path / "crypto-trading-system" / ".." / "apparently-safe"
+    with pytest.raises(g.IntakeError, match="cannot be used"):
+        g.status(path, now=NOW)
+    assert not (tmp_path / "apparently-safe").exists()

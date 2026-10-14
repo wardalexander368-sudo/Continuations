@@ -8,23 +8,26 @@ The process runs from `~/Projects/CodexCoinHunt/github-strategy-intake` until th
 flowchart LR
   A[Public GitHub search] --> B[Pin source and inspect method]
   B --> C[License, venue and prior-work review]
-  C --> D[Trusted adapter and cost-aware screen]
+  C --> G[Funding and execution-coverage preflight]
+  G --> D[Trusted adapter and cost-aware screen]
   D --> E[Fresh protocol and evidence]
   E --> F[Claude-reviewed project integration]
 ```
 
 ## Operate it
 
-Use the project's existing Python 3.12 environment or ordinary Python 3.10+; all three tools use the standard library. They do not install or execute downloaded strategies. Local state and foreign source snapshots belong outside the Git checkout:
+Use the project's existing Python 3.12 environment or ordinary Python 3.10+; all four tools use the standard library. They do not install or execute downloaded strategies. Local state and foreign source snapshots belong outside the Git checkout:
 
 ```sh
+python3 handoff/experiments/github_strategy_discovery.py status --state-dir "$HOME/Projects/CodexCoinHunt/github-strategy-intake-state"
 python3 handoff/experiments/github_strategy_discovery.py discover --state-dir "$HOME/Projects/CodexCoinHunt/github-strategy-intake-state"
 python3 handoff/experiments/github_strategy_discovery.py snapshot --state-dir "$HOME/Projects/CodexCoinHunt/github-strategy-intake-state" --repo OWNER/REPO --commit FULL_40_CHARACTER_SHA --path PATH_TO_METHOD
+python3 handoff/experiments/github_strategy_preflight.py --profile REVIEWED_GRID_PROFILE.json --cache EXISTING_PUBLIC_CACHE_DIR --sources-dir PINNED_SOURCE_DIRECTORY --output NEW_PREFLIGHT_DIR
 python3 handoff/experiments/github_strategy_intake.py screen --state-dir "$HOME/Projects/CodexCoinHunt/github-strategy-intake-state" --spec REVIEWED_SPEC.json --cache EXISTING_PUBLIC_CACHE_DIR --sources-dir PINNED_SOURCE_DIRECTORY
 python3 handoff/experiments/github_strategy_intake.py status --state-dir "$HOME/Projects/CodexCoinHunt/github-strategy-intake-state"
 ```
 
-`discover` accepts up to four `--query` overrides, up to ten results per page, four repository snapshots, 24 requests, 2 MiB per response, 512 KiB per source file and 16 MiB of responses per run. It makes unauthenticated GETs only to `api.github.com`, rejects redirects and inherited auth/proxies, and stops on limits. The fixed request budget includes repository metadata, full default-branch commit, Git tree, license and README. Partial source captures can resume on a later permitted run. Recent MIT/Apache backtests, broader funding methods and evergreen Bitcoin rebalancing form the default search lanes. Unseen, changed and partial candidates precede unchanged leaders, so the backlog can advance.
+`discover` accepts up to four `--query` overrides, up to ten results per page, three repository snapshots by default (four maximum), 24 requests per run, 2 MiB per response and 512 KiB per source file. Discovery and reviewer-selected `snapshot` calls also share a persisted rolling 24-hour allowance of 24 attempted HTTP requests and 16 MiB response budget. Failed attempts count; interrupted byte reservations remain conservatively charged. The usual four-query/three-repository batch leaves room for actual method files within the same allowance. Depleted allowance does not reset the discovery guard. Schema-1 state migrates only from bounded, validated saved HTTP receipts; missing or ambiguous accounting blocks acquisition. It makes unauthenticated GETs only to `api.github.com`, rejects redirects and inherited auth/proxies, and stops on limits. The fixed request budget includes repository metadata, full default-branch commit, Git tree, license and README. Partial source captures can resume on a later permitted run. Recent MIT/Apache backtests, broader funding methods and evergreen Bitcoin rebalancing form the default search lanes. Unseen, changed and partial candidates precede unchanged leaders, so the backlog can advance.
 
 Repo revisions are keyed by full name and commit. Sources require matching Git blob SHA and ordinary-file tree mode; a Contents API response that dereferences a symlink is insufficient. ETag reuse requires an intact saved body. HTTP status, timing, safe headers, byte counts and hashes survive errors. `COMPLETE` means the bounded run completed; its coverage still says incomplete. Rate limits, truncation, missing sources and corruption never become a successful empty search.
 
@@ -41,6 +44,8 @@ Codex performs the review; Alex does not need to approve each ordinary research 
 5. Write the fixed spec before screening: origin, adaptation differences, source hashes, reviewer, parameters, cash, costs, window, controls and evidence class. Copy `experiments/github-intake/first-screen-spec.json` for its schema only; its true review flags attest to that one inspected source and cannot be inherited by another project.
 
 ## Testing and adoption
+
+For a reviewed passive grid, run `github_strategy_preflight.py` before writing a return adapter. It verifies source/license/input hashes and continuous selected prices, then checks source minimum order units against a declared starting allocation and inventories quotes, trades, order lifecycle and paid-fee artifacts. It performs no return or fill simulation and does not consume a strategy-screen attempt. Funding bounds are pre-fee/pre-correction and use closes solely as static references. Missing/uninterpreted data and unfunded minimum orders yield `NOT_SCREENABLE`; even four kinds of hash-present files require semantic/protocol review and never verify real fills. Current product minimums/fees and actual upstream configuration remain unknown. Nonzero cold/reserve accounting is unsupported rather than guessed. Example: `experiments/github-intake/pytrader-source-default-preflight.json`.
 
 The first trusted adapter is constant-weight, long-only portfolio rebalancing. Asset weights sum to at most one; the rest is cash. Decision direction and share quantities are fixed at hour t, executed at t+1's close, with cash-budget caps, sells before buys, fees once per traded notional, and charged terminal liquidation. Missing hourly prices stop the screen; they are not synthesized. Matched controls use the same initial capital/allocation and initial/terminal costs. Buy-and-hold's later exposure drifts, so these are not identical-risk paths.
 
@@ -61,3 +66,7 @@ The initial live search used four explicit queries: 30 distinct eligible reposit
 An independently inspected evergreen seed, [caktux/pytrader](https://github.com/caktux/pytrader/tree/b45b216dab3db78d6028d85e9a6f80419c22cea0), supplied the MIT-declared 50/50 cash/Bitcoin allocation formula. Its full bot is an old limit-order grid; the first screen is explicitly a **daily market-rebalance adaptation**, not full-bot or fill replication. The complete 2024 calendar window was selected from cache coverage before strategy outcomes; 2025 had missing hourly prices. Previously accessed historical prices remain explored data.
 
 At $1,000 capital and 39 bp modeled cost per side, the adaptation produced $516.27 model net versus $590.44 for its starting-allocation buy-and-hold control: **−$74.18 excess**. At 78 bp stress, excess was **−$83.46**. Drawdown was 16.64% versus 20.54% in the base scenario. Lower drawdown is a descriptive tradeoff, not demonstrated risk-adjusted alpha. The screen is `FAIL_SCREEN`; no profitable strategy was validated. Attribution, hashes, protocol and review are in `reviews/github-strategy-intake-2026-10-14.md` and the local state receipts.
+
+## Deeper source audit
+
+The old source clamps each order to 0.1 base units. In the declared BTC/USD interpretation, a balanced $1,000 account cannot meet that source minimum: the 2024 starting close gives a $8,490.53 pre-fee inventory funding bound. The static preflight is `NOT_SCREENABLE`; close/volume inputs cannot establish passive fills. This changes the next step toward explicit product/ordered-execution coverage, not another close-only grid screen. See `reviews/github-source-fidelity-2026-10-14.md`. The four saved unlicensed README revisions have first-pass triage cards in `experiments/github-intake/candidate-triage-2026-10-14.json`; disclosed look-ahead and missing account/cost receipts prevent treating their claims as validated edges.
