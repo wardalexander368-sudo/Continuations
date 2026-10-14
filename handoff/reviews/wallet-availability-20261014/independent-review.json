@@ -1,0 +1,51 @@
+{
+  "reviewer": "cde_primary_followup_refute",
+  "read_only": true,
+  "status": "NO_OUTSTANDING_REPRODUCED_DEFECT",
+  "method": "Independent integer-microsecond comparisons and separate grouping; raw saved-RPC receipt search; pinned ledger identity join.",
+  "checks": {
+    "source_hash_entries": "13/13",
+    "output_hashes": "9/9",
+    "ledger_rows": 1511,
+    "exact_mint_paper_rows": 77,
+    "signal_keys": 39,
+    "ledger_cutoff_mismatches": 0,
+    "independent_earliest_receipt_matches": "47/47",
+    "selected_buyer_prior_receipt_counts": [
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    "retrospective_returners": 4,
+    "signal_zero_rows": 60,
+    "signal_zero_keys": 25,
+    "entry_zero_rows": 57,
+    "any_signal_keys": 14,
+    "any_entry_keys": 15
+  },
+  "corrected_during_review": "parse_epoch(10**400) raised OverflowError before its guard; math.isfinite moved inside handler, repro now returns None; pinned counts unchanged.",
+  "analyzer_sha256": "4ce869c4a55e4bbd06564465442fedd813e58507059cde98ff1bb72c7353a69b",
+  "not_checked": [
+    "Re-decoding/attribution beyond pinned exports",
+    "Complete histories or recorder archive",
+    "Private accounts",
+    "Prediction/profitability/independence/eligibility",
+    "Browser rendering or full suites"
+  ],
+  "format_only_followup": {
+    "reviewer": "cde_primary_followup_refute",
+    "source_hashes": "13/13",
+    "output_hashes": "9/9",
+    "unchanged_JSON_hashes": "5/5",
+    "CSV_LF_only": true,
+    "CSV_JSON_row_counts": [
+      77,
+      47,
+      5,
+      39
+    ],
+    "timing_and_guards_repeated": false
+  }
+}

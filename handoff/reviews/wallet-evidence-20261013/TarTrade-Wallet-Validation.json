@@ -1,0 +1,73 @@
+{
+  "checks": {
+    "all_bounded_dashboard_wallets_exist_in_complete_csv": true,
+    "all_detail_export_validation_checks_passed": true,
+    "all_primary_aggregate_validation_checks_passed": true,
+    "all_seven_verified_wallet_profiles_present": true,
+    "all_verified_wallet_archive_link_checks_passed": true,
+    "complete_csv_amount_totals_match_valid_wallet_aggregate": true,
+    "complete_csv_has_one_row_per_activity_wallet": true,
+    "complete_csv_integer_totals_match_valid_wallet_aggregate": true,
+    "contemporaneous_paper_coverage_is_explicitly_zero": true,
+    "no_artifact_consistency_violations": true,
+    "paper_timing_gap_is_positive": true,
+    "relationship_rows_match_export_receipt": true,
+    "verified_cohort_snapshot_matches_link_receipt": true
+  },
+  "complete_valid_wallet_csv_totals": {
+    "buy_events": 3639820,
+    "curve_events": 3244020,
+    "heuristic_events": 6871577,
+    "raw_observations": 8549875,
+    "recorded_buy_paid_sol": "377748.6518711020004577181427",
+    "recorded_buy_sol": "797701.1849497760006723021337",
+    "recorded_sell_paid_sol": "434855.2731782300003696351194",
+    "recorded_sell_sol": "851275.5695744560002219248224",
+    "sell_events": 3231757,
+    "swap_events": 3627557
+  },
+  "created_at_utc": "2026-10-13T05:52:42.269000+00:00",
+  "files": [
+    {
+      "bytes": 75244283,
+      "filename": "TarTrade-Wallet-Summary.csv",
+      "sha256": "69633abf7a4003e18564aec4bc9de637b24db9cb4aed62959a9f9c66ab36cc4e"
+    },
+    {
+      "bytes": 911588,
+      "filename": "TarTrade-Wallet-Paper-Mint-Relations.csv",
+      "sha256": "8d659ea806f57d7e5ce5c734c739ed496bca3035b6a40ab101662ed8e9289abd"
+    },
+    {
+      "bytes": 5470953,
+      "filename": "TarTrade-Wallet-Creator-Mint-Relations.csv",
+      "sha256": "90de6266307d686e59148a197d7fe2db3cdb6884e20209d1041bfa77bc7b8825"
+    },
+    {
+      "bytes": 575086,
+      "filename": "TarTrade-Wallet-Dashboard-Data.json",
+      "sha256": "c10717be24a94fa51161e12991f51a61075a8f3d322e31bfab76beae71f2cdfe"
+    },
+    {
+      "bytes": 76373,
+      "filename": "TarTrade-Wallet-Provenance.json",
+      "sha256": "ca927ab851cd617cf5f7d93ba4d663b03c15941f3c66507630d336b7118598c0"
+    },
+    {
+      "bytes": 1251,
+      "filename": "TarTrade-Wallet-Details-Receipt.json",
+      "sha256": "c24efe783c306059537b873061d6c3d80a976a89c70fcad1dcfbe810009dc35b"
+    },
+    {
+      "bytes": 4803,
+      "filename": "TarTrade-Verified-Wallet-Archive-Links.csv",
+      "sha256": "f3edd9fa4101c493e1d31b6092ed00fb054a4af1c2f17966e9f50e16e11cdf81"
+    }
+  ],
+  "limitations": [
+    "Checks establish artifact consistency and saved-sample completeness, not transaction-level deduplication, wallet identity, contemporaneous execution coverage, current balances, or profitability."
+  ],
+  "relation_csv_rows": 3931,
+  "violations": {},
+  "wallet_csv_rows": 339880
+}

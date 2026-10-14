@@ -1,0 +1,182 @@
+{
+  "generated_at_utc": "2026-10-14T06:11:14.825154+00:00",
+  "independence_or_profitability_tests": 0,
+  "limits": [
+    "Body receipt availability is an upper bound on potentially available inputs.",
+    "The computation time of the reconstructed owner/signer/buyer features is unknown; receipt does not prove a strategy had those features.",
+    "The 77 paper rows share 39 signal keys; correlated variants are not independent observations or real executions.",
+    "Saved histories are incomplete and selected after observation. Zero retained records does not prove no prior activity.",
+    "This audit tests neither independence, PnL, prediction, strategy eligibility nor profitability.",
+    "The seven-wallet RPC history is separate from the recorder archive; zero contemporaneous archive coverage remains unchanged."
+  ],
+  "network_requests": 0,
+  "output_files": [
+    {
+      "bytes": 3618,
+      "file": "findings.json",
+      "sha256": "6001e62e325bbc3a5d9a539d5e2b1288acf6efe148ad573aea49fb80bc06a765"
+    },
+    {
+      "bytes": 22560,
+      "file": "paper-row-availability.csv",
+      "sha256": "91212b25d2fbbb09719584c361e955ee5426e7055783b0816d6b8ad2bee8808f"
+    },
+    {
+      "bytes": 95869,
+      "file": "paper-row-availability.json",
+      "sha256": "05c42ef907a4e8e1df94575060cf15bff7933a597d3e176e6452239350906e9c"
+    },
+    {
+      "bytes": 11424,
+      "file": "saved-event-receipt-checks.csv",
+      "sha256": "8ee9ef3f4f7570c298663b8064b5ed566544d6842c7eceba333e8562bc17700a"
+    },
+    {
+      "bytes": 22639,
+      "file": "saved-event-receipt-checks.json",
+      "sha256": "064925422942050d959be2f9e3779aa843f1be8ea5f82443bb75c007391cd8bb"
+    },
+    {
+      "bytes": 1517,
+      "file": "selected-buy-prior-receipts.csv",
+      "sha256": "f67ad652a2646d94bfb322febf649cf4d952dfb702cda4a11ed77c313d4d57df"
+    },
+    {
+      "bytes": 3063,
+      "file": "selected-buy-prior-receipts.json",
+      "sha256": "c268e6335bcfd5b7e3763e0a2523f730f9b43acf9033439ca473225ce6a5ecff"
+    },
+    {
+      "bytes": 6905,
+      "file": "signal-key-availability.csv",
+      "sha256": "2398818938732b1e54d592225e86dcf8235d3d3fac9588c1c0242090902b18b7"
+    },
+    {
+      "bytes": 38194,
+      "file": "signal-key-availability.json",
+      "sha256": "f31e2fa160f9ed267fe417e48e323d2f19d29ebb0d93a3677985aca92380ad7b"
+    }
+  ],
+  "repository_writes": 0,
+  "source_files": [
+    {
+      "bytes": 7274,
+      "commit": "69ef6d63fc8008488861b157e15b49042c3849d6",
+      "expected_sha256": null,
+      "file": "handoff/reviews/wallet-evidence-20261013/Wallet-Artifact-Manifest.json",
+      "hash_matches": null,
+      "origin": "pinned_git_blob",
+      "sha256": "ec64d739ec81ce541b0e3f92b733f3a5be4f170f77e29cb1fb0abeda005771a1"
+    },
+    {
+      "bytes": 321131,
+      "commit": null,
+      "expected_sha256": "2c2120e79c1a7cd72c4bf5186762368b125c9208861e53be28edb870b51768f9",
+      "file": "Verified-Wallet-Saved-Activity.json",
+      "hash_matches": true,
+      "origin": "existing_hash_pinned_export",
+      "sha256": "2c2120e79c1a7cd72c4bf5186762368b125c9208861e53be28edb870b51768f9"
+    },
+    {
+      "bytes": 731731,
+      "commit": null,
+      "expected_sha256": "a121fcdeb1d501da192fd6c57cb935fa96f20a603a2be42402b350bae2501a68",
+      "file": "Verified-Wallet-Cohort.json",
+      "hash_matches": true,
+      "origin": "existing_hash_pinned_export",
+      "sha256": "a121fcdeb1d501da192fd6c57cb935fa96f20a603a2be42402b350bae2501a68"
+    },
+    {
+      "bytes": 7323,
+      "commit": null,
+      "expected_sha256": "aa530812ac2c99c354b3dd35b84f990c58ea7f2ebcb036650edbdeb88e4bcce2",
+      "file": "Verified-Wallet-Coverage.json",
+      "hash_matches": true,
+      "origin": "existing_hash_pinned_export",
+      "sha256": "aa530812ac2c99c354b3dd35b84f990c58ea7f2ebcb036650edbdeb88e4bcce2"
+    },
+    {
+      "bytes": 377587,
+      "commit": "abe8aca5748d2e351bbb7eb5cdefb061488f4633",
+      "expected_sha256": "5eb3d95e22a64c9cfb39c87cd5e455d5f312cd8e577bdf0e310fb7d6aa2b2883",
+      "file": "codexcoinhunt/research/data/buyer_probe_20261012/rpc.jsonl",
+      "hash_matches": true,
+      "origin": "pinned_git_blob",
+      "sha256": "5eb3d95e22a64c9cfb39c87cd5e455d5f312cd8e577bdf0e310fb7d6aa2b2883"
+    },
+    {
+      "bytes": 122762,
+      "commit": "abe8aca5748d2e351bbb7eb5cdefb061488f4633",
+      "expected_sha256": "81bf6718c6b016653992e7b4e36d1203dead1acc624ed0dabcf3c02e504b29d7",
+      "file": "codexcoinhunt/research/data/buyer_probe_20261012/wallet_rpc.jsonl",
+      "hash_matches": true,
+      "origin": "pinned_git_blob",
+      "sha256": "81bf6718c6b016653992e7b4e36d1203dead1acc624ed0dabcf3c02e504b29d7"
+    },
+    {
+      "bytes": 1157335,
+      "commit": "abe8aca5748d2e351bbb7eb5cdefb061488f4633",
+      "expected_sha256": "269b41340ca9a8118b31d50bdc4535159290a67147a44ee648cb978a64f4fe38",
+      "file": "codexcoinhunt/research/data/buyer_history_deep_20261012/rpc.jsonl",
+      "hash_matches": true,
+      "origin": "pinned_git_blob",
+      "sha256": "269b41340ca9a8118b31d50bdc4535159290a67147a44ee648cb978a64f4fe38"
+    },
+    {
+      "bytes": 982111,
+      "commit": "abe8aca5748d2e351bbb7eb5cdefb061488f4633",
+      "expected_sha256": "2bd1e7735e2f54571dd527951a0ea959c2e31d7d0fd90b2c677e3d336d8ff34b",
+      "file": "codexcoinhunt/research/data/buyer_trade_history_20261012/rpc.jsonl",
+      "hash_matches": true,
+      "origin": "pinned_git_blob",
+      "sha256": "2bd1e7735e2f54571dd527951a0ea959c2e31d7d0fd90b2c677e3d336d8ff34b"
+    },
+    {
+      "bytes": 1265136,
+      "commit": "abe8aca5748d2e351bbb7eb5cdefb061488f4633",
+      "expected_sha256": "46027aa57136704b7f0484ce7ed837a14a002f1c26c4c338d332a88b105447d2",
+      "file": "codexcoinhunt/research/data/buyer_funding_20261012/rpc.jsonl",
+      "hash_matches": true,
+      "origin": "pinned_git_blob",
+      "sha256": "46027aa57136704b7f0484ce7ed837a14a002f1c26c4c338d332a88b105447d2"
+    },
+    {
+      "bytes": 19233,
+      "commit": "abe8aca5748d2e351bbb7eb5cdefb061488f4633",
+      "expected_sha256": "ac91fa0389af1b2d71cbe351ae496d4410521162858f4a4517d10cf5ca51f04a",
+      "file": "codexcoinhunt/research/data/quote_provenance_20261012/rpc.jsonl",
+      "hash_matches": true,
+      "origin": "pinned_git_blob",
+      "sha256": "ac91fa0389af1b2d71cbe351ae496d4410521162858f4a4517d10cf5ca51f04a"
+    },
+    {
+      "bytes": 201142,
+      "commit": "abe8aca5748d2e351bbb7eb5cdefb061488f4633",
+      "expected_sha256": "55b5c46938873bf7138630a83119f65a7ec786b0083a5fe09316007b098b89b7",
+      "file": "codexcoinhunt/research/data/quote_provenance_20261012/participation_rpc.jsonl",
+      "hash_matches": true,
+      "origin": "pinned_git_blob",
+      "sha256": "55b5c46938873bf7138630a83119f65a7ec786b0083a5fe09316007b098b89b7"
+    },
+    {
+      "bytes": 1512932,
+      "commit": "abe8aca5748d2e351bbb7eb5cdefb061488f4633",
+      "expected_sha256": "12518620583d753bdaa86408d246378cae1144269e239e6d00ebf85bb2bce4e7",
+      "file": "autotrade/trades.jsonl",
+      "hash_matches": true,
+      "origin": "pinned_git_blob",
+      "sha256": "12518620583d753bdaa86408d246378cae1144269e239e6d00ebf85bb2bce4e7"
+    },
+    {
+      "bytes": 22882,
+      "commit": null,
+      "expected_sha256": null,
+      "file": "analyzer.py",
+      "hash_matches": null,
+      "origin": "analyzer",
+      "sha256": "4ce869c4a55e4bbd06564465442fedd813e58507059cde98ff1bb72c7353a69b"
+    }
+  ],
+  "source_input_commit": "abe8aca5748d2e351bbb7eb5cdefb061488f4633",
+  "source_review_commit": "69ef6d63fc8008488861b157e15b49042c3849d6"
+}

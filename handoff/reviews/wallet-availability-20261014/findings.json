@@ -1,0 +1,65 @@
+{
+  "analysis_type": "descriptive_receipt_time_audit",
+  "counts": {
+    "exact_target_saved_buys": 20,
+    "pinned_ledger_rows": 1511,
+    "retrospective_returners": 4,
+    "row_entry_known_buy_count_distribution": {
+      "0": 57,
+      "10": 1,
+      "20": 14,
+      "7": 5
+    },
+    "row_signal_known_buy_count_distribution": {
+      "0": 60,
+      "14": 1,
+      "20": 13,
+      "7": 3
+    },
+    "saved_unique_events": 47,
+    "selected_buy_count": 5,
+    "selected_buys_with_zero_prior_body_receipts_by_own_event": 5,
+    "selected_claudia_paper_rows": 77,
+    "signal_key_known_buy_count_distribution": {
+      "0": 25,
+      "14": 1,
+      "20": 10,
+      "7": 3
+    },
+    "signal_keys": 39,
+    "signal_keys_with_any_body_received_by_at_least_one_entry": 15,
+    "signal_keys_with_any_body_received_by_signal": 14
+  },
+  "issues": [],
+  "limitations": [
+    "Body receipt availability is an upper bound on potentially available inputs.",
+    "The computation time of the reconstructed owner/signer/buyer features is unknown; receipt does not prove a strategy had those features.",
+    "The 77 paper rows share 39 signal keys; correlated variants are not independent observations or real executions.",
+    "Saved histories are incomplete and selected after observation. Zero retained records does not prove no prior activity.",
+    "This audit tests neither independence, PnL, prediction, strategy eligibility nor profitability.",
+    "The seven-wallet RPC history is separate from the recorder archive; zero contemporaneous archive coverage remains unchanged."
+  ],
+  "match_criteria": {
+    "availability": "earliest valid received_at_utc across successful finalized bodies in seven pinned retained RPC files; must equal normalized available_at_utc; missing or invalid candidate times remain unknown",
+    "dedup_key": "event_id = signature:event:complete-event-bytes-sha256:occurrence; identical IDs counted once; conflicting IDs fail",
+    "entry_cutoff": "UTC timestamp of trade.entry_at; inclusive event_time <= cutoff AND receipt_time <= cutoff",
+    "paper_rows": "trade.meta.mint equals target exactly; no symbol or pool-valued asset substitution",
+    "prior_for_selected_buy": "same wallet, event_time strictly before selected buy; receipt_time <= selected buy event time",
+    "signal_cutoff": "UTC timestamp of trade.meta.signal_t; inclusive event_time <= cutoff AND receipt_time <= cutoff",
+    "target_buy_event": "normalized mint equals target exactly, side equals buy, transaction-user signer proof true, and matching saved finalized getTransaction body with explicit meta.err null and primary signature equal requested signature",
+    "timestamp_policy": "ISO timestamps must be timezone-aware; epoch timestamps must be finite numeric non-booleans; invalid, missing, inconsistent timestamps stay null/unknown, never converted to zero"
+  },
+  "question": "Which pinned Claudia paper decisions had target-buy transaction bodies received before signal or entry rather than merely earlier event times?",
+  "result": "Timing evidence can expose look-ahead and coverage limits; it cannot validate a buyer-conditioned strategy or establish eligibility.",
+  "source_input_commit": "abe8aca5748d2e351bbb7eb5cdefb061488f4633",
+  "source_review_commit": "69ef6d63fc8008488861b157e15b49042c3849d6",
+  "target_mint": "2j5SaS7xy776qCBpyPQbZjyQSAtKiFgrwjfErthnW2ZM",
+  "unknowns": {
+    "complete_wallet_history": "unknown",
+    "event_time_issues": 0,
+    "feature_computation_time": "unknown",
+    "paper_entry_cutoff_issues": 0,
+    "paper_signal_cutoff_issues": 0,
+    "receipt_time_issues": 0
+  }
+}
