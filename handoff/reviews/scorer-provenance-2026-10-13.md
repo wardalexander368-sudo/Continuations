@@ -1,0 +1,18 @@
+# Final-scoring execution provenance — 2026-10-13
+
+The automatic scoring wrapper previously kept a short execution commit and primary output but lacked a durable source/input receipt; informative secondary failures could be lost. This branch records attempts before execution and retains full source, frozen-pin, invocation, dependency, input, stdout/stderr and failure evidence outside preregistration.
+
+A reviewed `handoff/scoring/SOURCE_LOCK.json` baseline pins named scorers/dependencies/wrapper and checks existing frozen pins before and after a run. Its source identity is prospective from this change; historical registration-time executable identity remains unknown. Drift is never silently re-pinned. Nonzero primary or secondary, timeout, launch failure, reported exhausted acquisition or unavailable/empty declared local input hashing blocks official RESULT creation and preserves retry eligibility. Deliberately undeclared in-memory inputs remain explicitly acquisition-unknown. Input caches are hashed before deletion; a hash does not establish complete coverage or bytes consumed during concurrent collector changes.
+
+Two tiny CDE execution repairs preserve the original `--final` flag before argv reuse and propagate exhausted non-200/404 acquisition errors. Explicit 404 stays unavailable/coverage unknown. Registered constants, coins, requests, windows, bootstrap, costs and verdict calculations are unchanged. Commands, grace periods, original scoring order and verbatim score output remain intact. A correctly executed registered FAIL is still a valid recorded verdict.
+
+Validation receipts are in the PR/handoff. Tests use temporary fixtures and fake subprocesses, including secondary failure, timeout, source drift, changed lock/frozen pins, symlink/oversize inputs and scorer exit-zero with empty declared cache. No registered scorer was advanced to a future date or executed against live evidence. At the initial validation head, no workflow, schedule, registration byte or paper book was edited. HTTP response bodies fetched into memory remain unknown provenance.
+
+## Final validation receipt
+
+Full repository suite: **478 passed, 1 skipped, 9 subtests passed** in 92.42s. Command: `python -m pytest -q -p no:cacheprovider` in an isolated Python3.12.6 virtual environment with the same47 package versions as the existing environment. LightGBM was imported before the suite to remove cold-import timing from the demo test. The original environment is unchanged. `git diff --check`, forbidden-path/public-diff scan and frozen/numeric-constant checks passed.
+All8 declared scoring registrations passed prospective source/frozen-pin verification; helper SHA-256 `40e34be0051250846ba6de59b940455298a2f52b0129adb2d796e3130635020f`, source-lock SHA-256 `f4e27d0ca85e6b1713c336c565a172a549db6eae46c4fef14d3d98dcf98b3895`.
+
+## CI checkout follow-up — 2026-10-14
+
+The pushed head subsequently failed GitHub CI because its sparse checkout omitted the source-lock directory. The narrow workflow correction and reproduced before/after evidence are recorded in [scorer-ci-checkout-2026-10-14.md](scorer-ci-checkout-2026-10-14.md). The local result above does not override that failed CI run.

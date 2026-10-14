@@ -21,6 +21,7 @@ COINS = ["BTC", "ETH", "SOL", "XRP", "ADA", "AVAX", "LINK", "LTC", "DOT", "DOGE"
 cache = Path(sys.argv[1]); cache.mkdir(parents=True, exist_ok=True)
 a = sys.argv[sys.argv.index("--from") + 1] if "--from" in sys.argv else "2026-10-12"
 b = sys.argv[sys.argv.index("--to") + 1] if "--to" in sys.argv else "2027-10-11"
+final = "--final" in sys.argv  # retain the CLI flag before xs_coinbase argument rewriting
 if "--no-fetch" not in sys.argv:
     import httpx
     c = httpx.Client(timeout=30)
@@ -37,6 +38,11 @@ if "--no-fetch" not in sys.argv:
             if r.status_code == 200:
                 for ts, lo, hi, op, cl, v in r.json():
                     rows[ts] = (cl, v * cl)
+            elif r.status_code == 404:
+                print(f"{k}: unavailable Coinbase candles {t}..{t1} (HTTP 404; coverage unknown)")
+            else:
+                r.raise_for_status()  # exhausted retries must not turn into an apparently valid cache
+                raise RuntimeError(f"{k}: exhausted Coinbase candle retries {t}..{t1} (unexpected HTTP {r.status_code})")
             t = t1 + 86400
             time.sleep(0.2)
         (cache / f"{k}.csv").write_text("".join(f"{dt.datetime.fromtimestamp(ts, dt.timezone.utc).date()},{rows[ts][0]},{rows[ts][1]}\n" for ts in sorted(rows)))
@@ -52,6 +58,6 @@ rng = np.random.default_rng(1); B = 4
 bs = [x[np.concatenate([np.arange(s, s + B) % len(x) for s in rng.integers(0, len(x), len(x) // B + 1)])[: len(x)]].mean() for _ in range(10000)]
 lo, hi = np.percentile(bs, [5, 95])
 line = f"{a}..{b}: {len(x)} weeks, mean {x.mean() * 100:+.2f}%/week after 20 bp/side, 90% CI [{lo * 100:+.2f}, {hi * 100:+.2f}]"
-if "--final" in sys.argv:
+if final:
     line += "  " + ("SUCCESS" if x.mean() > 0 and lo > 0 else "FAIL")
 print(line)

@@ -1,0 +1,357 @@
+{
+  "baseline_commit": "a6da0ace5bf17cb53bf9cf65470e868070299d87",
+  "captured_at": "2026-10-14T21:14:37.190373+00:00",
+  "engineering_revision": {
+    "at": "2026-10-14T21:14:37.190373+00:00",
+    "previous_lock_file": "SOURCE_LOCK-before-completion-repair-2026-10-14.json",
+    "previous_lock_sha256": "f4e27d0ca85e6b1713c336c565a172a549db6eae46c4fef14d3d98dcf98b3895",
+    "registered_source_changes": 0,
+    "revised_sources": [
+      "handoff/experiments/final_scores.py",
+      "handoff/experiments/scoring_receipts.py"
+    ]
+  },
+  "execution_sources": [
+    "handoff/experiments/final_scores.py",
+    "handoff/experiments/scoring_receipts.py"
+  ],
+  "frozen_manifest_sha256": "048e9f3268769914b17d85017143eb076d70176b86d86ad882860a4352afb5a3",
+  "historical_registered_source_identity": {
+    "reason": "Prospective capture cannot establish registration-time source identity.",
+    "status": "unknown"
+  },
+  "identity_scope": "prospective-only",
+  "prospective_execution_repairs": [
+    "2026-10-13: preserve CDE --final before sys.argv rewrite; raise on exhausted non-200/404 HTTP retries; label 404 coverage unknown. Formula/universe/window/bootstrap/cost unchanged.",
+    "2026-10-14: prospective engineering wrapper/helper completion and atomic publication repair; 12 registered scorer/dependency identities and frozen registrations unchanged. No metrics, thresholds, schedules or registered formulas changed."
+  ],
+  "registrations": {
+    "cde-vol-momentum": {
+      "acquisition_provenance": {
+        "reason": "Run-owned Coinbase daily candle cache hashed before deletion; unavailable-product/HTTP 404 omissions and no HTTP response/page completeness manifest leave coverage unknown; exhausted unexpected HTTP statuses raise.",
+        "status": "unknown"
+      },
+      "commands": [
+        [
+          "handoff/experiments/edge-hunt/perps/cde_forward.py",
+          "{cache}",
+          "--final"
+        ]
+      ],
+      "inputs": [
+        {
+          "kind": "directory",
+          "path": ".",
+          "scope": "cache",
+          "suffix": ".csv"
+        }
+      ],
+      "packages": [
+        "numpy",
+        "httpx",
+        "httpcore",
+        "h11",
+        "anyio",
+        "certifi",
+        "idna",
+        "sniffio",
+        "typing_extensions"
+      ],
+      "sources": [
+        "handoff/experiments/edge-hunt/perps/cde_forward.py",
+        "handoff/experiments/edge-hunt/perps/xs_coinbase.py"
+      ],
+      "window": {
+        "end": "2027-10-11",
+        "selection": "existing scorer default window; boundaries unchanged",
+        "source": "handoff/preregistration/cde-vol-momentum/SPEC.md",
+        "start": "2026-10-12"
+      }
+    },
+    "hlp-hold": {
+      "acquisition_provenance": {
+        "reason": "Hyperliquid vaultDetails history fetched into memory; no response manifest",
+        "status": "unknown"
+      },
+      "commands": [
+        [
+          "handoff/experiments/edge-hunt/vaults/hlp_forward.py",
+          "--final"
+        ]
+      ],
+      "inputs": [],
+      "packages": [
+        "numpy",
+        "httpx",
+        "httpcore",
+        "h11",
+        "anyio",
+        "certifi",
+        "idna",
+        "sniffio",
+        "typing_extensions"
+      ],
+      "sources": [
+        "handoff/experiments/edge-hunt/vaults/hlp_forward.py"
+      ],
+      "window": {
+        "end": "2027-04-10",
+        "selection": "existing scorer default window; boundaries unchanged",
+        "source": "handoff/preregistration/hlp-hold/SPEC.md",
+        "start": "2026-10-12"
+      }
+    },
+    "jlp-hedged": {
+      "acquisition_provenance": {
+        "reason": "Local snapshot bytes hashed; Hyperliquid hourly candles/funding and Kamino benchmark fetched into memory; historical snapshot acquisition provenance unavailable",
+        "status": "unknown"
+      },
+      "commands": [
+        [
+          "handoff/experiments/jlp_paper.py",
+          "evaluate",
+          "--final"
+        ]
+      ],
+      "inputs": [
+        {
+          "kind": "file",
+          "path": "handoff/data/jlp-paper/snapshots.jsonl",
+          "scope": "repo"
+        }
+      ],
+      "packages": [
+        "numpy",
+        "httpx",
+        "httpcore",
+        "h11",
+        "anyio",
+        "certifi",
+        "idna",
+        "sniffio",
+        "typing_extensions"
+      ],
+      "sources": [
+        "handoff/experiments/jlp_paper.py"
+      ],
+      "window": {
+        "end": "2027-01-08T00:00:00Z",
+        "selection": "existing scorer default window; boundaries unchanged",
+        "source": "handoff/preregistration/jlp-hedged/SPEC.md",
+        "start": "2026-10-10T00:00:00Z"
+      }
+    },
+    "pumpflow": {
+      "acquisition_provenance": {
+        "reason": "Local snapshot bytes hashed; Hyperliquid funding fetched into memory; historical snapshot acquisition provenance unavailable",
+        "status": "unknown"
+      },
+      "commands": [
+        [
+          "handoff/experiments/pumpflow_paper.py",
+          "evaluate",
+          "--final"
+        ]
+      ],
+      "inputs": [
+        {
+          "kind": "file",
+          "path": "handoff/data/pumpflow-paper/snapshots.jsonl",
+          "scope": "repo"
+        }
+      ],
+      "packages": [
+        "numpy",
+        "httpx",
+        "httpcore",
+        "h11",
+        "anyio",
+        "certifi",
+        "idna",
+        "sniffio",
+        "typing_extensions"
+      ],
+      "sources": [
+        "handoff/experiments/pumpflow_paper.py"
+      ],
+      "window": {
+        "end": "2027-04-08T00:00:00Z",
+        "selection": "existing scorer default window; boundaries unchanged",
+        "source": "handoff/preregistration/pumpflow/SPEC.md",
+        "start": "2026-10-10T00:00:00Z"
+      }
+    },
+    "us-patterns": {
+      "acquisition_provenance": {
+        "reason": "Run-owned Coinbase 15-minute candle cache hashed before deletion; no HTTP response/page completeness manifest",
+        "status": "unknown"
+      },
+      "commands": [
+        [
+          "handoff/experiments/edge-hunt/patterns/pattern_forward.py",
+          "{cache}",
+          "--final"
+        ],
+        [
+          "handoff/experiments/edge-hunt/patterns/pattern_forward_costs.py",
+          "{cache}",
+          "--no-fetch"
+        ]
+      ],
+      "inputs": [
+        {
+          "kind": "directory",
+          "path": ".",
+          "scope": "cache",
+          "suffix": ".csv"
+        }
+      ],
+      "packages": [
+        "numpy",
+        "httpx",
+        "httpcore",
+        "h11",
+        "anyio",
+        "certifi",
+        "idna",
+        "sniffio",
+        "typing_extensions"
+      ],
+      "sources": [
+        "handoff/experiments/edge-hunt/patterns/pattern_forward.py",
+        "handoff/experiments/edge-hunt/patterns/pattern_forward_costs.py",
+        "handoff/experiments/edge-hunt/patterns/patterns.py",
+        "handoff/experiments/edge-hunt/patterns/fetch_coinbase.py"
+      ],
+      "window": {
+        "end": "2027-10-11",
+        "selection": "existing scorer default window; boundaries unchanged",
+        "source": "handoff/preregistration/us-patterns/SPEC.md",
+        "start": "2026-10-12"
+      }
+    },
+    "vol-momentum": {
+      "acquisition_provenance": {
+        "reason": "Hyperliquid universe/daily candles/funding fetched into memory; no response manifest",
+        "status": "unknown"
+      },
+      "commands": [
+        [
+          "handoff/experiments/edge-hunt/perps/vmom_forward.py",
+          "--final"
+        ]
+      ],
+      "inputs": [],
+      "packages": [
+        "numpy",
+        "httpx",
+        "httpcore",
+        "h11",
+        "anyio",
+        "certifi",
+        "idna",
+        "sniffio",
+        "typing_extensions"
+      ],
+      "sources": [
+        "handoff/experiments/edge-hunt/perps/vmom_forward.py"
+      ],
+      "window": {
+        "end": "2027-10-11",
+        "selection": "existing scorer default window; boundaries unchanged",
+        "source": "handoff/preregistration/vol-momentum/SPEC.md",
+        "start": "2026-10-12"
+      }
+    },
+    "wick-bounce": {
+      "acquisition_provenance": {
+        "reason": "Shallow collector CSV bytes hashed; historical Hyperliquid candle acquisition/coverage provenance unavailable",
+        "status": "unknown"
+      },
+      "commands": [
+        [
+          "handoff/experiments/edge-hunt/perps/wick_forward.py",
+          "--final"
+        ]
+      ],
+      "inputs": [
+        {
+          "kind": "directory",
+          "path": "handoff/data/edge-hunt/hl-1h",
+          "scope": "repo",
+          "suffix": ".csv"
+        }
+      ],
+      "packages": [
+        "numpy",
+        "httpx",
+        "httpcore",
+        "h11",
+        "anyio",
+        "certifi",
+        "idna",
+        "sniffio",
+        "typing_extensions"
+      ],
+      "sources": [
+        "handoff/experiments/edge-hunt/perps/wick_forward.py"
+      ],
+      "window": {
+        "end": "2027-10-11",
+        "selection": "existing scorer default window; boundaries unchanged",
+        "source": "handoff/preregistration/wick-bounce/SPEC.md",
+        "start": "2026-10-12"
+      }
+    },
+    "xs-momentum": {
+      "acquisition_provenance": {
+        "reason": "Hyperliquid universe/daily candles/funding fetched into memory; no response manifest",
+        "status": "unknown"
+      },
+      "commands": [
+        [
+          "handoff/experiments/xs_momentum_forward.py",
+          "--final"
+        ]
+      ],
+      "inputs": [],
+      "packages": [
+        "numpy",
+        "httpx",
+        "httpcore",
+        "h11",
+        "anyio",
+        "certifi",
+        "idna",
+        "sniffio",
+        "typing_extensions"
+      ],
+      "sources": [
+        "handoff/experiments/xs_momentum_forward.py"
+      ],
+      "window": {
+        "end": "2027-10-11",
+        "selection": "existing scorer default window; boundaries unchanged",
+        "source": "handoff/preregistration/xs-momentum/SPEC.md",
+        "start": "2026-10-12"
+      }
+    }
+  },
+  "schema_version": 1,
+  "source_sha256": {
+    "handoff/experiments/edge-hunt/patterns/fetch_coinbase.py": "1ca4dc6aa7b2378cd59ce9dc14d393115e0e142e2699c92c0679f2e1ff81a758",
+    "handoff/experiments/edge-hunt/patterns/pattern_forward.py": "629c87a4cba5e900da5627ca3ecc310de3ea8b5695ab512c225133757a112973",
+    "handoff/experiments/edge-hunt/patterns/pattern_forward_costs.py": "c3d90790f43728209865e9703bf4933e376c987e342c8768b815ceab0ce8b73a",
+    "handoff/experiments/edge-hunt/patterns/patterns.py": "aac47668618febade44bd8c49049372e43001e2254627f92a7857ac1c47b5a90",
+    "handoff/experiments/edge-hunt/perps/cde_forward.py": "9ac3350de2a82c13fa6e779baa1ebb4b4ad36aebdf6ebbbcf8c472b010ef9c0c",
+    "handoff/experiments/edge-hunt/perps/vmom_forward.py": "e386fdb8ac3894ec1da9b25c7b96653890659aba71482156653726f7ef31e1f3",
+    "handoff/experiments/edge-hunt/perps/wick_forward.py": "ade2755fb9df629aff72f2030c3b21f9c5f36c7a6cf51504e7e2b571d9723d76",
+    "handoff/experiments/edge-hunt/perps/xs_coinbase.py": "e6fc5d7a8ef20f606a133182a594a249559607df61c2e845ea323f5dad734052",
+    "handoff/experiments/edge-hunt/vaults/hlp_forward.py": "9c94f87a4aa408b165fcb585dc5e38e86edc29a3844d9313e1a0079bfdf5ae92",
+    "handoff/experiments/final_scores.py": "3549261339e61c1438c630d9e6351c433a0946f826f097d514cd287d285370b0",
+    "handoff/experiments/jlp_paper.py": "af6f5d1c11a685ee630e5019d88074907cce9f450aecc54e17d9159dd0467259",
+    "handoff/experiments/pumpflow_paper.py": "b856e5afbc3e2d462823c56313920cfc4511da0348fdfb5b2419b5d03fc411d5",
+    "handoff/experiments/scoring_receipts.py": "52be19c60d9253d32705d5b0c1e5cd9e4780c7fa70d04e6d7d7f59475aa11d98",
+    "handoff/experiments/xs_momentum_forward.py": "314b86a7ea8075a94c152c1f7afe3c68a501ad8684540f566510c7c0221108a3"
+  }
+}

@@ -36,6 +36,7 @@ jobs:
             /autotrade/config.json
             /handoff/experiments/
             /handoff/preregistration/
+            /handoff/scoring/
             /.github/
           sparse-checkout-cone-mode: false
       - uses: actions/setup-python@v5
