@@ -1,0 +1,48 @@
+{
+  "base_commit": "ed68abdcd9beab6083022246956d9a74a25f6d8f",
+  "checked_at_utc": "2026-10-13T14:09:52.657115+00:00",
+  "checks": {
+    "allowed_file_scope": "pass",
+    "diff_check": "pass",
+    "manifest_member_hashes": "pass",
+    "manifest_self_exclusion": "pass",
+    "owner_runtime_book_workflow_and_frozen_bytes_unchanged": "pass",
+    "public_json_parse": "pass",
+    "targeted_secret_pattern_scan": "pass"
+  },
+  "combined_unique_tests": {
+    "passed": 449,
+    "skipped": 1,
+    "subtests_passed": 9,
+    "unresolved_failures": 0
+  },
+  "github_ci": "Docs/data-only diff is excluded by current workflow path filters; no GitHub CI pass asserted.",
+  "profitability_established": false,
+  "scan_limit": "A targeted pattern scan is not a proof against all possible secret formats. Inputs are bounded unauthenticated public market responses and official-source research records.",
+  "schema_version": 1,
+  "status": "PASS_AFTER_LOOPBACK_FIXTURE_RERUN",
+  "test_log_location": "Saved local delivery only; no test log bytes copied into the public repository.",
+  "test_runs": [
+    {
+      "command": "PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=. python -m pytest -q -p no:cacheprovider",
+      "exit_code": 1,
+      "failed": 4,
+      "failure_reason": "All four failures were local 127.0.0.1 WebSocket fixture bind PermissionError under filesystem/network sandbox.",
+      "log_file": "CDE-Retail-Evidence-Pytest-20261013.txt",
+      "log_sha256": "1eab5db9472b38b8a0fdb0bf75c028b8a4e8b1cb21fba37d6eed1380d2231537",
+      "passed": 445,
+      "seconds": "82.69",
+      "skipped": 1,
+      "subtests_passed": 9
+    },
+    {
+      "command": "python -m pytest -q -p no:cacheprovider tests/test_chain_events.py::test_stream_watches_extra_accounts_on_one_connection tests/test_feeds.py::test_pumpportal_feed_against_local_websocket tests/test_feeds.py::test_stream_new_tokens_against_local_websocket tests/test_pipeline.py::test_recorder_against_local_pumpportal",
+      "execution": "Authorized local loopback fixture permission; no external service/account/order requests.",
+      "exit_code": 0,
+      "log_file": "CDE-Retail-Evidence-Loopback-Rerun-20261013.txt",
+      "log_sha256": "e2574b8c620370dd34492858108c39fe271cd190c25f08f2cb578a7d7f72c075",
+      "passed": 4,
+      "seconds": "1.98"
+    }
+  ]
+}

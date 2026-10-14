@@ -1,0 +1,226 @@
+{
+  "accounts_credentials_orders_or_repo_mutations": 0,
+  "decision": "Retain raw book size, outer funding rate, nested funding rate and funding interval separately. No capacity, rate-scale conversion or projected funding is justified by this follow-up.",
+  "explicit_distinctions": [
+    {
+      "bound": "This does not specify whether the REST string encodes 0.1 or 0.001 for that rate.",
+      "fact": "The US help example uses a +0.1% hourly rate. In arithmetic, 0.1% equals a decimal fraction of 0.001.",
+      "kind": "economic percentage versus REST representation",
+      "source_id": "us-funding-help"
+    },
+    {
+      "bound": "No inference from funding_interval to account posting frequency is supported.",
+      "fact": "US funding is calculated hourly; clearing aggregates cash adjustments at margin runs, and FCM posting may occur once or twice daily.",
+      "kind": "hourly rate calculation versus cash posting",
+      "source_id": "us-funding-help"
+    },
+    {
+      "bound": "It does not explicitly identify CDE units or map new_quantity to REST L2Level.size.",
+      "fact": "The Spot/US level2 reference describes new_quantity as the whole updated level size rather than a delta, with zero removing the level.",
+      "kind": "WebSocket quantity semantics versus REST quantity units",
+      "source_id": "us-level2"
+    },
+    {
+      "bound": "Native CDE FIX/SBE, Global/INTX or Deribit definitions are not substituted into REST fields without an explicit mapping.",
+      "fact": "The current endpoint overview separates Spot/US and Global streams, and the US guide identifies CFM products.",
+      "kind": "transport and venue separation",
+      "source_ids": [
+        "ws-endpoints",
+        "us-guide"
+      ]
+    }
+  ],
+  "fields": [
+    {
+      "explicit_unit_mapping_found": false,
+      "field": "pricebook.bids[].size / pricebook.asks[].size (L2Level.size)",
+      "observed_documentation": "Public REST book example shows string sizes. Official SDK retains size as a string without converting or documenting units.",
+      "source_ids": [
+        "public-book",
+        "official-sdk"
+      ],
+      "status": "unresolved",
+      "unknown": "Contracts versus underlying coin/base-asset units, and any CDE-specific multiplier transformation.",
+      "venue_and_transport": "US CDE product IDs returned by Advanced Trade REST public product_book"
+    },
+    {
+      "explicit_unit_mapping_found": false,
+      "field": "future_product_details.funding_rate",
+      "observed_documentation": "Public product example exposes outer and nested funding_rate as separate string fields. US funding help establishes hourly percentage economics, but names FIX/SBE publication and does not map this REST field.",
+      "source_ids": [
+        "public-product",
+        "us-funding-help"
+      ],
+      "status": "unresolved",
+      "unknown": "Percentage points versus decimal fraction; whether the REST value is final/current/projected and the exact period it represents.",
+      "venue_and_transport": "US CDE product metadata in Advanced Trade REST"
+    },
+    {
+      "explicit_unit_mapping_found": false,
+      "field": "future_product_details.funding_interval",
+      "observed_documentation": "Public product reference shows a string placeholder. Earlier repository evidence reports a raw 3600s value; this task did not retrieve a new product response. That duration-like literal and hourly economics do not define rate scale or cash posting frequency.",
+      "source_ids": [
+        "public-product",
+        "us-funding-help",
+        "prior-addendum"
+      ],
+      "status": "unresolved",
+      "unknown": "Authoritative REST format/unit definition and whether interval refers to rate calculation, publication or cash posting.",
+      "venue_and_transport": "US CDE product metadata in Advanced Trade REST"
+    }
+  ],
+  "next_evidence_needed": "Official Coinbase definition naming the CDE Advanced Trade REST fields and their contract/base units, rate scale and applicable interval/final-versus-projected meaning; a transport-specific schema description or explicit mapping is required.",
+  "not_checked": [
+    "Every official page or historical documentation version",
+    "Current complete raw OpenAPI schema",
+    "Native CDE FIX/SBE specifications in this follow-up",
+    "Account/billed funding or fills",
+    "API market-data responses or book/stream parity",
+    "Strategy performance, novelty, capacity or projected funding"
+  ],
+  "outcome": "UNRESOLVED_WITHIN_SEARCHED_SCOPE",
+  "research_completed_at_utc": "2026-10-13T13:49:34Z",
+  "schema_version": 1,
+  "searched_scope": "Five targeted queries, eight successful official/Coinbase-owned pages, one failed schema URL through web and one failed bounded local schema read. No broad site crawl, SDK clone, new market-data sample or account request.",
+  "searches": [
+    {
+      "domain_filter": null,
+      "query": "site.docs.cdp.coinbase.com advanced trade product_book L2Level size contracts futures funding_interval funding_rate",
+      "scope_note": "Initial broad query; nonprimary results ignored."
+    },
+    {
+      "domain_filter": null,
+      "query": "site.docs.cdp.coinbase.com future_product_details funding_rate funding_interval units percent",
+      "scope_note": "Initial broad query; nonprimary results ignored."
+    },
+    {
+      "domain_filter": [
+        "docs.cdp.coinbase.com",
+        "help.coinbase.com",
+        "coinbase.com"
+      ],
+      "query": "\"future_product_details\" \"funding_rate\" \"percent\" Coinbase",
+      "result": "No results returned."
+    },
+    {
+      "domain_filter": [
+        "docs.cdp.coinbase.com",
+        "help.coinbase.com",
+        "coinbase.com"
+      ],
+      "query": "\"product_book\" \"size\" \"contracts\" Coinbase",
+      "result": "No results returned."
+    },
+    {
+      "domain_filter": [
+        "docs.cdp.coinbase.com",
+        "help.coinbase.com",
+        "coinbase.com"
+      ],
+      "query": "\"funding_interval\" \"funding_rate\" \"CDE\"",
+      "result": "No results returned."
+    }
+  ],
+  "sources": [
+    {
+      "id": "public-book",
+      "locator": "Response example pricebook.bids/asks size; rendered reference lines 179-199 and 384-424",
+      "method": "Official page read through web tool",
+      "observation_completed_by_utc": "2026-10-13T13:47:42Z",
+      "paraphrase": "REST book sizes appear as strings; no explicit CDE contract/base-unit definition was found in the rendered reference.",
+      "raw_body_archived": false,
+      "title": "Get Public Product Book",
+      "url": "https://docs.cdp.coinbase.com/api-reference/advanced-trade-api/rest-api/public/get-public-product-book"
+    },
+    {
+      "id": "public-product",
+      "locator": "future_product_details response example; rendered lines 240-267 and 573-600",
+      "method": "Official page read and targeted funding_rate find",
+      "observation_completed_by_utc": "2026-10-13T13:47:59Z",
+      "paraphrase": "Contract size/root-unit, nested perpetual funding rate, outer funding interval and outer funding rate are distinct fields; rate/interval examples are string placeholders rather than explicit encodings.",
+      "raw_body_archived": false,
+      "title": "Get Public Product",
+      "url": "https://docs.cdp.coinbase.com/api-reference/advanced-trade-api/rest-api/public/get-public-product"
+    },
+    {
+      "id": "official-sdk",
+      "locator": "L2Level class and future_product_details pass-through; rendered lines 1041-1047 and 1090-1102",
+      "method": "Coinbase-owned GitHub source read and targeted L2Level find; moving master reference, commit not pinned",
+      "observation_completed_by_utc": "2026-10-13T13:47:59Z",
+      "paraphrase": "L2Level.size is preserved as a string; future_product_details is passed through as a dictionary. This is a type/pass-through observation, not an authoritative unit definition.",
+      "raw_body_archived": false,
+      "title": "Coinbase-owned Advanced Trade Python SDK product types",
+      "url": "https://github.com/coinbase/coinbase-advanced-py/blob/master/coinbase/rest/types/product_types.py"
+    },
+    {
+      "id": "us-guide",
+      "locator": "Rendered lines 150-158",
+      "method": "Official US-specific guide read",
+      "observation_completed_by_utc": "2026-10-13T13:48:36Z",
+      "paraphrase": "Advanced Trade supports US derivatives offered by CFM; the guide links order, market-data and futures-specific endpoints but does not define the requested REST units.",
+      "raw_body_archived": false,
+      "title": "Advanced Trade US Derivatives",
+      "url": "https://docs.cdp.coinbase.com/coinbase-app/advanced-trade-apis/guides/futures"
+    },
+    {
+      "id": "us-funding-help",
+      "locator": "Hourly percentage calculation, cash adjustments and publication; rendered lines 15-23, 47-67",
+      "method": "Official help page read",
+      "observation_completed_by_utc": "2026-10-13T13:48:36Z",
+      "paraphrase": "Hourly percentage economics, delayed clearing/FCM cash posting and FIX/SBE rate publication are documented. The page does not name Advanced Trade REST funding_rate or funding_interval encodings.",
+      "raw_body_archived": false,
+      "title": "US Perpetual-Style Futures Funding Rate Mechanism",
+      "url": "https://help.coinbase.com/en/derivatives/perpetual-style-futures/funding-rate"
+    },
+    {
+      "id": "ws-endpoints",
+      "locator": "Spot/US versus Global sections; rendered lines 148-192 and 243-284",
+      "method": "Official page read; requested old path redirected to endpoint overview",
+      "observation_completed_by_utc": "2026-10-13T13:48:36Z",
+      "paraphrase": "Spot/US market-data channels use the Advanced Trade public stream; Global uses a different host and schemas. It provides no REST size/funding mapping.",
+      "raw_body_archived": false,
+      "requested_url": "https://docs.cdp.coinbase.com/coinbase-app/advanced-trade-apis/websocket/websocket-channels",
+      "title": "Advanced Trade WebSocket Endpoints",
+      "url": "https://docs.cdp.coinbase.com/coinbase-app/advanced-trade-apis/websocket/websocket-endpoints"
+    },
+    {
+      "id": "us-level2",
+      "locator": "Rendered line 98",
+      "method": "Official Spot/US stream reference followed from endpoint overview",
+      "observation_completed_by_utc": "2026-10-13T13:49:34Z",
+      "paraphrase": "Updated level quantities replace the level rather than increment it; zero removes it. An explicit CDE unit and cross-transport REST mapping were not found.",
+      "raw_body_archived": false,
+      "title": "Level 2 order book",
+      "url": "https://docs.cdp.coinbase.com/api-reference/advanced-trade-api/websocket/level2"
+    },
+    {
+      "id": "get-order-reference",
+      "locator": "Generic response examples with base_size/quote_size",
+      "method": "Official static documentation read via US guide link; no API endpoint invoked",
+      "observation_completed_by_utc": "2026-10-13T13:49:34Z",
+      "paraphrase": "Generic order-size examples do not explicitly map CDE public-book L2Level.size or REST funding encodings.",
+      "raw_body_archived": false,
+      "title": "Get Order reference documentation",
+      "url": "https://docs.cdp.coinbase.com/api-reference/advanced-trade-api/rest-api/orders/get-order"
+    },
+    {
+      "bound": "No current schema body/hash is claimed. Prior schema evidence is contextual only.",
+      "failure_receipt": "local-delivery/work/cde-followup/units/schema-download-receipt.json",
+      "id": "schema-attempt",
+      "local_error": "URLError: <urlopen error [Errno 8] nodename nor servname provided, or not known>",
+      "method": "Web open failed with internal retrieval error; one bounded keyless local urllib read then failed DNS resolution",
+      "observation_completed_by_utc": "2026-10-13T13:48:35.327401+00:00",
+      "raw_body_archived": false,
+      "status": "not_retrieved",
+      "url": "https://docs.cdp.coinbase.com/api-reference/advanced-trade-api/rest-api/advanced-trade-spec.yaml"
+    },
+    {
+      "id": "prior-addendum",
+      "method": "Read-only prior project report",
+      "paraphrase": "Previous work leaves size/rate encoding unresolved and reports a saved raw 3600s interval plus outer/nested rate distinction. Its old schema receipt was not newly fetched in this task.",
+      "path": "repository/handoff/reviews/cde-cost-documentation-2026-10-13.md",
+      "primary_evidence_status": "Secondary project context; not a fresh primary-source schema read."
+    }
+  ],
+  "title": "US CDE Advanced Trade REST units: bounded official-source follow-up"
+}

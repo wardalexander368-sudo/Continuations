@@ -1,0 +1,348 @@
+{
+  "analysis": {
+    "error_count": 0,
+    "policy": {
+      "fee_assumption": null,
+      "funding_projection": null,
+      "funding_rate_units_or_period": "unknown",
+      "limits": "snapshot diagnostic; no order-rule, fill, fee, account-capital or stop simulation",
+      "margin": "published long fractions only; not account buying power or liquidation model",
+      "quote_size_units": "unknown",
+      "sizing": "floor(target_notional / (best_ask * contract_size)); whole contracts"
+    },
+    "products_receipt": {},
+    "roots": [
+      "AVAX",
+      "DOT"
+    ],
+    "rows": [
+      {
+        "contract_metadata": {
+          "contract_display_name": "AVAX PERP",
+          "contract_expiry": "2089-12-30T16:00:00Z",
+          "contract_expiry_name": "2030-12",
+          "contract_expiry_type": "EXPIRING"
+        },
+        "contract_size_coins": "10",
+        "funding_point_observations": {
+          "funding_interval": "3600s",
+          "funding_rate": "-0.000012",
+          "funding_time": "2026-10-13T13:00:00Z",
+          "perpetual_details": {
+            "base_asset_uuid": "",
+            "funding_rate": "",
+            "funding_time": null,
+            "max_leverage": "",
+            "open_interest": "14874",
+            "underlying_type": ""
+          }
+        },
+        "half_spread_bps": "4.8661800486618004866180048661800486618004866180049",
+        "immediate_cross_gross_return": "-0.00097276264591439688715953307392996108949416342412",
+        "immediate_cross_loss_usd_one_contract": "0.10",
+        "long_margin": {
+          "intraday_margin_rate": {
+            "fraction": "0.2001103",
+            "one_contract_margin_usd": "20.571338840",
+            "raw": {
+              "long_margin_rate": "0.2001103",
+              "short_margin_rate": "0.1999314"
+            },
+            "status": "observed"
+          },
+          "overnight_margin_rate": {
+            "fraction": "0.326125",
+            "one_contract_margin_usd": "33.52565000",
+            "raw": {
+              "long_margin_rate": "0.326125",
+              "short_margin_rate": "0.447875"
+            },
+            "status": "observed"
+          }
+        },
+        "max_whole_contracts_by_notional": 0,
+        "one_contract_exposure_usd": "102.80",
+        "one_percent_adverse_move_loss_usd": "1.028",
+        "order_rules_raw": {
+          "base_increment": "1",
+          "base_max_size": "1000",
+          "base_min_size": "1",
+          "price_increment": "0.01"
+        },
+        "product_id": "AVP-20DEC30-CDE",
+        "quote": {
+          "ask": "10.28",
+          "ask_raw_size": "275",
+          "bid": "10.27",
+          "bid_raw_size": "26",
+          "book_time": "2026-10-13T13:49:08.519251Z",
+          "local_receipt": {
+            "body_bytes": 264,
+            "body_sha256": "314c7ec6139f5408eb0ec41a81d6ca32f0a95472611259f43677957c4b2e3ce9",
+            "http_status": 200,
+            "request_completed_at": "2026-10-13T13:49:08.731348+00:00",
+            "request_method": "GET",
+            "request_started_at": "2026-10-13T13:49:08.574797+00:00",
+            "request_url": "https://api.coinbase.com/api/v3/brokerage/market/product_book?product_id=AVP-20DEC30-CDE&limit=1",
+            "response_age": null,
+            "response_content_type": "application/json; charset=utf-8",
+            "response_date": "Tue, 13 Oct 2026 13:49:08 GMT"
+          },
+          "midpoint": "10.275",
+          "reported_product_id": "AVP-20DEC30-CDE",
+          "size_units": "unknown"
+        },
+        "root": "AVAX",
+        "session_raw": {
+          "after_hours_order_entry_disabled": false,
+          "close_time": "2026-10-13T21:00:00Z",
+          "closed_reason": "FCM_TRADING_SESSION_CLOSED_REASON_UNDEFINED",
+          "is_session_open": true,
+          "maintenance": {
+            "end_time": "2026-10-24T19:00:00Z",
+            "start_time": "2026-10-24T10:00:00Z"
+          },
+          "open_time": "2026-10-12T21:00:00Z",
+          "session_state": "FCM_TRADING_SESSION_STATE_OPEN"
+        },
+        "status": "ok",
+        "target_exposure_usd": "0.00",
+        "unused_target_notional_usd": "100.00"
+      },
+      {
+        "contract_metadata": {
+          "contract_display_name": "DOT PERP",
+          "contract_expiry": "2089-12-30T16:00:00Z",
+          "contract_expiry_name": "2030-12",
+          "contract_expiry_type": "EXPIRING"
+        },
+        "contract_size_coins": "100",
+        "funding_point_observations": {
+          "funding_interval": "3600s",
+          "funding_rate": "-0.000012",
+          "funding_time": "2026-10-13T13:00:00Z",
+          "perpetual_details": {
+            "base_asset_uuid": "",
+            "funding_rate": "",
+            "funding_time": null,
+            "max_leverage": "",
+            "open_interest": "5922",
+            "underlying_type": ""
+          }
+        },
+        "half_spread_bps": "8.3542188805346700083542188805346700083542188805347",
+        "immediate_cross_gross_return": "-0.00166944908180300500834724540901502504173622704508",
+        "immediate_cross_loss_usd_one_contract": "0.200",
+        "long_margin": {
+          "intraday_margin_rate": {
+            "fraction": "0.200081",
+            "one_contract_margin_usd": "23.969703800",
+            "raw": {
+              "long_margin_rate": "0.200081",
+              "short_margin_rate": "0.199948"
+            },
+            "status": "observed"
+          },
+          "overnight_margin_rate": {
+            "fraction": "0.441875",
+            "one_contract_margin_usd": "52.936625000",
+            "raw": {
+              "long_margin_rate": "0.441875",
+              "short_margin_rate": "0.6475"
+            },
+            "status": "observed"
+          }
+        },
+        "max_whole_contracts_by_notional": 0,
+        "one_contract_exposure_usd": "119.800",
+        "one_percent_adverse_move_loss_usd": "1.198",
+        "order_rules_raw": {
+          "base_increment": "1",
+          "base_max_size": "1000",
+          "base_min_size": "1",
+          "price_increment": "0.001"
+        },
+        "product_id": "POP-20DEC30-CDE",
+        "quote": {
+          "ask": "1.198",
+          "ask_raw_size": "79",
+          "bid": "1.196",
+          "bid_raw_size": "132",
+          "book_time": "2026-10-13T13:49:07.505795Z",
+          "local_receipt": {
+            "body_bytes": 263,
+            "body_sha256": "cf26d6d9ba086128e5cf99fab696c695af7216fd8bad5dc8f74bc3fd5ea825b3",
+            "http_status": 200,
+            "request_completed_at": "2026-10-13T13:49:09.043650+00:00",
+            "request_method": "GET",
+            "request_started_at": "2026-10-13T13:49:08.896564+00:00",
+            "request_url": "https://api.coinbase.com/api/v3/brokerage/market/product_book?product_id=POP-20DEC30-CDE&limit=1",
+            "response_age": null,
+            "response_content_type": "application/json; charset=utf-8",
+            "response_date": "Tue, 13 Oct 2026 13:49:09 GMT"
+          },
+          "midpoint": "1.197",
+          "reported_product_id": "POP-20DEC30-CDE",
+          "size_units": "unknown"
+        },
+        "root": "DOT",
+        "session_raw": {
+          "after_hours_order_entry_disabled": false,
+          "close_time": "2026-10-13T21:00:00Z",
+          "closed_reason": "FCM_TRADING_SESSION_CLOSED_REASON_UNDEFINED",
+          "is_session_open": true,
+          "maintenance": {
+            "end_time": "2026-10-24T19:00:00Z",
+            "start_time": "2026-10-24T10:00:00Z"
+          },
+          "open_time": "2026-10-12T21:00:00Z",
+          "session_state": "FCM_TRADING_SESSION_STATE_OPEN"
+        },
+        "status": "ok",
+        "target_exposure_usd": "0.000",
+        "unused_target_notional_usd": "100.000"
+      }
+    ],
+    "schema_version": 1,
+    "status": "ok",
+    "target_notional_usd": "100"
+  },
+  "analyzer_path": "handoff/experiments/edge-hunt/cde_contract_economics.py",
+  "analyzer_sha256": "f6b672a60f07c7c4e200371737e5b9fa5fa948b3dcf1c51735fb4cfc056a80c1",
+  "bounded_scope_override": "COINS in imported module set to AVAX/DOT; no source or model edits",
+  "comparisons": [
+    {
+      "ask_decline_to_boundary_fraction": "0.0272373540856031128404669261",
+      "book_receipt_lag_seconds": 0.212097,
+      "funding_encoding": "unknown",
+      "max_ask_for_one_contract_at_100": "10",
+      "new_one_contract_notional": "102.80",
+      "prior_one_contract_notional": "102.30",
+      "product_id": "AVP-20DEC30-CDE",
+      "quote_size_units": "unknown",
+      "root": "AVAX",
+      "whole_contracts_at_100": 0
+    },
+    {
+      "ask_decline_to_boundary_fraction": "0.1652754590984974958263772955",
+      "book_receipt_lag_seconds": 1.537855,
+      "funding_encoding": "unknown",
+      "max_ask_for_one_contract_at_100": "1",
+      "new_one_contract_notional": "119.800",
+      "prior_one_contract_notional": "114.400",
+      "product_id": "POP-20DEC30-CDE",
+      "quote_size_units": "unknown",
+      "root": "DOT",
+      "whole_contracts_at_100": 0
+    }
+  ],
+  "created_at_utc": "2026-10-13T13:51:44.794255+00:00",
+  "limits": [
+    "Four short sequential public GETs, not simultaneous data or a crash cohort",
+    "Displayed prices do not guarantee executable depth or fills",
+    "Whole-contract notional only, not collateral or account eligibility",
+    "No fee assumption, carry extrapolation, orders or profit result"
+  ],
+  "request_receipt": {
+    "current_question": "Whether smallest fixed study contracts cross the $100 displayed-notional boundary; sizes/funding encoding remain raw",
+    "directory": "handoff/data/cde-retail-evidence/2026-10-13",
+    "http_statuses": [
+      200,
+      200,
+      200,
+      200
+    ],
+    "real_orders": 0,
+    "receipts": [
+      {
+        "body_bytes": 2886,
+        "body_sha256": "143e21ccc40ea560038c96e0899a949d3b85634c0ede761e28811897ec733a5c",
+        "final_url": "https://api.coinbase.com/api/v3/brokerage/market/products/AVP-20DEC30-CDE",
+        "http_status": 200,
+        "request_completed_at": "2026-10-13T13:49:08.573517+00:00",
+        "request_headers": {
+          "Cache-Control": "no-cache"
+        },
+        "request_method": "GET",
+        "request_started_at": "2026-10-13T13:49:08.377928+00:00",
+        "request_url": "https://api.coinbase.com/api/v3/brokerage/market/products/AVP-20DEC30-CDE",
+        "response_age": null,
+        "response_content_type": "application/json; charset=utf-8",
+        "response_date": "Tue, 13 Oct 2026 13:49:08 GMT"
+      },
+      {
+        "body_bytes": 264,
+        "body_sha256": "314c7ec6139f5408eb0ec41a81d6ca32f0a95472611259f43677957c4b2e3ce9",
+        "final_url": "https://api.coinbase.com/api/v3/brokerage/market/product_book?product_id=AVP-20DEC30-CDE&limit=1",
+        "http_status": 200,
+        "request_completed_at": "2026-10-13T13:49:08.731348+00:00",
+        "request_headers": {
+          "Cache-Control": "no-cache"
+        },
+        "request_method": "GET",
+        "request_started_at": "2026-10-13T13:49:08.574797+00:00",
+        "request_url": "https://api.coinbase.com/api/v3/brokerage/market/product_book?product_id=AVP-20DEC30-CDE&limit=1",
+        "response_age": null,
+        "response_content_type": "application/json; charset=utf-8",
+        "response_date": "Tue, 13 Oct 2026 13:49:08 GMT"
+      },
+      {
+        "body_bytes": 2875,
+        "body_sha256": "ee319781d0594eae0411930dd9662c2f14d8cd29f05acd07f28ca07e87716d01",
+        "final_url": "https://api.coinbase.com/api/v3/brokerage/market/products/POP-20DEC30-CDE",
+        "http_status": 200,
+        "request_completed_at": "2026-10-13T13:49:08.894712+00:00",
+        "request_headers": {
+          "Cache-Control": "no-cache"
+        },
+        "request_method": "GET",
+        "request_started_at": "2026-10-13T13:49:08.732523+00:00",
+        "request_url": "https://api.coinbase.com/api/v3/brokerage/market/products/POP-20DEC30-CDE",
+        "response_age": null,
+        "response_content_type": "application/json; charset=utf-8",
+        "response_date": "Tue, 13 Oct 2026 13:49:08 GMT"
+      },
+      {
+        "body_bytes": 263,
+        "body_sha256": "cf26d6d9ba086128e5cf99fab696c695af7216fd8bad5dc8f74bc3fd5ea825b3",
+        "final_url": "https://api.coinbase.com/api/v3/brokerage/market/product_book?product_id=POP-20DEC30-CDE&limit=1",
+        "http_status": 200,
+        "request_completed_at": "2026-10-13T13:49:09.043650+00:00",
+        "request_headers": {
+          "Cache-Control": "no-cache"
+        },
+        "request_method": "GET",
+        "request_started_at": "2026-10-13T13:49:08.896564+00:00",
+        "request_url": "https://api.coinbase.com/api/v3/brokerage/market/product_book?product_id=POP-20DEC30-CDE&limit=1",
+        "response_age": null,
+        "response_content_type": "application/json; charset=utf-8",
+        "response_date": "Tue, 13 Oct 2026 13:49:09 GMT"
+      }
+    ],
+    "requests": 4,
+    "scope": "Four public GETs only; no account, fees, order, wallet or authenticated endpoint"
+  },
+  "saved_response_verification": [
+    {
+      "bytes": 2886,
+      "path": "AVAX-product.json",
+      "sha256": "143e21ccc40ea560038c96e0899a949d3b85634c0ede761e28811897ec733a5c"
+    },
+    {
+      "bytes": 264,
+      "path": "AVAX-book.json",
+      "sha256": "314c7ec6139f5408eb0ec41a81d6ca32f0a95472611259f43677957c4b2e3ce9"
+    },
+    {
+      "bytes": 2875,
+      "path": "DOT-product.json",
+      "sha256": "ee319781d0594eae0411930dd9662c2f14d8cd29f05acd07f28ca07e87716d01"
+    },
+    {
+      "bytes": 263,
+      "path": "DOT-book.json",
+      "sha256": "cf26d6d9ba086128e5cf99fab696c695af7216fd8bad5dc8f74bc3fd5ea825b3"
+    }
+  ],
+  "source_base": "ed68abdcd9beab6083022246956d9a74a25f6d8f"
+}

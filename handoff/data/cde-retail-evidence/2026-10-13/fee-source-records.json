@@ -1,0 +1,188 @@
+{
+  "access_limits": {
+    "browser_attempt": {
+      "browser": "iab",
+      "page_content_acquired": false,
+      "result": "Browser is not available: iab",
+      "url": "https://www.coinbase.com/derivatives"
+    },
+    "direct_public_html_reads": [
+      {
+        "error": "HTTP Error 403: Forbidden",
+        "finished_at_utc": "2026-10-13T13:49:30.616546+00:00",
+        "name": "cde-market-notices",
+        "raw_body_retained": false,
+        "requested_url": "https://www.coinbase.com/derivatives/market-notices",
+        "started_at_utc": "2026-10-13T13:49:30.459951+00:00"
+      },
+      {
+        "error": "HTTP Error 403: Forbidden",
+        "finished_at_utc": "2026-10-13T13:49:30.612580+00:00",
+        "name": "cde-home",
+        "raw_body_retained": false,
+        "requested_url": "https://www.coinbase.com/derivatives",
+        "started_at_utc": "2026-10-13T13:49:30.460251+00:00"
+      },
+      {
+        "error": "HTTP Error 403: Forbidden",
+        "finished_at_utc": "2026-10-13T13:49:30.616844+00:00",
+        "name": "advanced-fees-us",
+        "raw_body_retained": false,
+        "requested_url": "https://www.coinbase.com/advanced-fees?country=US&currency=USD&japan_bespoke_content=false&logged_in=false&mobile=false",
+        "started_at_utc": "2026-10-13T13:49:30.460338+00:00"
+      }
+    ],
+    "direct_read_receipt_sha256": "fba45f3cd9179a0922e4aa597dc74993ac41c17bfb79af28dfbca4391b0f77be",
+    "generic_localization_warning": "Advanced VIP fee link resolved with country=DK/currency=DKK; generic page and non-US derivatives links were not substituted for US CFM scope.",
+    "other_unusable_web_opens": [
+      "https://www.coinbase.com/derivatives/fees",
+      "https://help.coinbase.com/en/coinbase/derivatives/us-derivatives-fees",
+      "https://www.coinbase.com/advanced-fees?country=US&currency=USD&japan_bespoke_content=false&logged_in=false&mobile=false"
+    ],
+    "web_raw_http_bodies_retained": 0,
+    "web_raw_http_hashes_available": false
+  },
+  "conclusion": "Historical 0.05% and launch as-low-as 0.02% have different dates and terms. Current US-CFM all-in retail fee, $0.15 side/roundtrip basis, minimum formula and latest full CDE schedule remain unresolved. Later CDE notice metadata was located.",
+  "input_document": {
+    "path": "handoff/reviews/cde-cost-documentation-2026-10-13.md",
+    "sha256": "3e769757b9eb75d204c3ebc63dff623679a9abc0996dc6156bf2f82a9873f1cf"
+  },
+  "next_evidence": [
+    "A dated current US-CFM contract/tier schedule with explicit side and minimum equation",
+    "A current complete CDE schedule plus relevant change notices",
+    "A permitted billed-component reconciliation tying fees to contract, side, fill quantity and cash postings"
+  ],
+  "observation_window": {
+    "finished_at_utc": "2026-10-13T13:51:34Z",
+    "individual_web_tool_timestamps_available": false,
+    "started_at_utc": "2026-10-13T13:46:49Z"
+  },
+  "profitability_claim": false,
+  "repository_mutations": false,
+  "research_rules": [
+    "Do not infer a current rate from either historical article",
+    "Do not choose max(rate*notional,0.15) or rate*notional+0.15 without explicit applicable terms",
+    "Do not add exchange/NFA charges to a historically bundled fee quote without billed reconciliation",
+    "Do not treat later notice headlines as a latest full fee schedule or apply them to every study contract"
+  ],
+  "resolved": [
+    {
+      "basis": "per contract per side",
+      "current_as_of_observation": false,
+      "item": "0.05 percent statement",
+      "minimum_usd": "0.20",
+      "publication_date": "2024-02-01",
+      "status": "historical dated source"
+    },
+    {
+      "all_eleven_current_contracts_verified": false,
+      "basis": "per contract; side/roundtrip not explicit",
+      "item": "0.02 percent statement",
+      "minimum_usd": "0.15",
+      "publication_date": "2025-07-21",
+      "status": "historical launch as-low-as marketing"
+    }
+  ],
+  "schema": "cde-retail-fee-followup-v1",
+  "scope": "Bounded public official Coinbase/CDP/help/assets research. No account, credentials, orders, private API, CTS or repo writes.",
+  "sources": [
+    {
+      "effective_date": null,
+      "key": "historical_cfm_2024",
+      "method": "web parsed open",
+      "paraphrase": "Historical CFM introductory futures charge was 0.05% per contract per side, minimum $0.20, including relevant exchange and NFA charges; subject to change. Current rates were available within accounts.",
+      "publication_date": "2024-02-01",
+      "raw_body_retained": false,
+      "raw_sha256": null,
+      "title": "Coinbase Advanced now offers a fee upgrade program for high volume traders",
+      "url": "https://www.coinbase.com/blog/coinbase-advanced-now-offers-a-fee-upgrade-program-for-high-volume-traders"
+    },
+    {
+      "key": "us_perp_launch_2025",
+      "launch_date": "2025-07-21",
+      "method": "web parsed open",
+      "paraphrase": "BTC/ETH launch advertised charges as low as 0.02%; fee description includes exchange, clearing and NFA and a $0.15 minimum per contract. It gives no explicit side/roundtrip or max-versus-additive equation.",
+      "publication_date": "2025-07-21",
+      "raw_body_retained": false,
+      "raw_sha256": null,
+      "title": "Perpetual futures have arrived in the U.S.",
+      "url": "https://www.coinbase.com/blog/perpetual-futures-have-arrived-in-the-us"
+    },
+    {
+      "effective_date": null,
+      "key": "generic_advanced_vip_observation",
+      "method": "web parsed open",
+      "observed_intro_maker_percent": "0.0950",
+      "observed_intro_taker_percent": "0.1000",
+      "paraphrase": "Generic page shows different futures volume tiers and a $0.15-per-contract footnote mentioning Sep and a subsequent Oct update, without an exact effective date or clear US-CFM product/billing scope.",
+      "publication_date": null,
+      "raw_body_retained": false,
+      "raw_sha256": null,
+      "scope_confirmed_for_us_cfm": false,
+      "title": "Apply for Advanced VIP",
+      "url": "https://www.coinbase.com/advanced-vip"
+    },
+    {
+      "attachment_bytes_acquired": 0,
+      "key": "cde_later_notice_metadata",
+      "method": "official-domain search-index text; subsequent open yielded zero extracted lines",
+      "notices": [
+        {
+          "effective_date": "2026-08-17",
+          "id": "R2026-46",
+          "published_date": "2026-08-03",
+          "title": "Modifications to the Fee Schedule"
+        },
+        {
+          "effective_date": "2026-10-01",
+          "id": "R2026-59",
+          "published_date": "2026-09-17",
+          "title": "Modifications to Rule 305 (Fees)"
+        }
+      ],
+      "paraphrase": "Official notice index lists fee-related dates later than the saved January schedule. Notice attachment bodies and a newer complete schedule were not acquired; no changed price or applicability to eleven study roots is asserted.",
+      "publication_date": null,
+      "raw_body_retained": false,
+      "raw_sha256": null,
+      "title": "Coinbase Derivatives Market Notices",
+      "url": "https://www.coinbase.com/derivatives/market-notices?country=US&currency=USD&japan_bespoke_content=false&logged_in=false&mobile=true&page=&source=post_internal_links---------3-------------------------------"
+    },
+    {
+      "effective_date": "2026-01-26",
+      "key": "saved_dated_cde_exchange_schedule",
+      "latest_applicability_verified": false,
+      "method": "existing repository addendum and saved-PDF metadata; official search reconfirmed title/effective date",
+      "new_pdf_download": false,
+      "prior_saved_pdf_bytes": 103371,
+      "prior_saved_pdf_sha256": "cf38e39591dab66cb89c9f4601e8aa50486a3b99597a628555c9f64ce8e4a612",
+      "title": "Fee Schedule 1.26.2026",
+      "url": "https://assets.ctfassets.net/k3n74unfin40/sgInuF26edJX4v4nUlE29/87f18103cd35feede93f0bb92a5f1065/Fee_Schedule_1.26.2026.pdf"
+    },
+    {
+      "key": "cde_schedule_pointer",
+      "method": "web parsed open/click",
+      "paraphrase": "Official help points to the CDE site; another official market-access article identifies its Fees dropdown as the schedule location. Parser did not expose a current schedule asset.",
+      "raw_body_retained": false,
+      "raw_sha256": null,
+      "related_market_access_url": "https://help.coinbase.com/en/derivatives/perpetual-style-futures/market-access",
+      "title": "Exchange Fees",
+      "url": "https://help.coinbase.com/en/derivatives/products/exchange-fees"
+    },
+    {
+      "key": "us_statement_definitions",
+      "method": "official help search extracted text",
+      "paraphrase": "US statements expose per-fill commissions, NFA and funding fields. That bookkeeping description does not establish whether a percentage quote bundles each billed component.",
+      "raw_body_retained": false,
+      "raw_sha256": null,
+      "title": "Manage your account (US Derivatives)",
+      "url": "https://help.coinbase.com/en/coinbase/derivatives/us-derivatives-manage-account"
+    }
+  ],
+  "unresolved": [
+    "Current US CFM maker/taker and volume/account-tier schedule across the eleven study roots",
+    "Whether $0.15 applies per side, per roundtrip, per contract fill, or another aggregation unit",
+    "Whether total is a minimum/floor, additive fixed charge, or another contract-specific formula",
+    "Current bundling and billed component reconciliation",
+    "Latest complete CDE exchange fee schedule and changes applicable to the study roots"
+  ]
+}

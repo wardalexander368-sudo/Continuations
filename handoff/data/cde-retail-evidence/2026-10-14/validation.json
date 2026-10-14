@@ -1,0 +1,35 @@
+{
+  "schema_version": 1,
+  "checked_at": "2026-10-14T05:40:44.627435+00:00",
+  "source_base": "cb8006074b4a2c2bd85a206f8e32e28f5b8ca7a5",
+  "status": "PASS",
+  "checks": {
+    "source_body_hashes_and_exact_arithmetic": "PASS",
+    "independent_visual_redline_review": "PASS",
+    "json_parse": "PASS",
+    "allowed_diff_scope": "PASS",
+    "diff_check": "PASS",
+    "targeted_credential_pattern_scan": "PASS"
+  },
+  "repository_tests": {
+    "passed": 449,
+    "skipped": 1,
+    "subtests_passed": 9,
+    "seconds": 79.97,
+    "exit_code": 0,
+    "command": "PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=. python -c 'import lightgbm; import pytest; raise SystemExit(pytest.main([\"-q\", \"-p\", \"no:cacheprovider\"]))'",
+    "execution": "existing exact-version local runtime; authorized local loopback fixtures",
+    "log_sha256": "70c0f424a2dffc65886cfb396f36edccdea7bc798728ce177cfba8d45e65e9ca",
+    "log_retention": "Mac delivery only"
+  },
+  "unchanged_in_diff": [
+    "runtime code",
+    "owner books",
+    "workflows",
+    "frozen registrations",
+    "numeric cost and strategy assumptions"
+  ],
+  "github_ci": "No GitHub CI pass claimed; docs/data paths excluded by current workflow filters.",
+  "scan_limit": "Pattern scan is not proof against every credential format; sources are bounded unauthenticated public reads.",
+  "profitability_established": false
+}

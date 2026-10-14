@@ -1,0 +1,373 @@
+{
+  "check_groups": [
+    {
+      "name": "four_body_sha256_and_byte_counts_match_snapshot_and_raw_receipts",
+      "scope": "4 saved bodies and 4 sibling receipts; no HTTP replay",
+      "status": "PASS"
+    },
+    {
+      "name": "four_public_get_receipts_and_sequential_timing",
+      "scope": "Exact recorded product/book URLs, 200 statuses, header set, chronology and durations",
+      "status": "PASS"
+    },
+    {
+      "name": "exact_two_root_product_book_venue_currency_mapping",
+      "scope": "AVAX AVP and DOT POP only; FUTURE, outer FCM, nested cde, USD and managed-by-FCM",
+      "status": "PASS"
+    },
+    {
+      "name": "independent_whole_contract_threshold_and_boundary_math",
+      "scope": "Fractions from raw decimal strings, both current and the two saved prior rows",
+      "status": "PASS"
+    },
+    {
+      "name": "independent_spread_cross_loss_and_margin_arithmetic",
+      "scope": "Exact rational comparison; recurring decimal outputs agree within half last printed unit",
+      "status": "PASS"
+    },
+    {
+      "name": "independent_timestamp_clock_differences",
+      "scope": "Integer-microsecond arithmetic, 4 durations, 2 book-start lags and 2 book-completion lags",
+      "status": "PASS"
+    },
+    {
+      "name": "source_hash_base_and_bounded_scope_override",
+      "scope": "Read-only working-tree and git blob SHA256 match, HEAD matches recorded base, AST literal scope 11 -> 2",
+      "status": "PASS"
+    },
+    {
+      "name": "unknown_cost_size_and_funding_bounds_preserved",
+      "scope": "Saved snapshot and read fee follow-up retain unknown fees, quote size units and funding encoding",
+      "status": "PASS"
+    }
+  ],
+  "check_groups_passed": 8,
+  "defects_found": [],
+  "fee_evidence_limits": {
+    "conclusion": "Historical 0.05% and launch as-low-as 0.02% have different dates and terms. Current US-CFM all-in retail fee, $0.15 side/roundtrip basis, minimum formula and latest full CDE schedule remain unresolved. Later CDE notice metadata was located.",
+    "interpretation": "Different dated 0.05% and as-low-as-0.02% statements do not establish current all-eleven US CFM costs; the $0.15 side/roundtrip basis and floor-versus-additive formula remain unresolved. Later fee-notice metadata is not the missing attachment schedule. Historical bundled exchange/clearing/NFA charges must not be added twice.",
+    "primary_document_followup_path": "local-delivery/outputs/CDE-Retail-Fee-Followup-20261013.json",
+    "reviewer_repeated_network_reads": false,
+    "unresolved": [
+      "Current US CFM maker/taker and volume/account-tier schedule across the eleven study roots",
+      "Whether $0.15 applies per side, per roundtrip, per contract fill, or another aggregation unit",
+      "Whether total is a minimum/floor, additive fixed charge, or another contract-specific formula",
+      "Current bundling and billed component reconciliation",
+      "Latest complete CDE exchange fee schedule and changes applicable to the study roots"
+    ]
+  },
+  "independent_rows": [
+    {
+      "ask_usd_per_root_unit": "10.28",
+      "bid_usd_per_root_unit": "10.27",
+      "book_time_utc": "2026-10-13T13:49:08.519251Z",
+      "book_to_receipt_complete_seconds_exact": "0.212097",
+      "book_to_request_start_seconds_exact": "0.055546",
+      "boundary_ask_for_one_contract_at_100": "10",
+      "contract_multiplier": "10",
+      "decline_to_boundary_fraction": {
+        "decimal_80sig": "0.027237354085603112840466926070038910505836575875486381322957198443579766536964981",
+        "denominator": "257",
+        "numerator": "7"
+      },
+      "funding_raw": {
+        "funding_interval": "3600s",
+        "funding_rate": "-0.000012",
+        "funding_time": "2026-10-13T13:00:00Z",
+        "perpetual_details": {
+          "base_asset_uuid": "",
+          "funding_rate": "",
+          "funding_time": null,
+          "max_leverage": "",
+          "open_interest": "14874",
+          "underlying_type": ""
+        }
+      },
+      "half_spread_bps": {
+        "decimal_80sig": "4.8661800486618004866180048661800486618004866180048661800486618004866180048661800",
+        "denominator": "411",
+        "numerator": "2000"
+      },
+      "identity": {
+        "contract_code": "AVP",
+        "contract_root_unit": "AVAX",
+        "future_details_venue": "cde",
+        "outer_product_venue": "FCM",
+        "product_type": "FUTURE",
+        "quote_currency_id": "USD",
+        "risk_managed_by": "MANAGED_BY_FCM"
+      },
+      "one_contract_ask_notional_usd": "102.8",
+      "prior_0202_comparison": {
+        "book_time_utc": "2026-10-13T02:02:04.818671Z",
+        "book_to_receipt_complete_seconds_exact": "1.624175",
+        "half_spread_bps": {
+          "decimal_80sig": "9.7847358121330724070450097847358121330724070450097847358121330724070450097847358",
+          "denominator": "511",
+          "numerator": "5000"
+        },
+        "notional_change_fraction": {
+          "decimal_80sig": "0.0048875855327468230694037145650048875855327468230694037145650048875855327468230694",
+          "denominator": "1023",
+          "numerator": "5"
+        },
+        "notional_change_usd": "0.5",
+        "one_contract_ask_notional_usd": "102.3",
+        "product_id": "AVP-20DEC30-CDE",
+        "scope": "Saved prior analysis row only; prior raw bodies were not rehashed in this follow-up.",
+        "whole_contracts_at_100_notional": 0
+      },
+      "product_id": "AVP-20DEC30-CDE",
+      "raw_book_sizes": {
+        "ask": "275",
+        "bid": "26",
+        "units": "unknown"
+      },
+      "raw_book_spread_bps": "9.727626459144",
+      "raw_expiry_metadata": {
+        "contract_expiry": "2089-12-30T16:00:00Z",
+        "contract_expiry_name": "2030-12",
+        "contract_expiry_type": "EXPIRING"
+      },
+      "root": "AVAX",
+      "whole_contracts_at_100_notional": 0
+    },
+    {
+      "ask_usd_per_root_unit": "1.198",
+      "bid_usd_per_root_unit": "1.196",
+      "book_time_utc": "2026-10-13T13:49:07.505795Z",
+      "book_to_receipt_complete_seconds_exact": "1.537855",
+      "book_to_request_start_seconds_exact": "1.390769",
+      "boundary_ask_for_one_contract_at_100": "1",
+      "contract_multiplier": "100",
+      "decline_to_boundary_fraction": {
+        "decimal_80sig": "0.16527545909849749582637729549248747913188647746243739565943238731218697829716194",
+        "denominator": "599",
+        "numerator": "99"
+      },
+      "funding_raw": {
+        "funding_interval": "3600s",
+        "funding_rate": "-0.000012",
+        "funding_time": "2026-10-13T13:00:00Z",
+        "perpetual_details": {
+          "base_asset_uuid": "",
+          "funding_rate": "",
+          "funding_time": null,
+          "max_leverage": "",
+          "open_interest": "5922",
+          "underlying_type": ""
+        }
+      },
+      "half_spread_bps": {
+        "decimal_80sig": "8.3542188805346700083542188805346700083542188805346700083542188805346700083542189",
+        "denominator": "1197",
+        "numerator": "10000"
+      },
+      "identity": {
+        "contract_code": "POP",
+        "contract_root_unit": "DOT",
+        "future_details_venue": "cde",
+        "outer_product_venue": "FCM",
+        "product_type": "FUTURE",
+        "quote_currency_id": "USD",
+        "risk_managed_by": "MANAGED_BY_FCM"
+      },
+      "one_contract_ask_notional_usd": "119.8",
+      "prior_0202_comparison": {
+        "book_time_utc": "2026-10-13T02:02:06.408823Z",
+        "book_to_receipt_complete_seconds_exact": "0.667153",
+        "half_spread_bps": {
+          "decimal_80sig": "8.7489063867016622922134733158355205599300087489063867016622922134733158355205599",
+          "denominator": "1143",
+          "numerator": "10000"
+        },
+        "notional_change_fraction": {
+          "decimal_80sig": "0.047202797202797202797202797202797202797202797202797202797202797202797202797202797",
+          "denominator": "572",
+          "numerator": "27"
+        },
+        "notional_change_usd": "5.4",
+        "one_contract_ask_notional_usd": "114.4",
+        "product_id": "POP-20DEC30-CDE",
+        "scope": "Saved prior analysis row only; prior raw bodies were not rehashed in this follow-up.",
+        "whole_contracts_at_100_notional": 0
+      },
+      "product_id": "POP-20DEC30-CDE",
+      "raw_book_sizes": {
+        "ask": "79",
+        "bid": "132",
+        "units": "unknown"
+      },
+      "raw_book_spread_bps": "16.69449081803",
+      "raw_expiry_metadata": {
+        "contract_expiry": "2089-12-30T16:00:00Z",
+        "contract_expiry_name": "2030-12",
+        "contract_expiry_type": "EXPIRING"
+      },
+      "root": "DOT",
+      "whole_contracts_at_100_notional": 0
+    }
+  ],
+  "input_artifacts": [
+    {
+      "bytes": 13817,
+      "path": "local-delivery/outputs/CDE-Threshold-Snapshot-20261013.json",
+      "sha256": "1a8ba9c607ccb530a90dd34aa8c2e6da7675302e34ee3a45c1bd73674227f943"
+    },
+    {
+      "bytes": 38483,
+      "path": "local-delivery/outputs/CDE-Contract-Economics-20261013.json",
+      "sha256": "f5bcaeb42c69f326ffe859a4f893a63b70de2e949f827f9fe49d99adfed02914"
+    },
+    {
+      "bytes": 4219,
+      "path": "local-delivery/work/cde-followup/analyze_threshold_snapshot.py",
+      "sha256": "969c5e1b42e77ebc7bda57518747e1aafa9002edb44fbd7fea54de66ab570b32"
+    },
+    {
+      "bytes": 9521,
+      "path": "local-delivery/outputs/CDE-Retail-Fee-Followup-20261013.json",
+      "sha256": "f922d4013b59d60fb6f1f7a34f9c788ad12b83264690de4a5c08b00fe82cfc6b"
+    },
+    {
+      "bytes": 5377,
+      "path": "local-delivery/outputs/CDE-Retail-Fee-Followup-20261013.md",
+      "sha256": "85ed92c84f5465cd96fa9c48c397edd6d7ad794544d6f92d817fe261d61746eb"
+    }
+  ],
+  "method": "Independent Fraction arithmetic from saved raw decimal strings and exact integer-microsecond timestamp deltas; existing analyzer read, not imported or executed.",
+  "request_gaps_seconds_exact": [
+    "0.00128",
+    "0.001175",
+    "0.001852"
+  ],
+  "request_window_seconds_exact": "0.665722",
+  "requests": [
+    {
+      "complete_utc": "2026-10-13T13:49:08.573517+00:00",
+      "elapsed_seconds_exact": "0.195589",
+      "kind": "product",
+      "receipt_file": {
+        "bytes": 665,
+        "path": "local-delivery/work/cde-followup/threshold-snapshot-20261013T134908Z/AVAX-product.receipt.json",
+        "sha256": "f77d76cb38b28090971aba07d9150258b73617c8aa40d6180cbbd9992462afbc"
+      },
+      "request_url": "https://api.coinbase.com/api/v3/brokerage/market/products/AVP-20DEC30-CDE",
+      "root": "AVAX",
+      "start_utc": "2026-10-13T13:49:08.377928+00:00"
+    },
+    {
+      "complete_utc": "2026-10-13T13:49:08.731348+00:00",
+      "elapsed_seconds_exact": "0.156551",
+      "kind": "book",
+      "receipt_file": {
+        "bytes": 710,
+        "path": "local-delivery/work/cde-followup/threshold-snapshot-20261013T134908Z/AVAX-book.receipt.json",
+        "sha256": "cd15ae8ced1bdcdf609a99c8df446ec9485656dd11941c62c42cf86ea188e126"
+      },
+      "request_url": "https://api.coinbase.com/api/v3/brokerage/market/product_book?product_id=AVP-20DEC30-CDE&limit=1",
+      "root": "AVAX",
+      "start_utc": "2026-10-13T13:49:08.574797+00:00"
+    },
+    {
+      "complete_utc": "2026-10-13T13:49:08.894712+00:00",
+      "elapsed_seconds_exact": "0.162189",
+      "kind": "product",
+      "receipt_file": {
+        "bytes": 665,
+        "path": "local-delivery/work/cde-followup/threshold-snapshot-20261013T134908Z/DOT-product.receipt.json",
+        "sha256": "e76467fc2d178b43da32da74c4b5e9c99e82fedb1068f1ad83bf0f85303421ea"
+      },
+      "request_url": "https://api.coinbase.com/api/v3/brokerage/market/products/POP-20DEC30-CDE",
+      "root": "DOT",
+      "start_utc": "2026-10-13T13:49:08.732523+00:00"
+    },
+    {
+      "complete_utc": "2026-10-13T13:49:09.043650+00:00",
+      "elapsed_seconds_exact": "0.147086",
+      "kind": "book",
+      "receipt_file": {
+        "bytes": 710,
+        "path": "local-delivery/work/cde-followup/threshold-snapshot-20261013T134908Z/DOT-book.receipt.json",
+        "sha256": "2b1d81cb40b817391edf390297131095ddd42f77cc042f397d082cc1b60796c4"
+      },
+      "request_url": "https://api.coinbase.com/api/v3/brokerage/market/product_book?product_id=POP-20DEC30-CDE&limit=1",
+      "root": "DOT",
+      "start_utc": "2026-10-13T13:49:08.896564+00:00"
+    }
+  ],
+  "reviewed_at_utc": "2026-10-13T14:02:29.650385+00:00",
+  "schema_version": 1,
+  "source": {
+    "base_git_blob_sha256": "f6b672a60f07c7c4e200371737e5b9fa5fa948b3dcf1c51735fb4cfc056a80c1",
+    "bytes": 11024,
+    "current_head_read": "ed68abdcd9beab6083022246956d9a74a25f6d8f",
+    "path": "repository/handoff/experiments/edge-hunt/cde_contract_economics.py",
+    "recorded_base": "ed68abdcd9beab6083022246956d9a74a25f6d8f",
+    "sha256": "f6b672a60f07c7c4e200371737e5b9fa5fa948b3dcf1c51735fb4cfc056a80c1",
+    "source_coin_scope": [
+      "BTC",
+      "ETH",
+      "SOL",
+      "XRP",
+      "DOGE",
+      "ADA",
+      "AVAX",
+      "LINK",
+      "LTC",
+      "BCH",
+      "DOT"
+    ],
+    "wrapper_scope_override": [
+      "AVAX",
+      "DOT"
+    ]
+  },
+  "status": "PASS_WITH_STATED_BOUNDS",
+  "verified_raw_bodies": [
+    {
+      "bytes": 2886,
+      "kind": "product",
+      "path": "local-delivery/work/cde-followup/threshold-snapshot-20261013T134908Z/AVAX-product.json",
+      "root": "AVAX",
+      "sha256": "143e21ccc40ea560038c96e0899a949d3b85634c0ede761e28811897ec733a5c",
+      "verified_against_both_receipts": true
+    },
+    {
+      "bytes": 264,
+      "kind": "book",
+      "path": "local-delivery/work/cde-followup/threshold-snapshot-20261013T134908Z/AVAX-book.json",
+      "root": "AVAX",
+      "sha256": "314c7ec6139f5408eb0ec41a81d6ca32f0a95472611259f43677957c4b2e3ce9",
+      "verified_against_both_receipts": true
+    },
+    {
+      "bytes": 2875,
+      "kind": "product",
+      "path": "local-delivery/work/cde-followup/threshold-snapshot-20261013T134908Z/DOT-product.json",
+      "root": "DOT",
+      "sha256": "ee319781d0594eae0411930dd9662c2f14d8cd29f05acd07f28ca07e87716d01",
+      "verified_against_both_receipts": true
+    },
+    {
+      "bytes": 263,
+      "kind": "book",
+      "path": "local-delivery/work/cde-followup/threshold-snapshot-20261013T134908Z/DOT-book.json",
+      "root": "DOT",
+      "sha256": "cf26d6d9ba086128e5cf99fab696c695af7216fd8bad5dc8f74bc3fd5ea825b3",
+      "verified_against_both_receipts": true
+    }
+  ],
+  "what_was_not_checked": [
+    "Only AVAX and DOT were freshly sampled; the other nine study roots were not refreshed.",
+    "Four sequential recorded public GETs, not simultaneous books, outage/crash coverage or an executable order test.",
+    "Book-versus-local-receipt differences are clock comparisons; no synchronized-clock, cache freshness or network-latency guarantee.",
+    "Whole-contract displayed notional is not required collateral, leverage, buying power, account eligibility or order acceptance.",
+    "Raw L2 size units and REST funding-rate encoding/period remain unknown; no depth capacity, funding extrapolation or native INTX substitution.",
+    "Expiry timestamp 2089-12-30 versus name 2030-12 is retained raw; exact IDs and root mappings are verified without resolving that metadata mismatch.",
+    "The saved prior two analysis rows were compared; their original body hashes were not revalidated in this follow-up.",
+    "Fee follow-up evidence was read from peer artifacts; this reviewer did not repeat its web requests, authenticate or inspect billed account fees.",
+    "No current all-eleven price, fee schedule, executed fill, strategy profitability, stop or liquidation assertion is established.",
+    "No analyzer import/rerun, network request, account/order action, repository write or CTS read was performed by this verifier."
+  ]
+}

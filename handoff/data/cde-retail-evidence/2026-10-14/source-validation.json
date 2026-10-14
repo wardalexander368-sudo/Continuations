@@ -1,0 +1,39 @@
+{
+  "schema_version": 1,
+  "checked_at": "2026-10-14T05:37:38.069347+00:00",
+  "status": "PASS",
+  "checks": [
+    {
+      "check": "retained_body_and_receipt",
+      "file": "cde-2026-46.pdf",
+      "status": "PASS"
+    },
+    {
+      "check": "retained_body_and_receipt",
+      "file": "cde-2026-59.pdf",
+      "status": "PASS"
+    },
+    {
+      "check": "retained_body_and_receipt",
+      "file": "us-funding-examples.html",
+      "status": "PASS"
+    },
+    {
+      "check": "exact_fraction_arithmetic",
+      "status": "PASS",
+      "printed_inputs_notional_usd": "1000",
+      "printed_inputs_funding_usd": "0.10",
+      "printed_inputs_gross_usd": "10",
+      "printed_inputs_net_before_trading_fees_usd": "9.90",
+      "published_funding_usd": "1.00",
+      "published_gross_usd": "100",
+      "published_net_usd": "99",
+      "rest_rate_encoding_resolved": false
+    }
+  ],
+  "limitations": [
+    "Checks retain raw-source identity and arithmetic, not API scaling or account billing.",
+    "Raw REST schema not retained; its reported hash is not reverified here.",
+    "No account, quote, trade, collector or backtest was accessed or run."
+  ]
+}
