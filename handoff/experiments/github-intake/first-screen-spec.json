@@ -1,0 +1,45 @@
+{
+  "schema_version": 1,
+  "candidate_id": "pytrader-market-rebalance-btc-cash-v1",
+  "source": {
+    "repo_url": "https://github.com/caktux/pytrader",
+    "commit": "b45b216dab3db78d6028d85e9a6f80419c22cea0",
+    "files": [
+      {
+        "path": "README.md",
+        "sha256": "e5d16a3b9f64e2a54c08eee580a449f2e64d2d0155cff9b2e1544eeca78d31ea"
+      },
+      {
+        "path": "balancer.py",
+        "sha256": "8bb39c6360750ae37c6805de5d56b1ff383e17da28ef2e916eb53ac171d7f734"
+      }
+    ],
+    "license_spdx": "MIT",
+    "license_file": "LICENSE",
+    "license_sha256": "8f71659370c5268d9a1dc962a46232540e8fca63462586d8efaa95aab492a208"
+  },
+  "review": {
+    "reviewer": "Codex source inspection 2026-10-14",
+    "transcription_checked": true,
+    "license_checked": true,
+    "closed_lane_checked": true,
+    "mechanism_note": "Clean-room adaptation of get_buy_at_price 50/50 cash/BTC allocation formula. Daily hourly-close signals execute frozen share intents next hour with fee budgeting. This does not reproduce the full pytrader limit grid or its historical fills. Core source is MIT; licensed source is retained locally, never executed. Constant-weight allocation is distinct from closed breakout/momentum/CAPIT parameter variants."
+  },
+  "method": {
+    "adapter": "constant_weight_rebalance",
+    "weights": {
+      "BTC": 0.5
+    },
+    "interval_bars": 24,
+    "drift_band": 0
+  },
+  "protocol": {
+    "capital_usd": 1000,
+    "side_cost_bps": 39,
+    "stress_side_cost_bps": 78,
+    "start_hour": 473352,
+    "end_hour": 482135,
+    "evidence_class": "explored-history",
+    "planned_at": "2026-10-14T15:57:47.869526Z"
+  }
+}

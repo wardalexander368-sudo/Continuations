@@ -1,0 +1,57 @@
+{
+  "schema_version": 1,
+  "candidate_id": "pytrader-source-default-grid-btc-preflight-v1",
+  "source": {
+    "repo_url": "https://github.com/caktux/pytrader",
+    "commit": "b45b216dab3db78d6028d85e9a6f80419c22cea0",
+    "files": [
+      {
+        "path": "README.md",
+        "sha256": "e5d16a3b9f64e2a54c08eee580a449f2e64d2d0155cff9b2e1544eeca78d31ea"
+      },
+      {
+        "path": "balancer.py",
+        "sha256": "8bb39c6360750ae37c6805de5d56b1ff383e17da28ef2e916eb53ac171d7f734"
+      }
+    ],
+    "license_spdx": "MIT",
+    "license_file": "LICENSE",
+    "license_sha256": "8f71659370c5268d9a1dc962a46232540e8fca63462586d8efaa95aab492a208"
+  },
+  "review": {
+    "reviewer": "Codex pinned-source audit 2026-10-14",
+    "transcription_checked": true,
+    "license_checked": true,
+    "closed_lane_checked": true,
+    "mechanism_note": "Static source-mechanism preflight for a declared BTC/USD $1000 50/50 starting allocation. Source code defaults specify center/1.05 buy and center*1.05 sell before fee/correction, minimum0.1 base units per side, zero cold holdings/reserves, old simulated fee5bp. Actual upstream balancer.conf and trading currency configuration are unknown. This is neither literal upstream starting-balance replication nor a return simulation. Bid/ask touches do not prove fills; asymmetric source simulation fee updates cannot validate full economics."
+  },
+  "method": {
+    "adapter": "balanced_base_quote_grid",
+    "base_symbol": "BTC",
+    "quote_symbol": "USD",
+    "target_base_weight": 0.5,
+    "minimum_base_units": 0.1,
+    "buy_step_factor": 1.05,
+    "sell_step_factor": 1.05,
+    "cold_base_units": 0,
+    "cold_quote_units": 0,
+    "reserve_base_units": 0,
+    "reserve_quote_units": 0,
+    "source_simulated_fee_bps": 5,
+    "units_interpretation_checked": true,
+    "source_configuration": "code-defaults-actual-config-unknown"
+  },
+  "protocol": {
+    "capital_quote_units": 1000,
+    "start_hour": 473352,
+    "end_hour": 482135,
+    "evidence_class": "static-preflight",
+    "planned_at": "2026-10-14T17:29:51.944896+00:00"
+  },
+  "execution_evidence": {
+    "quotes": [],
+    "trades": [],
+    "order_lifecycle": [],
+    "paid_fees": []
+  }
+}

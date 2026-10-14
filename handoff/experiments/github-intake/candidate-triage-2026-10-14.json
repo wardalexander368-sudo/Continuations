@@ -1,0 +1,145 @@
+{
+  "schema_version": 1,
+  "recorded_at": "2026-10-14T17:32:51.513886+00:00",
+  "input_run": "20261014T154922Z-c664769b",
+  "external_claims_replicated": false,
+  "new_http_requests": 0,
+  "new_return_screens": 0,
+  "cards": [
+    {
+      "repo": "spoots48/paper-trader",
+      "commit": "7a7305b7f4485538b85441c78f055f7d992145ee",
+      "readme_sha256": "e09dd1bc2d4f743fa8d148bb8dccfe1c37f4536b989ee14e50b8c446cef55da8",
+      "source_url": "https://github.com/spoots48/paper-trader/blob/7a7305b7f4485538b85441c78f055f7d992145ee/README.md",
+      "license_policy": "unknown_license_review",
+      "license_artifact_present": false,
+      "decision": "DEFER_CODE_REUSE_AND_RETURN_SCREEN",
+      "assessment_type": "first-pass unlicensed-source triage; not a licensed method review or a strategy test",
+      "validated_profitability": false,
+      "priority": 1,
+      "claim_assessment": "Upstream equity result underperforms its benchmark; no replicable crypto edge described.",
+      "rules": "SPY200day/VIX gate and earnings-gap/volatility momentum. Crypto rules lack enough definitions.",
+      "capabilities": [
+        "Separate modeled rebates from settled cash",
+        "Point-in-time publish and retrieval timestamps",
+        "Tape-volume maker-fill caps",
+        "Retry deduplication and missing-data rejection"
+      ],
+      "evidence_lines": [
+        16,
+        42,
+        48,
+        57,
+        103,
+        117,
+        125,
+        128,
+        133,
+        160
+      ],
+      "gaps": [
+        "Pinned configurations and historical universe",
+        "Point-in-time inputs and actual fill ledgers",
+        "Independent crypto account/cost replay"
+      ]
+    },
+    {
+      "repo": "oscarwy08/trading-dashboard",
+      "commit": "d601aa5c66ae291552a815f00aee1fa5c429ada1",
+      "readme_sha256": "f3983af95d6c7296e7e0000db4f7f452714d277473174aa62e0991283e3c6234",
+      "source_url": "https://github.com/oscarwy08/trading-dashboard/blob/d601aa5c66ae291552a815f00aee1fa5c429ada1/README.md",
+      "license_policy": "unknown_license_review",
+      "license_artifact_present": false,
+      "decision": "DEFER_CODE_REUSE_AND_RETURN_SCREEN",
+      "assessment_type": "first-pass unlicensed-source triage; not a licensed method review or a strategy test",
+      "validated_profitability": false,
+      "priority": 2,
+      "claim_assessment": "README expressly discloses look-ahead in Core picks and Risk crypto; results cannot establish chronological alpha.",
+      "rules": "Momentum/trend ranking, momentum-volume breakouts, breakout/pullback scoring.",
+      "capabilities": [
+        "Reserve data budget for held positions and pre-fill quotes",
+        "Reject missing indicator history",
+        "Reconcile cash, inventory, realised PnL and paid fees"
+      ],
+      "evidence_lines": [
+        11,
+        17,
+        41,
+        67,
+        137,
+        155,
+        196,
+        199,
+        218,
+        221,
+        518
+      ],
+      "gaps": [
+        "Historical screen and sentiment snapshots",
+        "Chronological universe and configuration",
+        "Validated volume/ATR proxies and actual execution costs"
+      ]
+    },
+    {
+      "repo": "0xsheriff/afterhours-sentinel",
+      "commit": "87a37985d030102c43ee859a2357f4c46681dac5",
+      "readme_sha256": "1d7c0c3c42d8de0134d49dade87fcbdf4630d55f45bf84a2891a474246d39a7d",
+      "source_url": "https://github.com/0xsheriff/afterhours-sentinel/blob/87a37985d030102c43ee859a2357f4c46681dac5/README.md",
+      "license_policy": "unknown_license_review",
+      "license_artifact_present": false,
+      "decision": "DEFER_CODE_REUSE_AND_RETURN_SCREEN",
+      "assessment_type": "first-pass unlicensed-source triage; not a licensed method review or a strategy test",
+      "validated_profitability": false,
+      "priority": 3,
+      "claim_assessment": "Small demo/simulation samples, no verified complete costs or controls.",
+      "rules": "30day beta-residual baseline,80bp volatility floor; news contradiction+volume<0.5 or alignment+volume>=0.8 at|z|>=2.",
+      "capabilities": [
+        "Keep text classification separate from numerical risk",
+        "Label live, fallback and skipped inputs",
+        "Distinguish demo fills from local simulated fills"
+      ],
+      "evidence_lines": [
+        48,
+        58,
+        83,
+        93,
+        100,
+        164,
+        166,
+        177
+      ],
+      "gaps": [
+        "Timestamped news availability and exact exit sampling",
+        "Benchmark self-inclusion and construction",
+        "Execution/account receipts, fees and US eligibility"
+      ]
+    },
+    {
+      "repo": "d503therapper/autonomous-crypto-engine",
+      "commit": "f39451c338db6798a2c8f673141fd332f21ce823",
+      "readme_sha256": "c47dfa88867986f86573490268b0c963d1388b4c146d1bb8465ba428a7754d30",
+      "source_url": "https://github.com/d503therapper/autonomous-crypto-engine/blob/f39451c338db6798a2c8f673141fd332f21ce823/README.md",
+      "license_policy": "unknown_license_review",
+      "license_artifact_present": false,
+      "decision": "DEFER_CODE_REUSE_AND_RETURN_SCREEN",
+      "assessment_type": "first-pass unlicensed-source triage; not a licensed method review or a strategy test",
+      "validated_profitability": false,
+      "priority": 4,
+      "claim_assessment": "No numerical returns; trade-count threshold alone does not exclude luck.",
+      "rules": "Price>SMA200,SMA20>SMA50,RSI<70,72h momentum ranking;ATR stops/trails and partial profits.",
+      "capabilities": [
+        "Explicit rule and exit definitions before replay"
+      ],
+      "evidence_lines": [
+        6,
+        28,
+        33
+      ],
+      "gaps": [
+        "Historical universe and indicator formulas",
+        "Chronological partial-exit fills and costs",
+        "Independent controls and replay"
+      ]
+    }
+  ]
+}
