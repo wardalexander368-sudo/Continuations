@@ -95,12 +95,15 @@ def main() -> int:
                 after["issues"].append("prospective source lock changed during execution")
             inputs = receipts.inventory(ROOT, cache_path, before["declared_inputs"])
             runs = evidence["runs"]
+            evidence["output_disposition"] = receipts.output_disposition(d, runs)
             if after["status"] != "PROSPECTIVE_SOURCE_MATCH":
                 status = "INVALID/PROTOCOL_DRIFT"
             elif any(q["returncode"] != 0 or q["failure"] or q["acquisition_failure_evidence"] for q in runs):
                 status = "FAILED_EXECUTION"
             elif inputs["status"] == "unknown_or_incomplete":
                 status = "INVALID/INPUT_PROVENANCE"
+            elif evidence["output_disposition"]["status"] != "REPORTED_FINAL_DISPOSITION":
+                status = "INCOMPLETE/SCORER_OUTPUT"
             else:
                 status = "EXECUTION_COMPLETE"  # exit zero is never interpreted as a profitable test
             receipts.finish_attempt(receipt_path, evidence, after=after, inputs=inputs, status=status)
@@ -122,11 +125,17 @@ def main() -> int:
             body += f"\nSecondary (informative), `python3 {' '.join(c2).replace('{cache}', 'CACHE')}`:\n\n```\n{(q['stdout'] or q['stderr']).strip()}\n```\n"
         result = PRE / d / f"RESULT-auto-{today}.md"
         try:
-            result.write_text(body)
+            evidence["result_publication"] = receipts.publish_result(result, body)
         except OSError as exc:
             evidence["result_write_error"] = f"{type(exc).__name__}: {exc}"
-            receipts.finish_attempt(receipt_path, evidence, after=after, inputs=inputs, status="FAILED_RESULT_WRITE")
-            raise
+            publication = getattr(exc, "publication", {"published": False, "durability": "unknown"})
+            evidence["result_publication"] = publication
+            write_status = "RESULT_RECORDED_DURABILITY_UNKNOWN" if publication["published"] else "FAILED_RESULT_WRITE"
+            receipts.finish_attempt(receipt_path, evidence, after=after, inputs=inputs, status=write_status,
+                                    official_result=result.relative_to(ROOT).as_posix() if publication["published"] else None)
+            print(f"  {write_status}; evidence: {receipt_path.relative_to(ROOT)}")
+            rc = 1
+            continue
         receipts.finish_attempt(receipt_path, evidence, after=after, inputs=inputs, status="RESULT_RECORDED", official_result=result.relative_to(ROOT).as_posix())
         print(f"  wrote {d}/RESULT-auto-{today}.md")
     return rc

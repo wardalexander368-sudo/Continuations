@@ -1,10 +1,13 @@
 """Prospective execution evidence; never import or change registered scorer code."""
 from __future__ import annotations
 
+import csv
 import datetime as dt
 import hashlib
 import importlib.metadata
+import io
 import json
+import math
 import os
 import platform
 import re
@@ -195,6 +198,214 @@ def verify(root: Path, lock_rel: str, registration: str, commands: list[list[str
     return out
 
 
+def input_content(base: Path, rel: str, record: dict) -> dict:
+    """Require actual records, without asserting complete coverage or parsing returns.
+
+    Declared JSONL and other files must be nonempty. The existing candle CSV
+    formats are headerless numeric/ISO-date records, optionally preceded by a
+    header whose first field names day/date/time/timestamp/ts/hour. At least one
+    nonblank, non-header row is required. This is a content-presence check only.
+    """
+    if record.get("status") != "hashed":
+        return {"status": "unknown", "reason": "file hashing unavailable"}
+    if record.get("bytes") == 0:
+        return {"status": "incomplete", "reason": "required file is empty"}
+    if not rel.lower().endswith(".csv"):
+        return {"status": "nonempty", "coverage": "not_established"}
+    parent = fd = None
+    try:
+        parts = _parts(rel)
+        parent = _open_dir(base, parts[:-1])
+        fd = os.open(parts[-1], os.O_RDONLY | os.O_NOFOLLOW | os.O_NONBLOCK, dir_fd=parent)
+        info = os.fstat(fd)
+        if not stat.S_ISREG(info.st_mode) or info.st_size > MAX_FILE_BYTES or info.st_size != record["bytes"] or info.st_mtime_ns != record["mtime_ns"]:
+            raise ValueError("input changed or is not a bounded regular file")
+        saw_header = False
+        with os.fdopen(fd, "rb") as binary:
+            fd = None
+            with io.TextIOWrapper(binary, encoding="utf-8-sig", newline="") as stream:
+                for row in csv.reader(stream):
+                    if not row or not any(field.strip() for field in row):
+                        continue
+                    first = row[0].strip()
+                    if first.lower() in {"day", "date", "time", "timestamp", "ts", "hour", "open", "high", "low", "close", "volume"}:
+                        saw_header = True
+                        continue
+                    if len(row) < 2:
+                        return {"status": "incomplete", "reason": "CSV has no supported candle record"}
+                    try:
+                        if not math.isfinite(float(first)):
+                            raise ValueError("nonfinite CSV timestamp")
+                    except ValueError:
+                        try:
+                            dt.datetime.fromisoformat(first.replace("Z", "+00:00"))
+                        except ValueError:
+                            return {"status": "incomplete", "reason": "CSV has no supported date/timestamp record"}
+                    try:
+                        if not all(math.isfinite(float(field.strip())) for field in row[1:]):
+                            raise ValueError("nonfinite candle field")
+                    except ValueError:
+                        return {"status": "incomplete", "reason": "CSV has no finite numeric candle record"}
+                    return {"status": "nonempty_records", "coverage": "not_established"}
+        return {"status": "incomplete", "reason": "CSV contains only headers" if saw_header else "CSV contains no records"}
+    except (OSError, ValueError, UnicodeError, csv.Error) as exc:
+        return {"status": "unknown", "reason": f"{type(exc).__name__}: {exc}"}
+    finally:
+        if fd is not None:
+            os.close(fd)
+        if parent is not None:
+            os.close(parent)
+
+
+def output_disposition(registration: str, runs: list[dict]) -> dict:
+    """Recognize existing finite reports and final tokens, never recompute verdicts.
+
+    Primary banners alone are insufficient. Each known registration has its
+    existing report grammar; explicit missing/unestimable/nonfinite diagnostics
+    block publication. A reported FAIL/NOT CONFIRMED remains a completed report.
+    Counts are reported observations, not inferred trades or independent samples;
+    no new strategy threshold is applied. JLP's explicit liquidation FAIL needs
+    its finite account report, not a CI that its scorer deliberately omits.
+    """
+    out = {"status": "INCOMPLETE", "issues": [], "primary_markers": [],
+           "coverage": "not_established_by_output", "profitability": "not_inferred"}
+    if not runs:
+        out["issues"].append("no scorer runs recorded")
+        return out
+    unsupported = re.compile(r"\b(?:not[-_ ]estimable|incomplete|inconclusive|nan|inf(?:inity)?)\b|nothing to (?:score|evaluate)|too few", re.I)
+    for index, run in enumerate(runs):
+        stdout, stderr = run.get("stdout", ""), run.get("stderr", "")
+        if not isinstance(stdout, str) or not isinstance(stderr, str):
+            out["issues"].append(f"run {index + 1}: unsupported text output")
+            continue
+        if not (stdout.strip() if index == 0 else (stdout + stderr).strip()):
+            out["issues"].append(f"run {index + 1}: no report output")
+        for line_number, line in enumerate((stdout + "\n" + stderr).splitlines(), 1):
+            if unsupported.search(line) or re.search(r"(?<![\d.])0\s+(?:complete\s+)?weeks?\b", line, re.I):
+                out["issues"].append(f"run {index + 1}, line {line_number}: unestimable or nonfinite output")
+    primary_stdout = runs[0].get("stdout", "")
+    if not isinstance(primary_stdout, str):
+        return out
+    lines = [(number, line.strip()) for number, line in enumerate(primary_stdout.splitlines(), 1)]
+    num = r"([+-]?(?:\d+(?:\.\d*)?|\.\d+)(?:[eE][+-]?\d+)?)"
+    money = r"([+-]?(?:\d{1,3}(?:,\d{3})+|\d+)(?:\.\d*)?)"
+    ci = r"90% CI \[" + num + r",\s*" + num + r"\]"
+
+    def report(pattern, description):
+        found = [(n, line, match) for n, line in lines if (match := re.fullmatch(pattern, line))]
+        if len(found) != 1:
+            out["issues"].append(f"missing or ambiguous {description}")
+            return False
+        try:
+            finite = all(math.isfinite(float(value.replace(",", ""))) for value in found[0][2].groups() if value is not None)
+        except (ValueError, OverflowError):
+            finite = False
+        if not finite:
+            out["issues"].append(f"nonfinite {description}")
+            return False
+        return True
+
+    def marker(pattern, description):
+        found = [(n, line) for n, line in lines if re.fullmatch(pattern, line)]
+        if len(found) != 1:
+            out["issues"].append(f"missing or ambiguous {description}")
+            return False
+        out["primary_markers"].append({"line": found[0][0], "text": found[0][1]})
+        return True
+
+    result_token = r"RESULT:\s*(?:SUCCESS|FAIL)(?:\s+\(.*\))?"
+    if registration == "us-patterns":
+        out["contract"] = "finite metric report and final token for each fixed CAPIT/VOLSPIKE rule"
+        for name in ("CAPIT Z=4 H=24", "VOLSPIKE K=10 H=72"):
+            report(re.escape(name) + r": (\d+) trades on (\d+) days, mean " + num + r"%/trade after 0\.62%/side, " + ci + r"\s+(?:SUCCESS|FAIL)", name + " finite metric report")
+            marker(re.escape(name) + r":.*\b(?:SUCCESS|FAIL)", name + " final disposition")
+    elif registration == "pumpflow":
+        out["contract"] = "finite net/timing reports and existing CONFIRMED/NOT CONFIRMED line"
+        report(r"(\d+) trades \d{4}-\d{2}-\d{2}\.\.\d{4}-\d{2}-\d{2} \(long (\d+)%\)", "pumpflow observation report")
+        report(r"mean net per trade " + num + r"%  90% CI \[" + num + r"%, " + num + r"%\]  total " + num + r"%", "pumpflow net report")
+        report(r"timing part " + num + r"%  90% CI \[" + num + r"%, " + num + r"%\]   buy-and-hold " + num + r"%/trade", "pumpflow timing report")
+        marker(r"(?:CONFIRMED|NOT CONFIRMED)", "pumpflow final disposition")
+    elif registration == "cde-vol-momentum":
+        out["contract"] = "existing finite weekly mean/CI report with final token"
+        report(r"\d{4}-\d{2}-\d{2}\.\.\d{4}-\d{2}-\d{2}: (\d+) weeks, mean " + num + r"%/week after 20 bp/side, " + ci + r"\s+(?:SUCCESS|FAIL)", "CDE weekly report")
+        marker(r".+\s+(?:SUCCESS|FAIL)", "CDE final disposition")
+    elif registration in {"vol-momentum", "xs-momentum"}:
+        out["contract"] = "existing finite weekly return/CI report and RESULT line"
+        report(r"(\d+) weeks \d{4}-\d{2}-\d{2} \.\. \d{4}-\d{2}-\d{2}: mean " + num + r"% per week net of costs and funding, " + ci + r", cumulative " + num + r"% \(long-short, \$1 per leg\)", "weekly momentum report")
+        marker(result_token, "momentum final disposition")
+    elif registration == "wick-bounce":
+        out["contract"] = "existing finite trade/CI report and final token"
+        report(r"\d{4}-\d{2}-\d{2}\.\.\d{4}-\d{2}-\d{2}: (\d+) trades on (\d+) days, mean " + num + r" bp/trade after 8\.5 bp/side, " + ci, "wick-bounce report")
+        marker(r"(?:SUCCESS|FAIL)", "wick-bounce final disposition")
+    elif registration == "hlp-hold":
+        out["contract"] = "existing finite HLP/hurdle/CI report and RESULT line"
+        report(r"(\d+) intervals, " + num + r" days: HLP " + num + r"% a year, minus the " + num + r"% hurdle " + num + r" points, " + ci, "HLP report")
+        marker(result_token, "HLP final disposition")
+    elif registration == "jlp-hedged":
+        out["contract"] = "finite account report plus excess CI or explicit registered liquidation FAIL"
+        report(r"(\d+) check-ins, .+ \(" + num + r" days\); rebalances \d+, top-ups \d+, withdrawals \d+", "JLP observation report")
+        report(r"equity \$" + money + r" after exit costs \(" + num + r"%\), Kamino USDC " + num + r"%", "JLP account report")
+        liquidation = any(re.fullmatch(r"RESULT: FAIL \(simulated liquidation at .+\)", line) for _, line in lines)
+        if not liquidation:
+            report(r"excess over Kamino USDC: " + num + r"% APR, " + ci + r" \(10-day moving blocks, (\d+) days\)", "JLP excess report")
+        marker(result_token, "JLP final disposition")
+    else:
+        out["contract"] = "finite count/mean/CI report and separate final token"
+        report(r"(\d+) (?:weeks|trades|observations), mean " + num + r"%, " + ci, "generic finite metric report")
+        marker(r"(?:RESULT:\s*)?(?:SUCCESS|FAIL)(?:\s+\(.*\))?", "generic final disposition")
+    if not out["issues"]:
+        out["status"] = "REPORTED_FINAL_DISPOSITION"
+    return out
+
+
+class ResultPublicationError(OSError):
+    def __init__(self, error: OSError, publication: dict):
+        super().__init__(str(error))
+        self.publication = publication
+
+
+def publish_result(path: Path, body: str) -> dict:
+    """Write/fsync an unrecognized temp name, atomically link without overwriting.
+
+    A failure before publication leaves no RESULT marker. A failure to sync the
+    directory after publication leaves a complete file, explicitly marked with
+    uncertain directory durability; it never leaves a partial official payload.
+    Existing result paths and concurrent writers are never replaced or deleted.
+    """
+    payload = body.encode("utf-8")
+    out = {"published": False, "bytes": len(payload), "sha256": hashlib.sha256(payload).hexdigest(), "durability": "not_published"}
+    parent = _open_dir(path.parent)
+    temp = f".result-pending-{uuid.uuid4().hex}.tmp"
+    created = False
+    try:
+        fd = os.open(temp, os.O_WRONLY | os.O_CREAT | os.O_EXCL | os.O_NOFOLLOW, 0o644, dir_fd=parent)
+        created = True
+        with os.fdopen(fd, "wb") as stream:
+            if stream.write(payload) != len(payload):
+                raise OSError("short result payload write")
+            stream.flush()
+            os.fsync(stream.fileno())
+        os.fsync(parent)
+        os.link(temp, path.name, src_dir_fd=parent, dst_dir_fd=parent, follow_symlinks=False)
+        out.update(published=True, durability="directory_sync_pending")
+        os.fsync(parent)
+        out["durability"] = "file_and_directory_synced"
+        return out
+    except OSError as exc:
+        if out["published"]:
+            out["durability"] = "directory_sync_unknown"
+        raise ResultPublicationError(exc, out) from exc
+    finally:
+        if created:
+            try:
+                os.unlink(temp, dir_fd=parent)
+            except FileNotFoundError:
+                pass
+            except OSError as exc:
+                out["temporary_cleanup_error"] = f"{type(exc).__name__}: {exc}"
+        os.close(parent)
+
+
 def inventory(root: Path, cache: Path, declarations: list[dict]) -> dict:
     """Inventory only explicitly declared files or one shallow suffix-limited directory."""
     out = {"captured_at": utc_now(), "files": [], "issues": []}
@@ -204,6 +415,9 @@ def inventory(root: Path, cache: Path, declarations: list[dict]) -> dict:
         label = f"{declaration['scope']}:{rel}"
         if declaration["kind"] == "file":
             rec = file_record(base, rel)
+            rec["content"] = input_content(base, rel, rec)
+            if rec["content"]["status"] not in {"nonempty", "nonempty_records"}:
+                out["issues"].append({"path": label, **rec["content"]})
             rec["path"] = label
             out["files"].append(rec)
             continue
@@ -218,6 +432,9 @@ def inventory(root: Path, cache: Path, declarations: list[dict]) -> dict:
             for name in names:
                 path = name if rel == "." else f"{rel}/{name}"
                 rec = file_record(base, path)
+                rec["content"] = input_content(base, path, rec)
+                if rec["content"]["status"] not in {"nonempty", "nonempty_records"}:
+                    out["issues"].append({"path": f"{declaration['scope']}:{path}", **rec["content"]})
                 rec["path"] = f"{declaration['scope']}:{path}"
                 out["files"].append(rec)
         except FileNotFoundError:

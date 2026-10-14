@@ -11,6 +11,8 @@ import pytest
 from handoff.experiments import scoring_receipts as receipts
 
 ROOT = Path(__file__).resolve().parents[1]
+FINITE_REPORT = "2 weeks, mean +0.00%, 90% CI [+0.00, +0.00]\n"
+PRIMARY_OUTPUT = FINITE_REPORT + "SUCCESS\n"
 spec = importlib.util.spec_from_file_location("receipt_final_scores", ROOT / "handoff/experiments/final_scores.py")
 fs = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(fs)
@@ -69,7 +71,7 @@ def fake_runner(monkeypatch, behavior=None):
             result = behavior(argv, len(calls))
             if result is not None:
                 return result
-        return subprocess.CompletedProcess(argv, 0, "SUCCESS\n" if len(calls) == 1 else "informative output\n", "")
+        return subprocess.CompletedProcess(argv, 0, PRIMARY_OUTPUT if len(calls) == 1 else "informative output\n", "")
 
     monkeypatch.setattr(fs.subprocess, "run", run)
     return calls, caches
@@ -95,10 +97,10 @@ def test_success_preserves_order_output_and_hashes_cache_before_cleanup(study, m
     assert rec["before"]["historical_registered_source_identity"]["status"] == "unknown"
     assert rec["before"]["dependencies"]["package-that-is-deliberately-not-installed"]["status"] == "unknown"
     assert rec["inputs_after_before_cleanup"]["files"][0]["sha256"] == digest(b"day,close,volume\n2020-01-01,100,200\n")
-    assert rec["runs"][0]["stdout"] == "SUCCESS\n"
+    assert rec["runs"][0]["stdout"] == PRIMARY_OUTPUT
     assert (pre / "SPEC.md").read_bytes() == original
     body = (pre / "RESULT-auto-2020-01-01.md").read_text()
-    assert "```\nSUCCESS\n```" in body
+    assert "```\n" + PRIMARY_OUTPUT.strip() + "\n```" in body
     assert "Secondary (informative)" in body and "informative output\n```" in body
     assert "`python3 handoff/experiments/primary.py CACHE --final`" in body
 
@@ -335,3 +337,229 @@ def test_checked_in_lock_covers_real_scorers_without_executing(monkeypatch):
         check = receipts.verify(ROOT, fs.LOCK_REL, registration, [cmd, *extra])
         assert check["status"] == "PROSPECTIVE_SOURCE_MATCH", check["issues"]
         assert check["historical_registered_source_identity"]["status"] == "unknown"
+
+
+@pytest.mark.parametrize("payload", [b"", b"day,close,volume\n", b"\n timestamp,close,volume\n\n", b"close,volume\n", b"garbage\n", b"2020-01-01,nan,2\n"])
+def test_required_empty_header_only_or_unsupported_csv_blocks_result(study, monkeypatch, payload):
+    root, pre, _, _ = study
+    def missing_records(argv, **kwargs):
+        (Path(argv[2]) / "BTC.csv").write_bytes(payload)
+        return subprocess.CompletedProcess(argv, 0, "SUCCESS\n", "")
+    monkeypatch.setattr(fs.subprocess, "run", missing_records)
+    assert fs.main() == 1 and not list(pre.glob("RESULT*"))
+    record = evidence(root)
+    assert record["status"] == "INVALID/INPUT_PROVENANCE"
+    assert record["inputs_after_before_cleanup"]["files"][0]["content"]["status"] == "incomplete"
+    assert fs.due(dt.date(2020, 1, 2))[0][3] is False
+
+
+@pytest.mark.parametrize("text", ["2026-10-12..2027-10-11: 0 weeks\n", "1 complete week: nothing to score yet\n", "0 trades\nSUCCESS\n", "4 daily excess returns: too few for a CI\n", "NOT-ESTIMABLE\n", "INCONCLUSIVE\n", "", "mean +100% without a final disposition\n"])
+def test_zero_exit_unestimable_or_unsupported_output_is_incomplete(study, monkeypatch, text):
+    root, pre, _, _ = study
+    fake_runner(monkeypatch, lambda argv, n: subprocess.CompletedProcess(argv, 0, text, "") if n == 1 else None)
+    assert fs.main() == 1 and not list(pre.glob("RESULT*"))
+    record = evidence(root)
+    assert record["status"] == "INCOMPLETE/SCORER_OUTPUT"
+    assert record["output_disposition"]["status"] == "INCOMPLETE"
+    assert record["runs"][0]["stdout"] == text
+    assert fs.due(dt.date(2020, 1, 2))[0][3] is False
+
+
+def test_empty_informative_secondary_is_incomplete_and_preserved(study, monkeypatch):
+    root, pre, _, _ = study
+    fake_runner(monkeypatch, lambda argv, n: subprocess.CompletedProcess(argv, 0, "", "") if n == 2 else None)
+    assert fs.main() == 1 and not list(pre.glob("RESULT*"))
+    record = evidence(root)
+    assert record["status"] == "INCOMPLETE/SCORER_OUTPUT"
+    assert record["runs"][1]["stdout"] == ""
+
+
+@pytest.mark.parametrize("marker", ["SUCCESS", "FAIL"])
+def test_reported_final_success_and_failure_are_both_complete(study, monkeypatch, marker):
+    root, pre, _, _ = study
+    fake_runner(monkeypatch, lambda argv, n: subprocess.CompletedProcess(argv, 0, FINITE_REPORT + marker + "\n", "") if n == 1 else None)
+    assert fs.main() == 0 and list(pre.glob("RESULT*"))
+    record = evidence(root)
+    assert record["status"] == "RESULT_RECORDED"
+    assert record["output_disposition"]["status"] == "REPORTED_FINAL_DISPOSITION"
+    assert record["output_disposition"]["profitability"] == "not_inferred"
+    assert record["result_publication"]["durability"] == "file_and_directory_synced"
+
+
+@pytest.mark.parametrize("marker", ["CONFIRMED", "NOT CONFIRMED"])
+def test_pumpflow_report_contract_preserves_existing_disposition(marker):
+    runs = [{"stdout": "3 trades 2026-10-10..2026-10-14 (long 0%)\nmean net per trade +0.000%  90% CI [+0.000%, +0.000%]  total +0.0%\ntiming part +0.000%  90% CI [+0.000%, +0.000%]   buy-and-hold +0.000%/trade\n" + marker + "\n", "stderr": ""}]
+    assert receipts.output_disposition("pumpflow", runs)["status"] == "REPORTED_FINAL_DISPOSITION"
+
+
+def test_us_patterns_contract_requires_both_fixed_rule_dispositions():
+    good = "CAPIT Z=4 H=24: 2 trades on 1 days, mean +0.00%/trade after 0.62%/side, 90% CI [-1.00, +1.00]  FAIL\nVOLSPIKE K=10 H=72: 3 trades on 2 days, mean +0.00%/trade after 0.62%/side, 90% CI [-1.00, +1.00]  SUCCESS\n"
+    assert receipts.output_disposition("us-patterns", [{"stdout": good, "stderr": ""}])["status"] == "REPORTED_FINAL_DISPOSITION"
+    incomplete = good.splitlines()[0] + "\nVOLSPIKE K=10 H=72: 0 trades in 2026..2027\n"
+    assert receipts.output_disposition("us-patterns", [{"stdout": incomplete, "stderr": ""}])["status"] == "INCOMPLETE"
+    assert receipts.output_disposition("us-patterns", [{"stdout": good.splitlines()[0], "stderr": ""}])["status"] == "INCOMPLETE"
+
+
+def test_ambiguous_multiple_primary_final_tokens_are_not_published():
+    result = receipts.output_disposition("example", [{"stdout": "SUCCESS\nFAIL\n", "stderr": ""}])
+    assert result["status"] == "INCOMPLETE"
+
+
+def test_partial_temporary_payload_write_leaves_no_result_and_retry_works(study, monkeypatch):
+    root, pre, _, _ = study
+    fake_runner(monkeypatch)
+    original = receipts.os.fdopen
+    class BrokenPayloadWriter:
+        def __init__(self, stream):
+            self.stream = stream
+        def __enter__(self):
+            return self
+        def __exit__(self, *args):
+            self.stream.close()
+        def write(self, payload):
+            self.stream.write(payload[:15])
+            self.stream.flush()
+            raise OSError("injected write failure after a partial temporary payload")
+    def partial(fd, mode, *args, **kwargs):
+        stream = original(fd, mode, *args, **kwargs)
+        return BrokenPayloadWriter(stream) if mode == "wb" else stream
+    monkeypatch.setattr(receipts.os, "fdopen", partial)
+    assert fs.main() == 1
+    record = evidence(root)
+    assert record["status"] == "FAILED_RESULT_WRITE"
+    assert record["result_publication"]["published"] is False
+    assert not list(pre.glob("RESULT*")) and not list(pre.glob(".result-pending-*"))
+    assert fs.due(dt.date(2020, 1, 2))[0][3] is False
+    monkeypatch.setattr(receipts.os, "fdopen", original)
+    fake_runner(monkeypatch)
+    assert fs.main() == 0
+    assert {json.loads(path.read_text())["status"] for path in (root / "handoff/scoring/receipts").glob("*.json")} == {"FAILED_RESULT_WRITE", "RESULT_RECORDED"}
+
+
+@pytest.mark.parametrize("failed_step", [1, 2])
+def test_fsync_failure_before_publication_leaves_no_recognized_marker(study, monkeypatch, failed_step):
+    root, pre, _, _ = study
+    fake_runner(monkeypatch)
+    original = receipts.os.fsync
+    count = 0
+    def failed(fd):
+        nonlocal count
+        count += 1
+        if count == failed_step:
+            raise OSError("injected pre-publication sync failure")
+        return original(fd)
+    monkeypatch.setattr(receipts.os, "fsync", failed)
+    assert fs.main() == 1 and not list(pre.glob("RESULT*"))
+    assert evidence(root)["status"] == "FAILED_RESULT_WRITE"
+    assert fs.due(dt.date(2020, 1, 2))[0][3] is False
+
+
+def test_atomic_link_failure_preserves_failed_attempt_and_allows_retry(study, monkeypatch):
+    root, pre, _, _ = study
+    fake_runner(monkeypatch)
+    original = receipts.os.link
+    def blocked(*args, **kwargs):
+        raise OSError("injected atomic publication failure")
+    monkeypatch.setattr(receipts.os, "link", blocked)
+    assert fs.main() == 1 and not list(pre.glob("RESULT*"))
+    assert evidence(root)["status"] == "FAILED_RESULT_WRITE"
+    monkeypatch.setattr(receipts.os, "link", original)
+    fake_runner(monkeypatch)
+    assert fs.main() == 0
+
+
+def test_publication_never_overwrites_an_existing_user_result(tmp_path):
+    result = tmp_path / "RESULT-auto-existing.md"
+    result.write_text("existing authoritative result\n")
+    with pytest.raises(receipts.ResultPublicationError) as failure:
+        receipts.publish_result(result, "replacement must not overwrite\n")
+    assert failure.value.publication["published"] is False
+    assert result.read_text() == "existing authoritative result\n"
+    assert not list(tmp_path.glob(".result-pending-*"))
+
+
+def test_post_publication_directory_sync_error_leaves_complete_file_with_explicit_uncertainty(study, monkeypatch):
+    root, pre, _, _ = study
+    fake_runner(monkeypatch)
+    original = receipts.os.fsync
+    count = 0
+    def failed(fd):
+        nonlocal count
+        count += 1
+        if count == 3:
+            raise OSError("injected directory sync failure after complete publication")
+        return original(fd)
+    monkeypatch.setattr(receipts.os, "fsync", failed)
+    assert fs.main() == 1
+    record = evidence(root)
+    assert record["status"] == "RESULT_RECORDED_DURABILITY_UNKNOWN"
+    assert record["result_publication"]["published"] is True
+    assert record["result_publication"]["durability"] == "directory_sync_unknown"
+    result = next(pre.glob("RESULT*"))
+    assert digest(result.read_bytes()) == record["result_publication"]["sha256"]
+    assert "informative output" in result.read_text()
+
+
+def test_named_required_empty_snapshot_file_has_incomplete_input_status(tmp_path):
+    snapshot = tmp_path / "snapshots.jsonl"
+    snapshot.write_bytes(b"")
+    value = receipts.inventory(tmp_path, tmp_path, [{"scope": "repo", "path": "snapshots.jsonl", "kind": "file"}])
+    assert value["status"] == "unknown_or_incomplete"
+    assert value["files"][0]["content"]["status"] == "incomplete"
+
+
+@pytest.mark.parametrize("text", ["2 weeks, mean nan, CI [nan,nan] FAIL\n", "2 weeks, mean inf, CI [inf,inf] SUCCESS\n"])
+def test_nonfinite_reported_metrics_are_incomplete_even_with_final_token(study, monkeypatch, text):
+    root, pre, _, _ = study
+    fake_runner(monkeypatch, lambda argv, n: subprocess.CompletedProcess(argv, 0, text, "") if n == 1 else None)
+    assert fs.main() == 1 and not list(pre.glob("RESULT*"))
+    assert evidence(root)["status"] == "INCOMPLETE/SCORER_OUTPUT"
+
+
+def test_unsupported_nontext_output_returns_incomplete_without_exception():
+    assert receipts.output_disposition("example", [{"stdout": None, "stderr": ""}])["status"] == "INCOMPLETE"
+
+
+REPORT_EXAMPLES = {
+    "cde-vol-momentum": "2026-10-12..2027-10-11: 52 weeks, mean -0.10%/week after 20 bp/side, 90% CI [-1.00, +1.00]  FAIL\n",
+    "vol-momentum": "52 weeks 2026-10-12 .. 2027-10-11: mean -0.10% per week net of costs and funding, 90% CI [-1.00, +1.00], cumulative -2.0% (long-short, $1 per leg)\nRESULT: FAIL (registered: mean > 0 and CI lower bound > 0)\n",
+    "xs-momentum": "52 weeks 2026-10-12 .. 2027-10-11: mean -0.10% per week net of costs and funding, 90% CI [-1.00, +1.00], cumulative -2.0% (long-short, $1 per leg)\nRESULT: FAIL (registered: mean > 0 and CI lower bound > 0)\n",
+    "hlp-hold": "20 intervals, 180 days: HLP +0.0% a year, minus the 5% hurdle -5.0 points, 90% CI [-6.0, -4.0]\nRESULT: FAIL (registered: excess > 0 and CI lower bound > 0)\n",
+    "wick-bounce": "2026-10-12..2027-10-11: 4 trades on 2 days, mean -1.0 bp/trade after 8.5 bp/side, 90% CI [-2.0, +1.0]\nFAIL\n",
+    "jlp-hedged": "100 check-ins, 2026-10-10T00:00:00Z .. 2027-01-08T00:00:00Z (90.0 days); rebalances 5, top-ups 0, withdrawals 0\nequity $1,000.00 after exit costs (+0.00%), Kamino USDC +1.00%\nexcess over Kamino USDC: -1.00% APR, 90% CI [-2.00, +1.00] (10-day moving blocks, 90 days)\nRESULT: FAIL (registered: mean > 0, CI lower bound > 0, no liquidation)\n",
+    "pumpflow": "3 trades 2026-10-10..2026-10-14 (long 0%)\nmean net per trade +0.000%  90% CI [+0.000%, +0.000%]  total +0.0%\ntiming part +0.000%  90% CI [+0.000%, +0.000%]   buy-and-hold +0.000%/trade\nNOT CONFIRMED\n",
+    "us-patterns": "CAPIT Z=4 H=24: 2 trades on 1 days, mean +0.00%/trade after 0.62%/side, 90% CI [-1.00, +1.00]  FAIL\nVOLSPIKE K=10 H=72: 3 trades on 2 days, mean +0.00%/trade after 0.62%/side, 90% CI [-1.00, +1.00]  FAIL\n",
+}
+
+
+@pytest.mark.parametrize("registration", sorted(REPORT_EXAMPLES))
+def test_existing_registered_finite_failure_reports_are_complete(registration):
+    result = receipts.output_disposition(registration, [{"stdout": REPORT_EXAMPLES[registration], "stderr": ""}])
+    assert result["status"] == "REPORTED_FINAL_DISPOSITION", result["issues"]
+    assert result["profitability"] == "not_inferred"
+    assert result["coverage"] == "not_established_by_output"
+
+
+@pytest.mark.parametrize("registration", sorted(REPORT_EXAMPLES))
+def test_known_registration_banners_without_finite_reports_never_complete(registration):
+    banner = "NOT CONFIRMED\n" if registration == "pumpflow" else "RESULT: SUCCESS\n"
+    result = receipts.output_disposition(registration, [{"stdout": banner, "stderr": ""}])
+    assert result["status"] == "INCOMPLETE"
+
+
+def test_covered_observation_report_with_no_executed_strategy_trades_can_report_fail():
+    text = "52 observations, mean +0.00%, 90% CI [+0.00, +0.00]\n0 executed trades\nFAIL\n"
+    assert receipts.output_disposition("example", [{"stdout": text, "stderr": ""}])["status"] == "REPORTED_FINAL_DISPOSITION"
+
+
+def test_registered_jlp_liquidation_failure_preserves_no_ci_exception():
+    text = "3 check-ins, 2026-10-10T00:00:00Z .. 2026-10-10T04:00:00Z (0.2 days); rebalances 0, top-ups 0, withdrawals 0\nequity $750.00 after exit costs (-25.00%), Kamino USDC +0.02%\nRESULT: FAIL (simulated liquidation at 2026-10-10T04:00:00Z)\n"
+    result = receipts.output_disposition("jlp-hedged", [{"stdout": text, "stderr": ""}])
+    assert result["status"] == "REPORTED_FINAL_DISPOSITION", result["issues"]
+    missing_account = text.splitlines()[0] + "\n" + text.splitlines()[2]
+    assert receipts.output_disposition("jlp-hedged", [{"stdout": missing_account, "stderr": ""}])["status"] == "INCOMPLETE"
+
+
+def test_matched_numeric_syntax_with_overflow_is_not_finite_evidence():
+    text = "2 observations, mean +1e9999%, 90% CI [+0.00, +1.00]\nSUCCESS\n"
+    assert receipts.output_disposition("example", [{"stdout": text, "stderr": ""}])["status"] == "INCOMPLETE"

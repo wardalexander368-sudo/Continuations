@@ -1,6 +1,16 @@
 {
   "baseline_commit": "a6da0ace5bf17cb53bf9cf65470e868070299d87",
-  "captured_at": "2026-10-13T23:19:38.558304+00:00",
+  "captured_at": "2026-10-14T21:14:37.190373+00:00",
+  "engineering_revision": {
+    "at": "2026-10-14T21:14:37.190373+00:00",
+    "previous_lock_file": "SOURCE_LOCK-before-completion-repair-2026-10-14.json",
+    "previous_lock_sha256": "f4e27d0ca85e6b1713c336c565a172a549db6eae46c4fef14d3d98dcf98b3895",
+    "registered_source_changes": 0,
+    "revised_sources": [
+      "handoff/experiments/final_scores.py",
+      "handoff/experiments/scoring_receipts.py"
+    ]
+  },
   "execution_sources": [
     "handoff/experiments/final_scores.py",
     "handoff/experiments/scoring_receipts.py"
@@ -12,7 +22,8 @@
   },
   "identity_scope": "prospective-only",
   "prospective_execution_repairs": [
-    "2026-10-13: preserve CDE --final before sys.argv rewrite; raise on exhausted non-200/404 HTTP retries; label 404 coverage unknown. Formula/universe/window/bootstrap/cost unchanged."
+    "2026-10-13: preserve CDE --final before sys.argv rewrite; raise on exhausted non-200/404 HTTP retries; label 404 coverage unknown. Formula/universe/window/bootstrap/cost unchanged.",
+    "2026-10-14: prospective engineering wrapper/helper completion and atomic publication repair; 12 registered scorer/dependency identities and frozen registrations unchanged. No metrics, thresholds, schedules or registered formulas changed."
   ],
   "registrations": {
     "cde-vol-momentum": {
@@ -337,10 +348,10 @@
     "handoff/experiments/edge-hunt/perps/wick_forward.py": "ade2755fb9df629aff72f2030c3b21f9c5f36c7a6cf51504e7e2b571d9723d76",
     "handoff/experiments/edge-hunt/perps/xs_coinbase.py": "e6fc5d7a8ef20f606a133182a594a249559607df61c2e845ea323f5dad734052",
     "handoff/experiments/edge-hunt/vaults/hlp_forward.py": "9c94f87a4aa408b165fcb585dc5e38e86edc29a3844d9313e1a0079bfdf5ae92",
-    "handoff/experiments/final_scores.py": "2b2f07de599fb28b41689bebc52af3c3c61c088a984467d2688928cf28e7bf0e",
+    "handoff/experiments/final_scores.py": "3549261339e61c1438c630d9e6351c433a0946f826f097d514cd287d285370b0",
     "handoff/experiments/jlp_paper.py": "af6f5d1c11a685ee630e5019d88074907cce9f450aecc54e17d9159dd0467259",
     "handoff/experiments/pumpflow_paper.py": "b856e5afbc3e2d462823c56313920cfc4511da0348fdfb5b2419b5d03fc411d5",
-    "handoff/experiments/scoring_receipts.py": "40e34be0051250846ba6de59b940455298a2f52b0129adb2d796e3130635020f",
+    "handoff/experiments/scoring_receipts.py": "52be19c60d9253d32705d5b0c1e5cd9e4780c7fa70d04e6d7d7f59475aa11d98",
     "handoff/experiments/xs_momentum_forward.py": "314b86a7ea8075a94c152c1f7afe3c68a501ad8684540f566510c7c0221108a3"
   }
 }
