@@ -26,12 +26,26 @@
     "any_entry_keys": 15
   },
   "corrected_during_review": "parse_epoch(10**400) raised OverflowError before its guard; math.isfinite moved inside handler, repro now returns None; pinned counts unchanged.",
-  "analyzer_sha256": "88d59ab39c5dfa6cf8f3196be1e6f12e9d8627c86ed60371e77496f7795592b7",
+  "analyzer_sha256": "4ce869c4a55e4bbd06564465442fedd813e58507059cde98ff1bb72c7353a69b",
   "not_checked": [
     "Re-decoding/attribution beyond pinned exports",
     "Complete histories or recorder archive",
     "Private accounts",
     "Prediction/profitability/independence/eligibility",
     "Browser rendering or full suites"
-  ]
+  ],
+  "format_only_followup": {
+    "reviewer": "cde_primary_followup_refute",
+    "source_hashes": "13/13",
+    "output_hashes": "9/9",
+    "unchanged_JSON_hashes": "5/5",
+    "CSV_LF_only": true,
+    "CSV_JSON_row_counts": [
+      77,
+      47,
+      5,
+      39
+    ],
+    "timing_and_guards_repeated": false
+  }
 }
