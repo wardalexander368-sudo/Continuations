@@ -1,0 +1,225 @@
+{
+  "planning_template_version": 1,
+  "status": "UNFILLED_PLANNING_ONLY",
+  "not_a_runtime_spec": true,
+  "instructions": "Fill with evidence and reasons. This sidecar does not pass current strict intake/ledger validators and grants no execution authority; translate only reviewed applicable fields through existing protocols.",
+  "candidate": {
+    "id": null,
+    "owner": null,
+    "mechanism": null,
+    "decision_question": null,
+    "cheapest_discriminating_check": null,
+    "stop_or_defer_condition": null,
+    "replication_or_adaptation": null,
+    "omitted_source_rules": [],
+    "prior_findings_checked": null
+  },
+  "sources": [
+    {
+      "id": null,
+      "url": null,
+      "version": null,
+      "hash": null,
+      "claim_locator": null,
+      "claim_status": "UNKNOWN",
+      "license_bytes_hash": null,
+      "reuse_status": "UNKNOWN",
+      "contradictions": []
+    }
+  ],
+  "evidence_axes": {
+    "scope_eligible": {
+      "status": "UNKNOWN",
+      "reason": null,
+      "receipt": null
+    },
+    "action_closed_loop": {
+      "status": "UNKNOWN",
+      "reason": null,
+      "receipt": null
+    },
+    "artifact_reproducible": {
+      "status": "UNKNOWN",
+      "reason": null,
+      "receipt": null
+    },
+    "rights_cleared": {
+      "status": "UNKNOWN",
+      "reason": null,
+      "receipt": null
+    },
+    "protocol_complete": {
+      "status": "UNKNOWN",
+      "reason": null,
+      "receipt": null
+    },
+    "availability_complete": {
+      "status": "UNKNOWN",
+      "reason": null,
+      "receipt": null
+    },
+    "execution_covered": {
+      "status": "UNKNOWN",
+      "reason": null,
+      "receipt": null
+    },
+    "account_reconciled": {
+      "status": "UNKNOWN",
+      "reason": null,
+      "receipt": null
+    },
+    "economically_cost_qualified": {
+      "status": "UNKNOWN",
+      "reason": null,
+      "receipt": null
+    },
+    "independent_power_adequate": {
+      "status": "UNKNOWN",
+      "reason": null,
+      "receipt": null
+    },
+    "prospective_validation": {
+      "status": "UNKNOWN",
+      "reason": null,
+      "receipt": null
+    }
+  },
+  "protocol": {
+    "registration_or_plan_hash": null,
+    "evidence_class": "hypothesis",
+    "explored_history": true,
+    "study_type": null,
+    "primary_endpoint": null,
+    "economic_minimum_effect": null,
+    "independent_unit": null,
+    "cluster_dependencies": [],
+    "cohort_inclusion": null,
+    "missing_and_late_disposition": null,
+    "splits": null,
+    "freeze_at": null,
+    "readout_schedule": null,
+    "stopping_and_multiplicity": null,
+    "all_attempts_log": null
+  },
+  "denominators": {
+    "candidate_universe": null,
+    "attempted": null,
+    "invalid": null,
+    "missing": null,
+    "late": null,
+    "excluded": null,
+    "signals": null,
+    "orders_requested": null,
+    "executed_sides": null,
+    "round_trips": null,
+    "days": null,
+    "independent_event_clusters": null
+  },
+  "information_contract": {
+    "event_at": null,
+    "published_at": null,
+    "first_observed_at": null,
+    "confirmed_at": null,
+    "computed_at": null,
+    "available_at": null,
+    "decision_cutoff": null,
+    "clock_quality": null,
+    "revision_identity": null,
+    "retrieved_evidence_ids": [],
+    "outcome_known_at": null,
+    "memory_snapshot_hash": null,
+    "model_version": null,
+    "prompt_hash": null,
+    "tool_schema_hash": null
+  },
+  "account_and_execution": {
+    "venue_and_product": null,
+    "us_fit": "UNKNOWN",
+    "capital_and_currency": null,
+    "contract_or_base_units": null,
+    "minimum_order_and_increment": null,
+    "cash_inventory_constraints": null,
+    "quote_receipts_and_size": null,
+    "latency_and_staleness": null,
+    "order_lifecycle_receipts": null,
+    "partial_cancel_reject_timeout_rules": null,
+    "external_flows": null,
+    "terminal_inventory_and_valuation": null,
+    "cost_components": [],
+    "actual_paid_fee_status": "UNKNOWN",
+    "control_funding_opportunities_exposure": null,
+    "risk_mismatch_disclosure": null
+  },
+  "operating_budget": {
+    "max_calls": null,
+    "max_tokens": null,
+    "max_wall_seconds": null,
+    "max_incremental_usd": null,
+    "pricing_date": null,
+    "measured_calls": null,
+    "measured_tokens": null,
+    "measured_retries": null,
+    "measured_wall_seconds": null,
+    "measured_incremental_usd": null,
+    "unknown_costs": []
+  },
+  "minimum_reporting": {
+    "MR-1": {
+      "applicability": null,
+      "status": "UNKNOWN",
+      "reason": null,
+      "artifact": null
+    },
+    "MR-2": {
+      "applicability": null,
+      "status": "UNKNOWN",
+      "reason": null,
+      "artifact": null
+    },
+    "MR-3": {
+      "applicability": null,
+      "status": "UNKNOWN",
+      "reason": null,
+      "artifact": null
+    },
+    "MR-4": {
+      "applicability": null,
+      "status": "UNKNOWN",
+      "reason": null,
+      "artifact": null
+    },
+    "MR-5": {
+      "applicability": null,
+      "status": "UNKNOWN",
+      "reason": null,
+      "artifact": null
+    },
+    "MR-6": {
+      "applicability": null,
+      "status": "UNKNOWN",
+      "reason": null,
+      "artifact": null
+    },
+    "MR-7": {
+      "applicability": null,
+      "status": "UNKNOWN",
+      "reason": null,
+      "artifact": null
+    }
+  },
+  "adaptation_if_applicable": {
+    "mutable_components": [],
+    "trigger": null,
+    "lookback": null,
+    "rollback": null,
+    "fixed_execution_cost_invariants": null,
+    "equal_budget_ablation": null
+  },
+  "review": {
+    "source_transcription": null,
+    "independent_accounting_and_causality": null,
+    "protocol_owner": null,
+    "integration_status": "NOT_REVIEWED",
+    "promotion_decision": "DO_NOT_ADVANCE_WITH_UNFILLED_PREREQUISITES"
+  }
+}

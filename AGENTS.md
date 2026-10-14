@@ -3,7 +3,8 @@
 You are the **ChatGPT lane** of the TarTrade project. Several Claude sessions also work here.
 Claude reviews every pull request you open before anything reaches `main`. Read this file, then
 `handoff/STATUS.md` (the board), `handoff/findings.md` (every idea already tested; closed ideas need new evidence) and the topic document for your task (`handoff/autotrade.md` for the
-trading agent, `handoff/edge-hunt.md` for research).
+trading agent, `handoff/edge-hunt.md` for research). For research planning also read
+`handoff/research/OPERATING-PRINCIPLES.md`; it adds evidence discipline and does not expand the hard-rule authorities below.
 
 ## Goal
 Make the project profitable on venues a US person can use. Trust evidence: test before betting, count

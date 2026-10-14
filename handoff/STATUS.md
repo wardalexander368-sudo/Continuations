@@ -63,6 +63,7 @@ Lanes as of 2026-10-12 (all paper only). Owner thread names are the project's th
   and the connected-project map `CONNECTED_PROJECTS.md`. Suggested next claims: `plan-2026-10-12.md` section E.
   Proposed claim 2026-10-13: CAPIT feed-coverage diagnostic (`reviews/capit-feed-integrity-2026-10-13.md`); synthetic missing-data/cursor evidence only; owner implementation unchanged.
   Proposed claim 2026-10-13: CDE cost-documentation addendum (`reviews/cde-cost-documentation-2026-10-13.md`); dated exchange fees, retail/REST units unresolved; docs only.
+  Proposed research planning 2026-10-14 (Alex: read supplied research, retain principles, realign goals): three-source claim audit, operating principles, 45-item backlog and planning-only composition-volume hypothesis (`codex/research-principles-20261014`; `reviews/agentic-research-2026-10-14/REPORT.md`); no strategy/frozen/owner/workflow changes; source counts version-pinned and no alpha validated.
 * **Continue TARTAR handoff session:** owns `autotrade/` and `tartar/autotrade/` (the hourly agent).
   Agent spec pass done 10-11 (separate hl/us risk books, error-halt retry, per-book drawdown stops). Next: plan A1, A2.
 * **Alpaca paper route (thread "Alpaca paper trading route"):** owns `tartar/autotrade/alpaca.py`. `us_capit` and

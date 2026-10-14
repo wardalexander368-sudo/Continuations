@@ -1,0 +1,102 @@
+{
+  "schema_version": 1,
+  "scope": "Documentary claim audit, not runtime validator or economic evidence",
+  "claims": [
+    {
+      "claim_id": "LIN-01",
+      "source_id": "S1",
+      "locator": "PDF pp17,33,39-43",
+      "claim": "600 rows are not600 independent experiments",
+      "status": "SUPPORTED_WITH_LIMITS",
+      "reason": "8market simulations,40agents,5stocks,15rounds; cross-stock shared cash/agents; effective experimental information constrained by8runs."
+    },
+    {
+      "claim_id": "LIN-02",
+      "source_id": "S1",
+      "locator": "PDF pp22-29,35-37",
+      "claim": "Wealth and price impact are directly tradable alpha",
+      "status": "REJECTED",
+      "reason": "Salary/flows confound wealth; linear/square-root specification mismatches and missing execution/cost calibration."
+    },
+    {
+      "claim_id": "LIN-03",
+      "source_id": "S1",
+      "locator": "PDF pp40,43,48-49",
+      "claim": "Composition can motivate a volume interaction question",
+      "status": "HYPOTHESIS_ONLY",
+      "reason": "Synthetic price-level/absolute-change regressions, not net-return validation; near-zero correlation does not prove independence."
+    },
+    {
+      "claim_id": "AIG-01",
+      "source_id": "S2",
+      "locator": "PDF pp3,8",
+      "claim": "No joint LLM/RL optimization exists",
+      "status": "CONTRADICTED",
+      "reason": "FLAG-Trader primary ACL method fine-tunes LLM policy layers through reward optimization."
+    },
+    {
+      "claim_id": "AIG-02",
+      "source_id": "S2",
+      "locator": "PDF pp3-6",
+      "claim": "Quoted FLAG/TradingAgents windows and aggregates are faithful",
+      "status": "NOT_CORROBORATED",
+      "reason": "Primary experimental universe/windows differ; no use of headline returns in our ranking."
+    },
+    {
+      "claim_id": "AIG-03",
+      "source_id": "S2",
+      "locator": "PDF p5",
+      "claim": "KTD-Fin supplies20-30step/5000document memory thresholds",
+      "status": "UNSUPPORTED_ATTRIBUTION",
+      "reason": "Primary paper addresses historical-memory leakage and exposure attribution; do not infer RAG sizing."
+    },
+    {
+      "claim_id": "AIG-04",
+      "source_id": "S2",
+      "locator": "PDF p8 Table1",
+      "claim": "Illustrated model budgets are measured quotes",
+      "status": "AUTHOR_ESTIMATES",
+      "reason": "No metered workload, current pricing/version or retry receipts; no cost assumption imported."
+    },
+    {
+      "claim_id": "XIA-01",
+      "source_id": "S3",
+      "locator": "PDF pp1,5,45-46",
+      "claim": "Initial19-study extraction shows sparse protocol reporting",
+      "status": "ARITHMETIC_VERIFIED_CODING_UNREPLICATED",
+      "reason": "2splits/1explicitcost/1universe/11execution; Rtiers15/1/3/0. Missing reporting is unknown, not proof controls absent."
+    },
+    {
+      "claim_id": "XIA-02",
+      "source_id": "S3",
+      "locator": "PDF p45 C24 and p44",
+      "claim": "Illustrative reclassification table has20works/17recent",
+      "status": "VISIBLE_INCONSISTENCY",
+      "reason": "19displayed rows,15dated2024-26. Separate from primary19."
+    },
+    {
+      "claim_id": "XIA-03",
+      "source_id": "S3",
+      "locator": "PDF pp24,30,33,35",
+      "claim": "All section-level scopes have identical eligibility/denominators",
+      "status": "AMBIGUOUS",
+      "reason": "9versus12 coordination scopes; cost/BG shorthand conflicts if applied globally. Full membership ledger not audited."
+    },
+    {
+      "claim_id": "XIA-04",
+      "source_id": "S3",
+      "locator": "PDF pp10-12,16-18,38-40",
+      "claim": "State/context separation, retrieval embargo and typed actions help audit",
+      "status": "DESIGN_RECOMMENDATION",
+      "reason": "Useful own contracts; no measured incremental alpha follows."
+    },
+    {
+      "claim_id": "VERSION-01",
+      "source_id": "S3",
+      "locator": "Officialv2abstract/Table4",
+      "claim": "Initial19 percentages describe current pooled literature",
+      "status": "REJECTED",
+      "reason": "v2 has185included/80core, preserving19initial+61extension; differing coding forbids a temporal-trend inference. Only spot-checked."
+    }
+  ]
+}

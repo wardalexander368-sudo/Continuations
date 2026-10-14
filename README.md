@@ -1,6 +1,6 @@
 # TarTrade (TARTAR)
 
-[Resolant connected-project map](CONNECTED_PROJECTS.md) · [CoinHunt Mac continuation](codexcoinhunt/MAC_CONTINUATION.md) · [Northstar handoff](handoff/northstar.md)
+[Research operating principles](handoff/research/OPERATING-PRINCIPLES.md) · [Resolant connected-project map](CONNECTED_PROJECTS.md) · [CoinHunt Mac continuation](codexcoinhunt/MAC_CONTINUATION.md) · [Northstar handoff](handoff/northstar.md)
 
 A fully automated, paper-only trading agent that tests strategies against every real cost and keeps only
 what makes money on venues a US person can use. **Start with the board, [`handoff/STATUS.md`](handoff/STATUS.md)**,
