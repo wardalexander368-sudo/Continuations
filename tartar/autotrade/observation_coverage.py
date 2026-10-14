@@ -16,6 +16,11 @@ STATES = ("observed-no-signal", "signal-intent", "busy", "outside-window", "inco
 MAX_AGE = 2 * 3600
 
 
+def latest_eligible_hour(at: float, delay: int) -> int:
+    """The strategy's existing closed-candle eligibility formula, unchanged."""
+    return (int(at) - 60 - delay * 900) // 3600 - 1
+
+
 def _hour(day: str) -> int:
     return int(datetime.fromisoformat(day).replace(tzinfo=timezone.utc).timestamp()) // 3600
 
@@ -32,7 +37,7 @@ def initialize(data: dict, *, done: int, now: int, coins: list[str], start: str,
             "legacy_unknown": {"from_hour": start_h, "through_hour": old_end, "coin_hours": unknown},
             "counts": dict.fromkeys(STATES, 0), "reasons": {}, "late_recovered": 0,
             "receipts": {}, "pending": {}, "progress": {},
-            "archived": {"receipts": 0, "unresolved": 0},
+            "archived": {"receipts": 0, "unresolved": 0, "late_first": 0, "unknown_first": 0},
         }
     c = data["coverage"]
     if not isinstance(c, dict) or c.get("schema_version") != VERSION:
@@ -81,8 +86,24 @@ def finish(c: dict, through: int) -> None:
     c["through_hour"] = max(c["through_hour"], through)
     rows = c["receipts"]
     if len(rows) > DETAIL_LIMIT:
+        archive = c["archived"]
+        # Old archives contain no per-hour observation times. Preserve their
+        # unknown timing rather than retroactively declaring them timely.
+        if "late_first" not in archive or "unknown_first" not in archive:
+            archive["late_first"] = 0
+            archive["unknown_first"] = archive["receipts"]
         old = sorted(rows, key=lambda key: (rows[key]["hour"], key))[:len(rows) - DETAIL_LIMIT]
         for key in old:
+            row = rows[key]
+            if row["state"] != "outside-window":
+                at = row.get("first_attempt_at")
+                if (not isinstance(at, (int, float)) or isinstance(at, bool) or not math.isfinite(at) or
+                        not c["initialized_at"] <= at <= c["checked_at"]):
+                    archive["unknown_first"] += 1
+                elif latest_eligible_hour(at, c["delay_bars"]) < row["hour"]:
+                    archive["unknown_first"] += 1
+                elif latest_eligible_hour(at, c["delay_bars"]) > row["hour"]:
+                    archive["late_first"] += 1
             del rows[key]
             c["archived"]["receipts"] += 1
             if key in c["pending"]:
@@ -118,6 +139,10 @@ def summarize(c, now: float) -> dict:
         at = c["checked_at"]
         if not isinstance(at, (float, int)) or isinstance(at, bool) or not math.isfinite(at) or at > now + 60:
             raise ValueError("invalid checked_at")
+        initialized = c["initialized_at"]
+        if (not isinstance(initialized, (float, int)) or isinstance(initialized, bool) or
+                not math.isfinite(initialized) or initialized > at):
+            raise ValueError("invalid initialized_at")
         legacy = c["legacy_unknown"]
         if not isinstance(legacy, dict) or not _integer(legacy["coin_hours"]) or legacy["coin_hours"] < 0:
             raise ValueError("invalid legacy count")
@@ -136,6 +161,11 @@ def summarize(c, now: float) -> dict:
         if not isinstance(pending, dict) or not isinstance(receipts, dict) or len(receipts) + archive["receipts"] != sum(counts.values()):
             raise ValueError("invalid receipts")
         recent_counts = dict.fromkeys(STATES, 0)
+        late_first = archive.get("late_first", 0)
+        unknown_first = archive.get("unknown_first", archive["receipts"])
+        if (not _integer(late_first) or not _integer(unknown_first) or
+                min(late_first, unknown_first) < 0 or late_first + unknown_first > archive["receipts"]):
+            raise ValueError("invalid archived observation timing")
         for key, row in receipts.items():
             if not isinstance(row, dict) or row.get("coin") not in coins or not _integer(row.get("hour")) or row.get("state") not in STATES:
                 raise ValueError("invalid receipt")
@@ -147,8 +177,14 @@ def summarize(c, now: float) -> dict:
             if s in ("incomplete", "busy") and (not isinstance(row.get("reason"), str) or not row["reason"]):
                 raise ValueError("missing gap reason")
             first_at = row["first_attempt_at"]
-            if not isinstance(first_at, (int, float)) or isinstance(first_at, bool) or not math.isfinite(first_at) or first_at > at:
+            if (not isinstance(first_at, (int, float)) or isinstance(first_at, bool) or not math.isfinite(first_at) or
+                    not initialized <= first_at <= at):
                 raise ValueError("invalid receipt time")
+            if s != "outside-window":
+                eligible = latest_eligible_hour(first_at, c["delay_bars"])
+                if eligible < h:
+                    raise ValueError("observation predates eligible candle")
+                late_first += eligible > h
             if "recovery" in row:
                 r = row["recovery"]
                 if (s != "incomplete" or not isinstance(r, dict) or not isinstance(r.get("signal"), bool) or
@@ -165,7 +201,7 @@ def summarize(c, now: float) -> dict:
         unresolved = len(pending) + archive["unresolved"]
         if unresolved + c["late_recovered"] != counts["incomplete"]:
             raise ValueError("gap denominator mismatch")
-        latest = (int(now) - 60 - c["delay_bars"] * 900) // 3600 - 1
+        latest = latest_eligible_hour(now, c["delay_bars"])
         if c["through_hour"] > latest:
             raise ValueError("future observation progress")
         want = min(latest, c["end_hour"])
@@ -175,12 +211,17 @@ def summarize(c, now: float) -> dict:
             issues.append(f"{legacy['coin_hours']} historically unknown coin-hours")
         if counts["incomplete"]:
             issues.append(f"{counts['incomplete']} original incomplete coin-hours ({unresolved} unresolved, {c['late_recovered']} recovered late)")
+        if late_first:
+            issues.append(f"{late_first} late first observations (historical catch-up, not first-run coverage)")
+        if unknown_first:
+            issues.append(f"{unknown_first} archived first-observation times unknown")
         if stale:
             issues.append("stale observation progress")
         return {"status": "stale" if stale else "incomplete" if issues else "complete", "complete": not issues,
                 "observed_coin_hours": observed, "expected_coin_hours": expected + legacy["coin_hours"],
                 "legacy_unknown_coin_hours": legacy["coin_hours"], "incomplete_coin_hours": counts["incomplete"],
                 "unresolved_coin_hours": unresolved, "late_recovered_coin_hours": c["late_recovered"],
+                "late_first_observation_coin_hours": late_first, "unknown_first_observation_coin_hours": unknown_first,
                 "detail": "; ".join(issues) if issues else f"all {observed} eligible coin-hours observed or explicitly busy"}
     except (KeyError, TypeError, ValueError, OverflowError):
         return {"status": "malformed", "complete": False, "detail": "malformed coverage; observation completeness cannot be established"}

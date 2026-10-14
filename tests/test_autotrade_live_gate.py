@@ -1,6 +1,7 @@
 """The adopted US live rule's gate and cost checks (live_gate.py), offline."""
 
 import json
+from datetime import datetime, timezone
 
 import pytest
 
@@ -8,7 +9,7 @@ from tartar.autotrade import live_gate as lg
 from tartar.autotrade import observation_coverage as oc
 
 DAY = 86400.0
-T0 = 1_791_800_000.0  # 2026-10-12 10:13 UTC, inside the forward window
+T0 = (1_791_800_000 // 3600) * 3600 + 1200.0  # 20 minutes past an hour, first eligible fast run
 NOW = T0 + 4 * DAY
 
 
@@ -17,15 +18,17 @@ def complete_state():
 
     data = {}
     start_h = lg.WINDOW_START // 3600
-    c = oc.initialize(data, done=start_h - 1, now=int(NOW), coins=COINS,
+    c = oc.initialize(data, done=start_h - 1, now=(start_h + 1) * 3600 + 1200, coins=COINS,
                       start="2026-10-12", end="2027-10-11", delay=1, rule="capit")
     through = (int(NOW) - 60 - 900) // 3600 - 1
     for h in range(start_h, through + 1):
         for coin in COINS:
-            oc.record(c, coin, h, "observed-no-signal", int(NOW))
+            oc.record(c, coin, h, "observed-no-signal", (h + 1) * 3600 + 1200)
     oc.finish(c, through)
+    c["checked_at"] = NOW
     return {"strategies": {lg.GATE_STRATEGY: {"data": data}}, "last_run": {"at": NOW},
-            "alpaca": {"reconcile": {"checked_at": NOW, "ok": True, "unconfirmed": [], "mismatches": [], "stuck_orders": []}}}
+            "alpaca": {"reconcile": {"checked_at": NOW, "ok": True, "valuation_evidence": "finite-inputs-checked",
+                                      "unconfirmed": [], "mismatches": [], "stuck_orders": []}}}
 
 
 def measured_gate(rows):
@@ -34,9 +37,16 @@ def measured_gate(rows):
 
 def trip(pos, day, sym="BTC/USD", cost=0.004, net=0.02, strategy="us_capit_fast", gap=10.0):
     at = T0 + day * DAY
-    completion = {"order_status": "filled", "requested_qty": 1.0, "filled_qty": 1.0, "fill_completion": "complete-requested-fill"}
-    return [{"event": "buy", "at": at, "paper_at": at, "strategy": strategy, "position": pos, "symbol": sym, **completion},
+    stamp = lambda value: datetime.fromtimestamp(value, timezone.utc).isoformat()
+    completion = {"order_status": "filled", "fill_completion": "complete-requested-fill", "configured_fee_per_side": 0.0025}
+    return [{"event": "buy", "at": at, "paper_at": at - 300, "signal_hour": int(at) // 3600 - 1,
+             "response_observed_at": at + 2, "broker_submitted_at": stamp(at), "broker_filled_at": stamp(at + 1),
+             "price_in": 100.0, "requested_qty": 1.0, "filled_qty": 1.0,
+             "strategy": strategy, "position": pos, "symbol": sym, **completion},
             {"event": "sell", "at": at + DAY, "strategy": strategy, "position": pos, "symbol": sym,
+             "paper_at": at + DAY - 300, "response_observed_at": at + DAY + 2,
+             "broker_submitted_at": stamp(at + DAY), "broker_filled_at": stamp(at + DAY + 1),
+             "requested_qty": 0.9975, "filled_qty": 0.9975, "exit_qty_increment": 1e-6,
              "measured_side_cost": cost, "alpaca_net_return": net, "entry_gap_bps": gap, "exit_gap_bps": -gap, **completion}]
 
 
@@ -72,9 +82,9 @@ def test_gate_fails_on_mean_cost_and_gap():
 
 def test_coin_screen_needs_three_fills():
     rows = trip("a", 0, "LTC/USD", cost=0.0058) + trip("b", 1, "LTC/USD", cost=0.0056)
-    assert lg.coin_screen(lg.round_trips(rows))["LTC/USD"]["ok"] is None
+    assert lg.coin_screen(lg.round_trips(rows, now=NOW))["LTC/USD"]["ok"] is None
     rows += trip("c", 2, "LTC/USD", cost=0.0057)
-    assert lg.coin_screen(lg.round_trips(rows))["LTC/USD"]["ok"] is False
+    assert lg.coin_screen(lg.round_trips(rows, now=NOW))["LTC/USD"]["ok"] is False
 
 
 def write(tmp_path, rows):
@@ -196,7 +206,7 @@ def test_fill_ignores_non_finite_price():
     ("buy", {"paper_at": float("nan")}, "missing or non-finite event time"),
     ("buy", {"paper_at": 0}, "entered before the window"),
     ("buy", {"paper_at": T0 + 60}, "paper event time contradicts execution"),
-    ("sell", {"paper_at": T0 - 60}, "paper event time contradicts execution"),
+    ("sell", {"paper_at": T0 - 600}, "paper event time contradicts execution"),
     ("sell", {"paper_at": T0 + DAY + 60}, "paper event time contradicts execution"),
 ))
 def test_round_trip_rejects_asset_and_clock_identity_defects(side, changes, expected):
@@ -209,7 +219,7 @@ def test_round_trip_rejects_asset_and_clock_identity_defects(side, changes, expe
     assert not g["met"] and g["trades"] == 9 and g["rejected"][0]["why"] == expected
 
 
-def test_round_trip_requires_actual_clocks_and_accepts_legacy_paper_clock_fallback():
+def test_round_trip_requires_actual_clocks_and_preserves_legacy_timing_unknown():
     rows = trip("p", 0)
     del rows[1]["at"]
     rejected = []
@@ -218,8 +228,9 @@ def test_round_trip_requires_actual_clocks_and_accepts_legacy_paper_clock_fallba
 
     rows = trip("p", 0)
     del rows[0]["paper_at"]  # legacy rows have only the actual buy clock
-    rows[1]["at"] = rows[0]["at"]  # same-run buy/close is chronologically valid
-    assert len(lg.round_trips(list(reversed(rows)))) == 1
+    rejected = []
+    assert lg.round_trips(list(reversed(rows)), rejected=rejected) == []
+    assert rejected[0]["why"] == "signal or paper execution timing unknown"
 
 
 def test_unknown_fill_events_are_rejected_and_failure_information_is_allowed():
@@ -292,10 +303,104 @@ def test_missing_reconciliation_keeps_terminal_inventory_unknown():
     assert not g["met"] and g["terminal_inventory"]["status"] == "unknown"
 
 
+def test_legacy_reconciliation_without_valuation_proof_remains_unknown():
+    state = complete_state()
+    del state["alpaca"]["reconcile"]["valuation_evidence"]
+    g = lg.gate(rows_for(3, 3), state, NOW)
+    assert not g["met"] and g["terminal_inventory"]["status"] == "unknown"
+
+
 def test_terminal_reconciliation_must_follow_latest_trade_observation():
     state = complete_state()
     state["alpaca"]["reconcile"]["checked_at"] = NOW - 1800
     rows = rows_for(3, 3)
     rows[-1]["at"] = NOW
+    rows[-1]["response_observed_at"] = NOW
     g = lg.gate(rows, state, NOW)
     assert not g["met"] and "predates" in g["terminal_inventory"]["detail"]
+
+
+def test_completed_small_sell_does_not_close_matching_buy_inventory():
+    rows = trip("undersold", 0)
+    rows[1].update(requested_qty=0.01, filled_qty=0.01)
+    rejected = []
+    assert lg.round_trips(rows, rejected=rejected, now=NOW) == []
+    assert rejected == [{"position": "undersold", "why": "matching buy inventory not closed"}]
+    assert not measured_gate(rows_for(3, 3) + rows)["met"]
+
+
+def test_recorded_sub_increment_residual_dust_can_count_after_configured_fee():
+    rows = trip("dust", 0)
+    rows[1].update(requested_qty=0.9974995, filled_qty=0.9974995)
+    assert len(lg.round_trips(rows, now=NOW)) == 1
+    rows[1]["exit_qty_increment"] = 1e-8
+    assert lg.round_trips(rows, now=NOW) == []
+
+
+@pytest.mark.parametrize("side,field,value", [
+    ("buy", "broker_filled_at", "2030-01-01T00:00:00Z"),
+    ("sell", "broker_filled_at", "2020-01-01T00:00:00Z"),
+    ("buy", "broker_submitted_at", "2020-01-01T00:00:00Z"),
+    ("buy", "broker_filled_at", "2026-10-12T10:00:00"),
+    ("sell", "broker_filled_at", None),
+    ("buy", "signal_hour", None),
+    ("sell", "response_observed_at", NOW + 1),
+])
+def test_broker_chronology_and_missing_timing_cannot_qualify(side, field, value):
+    rows = trip("clocks", 0)
+    next(row for row in rows if row["event"] == side)[field] = value
+    rejected = []
+    assert lg.round_trips(rows, rejected=rejected, now=NOW) == []
+    assert rejected and not measured_gate(rows_for(3, 3) + rows)["met"]
+
+
+def test_one_day_observed_historical_entries_do_not_supply_three_live_timing_days():
+    rows = rows_for(3, 3)
+    for row in rows:
+        row["at"] = NOW
+        row["response_observed_at"] = NOW
+    g = measured_gate(rows)
+    assert not g["met"] and g["trades"] == g["crash_days"] == 0
+    assert all(row["why"] == "buy observed after first eligible hourly run" for row in g["rejected"])
+
+
+def test_late_first_observation_is_sticky_after_pruning_and_retry(monkeypatch):
+    data = {}
+    start = lg.WINDOW_START // 3600
+    now = (start + 4) * 3600 + 1200
+    c = oc.initialize(data, done=start - 1, now=now, coins=["BTC"], start="2026-10-12",
+                      end="2027-10-11", delay=1, rule="capit")
+    for hour in range(start, start + 4):
+        oc.record(c, "BTC", hour, "observed-no-signal", now)
+    monkeypatch.setattr(oc, "DETAIL_LIMIT", 1)
+    oc.finish(c, start + 3)
+    summary = oc.summarize(c, now)
+    assert not summary["complete"] and summary["late_first_observation_coin_hours"] == 3
+    assert c["archived"]["late_first"] == 3
+    oc.record(c, "BTC", start, "observed-no-signal", now)  # neither repeat nor hindsight cleans history
+    assert not oc.summarize(c, now)["complete"]
+
+
+def test_legacy_archives_without_observation_times_remain_unknown():
+    c = complete_state()["strategies"][lg.GATE_STRATEGY]["data"]["coverage"]
+    key = next(iter(c["receipts"]))
+    del c["receipts"][key]
+    c["archived"] = {"receipts": 1, "unresolved": 0}
+    summary = oc.summarize(c, NOW)
+    assert not summary["complete"] and summary["unknown_first_observation_coin_hours"] == 1
+
+
+def test_first_observation_cannot_predate_coverage_initialization():
+    c = complete_state()["strategies"][lg.GATE_STRATEGY]["data"]["coverage"]
+    next(iter(c["receipts"].values()))["first_attempt_at"] = c["initialized_at"] - 1
+    assert oc.summarize(c, NOW)["status"] == "malformed"
+
+
+def test_pruning_cannot_erase_contradictory_first_observation_time(monkeypatch):
+    c = complete_state()["strategies"][lg.GATE_STRATEGY]["data"]["coverage"]
+    first = min(c["receipts"], key=lambda key: (c["receipts"][key]["hour"], key))
+    c["receipts"][first]["first_attempt_at"] = c["initialized_at"] - 1
+    monkeypatch.setattr(oc, "DETAIL_LIMIT", len(c["receipts"]) - 1)
+    oc.finish(c, c["through_hour"])
+    summary = oc.summarize(c, NOW)
+    assert not summary["complete"] and summary["unknown_first_observation_coin_hours"] == 1

@@ -111,12 +111,13 @@ def test_coinbase_coverage_health_checks_read_fast_strategy_data(tmp_path):
     now = t("2026-10-12T03:21:00")
     start = int(t("2026-10-12T00:00:00")) // 3600
     data = {}
-    c = oc.initialize(data, done=start - 1, now=int(now), coins=["BTC"],
+    c = oc.initialize(data, done=start - 1, now=(start + 1) * 3600 + 1200, coins=["BTC"],
                       start="2026-10-12", end="2027-10-11", delay=1, rule="capit")
     through = (int(now) - 60 - 900) // 3600 - 1
     for h in range(start, through + 1):
-        oc.record(c, "BTC", h, "observed-no-signal", int(now))
+        oc.record(c, "BTC", h, "observed-no-signal", (h + 1) * 3600 + 1200)
     oc.finish(c, through)
+    c["checked_at"] = now
 
     def check():
         (tmp_path / "state.json").write_text(json.dumps({"strategies": {"us_capit_fast": {"data": data}}}))

@@ -12,6 +12,7 @@ from __future__ import annotations
 import json
 import math
 import time
+from datetime import datetime
 from pathlib import Path
 
 from . import observation_coverage
@@ -75,6 +76,77 @@ def _completion_reason(row: dict, side: str) -> str | None:
     return None
 
 
+def _broker_time(value) -> float | None:
+    if not isinstance(value, str) or not value:
+        return None
+    try:
+        parsed = datetime.fromisoformat(value.replace("Z", "+00:00"))
+        return parsed.timestamp() if parsed.tzinfo is not None else None
+    except (ValueError, OverflowError, OSError):
+        return None
+
+
+def _timing_reason(buy: dict, sell: dict, now: float) -> str | None:
+    hour = buy.get("signal_hour")
+    paper_in, paper_out = buy.get("paper_at"), sell.get("paper_at")
+    if not observation_coverage._integer(hour) or not all(_finite(v) for v in (paper_in, paper_out)):
+        return "signal or paper execution timing unknown"
+    delay = (paper_in - (hour + 1) * 3600) / 900
+    if not math.isfinite(delay) or delay < 1 or not delay.is_integer():
+        return "paper entry does not match signal candle timing"
+    if buy.get("strategy") == GATE_STRATEGY and delay != 1:
+        return "buy timing does not match fast CAPIT entry"
+    if buy.get("strategy") == GATE_STRATEGY:
+        from .strategies.coinbase_pattern import RULES
+
+        if paper_out != paper_in + RULES["capit"]["hold"] * 3600:
+            return "paper exit does not match registered CAPIT hold"
+    if observation_coverage.latest_eligible_hour(buy["at"], int(delay)) != hour:
+        return "buy observed after first eligible hourly run"
+    clocks = {}
+    for side, row, expected in (("buy", buy, paper_in), ("sell", sell, paper_out)):
+        observed = row.get("response_observed_at")
+        if not _finite(observed) or not row["at"] <= observed <= now:
+            return f"{side} response observation time unknown or future"
+        submitted = _broker_time(row.get("broker_submitted_at"))
+        filled = _broker_time(row.get("broker_filled_at"))
+        if submitted is None or filled is None:
+            return f"{side} broker execution timing unknown"
+        if not expected <= submitted <= filled <= observed:
+            return f"{side} broker execution chronology contradictory"
+        clocks[side] = (submitted, filled)
+    if clocks["sell"][0] < clocks["buy"][1]:
+        return "broker sell precedes matching buy fill"
+    return None
+
+
+def _closure_reason(buy: dict, sell: dict) -> str | None:
+    """Requested-order completion alone does not close matching buy inventory."""
+    fee = sell.get("configured_fee_per_side", sell.get("fee_per_side"))
+    increment = sell.get("exit_qty_increment")
+    if not _finite(fee) or not 0 <= fee < 1 or not _finite(increment) or increment <= 0:
+        return "matching buy closure quantity evidence unknown"
+    buy_fee = buy.get("configured_fee_per_side")
+    if not _finite(buy_fee) or not math.isclose(buy_fee, fee, rel_tol=1e-12, abs_tol=0):
+        return "matching buy configured fee unknown or contradictory"
+    expected = buy["filled_qty"] * (1 - fee)
+    sold = sell["filled_qty"]
+    if not _finite(expected) or expected <= 0:
+        return "matching buy net inventory invalid"
+    if sold > expected and not math.isclose(sold, expected, rel_tol=1e-9, abs_tol=0):
+        return "sell exceeds matching buy inventory"
+    residual = max(0.0, expected - sold)
+    if residual:
+        from .alpaca import RECON_MIN_USD
+
+        price = buy.get("price_in")
+        if not _finite(price) or price <= 0:
+            return "matching buy residual valuation unknown"
+        if residual >= increment or residual * price > RECON_MIN_USD:
+            return "matching buy inventory not closed"
+    return None
+
+
 def _terminal_inventory(state, now: float, after: float | None = None) -> dict:
     """Read existing full-account reconciliation; never infer a balance from fills."""
     try:
@@ -88,6 +160,8 @@ def _terminal_inventory(state, now: float, after: float | None = None) -> dict:
             return {"status": "unknown", "complete": False, "detail": "reconciliation predates the latest trade observation"}
         if now - at > RECON_MAX_AGE:
             return {"status": "stale", "complete": False, "detail": "paper reconciliation stale"}
+        if rec.get("valuation_evidence") != "finite-inputs-checked":
+            return {"status": "unknown", "complete": False, "detail": "finite holding valuation proof missing; legacy reconciliation is unknown"}
         fields = ("unconfirmed", "mismatches", "stuck_orders")
         if any(not isinstance(rec.get(k), list) for k in fields) or not isinstance(rec.get("ok"), bool):
             return {"status": "unknown", "complete": False, "detail": "paper reconciliation incomplete"}
@@ -99,12 +173,14 @@ def _terminal_inventory(state, now: float, after: float | None = None) -> dict:
         return {"status": "unknown", "complete": False, "detail": "paper reconciliation malformed"}
 
 
-def round_trips(rows: list[dict], strategy: str | None = None, rejected: list | None = None) -> list[dict]:
+def round_trips(rows: list[dict], strategy: str | None = None, rejected: list | None = None, now: float | None = None) -> list[dict]:
     """Closed Alpaca round trips, each with ``day``: its buy's UTC date. A sell counts once per position, only with a
     matching buy (same position, strategy and symbol) entered inside the forward window, chronological finite
-    local-run/paper event times, proven requested-fill completion, and finite cost, return and gaps.
-    List order and local run observation times are not exchange fill timestamps.
+    local-run/paper and broker times, first-run entry evidence, requested-fill completion,
+    matching-buy quantity closure, and finite cost, return and gaps.
+    Local run-start times are distinct from response observation and broker fill times.
     Anything else is appended to ``rejected`` (Codex review 2026-10-13: these inputs used to satisfy the gate)."""
+    now = time.time() if now is None else now
     buys, rejected_buys = {}, set()
     for r in rows:
         malformed_event = isinstance(r, dict) and (not isinstance(r.get("event"), str) or not r.get("event"))
@@ -155,6 +231,8 @@ def round_trips(rows: list[dict], strategy: str | None = None, rejected: list | 
                completion_why if completion_why else
                "unmeasured sell" if "measured_side_cost" not in r else
                "missing or non-finite value" if not all(_finite(r.get(k)) for k in NUMERIC) else None)
+        if why is None:
+            why = _timing_reason(b, r, now) or _closure_reason(b, r)
         if why:
             if rejected is not None:
                 rejected.append({"position": pos, "why": why})
@@ -177,7 +255,7 @@ def gate(rows: list[dict], state: dict | None = None, now: float | None = None) 
     """The paper side of the start gate (items 2-4 of the rule); item 1 (AJ, funded account, live route) is never checked here."""
     now = time.time() if now is None else now
     rejected: list[dict] = []
-    trips = round_trips(rows, GATE_STRATEGY, rejected)
+    trips = round_trips(rows, GATE_STRATEGY, rejected, now)
     days = sorted({r["day"] for r in trips})
     out = {"strategy": GATE_STRATEGY, "trades": len(trips), "crash_days": len(days), "coins": coin_screen(trips),
            "rejected": rejected, "paper_cost_evidence": "paper-fill-proxy" if trips else "unmeasured",
@@ -208,7 +286,8 @@ def gate(rows: list[dict], state: dict | None = None, now: float | None = None) 
                                     "detail": "coverage does not match the fast CAPIT cohort, timing and forward window"}
     if not c["complete"]:
         unmet.append(f"Coinbase observation coverage {c['status']}: {c['detail']}")
-    latest = max((r["at"] for r in rows if isinstance(r, dict) and r.get("event") in ("buy", "sell") and _finite(r.get("at"))), default=None)
+    latest = max((r.get("response_observed_at", r.get("at")) for r in rows if isinstance(r, dict) and
+                  r.get("event") in ("buy", "sell") and _finite(r.get("response_observed_at", r.get("at")))), default=None)
     out["terminal_inventory"] = terminal = _terminal_inventory(state, now, after=latest)
     if not terminal["complete"]:
         unmet.append(f"Terminal paper inventory {terminal['status']}: {terminal['detail']}")

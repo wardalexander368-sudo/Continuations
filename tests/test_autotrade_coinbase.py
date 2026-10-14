@@ -86,14 +86,28 @@ def observation_fixture(rows, *, coins=("BTC", "ETH"), done=None, get=None):
     return strategy, Context((signal + 1) * 3600 + 1260, [], data, {})
 
 
-def test_complete_quiet_inputs_are_observed_without_signal():
+def test_complete_quiet_inputs_caught_up_late_remain_late_observations():
     from tartar.autotrade import observation_coverage as oc
 
     strategy, ctx = observation_fixture(bars(260, 10000))
     assert strategy.step(ctx) == []
     c = ctx.state["coverage"]
     assert set(r["state"] for r in c["receipts"].values()) == {"observed-no-signal"}
-    assert not c["pending"] and oc.summarize(c, ctx.now)["complete"]
+    summary = oc.summarize(c, ctx.now)
+    assert not c["pending"] and not summary["complete"]
+    assert summary["late_first_observation_coin_hours"] > 0
+
+
+def test_first_eligible_hourly_quiet_observations_can_establish_coverage():
+    from tartar.autotrade import observation_coverage as oc
+
+    strategy, ctx = observation_fixture(bars(260, 10000))
+    start = oc._hour(strategy.start)
+    for hour in range(start, H0 + 201):
+        ctx.now = (hour + 1) * 3600 + 1260
+        assert strategy.step(ctx) == []
+    summary = oc.summarize(ctx.state["coverage"], ctx.now)
+    assert summary["complete"] and summary["late_first_observation_coin_hours"] == 0
 
 
 @pytest.mark.parametrize("missing, reason", ((H0 + 100, "missing-signal-lookback"), (H0 + 201, "missing-entry-candle")))

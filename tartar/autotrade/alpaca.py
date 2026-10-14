@@ -200,6 +200,7 @@ class AlpacaMirror:
         cid = f"tt:{pos.strategy}:{pos.asset}:{pos.meta.get('signal_hour', pos.id)}:buy"
         rec = {"event": "buy", "at": now, "strategy": pos.strategy, "position": pos.id, "symbol": sym, "client_order_id": cid,
                "notional_usd": round(pos.notional_usd, 2), "paper_price_in": intent.price, "paper_at": intent.at,
+               "signal_hour": pos.meta.get("signal_hour"), "expected_exit_at": pos.meta.get("exit_t"),
                "paper_cost_evidence": "unmeasured", "fee_basis": "configured", "configured_fee_per_side": self.cfg["taker_fee"],
                "commission_evidence": "unknown", "commission_paid_usd": None, **_order_evidence({}, None)}
         try:
@@ -217,6 +218,7 @@ class AlpacaMirror:
             self.error({**rec, "error": f"{type(exc).__name__}: {exc}"[:300]})
             return
         twin = {"symbol": sym, "buy_id": order["id"], "buy_cid": cid, "paper_price_in": intent.price, "spread_in_bps": spread}
+        twin["response_observed_at"] = time.time()
         f = _fill(order)
         twin.update(_order_evidence(order, f))
         if f:
@@ -230,6 +232,7 @@ class AlpacaMirror:
             return
         sym = twin["symbol"]
         rec = {"event": "sell", "at": now, "strategy": pos.strategy, "position": pos.id, "symbol": sym,
+               "paper_at": intent.at, "signal_hour": pos.meta.get("signal_hour"),
                **_order_evidence({}, None)}
         try:
             if "qty" not in twin:  # the buy had not filled when last looked at
@@ -267,6 +270,7 @@ class AlpacaMirror:
                "paper_net_return": trade.net_return, "fee_per_side": fee,
                "paper_cost_evidence": "paper-fill-proxy", "fee_basis": "configured", "configured_fee_per_side": fee,
                "commission_evidence": "unknown", "commission_paid_usd": None,
+               "exit_qty_increment": incr, "response_observed_at": time.time(),
                **_order_evidence(order, f, requested_qty=qty)}
         # Legacy field name retained: configured fee plus average paper fill gap, not actual paid commission.
         cmp["measured_side_cost"] = fee + (cmp["entry_gap_bps"] + cmp["exit_gap_bps"]) / 2e4
@@ -297,31 +301,62 @@ def reconcile(client: AlpacaPaper, positions, taker_fee: float, now: float) -> d
     want: dict[str, float] = {}
     mark: dict[str, float] = {}
     unconfirmed = []
+    def numeric(value, *, positive=False):
+        if isinstance(value, bool):
+            return None
+        try:
+            value = float(value)
+        except (TypeError, ValueError, OverflowError):
+            return None
+        return value if math.isfinite(value) and (value > 0 if positive else value >= 0) else None
+
     for p in positions:
         twin = (p.meta or {}).get("alpaca")
         if not twin:
             continue
         key = twin["symbol"].replace("/", "")
-        if "qty" not in twin:  # the buy had not filled when last looked at: can't say what it should hold
+        qty = numeric(twin.get("qty"), positive=True)
+        fee = numeric(taker_fee)
+        if qty is None or fee is None or fee >= 1:
             unconfirmed.append(key)
             continue
-        want[key] = want.get(key, 0.0) + twin["qty"] * (1 - taker_fee)
-        mark[key] = p.mark_price or twin.get("price_in") or 0.0
+        expected = want.get(key, 0.0) + qty * (1 - fee)
+        if not math.isfinite(expected):
+            unconfirmed.append(key)
+            continue
+        want[key] = expected
+        mark[key] = numeric(p.mark_price, positive=True) or numeric(twin.get("price_in"), positive=True)
     held, price = {}, {}
     for r in client.positions():
         if r.get("asset_class", "crypto") != "crypto":
             continue
         key = str(r["symbol"]).replace("/", "")
-        held[key] = float(r["qty"])
-        price[key] = float(r.get("current_price") or 0) or mark.get(key, 0.0)
+        quantity = numeric(r.get("qty"))
+        if quantity is None or key in held:
+            unconfirmed.append(key)
+            continue
+        held[key] = quantity
+        price[key] = numeric(r.get("current_price"), positive=True) or mark.get(key)
+        if quantity > 0 and price[key] is None:
+            unconfirmed.append(key)
     mismatches = []
     for key in sorted(set(want) | set(held)):
         if key in unconfirmed:
             continue
         w, h = want.get(key, 0.0), held.get(key, 0.0)
-        px = price.get(key) or mark.get(key) or 0.0
+        px = price.get(key) or mark.get(key)
+        if (h > 0 or w > 0) and (px is None or not math.isfinite(px) or px <= 0):
+            unconfirmed.append(key)
+            continue
+        if h == w == 0:
+            continue
+        book_usd, held_usd = w * px, h * px
         diff_usd = abs(h - w) * px
-        if diff_usd > max(RECON_MIN_USD, RECON_FRAC * w * px):
+        tolerance = max(RECON_MIN_USD, RECON_FRAC * book_usd)
+        if not all(math.isfinite(v) for v in (w, h, book_usd, held_usd, diff_usd, tolerance)):
+            unconfirmed.append(key)
+            continue
+        if diff_usd > tolerance:
             mismatches.append({"symbol": key, "book_qty": round(w, 9), "held_qty": round(h, 9), "diff_usd": round(diff_usd, 2)})
     stuck = []
     for o in client.open_orders():
@@ -329,7 +364,8 @@ def reconcile(client: AlpacaPaper, positions, taker_fee: float, now: float) -> d
         if t is None or now - t > RECON_ORDER_AGE_S:
             stuck.append({"symbol": o.get("symbol"), "side": o.get("side"), "client_order_id": o.get("client_order_id"),
                           "submitted_at": o.get("submitted_at")})
-    return {"checked_at": now, "ok": not mismatches and not stuck, "mismatches": mismatches, "stuck_orders": stuck,
+    return {"checked_at": now, "ok": not mismatches and not stuck and not unconfirmed, "mismatches": mismatches, "stuck_orders": stuck,
+            "valuation_evidence": "finite-inputs-checked" if not unconfirmed else "unknown",
             "unconfirmed": sorted(set(unconfirmed)), "symbols": len(set(want) | set(held))}
 
 

@@ -245,7 +245,8 @@ def test_account_matches_book_every_run_and_a_stray_holding_turns_health_red(tmp
                                         ("stale", "yellow"), ("mismatch", "red"), ("complete", "green")))
 def test_account_health_cannot_make_unknown_or_unconfirmed_inventory_green(tmp_path, kind, level):
     now = 1_791_800_000.0
-    rec = {"checked_at": now, "ok": True, "unconfirmed": [], "mismatches": [], "stuck_orders": []}
+    rec = {"checked_at": now, "ok": True, "valuation_evidence": "finite-inputs-checked",
+           "unconfirmed": [], "mismatches": [], "stuck_orders": []}
     if kind == "unconfirmed":
         rec["unconfirmed"] = ["BTCUSD"]
     elif kind == "stale":
@@ -265,6 +266,34 @@ def test_an_order_open_for_hours_is_stuck(tmp_path):
     assert rec["ok"] is False and rec["stuck_orders"][0]["client_order_id"] == "x"
 
 
+@pytest.mark.parametrize("price", [None, 0, "NaN", "Infinity", -100])
+def test_unvalued_residual_holdings_are_unconfirmed_not_reconciled(price):
+    from types import SimpleNamespace
+    holding = {"symbol": "BTCUSD", "qty": "2.9625", "asset_class": "crypto"}
+    if price is not None:
+        holding["current_price"] = price
+    fake = SimpleNamespace(positions=lambda: [holding], open_orders=lambda: [])
+    rec = alpaca.reconcile(fake, [], 0.0025, 1_791_800_000.0)
+    assert rec["ok"] is False and rec["unconfirmed"] == ["BTCUSD"]
+
+
+def test_valued_residual_dust_retains_existing_one_dollar_allowance():
+    from types import SimpleNamespace
+    fake = SimpleNamespace(positions=lambda: [{"symbol": "BTCUSD", "qty": "0.00001", "current_price": "50000"}],
+                           open_orders=lambda: [])
+    rec = alpaca.reconcile(fake, [], 0.0025, 1_791_800_000.0)
+    assert rec["ok"] is True and rec["mismatches"] == rec["unconfirmed"] == []
+
+
+@pytest.mark.parametrize("quantity", ["NaN", "Infinity", "-1", True])
+def test_invalid_held_quantity_is_unconfirmed(quantity):
+    from types import SimpleNamespace
+    fake = SimpleNamespace(positions=lambda: [{"symbol": "BTCUSD", "qty": quantity, "current_price": "50000"}],
+                           open_orders=lambda: [])
+    rec = alpaca.reconcile(fake, [], 0.0025, 1_791_800_000.0)
+    assert rec["ok"] is False and rec["unconfirmed"] == ["BTCUSD"]
+
+
 def test_a_failed_check_is_reported_not_raised(tmp_path):
     class Broken:
         cfg = {"taker_fee": 0.0025}
@@ -278,3 +307,20 @@ def test_a_failed_check_is_reported_not_raised(tmp_path):
 
     rec = alpaca.reconcile_safe(Broken(), [], 1.0)
     assert rec["ok"] is None and "boom" in rec["error"]
+
+
+@pytest.mark.parametrize("quantities,held,price", [
+    ([1e308], "0.9975", "100"),
+    ([1e308, 1e308], "0.9975", "1"),
+    ([1.0], "1e308", "100"),
+    ([1e308], "9.975e307", "100"),
+])
+def test_nonfinite_derived_inventory_valuation_is_unconfirmed(quantities, held, price):
+    from types import SimpleNamespace
+    modeled = [SimpleNamespace(meta={"alpaca": {"symbol": "BTC/USD", "qty": qty, "price_in": 100.0}},
+                               mark_price=100.0) for qty in quantities]
+    fake = SimpleNamespace(positions=lambda: [{"symbol": "BTCUSD", "qty": held, "current_price": price}],
+                           open_orders=lambda: [])
+    rec = alpaca.reconcile(fake, modeled, 0.0025, 1_791_800_000.0)
+    assert rec["ok"] is False and rec["unconfirmed"] == ["BTCUSD"]
+    assert rec["valuation_evidence"] == "unknown"
