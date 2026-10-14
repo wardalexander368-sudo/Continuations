@@ -65,6 +65,8 @@ Lanes as of 2026-10-12 (all paper only). Owner thread names are the project's th
   Landed PR #8 (2026-10-13): CDE cost-documentation addendum (`reviews/cde-cost-documentation-2026-10-13.md`); dated exchange fees, retail/REST units unresolved; docs only.
   Proposed implementation 2026-10-13 (Alex: "build those improvements"): offline trial/access ledger, evidence/metric/cost contracts and current governance documentation (`codex/research-evidence-controls`); frozen rules unchanged.
   Proposed implementation 2026-10-13 (Alex: "build those improvements"): per-coin/hour observation coverage, incomplete readiness and paper-cost labels (`codex/observation-coverage`; review `reviews/observation-coverage-2026-10-13.md`); owner books and numeric rules unchanged.
+
+  Proposed implementation 2026-10-13 (Alex: "build those improvements"): prospective source/input execution receipts, failure retention and CDE CLI/acquisition repair (`codex/scorer-provenance`; review `reviews/scorer-provenance-2026-10-13.md`); frozen statistics unchanged.
 * **Continue TARTAR handoff session:** owns `autotrade/` and `tartar/autotrade/` (the hourly agent).
   Agent spec pass done 10-11 (separate hl/us risk books, error-halt retry, per-book drawdown stops). Next: plan A1, A2.
 * **Alpaca paper route (thread "Alpaca paper trading route"):** owns `tartar/autotrade/alpaca.py`. `us_capit` and
