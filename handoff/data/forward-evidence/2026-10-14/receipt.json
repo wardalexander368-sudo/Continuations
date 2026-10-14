@@ -1,0 +1,65 @@
+{
+  "observed_utc": "2026-10-14T05:02:38Z",
+  "source_commit": "69d9847ed77df8df52271ec655d0908c1ec8449e",
+  "comparison_commit": "2db0be79abd5fcecf9c3b1e49cad81da97143f19",
+  "source_commit_utc": "2026-10-14T04:42:51Z",
+  "source_run_utc": "2026-10-14T04:35:09.160509Z",
+  "method": "named public git-show snapshots; aggregate read-only comparison; no collectors/scorers/private accounts",
+  "evidence_class": "explored-history",
+  "capit_volspike": {
+    "completed_trades": 0,
+    "positions": 0,
+    "alpaca_receipts": 0,
+    "priced_random_controls": 0,
+    "observation_receipts": "absent; saved done_hour alone cannot establish completeness"
+  },
+  "cde": {
+    "new_paper_positions": 8,
+    "aggregate_modeled_notional_usd": 2000,
+    "modeled_entry_cost_usd": 4,
+    "entered_utc": "2026-10-14T00:00:00Z",
+    "completed_weeks": 0,
+    "completed_trades": 0,
+    "broker_receipts": 0,
+    "live_route": "not implemented; journal says paper only"
+  },
+  "fills": {
+    "previous_rows": 4,
+    "current_rows": 48,
+    "new_hl_momentum_dry_rows": 44,
+    "new_us_broker_fills": 0
+  },
+  "reconciliation": {
+    "ok": true,
+    "symbols": 0,
+    "interpretation": "empty comparison; not populated-account validation"
+  },
+  "search_cache": {
+    "files": 23,
+    "rows": 41555,
+    "latest_day": "2026-10-13",
+    "source": "daily USD spot proxies; not measured futures execution",
+    "duplicates": 0,
+    "xrp_missing_internal_days": 904,
+    "xrp_adjacent_dates": [
+      "2021-01-19",
+      "2023-07-13"
+    ],
+    "gap_cause": "not checked"
+  },
+  "cde_search": {
+    "variants": 95,
+    "weeks": 271,
+    "shared_multiple_testing_M": 189,
+    "survivors": 0,
+    "best_reported_penalized_train_bound_percent_per_week": -0.2,
+    "cost_model": "20 bp per side turnover; funding uncharged",
+    "interpretation": "all variants fail their declared screen; existing frozen strategy verdict unchanged; no profitable new claim"
+  },
+  "sha256": {
+    "autotrade/REPORT.md": "d2c9026af3e2c6a36c7754828300112320f9c4abebea69a3fd264f570eb55a49",
+    "autotrade/state.json": "4b39ee6f95ef46f49289ac080aededb9fd4c0d585bd2374a5f7a7673f9b203a1",
+    "autotrade/search/last_run.json": "44d8a28213b6fe8137edb3a0a25d63195b8bed0a0093c6940014be5029811683",
+    "autotrade/search/REPORT.md": "d15685a3376d4657e1ed761f81e59ae65f3ef9205d10db629d4242d3ef7c8076"
+  }
+}

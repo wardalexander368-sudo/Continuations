@@ -3,8 +3,8 @@
 The paper book keeps its registered cost model and is scored as before. Beside it, each entry of a mirrored
 strategy (config ``alpaca_paper.strategies``, venue ``coinbase``) is bought on Alpaca's paper endpoint at the
 paper size, and sold when the paper position closes. The fills go to ``alpaca_fills.jsonl`` and onto the trade
-(``meta["alpaca"]``), so the ~0.39%/side Alpaca cost assumption (handoff/autotrade.md) becomes a measurement:
-fill price against the paper reference at entry and exit, plus Alpaca's fee schedule.
+(``meta["alpaca"]``). The cost is a proxy: paper fill prices against the reference at entry and exit, plus
+the configured fee assumption. Actual commissions paid are not verified by these paper responses.
 
 Paper only, in every mode: the only URL here is ``https://paper-api.alpaca.markets``, which rejects live keys.
 There is no live Alpaca route; going live needs its own route, the gate, and AJ's word.
@@ -122,6 +122,34 @@ def _fill(order: dict) -> tuple[float, float] | None:
     return (qty, price) if math.isfinite(qty) and math.isfinite(price) and qty > 0 and price > 0 else None
 
 
+def _order_evidence(order: dict, fill: tuple[float, float] | None, requested_qty: float | None = None) -> dict:
+    """Annotate the returned response only; never drive an order or infer balances."""
+    raw_requested = requested_qty if requested_qty is not None else order.get("qty")
+    try:
+        requested = float(raw_requested) if raw_requested is not None and not isinstance(raw_requested, bool) else None
+        if requested is not None and (not math.isfinite(requested) or requested <= 0):
+            requested = None
+    except (TypeError, ValueError, OverflowError):
+        requested = None
+    status = order.get("status")
+    completion = "unknown"
+    if isinstance(status, str) and status != "filled":
+        completion = "partial-or-unfilled"
+    elif status == "filled" and fill:
+        if raw_requested is not None and requested is None:
+            completion = "unknown"
+        elif requested is not None and not math.isclose(fill[0], requested, rel_tol=1e-9, abs_tol=0):
+            completion = "partial-or-unfilled"
+        else:
+            completion = "complete-requested-fill"
+    return {"order_status": status, "broker_submitted_at": order.get("submitted_at"),
+            "broker_filled_at": order.get("filled_at"), "broker_clock_basis": "broker-provided",
+            "observation_clock_basis": "local-run-observation", "requested_qty": requested,
+            "filled_qty": fill[0] if fill else None, "fill_completion": completion,
+            "fill_completion_basis": "broker-status-and-requested-quantity" if requested is not None else "broker-status",
+            "terminal_inventory_evidence": "unknown", "terminal_inventory_qty": None}
+
+
 class AlpacaMirror:
     """Built once per run; ``make_mirror`` returns None when it is off or has no keys."""
 
@@ -171,7 +199,10 @@ class AlpacaMirror:
         sym = symbol(pos.asset)
         cid = f"tt:{pos.strategy}:{pos.asset}:{pos.meta.get('signal_hour', pos.id)}:buy"
         rec = {"event": "buy", "at": now, "strategy": pos.strategy, "position": pos.id, "symbol": sym, "client_order_id": cid,
-               "notional_usd": round(pos.notional_usd, 2), "paper_price_in": intent.price, "paper_at": intent.at}
+               "notional_usd": round(pos.notional_usd, 2), "paper_price_in": intent.price, "paper_at": intent.at,
+               "signal_hour": pos.meta.get("signal_hour"), "expected_exit_at": pos.meta.get("exit_t"),
+               "paper_cost_evidence": "unmeasured", "fee_basis": "configured", "configured_fee_per_side": self.cfg["taker_fee"],
+               "commission_evidence": "unknown", "commission_paid_usd": None, **_order_evidence({}, None)}
         try:
             spread = self.client.spread_bps(sym)
         except Exception:  # noqa: BLE001 - the quote is a measurement, not a requirement
@@ -187,9 +218,11 @@ class AlpacaMirror:
             self.error({**rec, "error": f"{type(exc).__name__}: {exc}"[:300]})
             return
         twin = {"symbol": sym, "buy_id": order["id"], "buy_cid": cid, "paper_price_in": intent.price, "spread_in_bps": spread}
+        twin["response_observed_at"] = time.time()
         f = _fill(order)
+        twin.update(_order_evidence(order, f))
         if f:
-            twin.update(qty=f[0], price_in=f[1], entry_gap_bps=1e4 * (f[1] / intent.price - 1))
+            twin.update(qty=f[0], price_in=f[1], entry_gap_bps=1e4 * (f[1] / intent.price - 1), paper_cost_evidence="paper-fill-proxy")
         pos.meta["alpaca"] = twin
         self.log({**rec, "order_status": order.get("status"), **twin})
 
@@ -198,7 +231,9 @@ class AlpacaMirror:
         if not twin or not self.ready(now):
             return
         sym = twin["symbol"]
-        rec = {"event": "sell", "at": now, "strategy": pos.strategy, "position": pos.id, "symbol": sym}
+        rec = {"event": "sell", "at": now, "strategy": pos.strategy, "position": pos.id, "symbol": sym,
+               "paper_at": intent.at, "signal_hour": pos.meta.get("signal_hour"),
+               **_order_evidence({}, None)}
         try:
             if "qty" not in twin:  # the buy had not filled when last looked at
                 f = _fill(self.client.order(twin["buy_id"]))
@@ -215,8 +250,10 @@ class AlpacaMirror:
             if qty <= 0:
                 self.error({**rec, "error": f"nothing to sell (held {held}, want {want})"})
                 return
+            rec["requested_qty"] = qty
             order = self.client.wait_fill(self.client.submit(f"tt:{pos.id}:sell", sym, "sell", qty=qty), self.cfg["fill_wait_s"])
             f = _fill(order)
+            rec.update(_order_evidence(order, f, requested_qty=qty))
             if not f:
                 self.error({**rec, "error": f"sell not filled (status {order.get('status')})", "sell_id": order.get("id")})
                 return
@@ -230,8 +267,12 @@ class AlpacaMirror:
                "entry_gap_bps": twin["entry_gap_bps"], "exit_gap_bps": 1e4 * (1 - f[1] / intent.price),
                "spread_in_bps": twin.get("spread_in_bps"),
                "alpaca_gross_return": gross, "alpaca_net_return": (1 + gross) * (1 - fee) ** 2 - 1,
-               "paper_net_return": trade.net_return, "fee_per_side": fee}
-        # measured cost per side: fee plus the average fill gap against the paper reference (the 0.39% assumption)
+               "paper_net_return": trade.net_return, "fee_per_side": fee,
+               "paper_cost_evidence": "paper-fill-proxy", "fee_basis": "configured", "configured_fee_per_side": fee,
+               "commission_evidence": "unknown", "commission_paid_usd": None,
+               "exit_qty_increment": incr, "response_observed_at": time.time(),
+               **_order_evidence(order, f, requested_qty=qty)}
+        # Legacy field name retained: configured fee plus average paper fill gap, not actual paid commission.
         cmp["measured_side_cost"] = fee + (cmp["entry_gap_bps"] + cmp["exit_gap_bps"]) / 2e4
         trade.meta["alpaca"] = cmp
         self.log({**rec, "sell_id": order["id"], **cmp})
@@ -260,31 +301,62 @@ def reconcile(client: AlpacaPaper, positions, taker_fee: float, now: float) -> d
     want: dict[str, float] = {}
     mark: dict[str, float] = {}
     unconfirmed = []
+    def numeric(value, *, positive=False):
+        if isinstance(value, bool):
+            return None
+        try:
+            value = float(value)
+        except (TypeError, ValueError, OverflowError):
+            return None
+        return value if math.isfinite(value) and (value > 0 if positive else value >= 0) else None
+
     for p in positions:
         twin = (p.meta or {}).get("alpaca")
         if not twin:
             continue
         key = twin["symbol"].replace("/", "")
-        if "qty" not in twin:  # the buy had not filled when last looked at: can't say what it should hold
+        qty = numeric(twin.get("qty"), positive=True)
+        fee = numeric(taker_fee)
+        if qty is None or fee is None or fee >= 1:
             unconfirmed.append(key)
             continue
-        want[key] = want.get(key, 0.0) + twin["qty"] * (1 - taker_fee)
-        mark[key] = p.mark_price or twin.get("price_in") or 0.0
+        expected = want.get(key, 0.0) + qty * (1 - fee)
+        if not math.isfinite(expected):
+            unconfirmed.append(key)
+            continue
+        want[key] = expected
+        mark[key] = numeric(p.mark_price, positive=True) or numeric(twin.get("price_in"), positive=True)
     held, price = {}, {}
     for r in client.positions():
         if r.get("asset_class", "crypto") != "crypto":
             continue
         key = str(r["symbol"]).replace("/", "")
-        held[key] = float(r["qty"])
-        price[key] = float(r.get("current_price") or 0) or mark.get(key, 0.0)
+        quantity = numeric(r.get("qty"))
+        if quantity is None or key in held:
+            unconfirmed.append(key)
+            continue
+        held[key] = quantity
+        price[key] = numeric(r.get("current_price"), positive=True) or mark.get(key)
+        if quantity > 0 and price[key] is None:
+            unconfirmed.append(key)
     mismatches = []
     for key in sorted(set(want) | set(held)):
         if key in unconfirmed:
             continue
         w, h = want.get(key, 0.0), held.get(key, 0.0)
-        px = price.get(key) or mark.get(key) or 0.0
+        px = price.get(key) or mark.get(key)
+        if (h > 0 or w > 0) and (px is None or not math.isfinite(px) or px <= 0):
+            unconfirmed.append(key)
+            continue
+        if h == w == 0:
+            continue
+        book_usd, held_usd = w * px, h * px
         diff_usd = abs(h - w) * px
-        if diff_usd > max(RECON_MIN_USD, RECON_FRAC * w * px):
+        tolerance = max(RECON_MIN_USD, RECON_FRAC * book_usd)
+        if not all(math.isfinite(v) for v in (w, h, book_usd, held_usd, diff_usd, tolerance)):
+            unconfirmed.append(key)
+            continue
+        if diff_usd > tolerance:
             mismatches.append({"symbol": key, "book_qty": round(w, 9), "held_qty": round(h, 9), "diff_usd": round(diff_usd, 2)})
     stuck = []
     for o in client.open_orders():
@@ -292,7 +364,8 @@ def reconcile(client: AlpacaPaper, positions, taker_fee: float, now: float) -> d
         if t is None or now - t > RECON_ORDER_AGE_S:
             stuck.append({"symbol": o.get("symbol"), "side": o.get("side"), "client_order_id": o.get("client_order_id"),
                           "submitted_at": o.get("submitted_at")})
-    return {"checked_at": now, "ok": not mismatches and not stuck, "mismatches": mismatches, "stuck_orders": stuck,
+    return {"checked_at": now, "ok": not mismatches and not stuck and not unconfirmed, "mismatches": mismatches, "stuck_orders": stuck,
+            "valuation_evidence": "finite-inputs-checked" if not unconfirmed else "unknown",
             "unconfirmed": sorted(set(unconfirmed)), "symbols": len(set(want) | set(held))}
 
 
@@ -309,25 +382,21 @@ def reconcile_safe(mirror: "AlpacaMirror | None", positions, now: float) -> dict
 def health_items(root: Path, now: float | None = None) -> list[dict]:
     """Health check "Alpaca paper account matches book", from state.json (written by the hourly run)."""
     try:
+        from .live_gate import _terminal_inventory
+
         state = json.loads((Path(root) / "state.json").read_text()) if (Path(root) / "state.json").exists() else {}
-        rec = (state.get("alpaca") or {}).get("reconcile")
-        if not rec:
-            return [{"check": "Alpaca account vs book", "level": "green", "detail": "not checked yet (needs the paper keys)"}]
-        if now is not None and now - rec["checked_at"] > 3 * 3600:
-            return [{"check": "Alpaca account vs book", "level": "yellow",
-                     "detail": f"last checked {(now - rec['checked_at']) / 3600:.0f} h ago"}]
-        if rec.get("ok") is None:
-            return [{"check": "Alpaca account vs book", "level": "yellow", "detail": f"could not check: {rec.get('error')}"[:300]}]
-        if not rec["ok"]:
-            bits = [f"{m['symbol']} book {m['book_qty']} vs held {m['held_qty']} (${m['diff_usd']})" for m in rec["mismatches"]]
-            bits += [f"{o['side']} {o['symbol']} open since {o['submitted_at']}" for o in rec["stuck_orders"]]
-            return [{"check": "Alpaca account vs book", "level": "red",
-                     "detail": ("paper account differs from the book (live rule: would write HALT): " + "; ".join(bits))[:400]}]
-        return [{"check": "Alpaca account vs book", "level": "green",
-                 "detail": f"{rec['symbols']} symbol(s) match the book"
-                           + (f"; buys not yet confirmed: {', '.join(rec['unconfirmed'])}" if rec.get("unconfirmed") else "")}]
+        last = (state.get("last_run") or {}).get("at")
+        c = _terminal_inventory(state, time.time() if now is None else now,
+                                after=last if isinstance(last, (int, float)) and not isinstance(last, bool) and math.isfinite(last) else None)
+        rec = (state.get("alpaca") or {}).get("reconcile") or {}
+        bad = c["status"] == "unmatched" and bool(rec.get("mismatches") or rec.get("stuck_orders"))
+        level = "green" if c["complete"] else "red" if bad else "yellow"
+        symbols = [str(r.get("symbol") or "?") for k in ("mismatches", "stuck_orders") for r in (rec.get(k) or []) if isinstance(r, dict)] if bad else []
+        return [{"check": "Alpaca account vs book", "level": level, "terminal_inventory_evidence": c["status"],
+                 "detail": f"terminal_inventory_evidence={c['status']}: {c['detail']}" + (f"; {', '.join(symbols)}" if symbols else "")}]
     except Exception as exc:  # noqa: BLE001 - never break the health run
-        return [{"check": "Alpaca account vs book", "level": "yellow", "detail": f"could not read state: {type(exc).__name__}: {exc}"[:300]}]
+        return [{"check": "Alpaca account vs book", "level": "yellow", "terminal_inventory_evidence": "unknown",
+                 "detail": f"terminal_inventory_evidence=unknown: could not read state: {type(exc).__name__}: {exc}"[:300]}]
 
 
 def make_mirror(config: dict, env, root=None, journal=None, client=None) -> AlpacaMirror | None:
@@ -343,28 +412,49 @@ def make_mirror(config: dict, env, root=None, journal=None, client=None) -> Alpa
 
 
 def report_lines(root: Path, state: dict | None = None) -> list[str]:
-    path = Path(root) / "alpaca_fills.jsonl"
-    rows = [json.loads(x) for x in path.read_text().splitlines() if x.strip()] if path.exists() else []
+    from .live_gate import _finite, _rows, _terminal_inventory, round_trips
+
+    rows = _rows(root)
     st = (state or {}).get("alpaca")
     if not rows and not st:
         return []
     head = ["", "## Alpaca paper fills (US spot, paper account; alpaca_fills.jsonl)", ""]
-    rec = (st or {}).get("reconcile")
-    if rec:
-        head.append("Account vs book: " + ("matches" if rec.get("ok") else "could not check" if rec.get("ok") is None else
-                                          f"**differs** ({len(rec.get('mismatches', []))} holding(s), {len(rec.get('stuck_orders', []))} stuck order(s))") + ".")
+    at = ((state or {}).get("last_run") or {}).get("at")
+    latest = max((r["at"] for r in rows if r.get("event") in ("buy", "sell") and _finite(r.get("at"))), default=None)
+    terminal = _terminal_inventory(state, at if _finite(at) else time.time(), after=latest)
+    head.append(f"Terminal paper inventory: {terminal['status']}; {terminal['detail']}.")
     if st:
         head.append("Key check this run: " + ("paper account OK" + (f", crypto {st['crypto_status']}" if st.get("crypto_status") else "")
                                              if st.get("ok") else f"not working ({st.get('error')})") + ".")
     if not rows:
         return head
     sells = [r for r in rows if r.get("event") == "sell"]
-    out = head + [f"{sum(r.get('event') == 'buy' for r in rows)} buys, {len(sells)} round trips, "
+    out = head + [f"{sum(r.get('event') == 'buy' for r in rows)} buy receipts, {len(sells)} sell receipts, "
            f"{sum(r.get('event') == 'error' for r in rows)} errors."]
-    if sells:
-        n = len(sells)
-        mean = lambda k: sum(r[k] for r in sells) / n  # noqa: E731
-        out.append(f"Mean measured cost per side {100 * mean('measured_side_cost'):.2f}% (assumed 0.39%): entry gap "
-                   f"{mean('entry_gap_bps'):+.0f} bp, exit gap {mean('exit_gap_bps'):+.0f} bp, fee {100 * sells[0]['fee_per_side']:.2f}%. "
-                   f"Mean net per trade {100 * mean('alpaca_net_return'):+.2f}% on Alpaca vs {100 * mean('paper_net_return'):+.2f}% on paper.")
+    trade_rows = [r for r in rows if r.get("event") in ("buy", "sell")]
+    partial = sum(r.get("fill_completion") == "partial-or-unfilled" for r in trade_rows)
+    unknown = sum(r.get("fill_completion") not in ("partial-or-unfilled", "complete-requested-fill") for r in trade_rows)
+    out.append(f"Requested fill completion: {partial} partial/unfilled receipt(s), {unknown} unknown receipt(s). "
+               "Local at is the run observation time; broker submitted/fill times are retained only when provided. "
+               "A completed requested order does not prove terminal inventory.")
+    rejected = []
+    pairs = round_trips(rows, rejected=rejected)
+    out.append(f"{len(pairs)} validated complete requested-fill pair(s); {len(rejected)} rejected record(s). "
+               "Legacy records without completion proof remain unknown.")
+    usable = [r for r in pairs if all(_finite(r.get(k)) for k in
+              ("measured_side_cost", "entry_gap_bps", "exit_gap_bps", "fee_per_side", "alpaca_net_return", "paper_net_return"))]
+    invalid = sum(bool(r.get("_invalid_fill_record")) for r in rows)
+    unmeasured = sum(not all(_finite(r.get(k)) for k in
+                     ("measured_side_cost", "entry_gap_bps", "exit_gap_bps", "fee_per_side", "alpaca_net_return", "paper_net_return")) for r in sells)
+    if invalid or unmeasured:
+        out.append(f"Fill evidence incomplete: {invalid} malformed/non-object line(s), {unmeasured} unmeasured sell(s).")
+    if usable:
+        n = len(usable)
+        mean = lambda k: sum(r[k] for r in usable) / n  # noqa: E731
+        out.append(f"paper_cost_evidence=paper-fill-proxy: mean cost per side {100 * mean('measured_side_cost'):.2f}% (assumed 0.39%): entry gap "
+                   f"{mean('entry_gap_bps'):+.0f} bp, exit gap {mean('exit_gap_bps'):+.0f} bp, configured fee {100 * mean('fee_per_side'):.2f}%. "
+                   f"Mean modeled net per trade {100 * mean('alpaca_net_return'):+.2f}% on Alpaca paper vs {100 * mean('paper_net_return'):+.2f}% on paper. "
+                   "Actual commission paid is unknown; older unlabeled records are treated as paper proxies.")
+    else:
+        out.append("paper_cost_evidence=unmeasured; actual commission paid is unknown.")
     return out

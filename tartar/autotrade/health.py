@@ -24,7 +24,7 @@ import time
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
-from . import alpaca, live_gate
+from . import alpaca, live_gate, observation_coverage
 
 REPO = os.environ.get("GITHUB_REPOSITORY") or "wardalexander368-sudo/Continuations"  # moved from StaticPush7217/TARTAR 2026-10-10
 API = f"https://api.github.com/repos/{REPO}"
@@ -185,6 +185,14 @@ def check_agent(root: Path, now: float | None = None) -> list[dict]:
                if r.get("errors") and r.get("status") != "halted"]
     if failing:
         out.append({"check": "Agent: strategy errors", "level": "yellow", "detail": "; ".join(failing)[:400]})
+    coverage_names = {live_gate.GATE_STRATEGY} | {
+        n for n, r in strats.items() if n in ("us_capit", "us_capit_fast", "us_capit~wide", "us_volspike")
+        or isinstance(r.get("data"), dict) and "coverage" in r["data"]}
+    for name in sorted(coverage_names):
+        c = observation_coverage.from_state(state, name, time.time() if now is None else now)
+        level = "green" if c["complete"] else "red" if c["status"] in ("malformed", "stale") or c.get("incomplete_coin_hours", 0) else "yellow"
+        out.append({"check": f"Input: Coinbase coverage {name}", "level": level,
+                    "coverage_status": c["status"], "detail": c["detail"]})
     path = root / "fills.jsonl"
     rows = [json.loads(x) for x in path.read_text().splitlines() if x.strip()] if path.exists() else []
     closes = [r for r in rows if r.get("event") in ("sell", "perp_close", "perp_roll_out", "usd_sell") and "compare" in r]
