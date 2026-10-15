@@ -1,0 +1,141 @@
+{
+  "checked_at": "2026-10-14T06:38:04.686692+00:00",
+  "source_head_before_fix": "2dfbaf8e27d89467477fb7f7231553302698f61e",
+  "failed_github_run": {
+    "conclusion": "failure",
+    "createdAt": "2026-10-13T23:45:30Z",
+    "databaseId": 38486164261,
+    "headSha": "2dfbaf8e27d89467477fb7f7231553302698f61e",
+    "jobs": [
+      {
+        "completedAt": "2026-10-13T23:48:05Z",
+        "conclusion": "failure",
+        "databaseId": 115600221886,
+        "name": "pytest",
+        "startedAt": "2026-10-13T23:45:32Z",
+        "status": "completed",
+        "steps": [
+          {
+            "completedAt": "2026-10-13T23:45:35Z",
+            "conclusion": "success",
+            "name": "Set up job",
+            "number": 1,
+            "startedAt": "2026-10-13T23:45:33Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-13T23:45:40Z",
+            "conclusion": "success",
+            "name": "Run actions/checkout@v4",
+            "number": 2,
+            "startedAt": "2026-10-13T23:45:35Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-13T23:45:40Z",
+            "conclusion": "success",
+            "name": "Run actions/setup-python@v5",
+            "number": 3,
+            "startedAt": "2026-10-13T23:45:40Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-13T23:46:02Z",
+            "conclusion": "success",
+            "name": "Run pip install -e \".[dev,live]\"",
+            "number": 4,
+            "startedAt": "2026-10-13T23:45:40Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-13T23:48:03Z",
+            "conclusion": "failure",
+            "name": "Run python -m pytest -q",
+            "number": 5,
+            "startedAt": "2026-10-13T23:46:02Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-13T23:48:03Z",
+            "conclusion": "skipped",
+            "name": "Post Run actions/setup-python@v5",
+            "number": 9,
+            "startedAt": "2026-10-13T23:48:03Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-13T23:48:03Z",
+            "conclusion": "success",
+            "name": "Post Run actions/checkout@v4",
+            "number": 10,
+            "startedAt": "2026-10-13T23:48:03Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-13T23:48:03Z",
+            "conclusion": "success",
+            "name": "Complete job",
+            "number": 11,
+            "startedAt": "2026-10-13T23:48:03Z",
+            "status": "completed"
+          }
+        ],
+        "url": "https://github.com/wardalexander368-sudo/Continuations/actions/runs/38486164261/job/115600221886"
+      }
+    ],
+    "status": "completed",
+    "updatedAt": "2026-10-13T23:48:06Z",
+    "url": "https://github.com/wardalexander368-sudo/Continuations/actions/runs/38486164261"
+  },
+  "reproduction": {
+    "status": "REPRODUCED_AND_FIXED",
+    "source_head": "2dfbaf8e27d89467477fb7f7231553302698f61e",
+    "network_requests": 0,
+    "workflow_change": "One sparse-checkout path added; no triggers/schedule/permissions/test-command change.",
+    "selected_test": "tests/test_scoring_receipts.py::test_checked_in_lock_covers_real_scorers_without_executing",
+    "test_runs": [
+      {
+        "snapshot": "before",
+        "exit_code": 1,
+        "started_at": "2026-10-14T06:33:09.666786+00:00",
+        "finished_at": "2026-10-14T06:33:10.665442+00:00",
+        "log": "before-pytest.txt",
+        "log_sha256": "c93b5e88e060d613156ed4be613b89cf840c391639bebd9f381e417663a7774d",
+        "source_lock_present": false
+      },
+      {
+        "snapshot": "after",
+        "exit_code": 0,
+        "started_at": "2026-10-14T06:33:10.665868+00:00",
+        "finished_at": "2026-10-14T06:33:11.102476+00:00",
+        "log": "after-pytest.txt",
+        "log_sha256": "3be6ffcaecf85b5bd3eef3693ab214b0e7c9eb4e36d117fcf1825652de5eb298",
+        "source_lock_present": true
+      }
+    ],
+    "actual_registered_scorers_executed": 0,
+    "frozen_inputs_changed": false
+  },
+  "workflow_sha256_before": "8ba35432e4436936b78108060eb594f22a7cb9aa90bee476585b74e0d6cb5c39",
+  "workflow_sha256_after": "ce75b5cd972097c2ef138c6e36f7777f67e3804a4f34aeb96763fa1914c8607c",
+  "source_lock_sha256_unchanged": "f4e27d0ca85e6b1713c336c565a172a549db6eae46c4fef14d3d98dcf98b3895",
+  "execution_source_hashes_unchanged": {
+    "handoff/experiments/edge-hunt/patterns/fetch_coinbase.py": "1ca4dc6aa7b2378cd59ce9dc14d393115e0e142e2699c92c0679f2e1ff81a758",
+    "handoff/experiments/edge-hunt/patterns/pattern_forward.py": "629c87a4cba5e900da5627ca3ecc310de3ea8b5695ab512c225133757a112973",
+    "handoff/experiments/edge-hunt/patterns/pattern_forward_costs.py": "c3d90790f43728209865e9703bf4933e376c987e342c8768b815ceab0ce8b73a",
+    "handoff/experiments/edge-hunt/patterns/patterns.py": "aac47668618febade44bd8c49049372e43001e2254627f92a7857ac1c47b5a90",
+    "handoff/experiments/edge-hunt/perps/cde_forward.py": "9ac3350de2a82c13fa6e779baa1ebb4b4ad36aebdf6ebbbcf8c472b010ef9c0c",
+    "handoff/experiments/edge-hunt/perps/vmom_forward.py": "e386fdb8ac3894ec1da9b25c7b96653890659aba71482156653726f7ef31e1f3",
+    "handoff/experiments/edge-hunt/perps/wick_forward.py": "ade2755fb9df629aff72f2030c3b21f9c5f36c7a6cf51504e7e2b571d9723d76",
+    "handoff/experiments/edge-hunt/perps/xs_coinbase.py": "e6fc5d7a8ef20f606a133182a594a249559607df61c2e845ea323f5dad734052",
+    "handoff/experiments/edge-hunt/vaults/hlp_forward.py": "9c94f87a4aa408b165fcb585dc5e38e86edc29a3844d9313e1a0079bfdf5ae92",
+    "handoff/experiments/final_scores.py": "2b2f07de599fb28b41689bebc52af3c3c61c088a984467d2688928cf28e7bf0e",
+    "handoff/experiments/jlp_paper.py": "af6f5d1c11a685ee630e5019d88074907cce9f450aecc54e17d9159dd0467259",
+    "handoff/experiments/pumpflow_paper.py": "b856e5afbc3e2d462823c56313920cfc4511da0348fdfb5b2419b5d03fc411d5",
+    "handoff/experiments/scoring_receipts.py": "40e34be0051250846ba6de59b940455298a2f52b0129adb2d796e3130635020f",
+    "handoff/experiments/xs_momentum_forward.py": "314b86a7ea8075a94c152c1f7afe3c68a501ad8684540f566510c7c0221108a3"
+  },
+  "registered_sources_executed": 0,
+  "frozen_and_paper_book_diff": [],
+  "scope": "CI checkout repair; no strategy or profitability result"
+}
