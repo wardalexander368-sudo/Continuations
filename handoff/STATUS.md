@@ -51,9 +51,11 @@ Lanes as of 2026-10-12 (all paper only). Owner thread names are the project's th
   plan and topic docs brought into line. Done when it lands; then the ledger is kept by whoever lands a result.
 * **Live rule (thread "Full project overview and alignment"):** v2 adopted 10-12; owns `tartar/autotrade/live_gate.py`
   (gate line in REPORT, Alpaca cost health check). Next step needs AJ: fund an Alpaca live account when the gate is met.
+  **Suspended 2026-10-15 with the live rule:** nothing here authorizes funding a live account.
 
-* **ChatGPT lane: PAUSED from 2026-10-15 (AJ).** No new claims or PRs until AJ says so. The open PRs (#12 to #19)
-  are reviewed by the LiveDesk project's Claude. Earlier record of the lane follows.
+* **ChatGPT lane: ENDED 2026-10-15 (AJ).** Codex's scheduled tasks are stopped and Codex no longer works here; the
+  LiveDesk project's Claude carries this repository. Of the lane's last PRs, #13, #16 and #19 merged; #12, #14, #15, #17
+  and #18 are closed unmerged, with their branches kept as the record. Earlier record of the lane follows.
 * **ChatGPT lane (Codex, thread "ChatGPT lane with Claude review", from 2026-10-12):** AJ's ChatGPT works only on
   `codex/*` branches and opens PRs into `main`; rules in `AGENTS.md`. Claude reviews each PR before it lands;
   approved PRs land on main through the coordinator's bundle push. A twice-daily routine (01:07/13:07 UTC) checks for new
@@ -115,6 +117,10 @@ Lanes as of 2026-10-12 (all paper only). Owner thread names are the project's th
   `archive/STATUS-history-to-2026-10-10.md`; that lane is closed.
 
 ## Log (newest first)
+
+* **2026-10-15 ~02:28 UTC, LiveDesk project ("Absorbing Continuations"): AJ ended Codex's scheduled tasks; Codex leaves
+  this project.** The ChatGPT lane is ended, not paused. After AJ removed the live-route secrets, #20, #13, #19 and #16
+  merged; #12, #14, #15, #17 and #18 are closed unmerged, branches kept. Docs only.
 
 * **2026-10-15 ~00:10 UTC, LiveDesk project ("Absorbing Continuations"): AJ "approved for all recommended".**
   This repository becomes a frozen annex of the LiveDesk project; the US live rule is suspended; the ChatGPT lane is

@@ -1,8 +1,9 @@
 # AGENTS.md: rules for ChatGPT / Codex in this repo
 
-> **Paused from 2026-10-15 (AJ).** This repository is a frozen annex of AJ's LiveDesk project. Make no new claims and
-> open no new pull requests until AJ says so in words. Your open PRs are reviewed by the LiveDesk project's Claude.
-> Work only inside this repository's checkout: do not open, read or list any other folder on AJ's machine.
+> **Ended 2026-10-15 (AJ).** Codex no longer works in this repository; its scheduled tasks are stopped. This repository
+> is a frozen annex of AJ's LiveDesk project, worked only by that project's Claude. Make no claims, branches or pull
+> requests here, and do not open, read or list any folder of this project or of AJ's other projects on AJ's machine.
+> The rules below are kept as the lane's record.
 
 You are the **ChatGPT lane** of the TarTrade project. Several Claude sessions also work here.
 Claude reviews every pull request you open before anything reaches `main`. Read this file, then
