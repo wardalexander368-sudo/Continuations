@@ -1,0 +1,45 @@
+{
+  "at": "2026-10-14T21:50:22.722053+00:00",
+  "base": "f90162cb1afc1223e8bda51ab79a1afc2445fc2c",
+  "scope": "Documentation only; tests use existing unchanged base runtime code. No return screen or real scorer executed.",
+  "interpreter": {
+    "python": "3.12.6",
+    "implementation": "cpython",
+    "cache_tag": "cpython-312"
+  },
+  "pytest": {
+    "passed": 449,
+    "skipped": 1,
+    "subtests_passed": 9,
+    "seconds": 82.65,
+    "command": "PYTHONDONTWRITEBYTECODE=1 <existing CoinHunt Python3.12.6> -u -c 'import lightgbm; import pytest; raise SystemExit(pytest.main([\"-q\", \"-p\", \"no:cacheprovider\"]))'",
+    "log_sha256": "deb88e23e8fd794c26216766664dabe5c3f8e27d546655087e2cafb91a3c5bc3",
+    "initial_setup_failure": "Unsupported sparse-add --no-cone flag left code/test paths unmaterialized; first pytest collected no tests (exit5). Log preserved. Corrected checkout then passed full suite without assertion changes."
+  },
+  "checks": {
+    "backlog_items": 45,
+    "supplied_pages": 153,
+    "json_parse": true,
+    "new_relative_links_and_git_tracked_baseline_links": true,
+    "hard_rules_and_review_section_byte_preserved": true,
+    "private_Downloads_paths_removed": true,
+    "no_raw_PDF_or_full_extraction_added": true,
+    "no_owner_config_frozen_workflow_or_runtime_changes": true
+  },
+  "source_documents": {
+    "handoff/reviews/agentic-research-2026-10-14/SOURCES.json": "b75a25f8f7fe5d450892a8a6e2a9e9b6c0ca0da3ac3e5c8785a2c8b7213a35ae",
+    "handoff/reviews/agentic-research-2026-10-14/LIN.md": "2516f3e0dc7fb4c94845992ac2de5e0e494d467b46bed9ddc599ed3a70ec6bd9",
+    "handoff/reviews/agentic-research-2026-10-14/XIA.md": "15d52382aaefe544a9cb61d4717484956434173e8f5541731705a7f61a5b2e87",
+    "handoff/reviews/agentic-research-2026-10-14/REPORT.md": "4bdfb68f66f8e813a1125cd48ce51429f784fdb518727f369aae54424f7eef56",
+    "handoff/reviews/agentic-research-2026-10-14/CLAIMS.json": "783d35728fc83d3e424fd27d2ca66e720934afddcceeb5fda844e8b05104f89b",
+    "handoff/reviews/agentic-research-2026-10-14/AIGNER.md": "4fe7c093d4cb420212025cdac900886246b39b84caf10e89a643741c49bde0a4",
+    "handoff/research/OPERATING-PRINCIPLES.md": "81c7d34a63fc76f94c1d868629eb4bc82d426005f1c969aae038910cdd95f7b1",
+    "handoff/research/IMPROVEMENT-BACKLOG.md": "7fe09724c3f9e28614ddfbb54b9332124757ac4dc8703b8988973f9a4e3dd3df",
+    "handoff/research/CANDIDATE-CARD.template.json": "8525a74c2a683bf7ddaa1c064f0e496aefede4620731aaee37fe54fe2ff1e91c",
+    "handoff/research/COMPOSITION-VOLUME-PROPOSAL.md": "50627dd1ec61c6fef5f79721e9a23c24df352a23cc0c3e38908f2592ba6fbe0e",
+    "AGENTS.md": "9b6893fd177fa8962a2f77d8899271c0b3af52a970db30f121929a0895eb4d89",
+    "README.md": "b2fc9b7bfcf3378d89c031e5ab8005d2adc2610ca04d29a983ba9f78d27fe9ae",
+    "handoff/README.md": "2900227493017c1bfe104cef8e3f762ba6e842a2a86891296f56edf8588a77ac",
+    "handoff/STATUS.md": "e654a99e7e365fd55a53a25961867547c8292d412e9891bf5d1a43363de3d6d5"
+  }
+}
