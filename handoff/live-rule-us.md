@@ -1,4 +1,9 @@
-# Live rule for US strategies (v2, ADOPTED by AJ 2026-10-12 22:45 UTC)
+# Live rule for US strategies (v2, SUSPENDED by AJ 2026-10-15; adopted 2026-10-12)
+
+> **Suspended** (AJ, 2026-10-15 00:02 UTC, approving the LiveDesk project's plan for absorbing this repository).
+> No Alpaca live account is funded and no live route is built under this rule. Real money moves only through
+> LiveDesk's own pre-trade gate and stages. The paper gate line in REPORT may keep reporting; it authorizes nothing.
+
 
 > **Adopted** (AJ, 2026-10-12 22:45 UTC: "approved, move forward when ready"). Adopting the rule does not fund
 > anything or send any order: section 4 item 1 (AJ's go in words to fund an Alpaca live account, its keys, and the

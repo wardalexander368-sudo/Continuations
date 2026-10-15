@@ -7,9 +7,11 @@
 >   account, and `cde_vol_momentum` on Coinbase's US perps (+0.39%/wk test, CI includes zero; needs ~$8k).
 > * **US costs:** Coinbase 0.90% taker / 0.50% maker since 2026-09-16; Alpaca ~0.39%/side (the first live US
 >   route if one is approved). Details `reviews/gap-review-2026-10-11.md`.
-> * **Live rule ADOPTED** (AJ, 10-12 22:45 UTC): `live-rule-us.md` v2, us_capit only, on coins whose measured Alpaca
->   cost is at most 0.50%/side, $100/trade, $250 stop. Gate progress: REPORT line "Live rule gate". Real money still
->   needs AJ to fund an Alpaca live account and a live route built after that; neither exists.
+> * **Absorbed into the LiveDesk project (AJ, 2026-10-15 00:02 UTC).** This repository is now a frozen annex:
+>   no new research lanes, Codex makes no new claims, and the LiveDesk project's Claude reviews and lands PRs here.
+>   Nothing here may trade real money; AJ is removing the live-route secrets. The paper Actions keep running.
+> * **Live rule SUSPENDED** (AJ, 2026-10-15): `live-rule-us.md` v2 (adopted 10-12) authorizes nothing. No Alpaca live
+>   account or live route will be built under it; real money moves only through LiveDesk's own gate and stages.
 > * **Every finding (Claude and Codex) in one table:** `findings.md`. Check it before proposing an idea.
 > * **Plan:** `plan-2026-10-12.md` (section G is the order of work). **Map of the repo:** `README.md` and `handoff/README.md`.
 > * **Paper tests running:** see *Active*. Every registered test is scored by a routine and/or the weekly
@@ -50,6 +52,8 @@ Lanes as of 2026-10-12 (all paper only). Owner thread names are the project's th
 * **Live rule (thread "Full project overview and alignment"):** v2 adopted 10-12; owns `tartar/autotrade/live_gate.py`
   (gate line in REPORT, Alpaca cost health check). Next step needs AJ: fund an Alpaca live account when the gate is met.
 
+* **ChatGPT lane: PAUSED from 2026-10-15 (AJ).** No new claims or PRs until AJ says so. The open PRs (#12 to #19)
+  are reviewed by the LiveDesk project's Claude. Earlier record of the lane follows.
 * **ChatGPT lane (Codex, thread "ChatGPT lane with Claude review", from 2026-10-12):** AJ's ChatGPT works only on
   `codex/*` branches and opens PRs into `main`; rules in `AGENTS.md`. Claude reviews each PR before it lands;
   approved PRs land on main through the coordinator's bundle push. A twice-daily routine (01:07/13:07 UTC) checks for new
@@ -63,6 +67,7 @@ Lanes as of 2026-10-12 (all paper only). Owner thread names are the project's th
   and the connected-project map `CONNECTED_PROJECTS.md`. Suggested next claims: `plan-2026-10-12.md` section E.
   Proposed claim 2026-10-13: CAPIT feed-coverage diagnostic (`reviews/capit-feed-integrity-2026-10-13.md`); synthetic missing-data/cursor evidence only; owner implementation unchanged.
   Proposed claim 2026-10-13: CDE cost-documentation addendum (`reviews/cde-cost-documentation-2026-10-13.md`); dated exchange fees, retail/REST units unresolved; docs only.
+  Proposed claim 2026-10-13: paper box evidence audit, synthetic execution evidence and prospective comparison protocol (`reviews/box-evidence-audit-2026-10-13.md`, `reviews/box-execution-evidence-2026-10-13.md`, `codex/box-evidence-audit`); docs only, 19 offline cases/98 diagnostic outcomes, tested valued residuals caught and halted; no production occurrence or profitability claim; Alpaca/agent owner implementation unchanged.
   Proposed research planning 2026-10-14 (Alex: read supplied research, retain principles, realign goals): three-source claim audit, operating principles, 45-item backlog and planning-only composition-volume hypothesis (`codex/research-principles-20261014`; `reviews/agentic-research-2026-10-14/REPORT.md`); no strategy/frozen/owner/workflow changes; source counts version-pinned and no alpha validated.
 * **Continue TARTAR handoff session:** owns `autotrade/` and `tartar/autotrade/` (the hourly agent).
   Agent spec pass done 10-11 (separate hl/us risk books, error-halt retry, per-book drawdown stops). Next: plan A1, A2.
@@ -109,6 +114,10 @@ Lanes as of 2026-10-12 (all paper only). Owner thread names are the project's th
   `archive/STATUS-history-to-2026-10-10.md`; that lane is closed.
 
 ## Log (newest first)
+
+* **2026-10-15 ~00:10 UTC, LiveDesk project ("Absorbing Continuations"): AJ "approved for all recommended".**
+  This repository becomes a frozen annex of the LiveDesk project; the US live rule is suspended; the ChatGPT lane is
+  paused; the connected-project map names LiveDesk only as a separate project. Code, data and tests are unchanged.
 
 * **2026-10-13 ~06:30 UTC, thread "Perfect trading system vs ours": AJ "approved for all"** (the review's three gaps).
   (1) Hourly Alpaca account-vs-book check: `alpaca.reconcile`, state `alpaca.reconcile`, health "Alpaca account vs book"
