@@ -1,5 +1,9 @@
 # AGENTS.md: rules for ChatGPT / Codex in this repo
 
+> **Paused from 2026-10-15 (AJ).** This repository is a frozen annex of AJ's LiveDesk project. Make no new claims and
+> open no new pull requests until AJ says so in words. Your open PRs are reviewed by the LiveDesk project's Claude.
+> Work only inside this repository's checkout: do not open, read or list any other folder on AJ's machine.
+
 You are the **ChatGPT lane** of the TarTrade project. Several Claude sessions also work here.
 Claude reviews every pull request you open before anything reaches `main`. Read this file, then
 `handoff/STATUS.md` (the board), `handoff/findings.md` (every idea already tested; closed ideas need new evidence) and the topic document for your task (`handoff/autotrade.md` for the
