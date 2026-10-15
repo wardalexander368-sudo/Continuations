@@ -11,7 +11,7 @@ This is the shared navigation and handoff map for the Continuations Codex branch
 | TarTrade profitability and edge research | [Profitability](handoff/profitability.md), [edge hunt](handoff/edge-hunt.md), [frozen protocols](handoff/preregistration/) | Cost, venue, control and censoring lessons can be compared prospectively. Registered protocols, closed lanes and observations retain their original scope. |
 | JevTrader / jev-paper-loop | [Public repository](https://github.com/AJW9991/jevtrader), [existing contribution handoff](handoff/jevtrader.md) | Separate sealed forward-only SOL-USD paper measurement. Link only: no sealed outcomes, proposal logs or altered protocol copied into this branch. |
 | SlowLane / Sieve | [External-project handoff](handoff/connected-external.md) | Separate rules-based daily spot research; referenced from its local overview, with no sealed results or runtime copied. |
-| LiveDesk | [External-project handoff](handoff/connected-external.md) | Separate operator-controlled execution project. Connection is documentation only; this branch does not activate or alter it. |
+| LiveDesk | [External-project handoff](handoff/connected-external.md) | A separate project. |
 | JEV tooling | [External-project handoff](handoff/connected-external.md) | Shared reading/typed-judgment tooling; project-specific permission and evaluation contracts remain separate. |
 | AI Server Build | [External-project handoff](handoff/connected-external.md) | Shared prospective hosting infrastructure; hardware and services stay in their own project. |
 | CMem context archive | [External-project handoff](handoff/connected-external.md) | Local exported context/artifact reference. Private conversation payloads are not copied into this public branch. |
