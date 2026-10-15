@@ -1,0 +1,67 @@
+{
+  "review_date": "2026-10-14",
+  "scope": "Supplied153pages; primary-source spot checks; no economic replication or foreign code execution",
+  "sources": [
+    {
+      "source_id": "S1",
+      "filename": "content.pdf",
+      "sha256": "a9d9164cb6e04e4b67f163063f2cb543f9bb7db03f86ca2de739355d64dd946f",
+      "bytes": 5720677,
+      "pdf_pages": 82,
+      "review_file": "LIN.md"
+    },
+    {
+      "source_id": "S2",
+      "filename": "Aigner-Agentic-Trading-Overwview-Jun-2026.pdf",
+      "sha256": "21302f3d7cf66c8bd377b043979e6d09a0a0282d0df6269e874912ae81d68448",
+      "bytes": 229322,
+      "pdf_pages": 12,
+      "review_file": "AIGNER.md"
+    },
+    {
+      "source_id": "S3",
+      "filename": "2605.19337v1.pdf",
+      "sha256": "14f40887163808b36333f3539b0279d4497971e7a85408a62437b34f9c5c40ec",
+      "bytes": 11271491,
+      "pdf_pages": 59,
+      "review_file": "XIA.md"
+    }
+  ],
+  "identities": {
+    "S1": "Stephanie Lin, Harvard undergraduate thesis, cover March2025; DASH posted2025-05-22",
+    "S2": "Andreas A. Aigner, Tradeflags independent narrative research report, June2026 metadata; official publication/peer review not established",
+    "S3": "Xia et al., arXiv2605.19337v1 submitted2026-05-19, evidence cutoff2026-03-09; bounded v2 spot-check separate"
+  },
+  "primary_links": [
+    "https://dash.harvard.edu/items/930ce41e-91f2-43c9-8ebc-25a696cc32d3",
+    "https://arxiv.org/abs/2605.19337v1",
+    "https://arxiv.org/abs/2605.19337v2",
+    "https://arxiv.org/html/2605.19337v2",
+    "https://aclanthology.org/2025.findings-acl.716/",
+    "https://arxiv.org/abs/2605.28359v1"
+  ],
+  "license_boundary": "PDF access/distribution terms do not establish associated code/data reuse rights; no supplied PDF or full extraction is included in repository",
+  "unchecked": [
+    "all surveyed implementations and costs",
+    "individual primary-study coding without S1-S3 ledger",
+    "complete v2 survey",
+    "actual account fills or paid commissions",
+    "complete claim-by-claim verification of every bibliography reference"
+  ],
+  "additional_primary_check_identity": {
+    "checked_on": "2026-10-14",
+    "status": "DOCUMENTARY_SPOT_CHECKS_WITH_PARTIAL_VERSION_IDENTITY",
+    "explicit_identifiers": [
+      "ACL2025.findings-acl.716",
+      "arXiv2605.28359v1",
+      "arXiv2605.19337v1",
+      "arXiv2605.19337v2"
+    ],
+    "unversioned_urls_in_AIGNER_notes": [
+      "https://arxiv.org/pdf/2412.20138",
+      "https://arxiv.org/pdf/2311.13743",
+      "https://arxiv.org/abs/2510.11695"
+    ],
+    "unversioned_identity_status": "Exact returned revision and remote byte hashes not retained; do not treat comparisons as immutable historical source snapshots. Pin anew before any empirical method use."
+  }
+}
