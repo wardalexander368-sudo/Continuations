@@ -1,5 +1,8 @@
 # The always-on box (approved by AJ 2026-10-13)
 
+> **Dropped 2026-10-15 (AJ, "skip it"): no server is set up and nothing runs this.** The box only measured faster
+> `us_capit` entries for the US live rule, which is suspended. The code and this page stay as the record.
+
 AJ approved the ~$5/month always-on machine on 2026-10-13 ("approved for all, ill add the box in the next few days").
 What it runs: `tartar/autotrade/box.py`. It checks the 11 us_capit coins about 90 seconds after every hour closes with
 the registered CAPIT Z=4 signal and buys on an Alpaca **paper** account at once (the hourly GitHub runner gets there

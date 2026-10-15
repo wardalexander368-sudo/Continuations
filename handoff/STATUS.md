@@ -118,6 +118,9 @@ Lanes as of 2026-10-12 (all paper only). Owner thread names are the project's th
 
 ## Log (newest first)
 
+* **2026-10-15 ~02:31 UTC, LiveDesk project: AJ dropped the always-on box ("skip it").** No server is set up;
+  `box.py` and `box.md` stay as the record. The hourly paper runner on GitHub is unchanged. Docs only.
+
 * **2026-10-15 ~02:28 UTC, LiveDesk project ("Absorbing Continuations"): AJ ended Codex's scheduled tasks; Codex leaves
   this project.** The ChatGPT lane is ended, not paused. After AJ removed the live-route secrets, #20, #13, #19 and #16
   merged; #12, #14, #15, #17 and #18 are closed unmerged, branches kept. Docs only.
