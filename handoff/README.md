@@ -15,7 +15,7 @@ The repository map is in the top-level [`README.md`](../README.md).
 | [`plan-2026-10-12.md`](plan-2026-10-12.md) | Implementation plan, in order, with owners |
 | [`autotrade.md`](autotrade.md) | The hourly paper-trading agent (`tartar/autotrade/`), its strategies and risk books |
 | [`edge-hunt.md`](edge-hunt.md) | Every strategy family tested, with results (§K-§N are the US work) |
-| [`live-rule-us.md`](live-rule-us.md) | Adopted v2 sizing/cost-measurement rule for `us_capit`; live funding/route still separate |
+| [`live-rule-us.md`](live-rule-us.md) | v2 sizing/cost-measurement rule for `us_capit`, adopted 2026-10-12, SUSPENDED by AJ 2026-10-15; authorizes nothing |
 | [`hl-costs.md`](hl-costs.md) | Hyperliquid execution costs from the `hl-book` collector |
 | [`profitability.md`](profitability.md) | `tartar profit` and the pump.fun-phase cost findings |
 | [`candle-prediction-agent.md`](candle-prediction-agent.md) | The candle predictor (`tartar watch`) |
