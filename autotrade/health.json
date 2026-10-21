@@ -1,6 +1,6 @@
 {
- "checked_at": 1792534396.9008415,
- "status": "green",
+ "checked_at": 1792541195.2008765,
+ "status": "yellow",
  "items": [
   {
    "check": "Action autotrade.yml",
@@ -35,32 +35,32 @@
   {
    "check": "Input: JLP snapshots",
    "level": "green",
-   "detail": "newest 1.1 h old"
+   "detail": "newest 3.0 h old"
   },
   {
    "check": "Input: dip cohorts",
    "level": "green",
-   "detail": "newest 19.4 h old"
+   "detail": "newest 21.3 h old"
   },
   {
    "check": "Input: pumpflow snapshots",
    "level": "green",
-   "detail": "newest 20.5 h old"
+   "detail": "newest 22.4 h old"
   },
   {
    "check": "Input: HL OI/funding snapshots",
    "level": "green",
-   "detail": "newest 0.9 h old"
+   "detail": "newest 2.8 h old"
   },
   {
    "check": "Input: HL 1h candles (wick test)",
    "level": "green",
-   "detail": "newest 2.2 h old"
+   "detail": "newest 4.1 h old"
   },
   {
-   "check": "Agent",
-   "level": "green",
-   "detail": "no halts, no strategy errors, no orphans, no closed twins yet"
+   "check": "Agent: strategy errors",
+   "level": "yellow",
+   "detail": "hlp_hold x1 (KeyError: 1791816853.489)"
   },
   {
    "check": "Alpaca paper cost",
