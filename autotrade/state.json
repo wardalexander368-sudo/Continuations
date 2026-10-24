@@ -1,10 +1,10 @@
 {
  "alpaca": {
-  "checked_at": 1792877330.277979,
+  "checked_at": 1792880852.7371702,
   "crypto_status": "ACTIVE",
   "ok": true,
   "reconcile": {
-   "checked_at": 1792877330.277979,
+   "checked_at": 1792880852.7371702,
    "mismatches": [],
    "ok": true,
    "stuck_orders": [],
@@ -34,16 +34,14 @@
  },
  "halted": null,
  "last_run": {
-  "at": 1792877330.277979,
+  "at": 1792880852.7371702,
   "closed": 0,
-  "errors": {
-   "hlp_hold": "KeyError: 1791816853.489"
-  },
+  "errors": {},
   "halted": null,
   "new_halts": [],
   "opened": 0,
   "rejected": 0,
-  "skipped": 63,
+  "skipped": 64,
   "stale_close": 4
  },
  "live": {
@@ -74,18 +72,18 @@
   "unclaimed": {},
   "vault_handover": [],
   "wallet_sol": {
-   "at": 1792877330.277979,
+   "at": 1792880852.7371702,
    "sol": 0.05
   }
  },
  "perp_risk": {
-  "drawdown_frac": 0.08063075382601019,
-  "equity": -161.26150765202038,
+  "drawdown_frac": 0.08428147424535337,
+  "equity": -168.56294849070673,
   "peak": 0.0
  },
  "perp_risk_us": {
-  "drawdown_frac": 0.05600628532971791,
-  "equity": 0.2241491926576522,
+  "drawdown_frac": 0.052544907993846174,
+  "equity": 3.685526528529386,
   "peak": 56.23043452237556
  },
  "positions": [
@@ -134,8 +132,8 @@
    "entry_cost_usd": 0.039316500000000004,
    "entry_price": 109.34,
    "id": "c3863a23fb2f",
-   "mark_at": 1792877330.277979,
-   "mark_price": 101.385,
+   "mark_at": 1792880852.7371702,
+   "mark_price": 101.645,
    "meta": {
     "basket": "jlp",
     "coin": "SOL",
@@ -169,8 +167,8 @@
    "entry_cost_usd": 0.006916499999999999,
    "entry_price": 2487.8,
    "id": "cc20dc16b623",
-   "mark_at": 1792877330.277979,
-   "mark_price": 2339.25,
+   "mark_at": 1792880852.7371702,
+   "mark_price": 2344.15,
    "meta": {
     "basket": "jlp",
     "coin": "ETH",
@@ -204,8 +202,8 @@
    "entry_cost_usd": 0.0110385,
    "entry_price": 82520.0,
    "id": "115f17939294",
-   "mark_at": 1792877330.277979,
-   "mark_price": 80395.5,
+   "mark_at": 1792880852.7371702,
+   "mark_price": 80560.5,
    "meta": {
     "basket": "jlp",
     "coin": "BTC",
@@ -257,8 +255,8 @@
    "entry_cost_usd": 0.0,
    "entry_price": 0.88757,
    "id": "f563345b49f0",
-   "mark_at": 1792877330.277979,
-   "mark_price": 0.693355,
+   "mark_at": 1792880852.7371702,
+   "mark_price": 0.692595,
    "meta": {
     "label": "AERO",
     "leg_usd": 1000.0,
@@ -292,8 +290,8 @@
    "entry_cost_usd": 0.041845708143511004,
    "entry_price": 0.18769,
    "id": "654b8569b0cd",
-   "mark_at": 1792877330.277979,
-   "mark_price": 0.16704,
+   "mark_at": 1792880852.7371702,
+   "mark_price": 0.16762,
    "meta": {
     "label": "ARB",
     "leg_usd": 1000.0,
@@ -327,8 +325,8 @@
    "entry_cost_usd": 0.04214240545594185,
    "entry_price": 0.004562,
    "id": "f708357b5435",
-   "mark_at": 1792877330.277979,
-   "mark_price": 0.004505,
+   "mark_at": 1792880852.7371702,
+   "mark_price": 0.004514,
    "meta": {
     "label": "kPEPE",
     "leg_usd": 1000.0,
@@ -362,8 +360,8 @@
    "entry_cost_usd": 0.03782739049320667,
    "entry_price": 82990.0,
    "id": "ec6ce197f2f9",
-   "mark_at": 1792877330.277979,
-   "mark_price": 80395.5,
+   "mark_at": 1792880852.7371702,
+   "mark_price": 80560.5,
    "meta": {
     "label": "BTC",
     "leg_usd": 1000.0,
@@ -397,8 +395,8 @@
    "entry_cost_usd": 0.046519517998864994,
    "entry_price": 0.71645,
    "id": "ce5c54befdce",
-   "mark_at": 1792877330.277979,
-   "mark_price": 0.70338,
+   "mark_at": 1792880852.7371702,
+   "mark_price": 0.7046,
    "meta": {
     "label": "ASTER",
     "leg_usd": 1000.0,
@@ -432,8 +430,8 @@
    "entry_cost_usd": 0.04286657755722963,
    "entry_price": 0.39159,
    "id": "641c104ae7df",
-   "mark_at": 1792877330.277979,
-   "mark_price": 0.35159,
+   "mark_at": 1792880852.7371702,
+   "mark_price": 0.35083,
    "meta": {
     "label": "CRV",
     "leg_usd": 1000.0,
@@ -467,8 +465,8 @@
    "entry_cost_usd": 0.049351035665323395,
    "entry_price": 0.33138,
    "id": "ffe83356577a",
-   "mark_at": 1792877330.277979,
-   "mark_price": 0.32913,
+   "mark_at": 1792880852.7371702,
+   "mark_price": 0.329035,
    "meta": {
     "label": "TRX",
     "leg_usd": 1000.0,
@@ -502,8 +500,8 @@
    "entry_cost_usd": 0.0,
    "entry_price": 4119.9,
    "id": "c1b243b8c774",
-   "mark_at": 1792877330.277979,
-   "mark_price": 3999.45,
+   "mark_at": 1792880852.7371702,
+   "mark_price": 4001.25,
    "meta": {
     "label": "PAXG",
     "leg_usd": 1000.0,
@@ -537,8 +535,8 @@
    "entry_cost_usd": 0.04177478138017267,
    "entry_price": 599.04,
    "id": "4fe171b68af1",
-   "mark_at": 1792877330.277979,
-   "mark_price": 606.375,
+   "mark_at": 1792880852.7371702,
+   "mark_price": 614.89,
    "meta": {
     "label": "XMR",
     "leg_usd": 1000.0,
@@ -572,8 +570,8 @@
    "entry_cost_usd": 0.0,
    "entry_price": 0.05729,
    "id": "19aa2578c239",
-   "mark_at": 1792877330.277979,
-   "mark_price": 0.04645,
+   "mark_at": 1792880852.7371702,
+   "mark_price": 0.04652,
    "meta": {
     "label": "STRK",
     "leg_usd": 1000.0,
@@ -607,8 +605,8 @@
    "entry_cost_usd": 0.044125913405760796,
    "entry_price": 8.9458,
    "id": "29c0b0f1d665",
-   "mark_at": 1792877330.277979,
-   "mark_price": 7.56595,
+   "mark_at": 1792880852.7371702,
+   "mark_price": 7.60265,
    "meta": {
     "label": "INJ",
     "leg_usd": 1000.0,
@@ -642,8 +640,8 @@
    "entry_cost_usd": 0.046779059190087575,
    "entry_price": 0.62419,
    "id": "f85bbeb38616",
-   "mark_at": 1792877330.277979,
-   "mark_price": 0.53069,
+   "mark_at": 1792880852.7371702,
+   "mark_price": 0.53202,
    "meta": {
     "label": "TIA",
     "leg_usd": 1000.0,
@@ -677,8 +675,8 @@
    "entry_cost_usd": 0.0,
    "entry_price": 0.098852,
    "id": "e6536647454f",
-   "mark_at": 1792877330.277979,
-   "mark_price": 0.094706,
+   "mark_at": 1792880852.7371702,
+   "mark_price": 0.095045,
    "meta": {
     "label": "PURR",
     "leg_usd": 1000.0,
@@ -712,8 +710,8 @@
    "entry_cost_usd": 0.04327438406513941,
    "entry_price": 0.022093,
    "id": "073ec705f847",
-   "mark_at": 1792877330.277979,
-   "mark_price": 0.02142,
+   "mark_at": 1792880852.7371702,
+   "mark_price": 0.021756,
    "meta": {
     "label": "MON",
     "leg_usd": 1000.0,
@@ -747,8 +745,8 @@
    "entry_cost_usd": 0.0,
    "entry_price": 0.11755,
    "id": "ddc439887e18",
-   "mark_at": 1792877330.277979,
-   "mark_price": 0.093912,
+   "mark_at": 1792880852.7371702,
+   "mark_price": 0.093673,
    "meta": {
     "label": "CASHCAT",
     "leg_usd": 1000.0,
@@ -782,8 +780,8 @@
    "entry_cost_usd": 0.03917802648927736,
    "entry_price": 0.004869,
    "id": "92c5e0aa3a97",
-   "mark_at": 1792877330.277979,
-   "mark_price": 0.004273,
+   "mark_at": 1792880852.7371702,
+   "mark_price": 0.004286,
    "meta": {
     "label": "PUMP",
     "leg_usd": 1000.0,
@@ -817,8 +815,8 @@
    "entry_cost_usd": 0.04629965968465672,
    "entry_price": 0.19684,
    "id": "3e230848633a",
-   "mark_at": 1792877330.277979,
-   "mark_price": 0.17566,
+   "mark_at": 1792880852.7371702,
+   "mark_price": 0.17663,
    "meta": {
     "label": "FET",
     "leg_usd": 1000.0,
@@ -852,8 +850,8 @@
    "entry_cost_usd": 0.0,
    "entry_price": 0.19608,
    "id": "5915e8b84aa1",
-   "mark_at": 1792877330.277979,
-   "mark_price": 0.190075,
+   "mark_at": 1792880852.7371702,
+   "mark_price": 0.193865,
    "meta": {
     "label": "ENA",
     "leg_usd": 1000.0,
@@ -887,8 +885,8 @@
    "entry_cost_usd": 0.049273540733352744,
    "entry_price": 0.48225,
    "id": "ae358700c9ba",
-   "mark_at": 1792877330.277979,
-   "mark_price": 0.43305,
+   "mark_at": 1792880852.7371702,
+   "mark_price": 0.432505,
    "meta": {
     "label": "JTO",
     "leg_usd": 1000.0,
@@ -922,8 +920,8 @@
    "entry_cost_usd": 0.0,
    "entry_price": 3.3851,
    "id": "43d6e2130fb0",
-   "mark_at": 1792877330.277979,
-   "mark_price": 3.2043,
+   "mark_at": 1792880852.7371702,
+   "mark_price": 3.2312,
    "meta": {
     "label": "LIT",
     "leg_usd": 1000.0,
@@ -957,8 +955,8 @@
    "entry_cost_usd": 0.04834473089667278,
    "entry_price": 0.68138,
    "id": "e497e587d0ef",
-   "mark_at": 1792877330.277979,
-   "mark_price": 0.62254,
+   "mark_at": 1792880852.7371702,
+   "mark_price": 0.62459,
    "meta": {
     "label": "VIRTUAL",
     "leg_usd": 1000.0,
@@ -992,8 +990,8 @@
    "entry_cost_usd": 0.0,
    "entry_price": 0.007971,
    "id": "8ffeed226119",
-   "mark_at": 1792877330.277979,
-   "mark_price": 0.007562,
+   "mark_at": 1792880852.7371702,
+   "mark_price": 0.00758,
    "meta": {
     "label": "PENGU",
     "leg_usd": 1000.0,
@@ -1027,8 +1025,8 @@
    "entry_cost_usd": 0.04288538685197699,
    "entry_price": 0.1471,
    "id": "ca4ecfb21f94",
-   "mark_at": 1792877330.277979,
-   "mark_price": 0.12696,
+   "mark_at": 1792880852.7371702,
+   "mark_price": 0.12794,
    "meta": {
     "label": "FARTCOIN",
     "leg_usd": 1000.0,
@@ -1062,8 +1060,8 @@
    "entry_cost_usd": 0.04556397138136145,
    "entry_price": 0.08583,
    "id": "1ab847fc6af9",
-   "mark_at": 1792877330.277979,
-   "mark_price": 0.084131,
+   "mark_at": 1792880852.7371702,
+   "mark_price": 0.087834,
    "meta": {
     "label": "NIL",
     "leg_usd": 1000.0,
@@ -1097,8 +1095,8 @@
    "entry_cost_usd": 0.047180141442984984,
    "entry_price": 1.1506,
    "id": "8cde5a936607",
-   "mark_at": 1792877330.277979,
-   "mark_price": 1.0377,
+   "mark_at": 1792880852.7371702,
+   "mark_price": 1.039,
    "meta": {
     "label": "DOT",
     "leg_usd": 1000.0,
@@ -1132,8 +1130,8 @@
    "entry_cost_usd": 0.0,
    "entry_price": 0.58782,
    "id": "a9d40d4371c3",
-   "mark_at": 1792877330.277979,
-   "mark_price": 0.46291,
+   "mark_at": 1792880852.7371702,
+   "mark_price": 0.46498,
    "meta": {
     "label": "WLD",
     "leg_usd": 1000.0,
@@ -1167,8 +1165,8 @@
    "entry_cost_usd": 0.04214240545594185,
    "entry_price": 0.004562,
    "id": "5f807f931f2f",
-   "mark_at": 1792877330.277979,
-   "mark_price": 0.004505,
+   "mark_at": 1792880852.7371702,
+   "mark_price": 0.004514,
    "meta": {
     "label": "kPEPE",
     "leg_usd": 1000.0,
@@ -1202,8 +1200,8 @@
    "entry_cost_usd": 0.0,
    "entry_price": 0.88757,
    "id": "ecf7ec05e588",
-   "mark_at": 1792877330.277979,
-   "mark_price": 0.693355,
+   "mark_at": 1792880852.7371702,
+   "mark_price": 0.692595,
    "meta": {
     "label": "AERO",
     "leg_usd": 1000.0,
@@ -1237,8 +1235,8 @@
    "entry_cost_usd": 0.0,
    "entry_price": 4.9342,
    "id": "1d0dfe0355df",
-   "mark_at": 1792877330.277979,
-   "mark_price": 4.431,
+   "mark_at": 1792880852.7371702,
+   "mark_price": 4.46915,
    "meta": {
     "label": "NEAR",
     "leg_usd": 1000.0,
@@ -1272,8 +1270,8 @@
    "entry_cost_usd": 0.041845708143511004,
    "entry_price": 0.18769,
    "id": "2dc5456078b9",
-   "mark_at": 1792877330.277979,
-   "mark_price": 0.16704,
+   "mark_at": 1792880852.7371702,
+   "mark_price": 0.16762,
    "meta": {
     "label": "ARB",
     "leg_usd": 1000.0,
@@ -1307,8 +1305,8 @@
    "entry_cost_usd": 0.0,
    "entry_price": 4119.9,
    "id": "3d495839b1f3",
-   "mark_at": 1792877330.277979,
-   "mark_price": 3999.45,
+   "mark_at": 1792880852.7371702,
+   "mark_price": 4001.25,
    "meta": {
     "label": "PAXG",
     "leg_usd": 1000.0,
@@ -1342,8 +1340,8 @@
    "entry_cost_usd": 0.04286657755722963,
    "entry_price": 0.39159,
    "id": "6246e6dd9813",
-   "mark_at": 1792877330.277979,
-   "mark_price": 0.35159,
+   "mark_at": 1792880852.7371702,
+   "mark_price": 0.35083,
    "meta": {
     "label": "CRV",
     "leg_usd": 1000.0,
@@ -1377,8 +1375,8 @@
    "entry_cost_usd": 0.0,
    "entry_price": 0.05729,
    "id": "d43092ae07c0",
-   "mark_at": 1792877330.277979,
-   "mark_price": 0.04645,
+   "mark_at": 1792880852.7371702,
+   "mark_price": 0.04652,
    "meta": {
     "label": "STRK",
     "leg_usd": 1000.0,
@@ -1412,8 +1410,8 @@
    "entry_cost_usd": 0.044125913405760796,
    "entry_price": 8.9458,
    "id": "8af20500b425",
-   "mark_at": 1792877330.277979,
-   "mark_price": 7.56595,
+   "mark_at": 1792880852.7371702,
+   "mark_price": 7.60265,
    "meta": {
     "label": "INJ",
     "leg_usd": 1000.0,
@@ -1447,8 +1445,8 @@
    "entry_cost_usd": 0.046779059190087575,
    "entry_price": 0.62419,
    "id": "ec2bb00cebbd",
-   "mark_at": 1792877330.277979,
-   "mark_price": 0.53069,
+   "mark_at": 1792880852.7371702,
+   "mark_price": 0.53202,
    "meta": {
     "label": "TIA",
     "leg_usd": 1000.0,
@@ -1482,8 +1480,8 @@
    "entry_cost_usd": 0.04177478138017267,
    "entry_price": 599.04,
    "id": "f8a107b30a02",
-   "mark_at": 1792877330.277979,
-   "mark_price": 606.375,
+   "mark_at": 1792880852.7371702,
+   "mark_price": 614.89,
    "meta": {
     "label": "XMR",
     "leg_usd": 1000.0,
@@ -1517,8 +1515,8 @@
    "entry_cost_usd": 0.0,
    "entry_price": 1.336,
    "id": "991e84a8bfdf",
-   "mark_at": 1792877330.277979,
-   "mark_price": 1.29255,
+   "mark_at": 1792880852.7371702,
+   "mark_price": 1.29305,
    "meta": {
     "label": "XRP",
     "leg_usd": 1000.0,
@@ -1552,8 +1550,8 @@
    "entry_cost_usd": 0.04189603833939099,
    "entry_price": 154.5,
    "id": "40b7999f6114",
-   "mark_at": 1792877330.277979,
-   "mark_price": 136.635,
+   "mark_at": 1792880852.7371702,
+   "mark_price": 137.11,
    "meta": {
     "label": "AAVE",
     "leg_usd": 1000.0,
@@ -1587,8 +1585,8 @@
    "entry_cost_usd": 0.0,
    "entry_price": 0.18219,
    "id": "35d1ffeffba0",
-   "mark_at": 1792877330.277979,
-   "mark_price": 0.170345,
+   "mark_at": 1792880852.7371702,
+   "mark_price": 0.170655,
    "meta": {
     "label": "XLM",
     "leg_usd": 1000.0,
@@ -1622,8 +1620,8 @@
    "entry_cost_usd": 0.0,
    "entry_price": 0.081826,
    "id": "376a85cade37",
-   "mark_at": 1792877330.277979,
-   "mark_price": 0.077165,
+   "mark_at": 1792880852.7371702,
+   "mark_price": 0.077337,
    "meta": {
     "label": "DOGE",
     "leg_usd": 1000.0,
@@ -1657,8 +1655,8 @@
    "entry_cost_usd": 0.03830783703138761,
    "entry_price": 80.347,
    "id": "df75769c6f61",
-   "mark_at": 1792877330.277979,
-   "mark_price": 76.0245,
+   "mark_at": 1792880852.7371702,
+   "mark_price": 76.3525,
    "meta": {
     "label": "HYPE",
     "leg_usd": 1000.0,
@@ -1692,8 +1690,8 @@
    "entry_cost_usd": 0.04288538685197699,
    "entry_price": 0.1471,
    "id": "c790e5a578cc",
-   "mark_at": 1792877330.277979,
-   "mark_price": 0.12696,
+   "mark_at": 1792880852.7371702,
+   "mark_price": 0.12794,
    "meta": {
     "label": "FARTCOIN",
     "leg_usd": 1000.0,
@@ -1727,8 +1725,8 @@
    "entry_cost_usd": 0.04462148191722651,
    "entry_price": 0.007971,
    "id": "d468645dd432",
-   "mark_at": 1792877330.277979,
-   "mark_price": 0.007562,
+   "mark_at": 1792880852.7371702,
+   "mark_price": 0.00758,
    "meta": {
     "label": "PENGU",
     "leg_usd": 1000.0,
@@ -1762,8 +1760,8 @@
    "entry_cost_usd": 0.03917802648927736,
    "entry_price": 0.004869,
    "id": "e67ba23ce833",
-   "mark_at": 1792877330.277979,
-   "mark_price": 0.004273,
+   "mark_at": 1792880852.7371702,
+   "mark_price": 0.004286,
    "meta": {
     "label": "PUMP",
     "leg_usd": 1000.0,
@@ -1797,8 +1795,8 @@
    "entry_cost_usd": 0.0,
    "entry_price": 61.569,
    "id": "e7cb295ccdf1",
-   "mark_at": 1792877330.277979,
-   "mark_price": 56.7705,
+   "mark_at": 1792880852.7371702,
+   "mark_price": 56.806,
    "meta": {
     "label": "LTC",
     "leg_usd": 1000.0,
@@ -1832,8 +1830,8 @@
    "entry_cost_usd": 0.04834473089667278,
    "entry_price": 0.68138,
    "id": "f1ae2da3ef58",
-   "mark_at": 1792877330.277979,
-   "mark_price": 0.62254,
+   "mark_at": 1792880852.7371702,
+   "mark_price": 0.62459,
    "meta": {
     "label": "VIRTUAL",
     "leg_usd": 1000.0,
@@ -1867,8 +1865,8 @@
    "entry_cost_usd": 0.04327438406513941,
    "entry_price": 0.022093,
    "id": "3a022363e60b",
-   "mark_at": 1792877330.277979,
-   "mark_price": 0.02142,
+   "mark_at": 1792880852.7371702,
+   "mark_price": 0.021756,
    "meta": {
     "label": "MON",
     "leg_usd": 1000.0,
@@ -1902,8 +1900,8 @@
    "entry_cost_usd": 0.04698488797878773,
    "entry_price": 1.7861,
    "id": "62f50d83f585",
-   "mark_at": 1792877330.277979,
-   "mark_price": 1.66625,
+   "mark_at": 1792880852.7371702,
+   "mark_price": 1.6752,
    "meta": {
     "label": "TRUMP",
     "leg_usd": 1000.0,
@@ -1937,8 +1935,8 @@
    "entry_cost_usd": 0.5,
    "entry_price": 1257.48,
    "id": "a856e5209048",
-   "mark_at": 1792877330.277979,
-   "mark_price": 1195.07,
+   "mark_at": 1792880852.7371702,
+   "mark_price": 1205.3,
    "meta": {
     "label": "ZEC",
     "leg_usd": 1000.0,
@@ -1957,8 +1955,8 @@
    "entry_cost_usd": 0.0,
    "entry_price": 1.1497,
    "id": "9f1f3328f960",
-   "mark_at": 1792877330.277979,
-   "mark_price": 1.0364,
+   "mark_at": 1792880852.7371702,
+   "mark_price": 1.0377,
    "meta": {
     "label": "DOT",
     "leg_usd": 1000.0,
@@ -1977,8 +1975,8 @@
    "entry_cost_usd": 0.5,
    "entry_price": 4.55e-06,
    "id": "350c476609dc",
-   "mark_at": 1792877330.277979,
-   "mark_price": 4.5e-06,
+   "mark_at": 1792880852.7371702,
+   "mark_price": 4.51e-06,
    "meta": {
     "label": "PEPE",
     "leg_usd": 1000.0,
@@ -1997,8 +1995,8 @@
    "entry_cost_usd": 0.0,
    "entry_price": 4.9267,
    "id": "2ea5273b022c",
-   "mark_at": 1792877330.277979,
-   "mark_price": 4.4259,
+   "mark_at": 1792880852.7371702,
+   "mark_price": 4.4653,
    "meta": {
     "label": "NEAR",
     "leg_usd": 1000.0,
@@ -2017,8 +2015,8 @@
    "entry_cost_usd": 0.0,
    "entry_price": 0.182009,
    "id": "8e131a311d82",
-   "mark_at": 1792877330.277979,
-   "mark_price": 0.170264,
+   "mark_at": 1792880852.7371702,
+   "mark_price": 0.17049,
    "meta": {
     "label": "XLM",
     "leg_usd": 1000.0,
@@ -2037,8 +2035,8 @@
    "entry_cost_usd": 0.5,
    "entry_price": 0.08175,
    "id": "ea4ed4377150",
-   "mark_at": 1792877330.277979,
-   "mark_price": 0.07711,
+   "mark_at": 1792880852.7371702,
+   "mark_price": 0.07727,
    "meta": {
     "label": "DOGE",
     "leg_usd": 1000.0,
@@ -2057,8 +2055,8 @@
    "entry_cost_usd": 0.5,
    "entry_price": 154.4,
    "id": "f0f9b45632e0",
-   "mark_at": 1792877330.277979,
-   "mark_price": 136.61,
+   "mark_at": 1792880852.7371702,
+   "mark_price": 136.96,
    "meta": {
     "label": "AAVE",
     "leg_usd": 1000.0,
@@ -2077,8 +2075,8 @@
    "entry_cost_usd": 0.0,
    "entry_price": 1.3346,
    "id": "a092618e1afb",
-   "mark_at": 1792877330.277979,
-   "mark_price": 1.2915,
+   "mark_at": 1792880852.7371702,
+   "mark_price": 1.2917,
    "meta": {
     "label": "XRP",
     "leg_usd": 1000.0,
@@ -2097,8 +2095,8 @@
    "entry_cost_usd": 0.16666666666666666,
    "entry_price": 0.58398,
    "id": "99600ec168c9",
-   "mark_at": 1792877330.277979,
-   "mark_price": 0.46283,
+   "mark_at": 1792880852.7371702,
+   "mark_price": 0.46429,
    "meta": {
     "label": "WLD",
     "leg_usd": 500.0,
@@ -2117,8 +2115,8 @@
    "entry_cost_usd": 0.16666666666666666,
    "entry_price": 0.05744,
    "id": "5ff5b688cfad",
-   "mark_at": 1792877330.277979,
-   "mark_price": 0.04648,
+   "mark_at": 1792880852.7371702,
+   "mark_price": 0.04649,
    "meta": {
     "label": "STRK",
     "leg_usd": 500.0,
@@ -2137,8 +2135,8 @@
    "entry_cost_usd": 0.16666666666666666,
    "entry_price": 8.6196,
    "id": "6c4dc2b375f9",
-   "mark_at": 1792877330.277979,
-   "mark_price": 7.56585,
+   "mark_at": 1792880852.7371702,
+   "mark_price": 7.60305,
    "meta": {
     "label": "INJ",
     "leg_usd": 500.0,
@@ -2157,8 +2155,8 @@
    "entry_cost_usd": 0.16666666666666666,
    "entry_price": 1.95,
    "id": "9f8291914b45",
-   "mark_at": 1792877330.277979,
-   "mark_price": 1.7246,
+   "mark_at": 1792880852.7371702,
+   "mark_price": 1.74675,
    "meta": {
     "label": "ZRO",
     "leg_usd": 500.0,
@@ -2177,8 +2175,8 @@
    "entry_cost_usd": 0.16666666666666666,
    "entry_price": 0.5989,
    "id": "d62ed45162b8",
-   "mark_at": 1792877330.277979,
-   "mark_price": 0.53069,
+   "mark_at": 1792880852.7371702,
+   "mark_price": 0.5317,
    "meta": {
     "label": "TIA",
     "leg_usd": 500.0,
@@ -2197,8 +2195,8 @@
    "entry_cost_usd": 0.16666666666666666,
    "entry_price": 622.7,
    "id": "842d452dbe7d",
-   "mark_at": 1792877330.277979,
-   "mark_price": 606.34,
+   "mark_at": 1792880852.7371702,
+   "mark_price": 615.25,
    "meta": {
     "label": "XMR",
     "leg_usd": 500.0,
@@ -2217,8 +2215,8 @@
    "entry_cost_usd": 0.16666666666666666,
    "entry_price": 0.18376,
    "id": "e6a4cbf0d23a",
-   "mark_at": 1792877330.277979,
-   "mark_price": 0.170365,
+   "mark_at": 1792880852.7371702,
+   "mark_price": 0.17065,
    "meta": {
     "label": "XLM",
     "leg_usd": 500.0,
@@ -2237,8 +2235,8 @@
    "entry_cost_usd": 0.16666666666666666,
    "entry_price": 12.495,
    "id": "e452d816b392",
-   "mark_at": 1792877330.277979,
-   "mark_price": 11.535,
+   "mark_at": 1792880852.7371702,
+   "mark_price": 11.5605,
    "meta": {
     "label": "LINK",
     "leg_usd": 500.0,
@@ -2257,8 +2255,8 @@
    "entry_cost_usd": 0.16666666666666666,
    "entry_price": 1.365,
    "id": "235925ca7a07",
-   "mark_at": 1792877330.277979,
-   "mark_price": 1.29245,
+   "mark_at": 1792880852.7371702,
+   "mark_price": 1.29265,
    "meta": {
     "label": "XRP",
     "leg_usd": 500.0,
@@ -2277,8 +2275,8 @@
    "entry_cost_usd": 0.16666666666666666,
    "entry_price": 0.081921,
    "id": "11d849414ebe",
-   "mark_at": 1792877330.277979,
-   "mark_price": 0.077165,
+   "mark_at": 1792880852.7371702,
+   "mark_price": 0.077337,
    "meta": {
     "label": "DOGE",
     "leg_usd": 500.0,
@@ -2297,8 +2295,8 @@
    "entry_cost_usd": 0.16666666666666666,
    "entry_price": 0.08206,
    "id": "97097cdb058c",
-   "mark_at": 1792877330.277979,
-   "mark_price": 0.073339,
+   "mark_at": 1792880852.7371702,
+   "mark_price": 0.073767,
    "meta": {
     "label": "XPL",
     "leg_usd": 500.0,
@@ -2317,8 +2315,8 @@
    "entry_cost_usd": 0.16666666666666666,
    "entry_price": 61.546,
    "id": "bbf3cada23fa",
-   "mark_at": 1792877330.277979,
-   "mark_price": 56.746,
+   "mark_at": 1792880852.7371702,
+   "mark_price": 56.7955,
    "meta": {
     "label": "LTC",
     "leg_usd": 500.0,
@@ -2343,7 +2341,7 @@
    "size_factor": 1.0,
    "status": "paper",
    "verdict": {
-    "at": 1792877330.277979,
+    "at": 1792880852.7371702,
     "decision": "pending",
     "n": 0,
     "reason": "0 complete week(s); scored at 26 weeks (registered)",
@@ -2362,7 +2360,7 @@
    "size_factor": 1.0,
    "status": "paper",
    "verdict": {
-    "at": 1792877330.277979,
+    "at": 1792880852.7371702,
     "decision": "pending",
     "n": 1,
     "reason": "1 complete week(s); scored at 52 weeks (registered)",
@@ -2374,7 +2372,7 @@
   "dip": {
    "costs_version": "2026-10-10-hourly-observed",
    "data": {
-    "fetch_skipped": 33,
+    "fetch_skipped": 34,
     "pools": {
      "261jSeTokAquP254HbWiXmvJb3MUA19VAmv5XbjxXjqh": {
       "busy_until": 1792595700.0,
@@ -2384,8 +2382,8 @@
      },
      "2B8tftZ5ww8TREMr3pgkgERLNjJyJxEAPWMENViGMsL4": {
       "busy_until": 1792888200.0,
-      "cursor": 1792876500.0,
-      "fetched_at": 1792877330.277979,
+      "cursor": 1792880100.0,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1791581400.0
      },
      "2U5kdozDrdgYzyGRNbTdBejGLYEeRt1FkERQmyPbV85P": {
@@ -2396,44 +2394,44 @@
      },
      "2aEWsofKAiPyoTEdsSWVDL5paCmb9GvK9Dtg5w8UhHgj": {
       "busy_until": 1792734000.0,
-      "cursor": 1792816500.0,
-      "fetched_at": 1792873678.1964195,
+      "cursor": 1792878600.0,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1792380300.0
      },
      "2sA5714M6Bst4zdPxS5TRfPPEAz1pCAmDYhGGatFrAZW": {
       "busy_until": 1792877700.0,
-      "cursor": 1792872300.0,
-      "fetched_at": 1792873678.1964195,
+      "cursor": 1792880100.0,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1792466700.0
      },
      "3ENsvQnHuHtQzMBxpDG4pkxwbBnzJvFcz2yyCfxC9QNH": {
-      "busy_until": 1792871400.0,
-      "cursor": 1792872900.0,
-      "fetched_at": 1792873678.1964195,
+      "busy_until": 1792893900.0,
+      "cursor": 1792880100.0,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1792466700.0
      },
      "3NBq9zynLPDQQDvYf8xiMbWywQfKZD7m7fyprY524efq": {
       "busy_until": 1792649100.0,
-      "cursor": 1792866300.0,
-      "fetched_at": 1792877330.277979,
+      "cursor": 1792878600.0,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1791581400.0
      },
      "3f5N5Sq1Rz6aGySeuwSG466UuoNpisFZY221QyynsYPu": {
       "busy_until": 0.0,
       "cursor": 1792470600.0,
-      "fetched_at": 1792873678.1964195,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1792470600.0
      },
      "3p3yajJRqwrvgNs3M1UDVDXVUriZjZ8vE8bdpnpvkNRJ": {
       "busy_until": 1792881600.0,
-      "cursor": 1792872300.0,
-      "fetched_at": 1792873678.1964195,
+      "cursor": 1792878000.0,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1792380300.0
      },
      "4JAnKFddd5fFTk5PxDj3PpTWJuTEfSWQEjZJcgKQ9KwW": {
       "busy_until": 1792866000.0,
-      "cursor": 1792876500.0,
-      "fetched_at": 1792877330.277979,
+      "cursor": 1792880100.0,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1791581400.0
      },
      "4MWjp1aBQqE9Y6iC5cd3NrVvWWcHsN2LgpjWYMDK7u7E": {
@@ -2444,26 +2442,26 @@
      },
      "4R8CiMnJWDNoes3fQi1ccPFJygPXazaHaWpHrN3rZeNj": {
       "busy_until": 1792887300.0,
-      "cursor": 1792876500.0,
-      "fetched_at": 1792877330.277979,
+      "cursor": 1792880100.0,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1791663300.0
      },
      "4SMPAuRkMTMFiMnW1oDcDQdi54CC9R4of9xtr4phiYiG": {
-      "busy_until": 1792878300.0,
-      "cursor": 1792872900.0,
-      "fetched_at": 1792873678.1964195,
+      "busy_until": 1792893300.0,
+      "cursor": 1792880100.0,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1792725900.0
      },
      "4qxSqMh6iEdbdvtMp8r5MK2psAGKNk57PfGeVo2VhczQ": {
       "busy_until": 1792873500.0,
-      "cursor": 1792875000.0,
-      "fetched_at": 1792877330.277979,
+      "cursor": 1792880100.0,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1791663000.0
      },
      "51Fk2LMfAz85d2w5ZqGdtmHgEJvStK1j8WDb9WB3YYK3": {
       "busy_until": 1792869900.0,
       "cursor": 1792872600.0,
-      "fetched_at": 1792873678.1964195,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1792725000.0
      },
      "54q8E1sqsfVBgytXso1xUGS3WRovFAJTfou5XKLFpnp1": {
@@ -2474,14 +2472,14 @@
      },
      "5E3dXLXGwmTDCokA51WYYaKttjFZBwqCoyUHBUi5gt2m": {
       "busy_until": 1792869000.0,
-      "cursor": 1792872900.0,
-      "fetched_at": 1792873678.1964195,
+      "cursor": 1792880100.0,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1792725900.0
      },
      "5Jj7H9v191CXQWS6uk6XrsydmYo5isjDWqLyCUPqm1dX": {
       "busy_until": 1792722300.0,
       "cursor": 1792864800.0,
-      "fetched_at": 1792873678.1964195,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1792466100.0
      },
      "5XH4eWypoE3wita96WjAnbQBJxYAjpk6bkJADu17UsiH": {
@@ -2493,19 +2491,19 @@
      "5qL4fEq9pBczu8xVpJox3FEDUyP9qyMB6iEK6xPo9kPM": {
       "busy_until": 0.0,
       "cursor": 1792215000.0,
-      "fetched_at": 1792873678.1964195,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1792215000.0
      },
      "65GHmCbyRME3XwKjTqDB7pMJw2gvj2LZryfWKczoAqFR": {
       "busy_until": 1792476600.0,
       "cursor": 1792830000.0,
-      "fetched_at": 1792877330.277979,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1791581400.0
      },
      "6DNxwecbtdNNstpB5tdnxZsfGe3HmsNgEUZhdue4b1PH": {
       "busy_until": 1792877400.0,
-      "cursor": 1792872900.0,
-      "fetched_at": 1792873678.1964195,
+      "cursor": 1792880100.0,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1792639500.0
      },
      "6FBnZzRtdMrjxEPdLK4UGP9Xm2hsYwLY3xp6EWB1e2md": {
@@ -2522,20 +2520,20 @@
      },
      "6QyYdc6jgeKnfP1FWhiexMYq3JQ3sidSYoubjWUTo3rm": {
       "busy_until": 1792880400.0,
-      "cursor": 1792876500.0,
-      "fetched_at": 1792877330.277979,
+      "cursor": 1792880100.0,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1791581400.0
      },
      "6aXb1e6uTMsz77zhncRYFe7AugzBxxcUnhCodhd3odag": {
       "busy_until": 1792879200.0,
-      "cursor": 1792872000.0,
-      "fetched_at": 1792873678.1964195,
+      "cursor": 1792879200.0,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1792380300.0
      },
      "6f1HD3hodH3A8zHSL4ddA5yB6TjGYpidwiZVHJJRBn5M": {
       "busy_until": 1792783500.0,
-      "cursor": 1792870800.0,
-      "fetched_at": 1792873678.1964195,
+      "cursor": 1792879500.0,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1792380300.0
      },
      "6iep3EgqksbZwgzMBCyAJtiVtVYkCgL9BnPBEwLR8AGQ": {
@@ -2546,26 +2544,26 @@
      },
      "6qUUCwD9fyRafora8XVmdApQBxCkbUiZTMkcYD47rWsS": {
       "busy_until": 1792871100.0,
-      "cursor": 1792875300.0,
-      "fetched_at": 1792877330.277979,
+      "cursor": 1792879800.0,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1791663300.0
      },
      "745ATaSSWxvry5qt1XVv9eXuG884hDvNJfvA2o82dNBi": {
-      "busy_until": 1792866900.0,
-      "cursor": 1792875900.0,
-      "fetched_at": 1792877330.277979,
+      "busy_until": 1792892700.0,
+      "cursor": 1792880100.0,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1791581400.0
      },
      "7ix8yMJsoCYsXgGjRjx7zPCQumGiBVotNUYSoMYuJPy2": {
       "busy_until": 1792777500.0,
-      "cursor": 1792864800.0,
-      "fetched_at": 1792873678.1964195,
+      "cursor": 1792880100.0,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1792293900.0
      },
      "7kMxqvCqLbHCXDy25oVX7Bx44Z3ud6SYZBK2jhJpRLsf": {
       "busy_until": 0.0,
       "cursor": 1792214700.0,
-      "fetched_at": 1792873678.1964195,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1792214700.0
      },
      "7mHdMhMnEpXSjF6hoj2wxRnzkSE1KwePq5UErjwnrLs7": {
@@ -2588,8 +2586,8 @@
      },
      "867dKvaCcyRrUDP66bqNXbujXfjaxsNB9wTpc4CmBdAD": {
       "busy_until": 1792876200.0,
-      "cursor": 1792876500.0,
-      "fetched_at": 1792877330.277979,
+      "cursor": 1792880100.0,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1791581400.0
      },
      "89DxSaK1YZx8TbPapMSSEgkEdhYuhYBo26BytgELrJBd": {
@@ -2600,14 +2598,14 @@
      },
      "8JoQRQ4oAXNuQSTcComuUAAgF3ViJ7e3escwatMncZ3H": {
       "busy_until": 1792483800.0,
-      "cursor": 1792871400.0,
-      "fetched_at": 1792873678.1964195,
+      "cursor": 1792879500.0,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1792293900.0
      },
      "8ewuF2o8ACro7fqWepZ3tKhkbBjndZU4Ldk9scRPw83d": {
       "busy_until": 1792885500.0,
-      "cursor": 1792876500.0,
-      "fetched_at": 1792877330.277979,
+      "cursor": 1792880100.0,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1791581400.0
      },
      "8iSy6UUmgDqXsVAKL8tJyRUXSTLdMwPuC6QXW5j3fhjA": {
@@ -2624,8 +2622,8 @@
      },
      "9d6fbbtAGjM6eFHo4NpsPrDgnwhZNdetgewHmupZTVjV": {
       "busy_until": 1792873200.0,
-      "cursor": 1792875900.0,
-      "fetched_at": 1792877330.277979,
+      "cursor": 1792877100.0,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1791663300.0
      },
      "9dsiuydk5EFRCLk6VEywY95Nn3jjGbdWNijuACf1PXuA": {
@@ -2643,7 +2641,7 @@
      "A7nWJWGUjNyWbVNPA5RrvLoF37j3ovdh8DKdgxYefcdk": {
       "busy_until": 1792877100.0,
       "cursor": 1792875000.0,
-      "fetched_at": 1792877330.277979,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1791581400.0
      },
      "ABqXgS5c78P8Nix49kqsBTNQjAmMAhCBH2mvjq1zqQZ2": {
@@ -2654,20 +2652,20 @@
      },
      "AJE7eWHJMBjvwib78dGwS8iZxb7bGx7NXLZVXX6xMHn6": {
       "busy_until": 1792883700.0,
-      "cursor": 1792872900.0,
-      "fetched_at": 1792873678.1964195,
+      "cursor": 1792879800.0,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1792293900.0
      },
      "ARcvd2GiVSmz7oR2ozpe3KzVBadsVrEav5DdnVJ8sjhK": {
       "busy_until": 1792883100.0,
-      "cursor": 1792872900.0,
-      "fetched_at": 1792873678.1964195,
+      "cursor": 1792879500.0,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1791774900.0
      },
      "AZgECLWq2Xd7KfjKVt6jFuJTWmFxqBuhAA4PXKDMwVcr": {
       "busy_until": 0.0,
       "cursor": 1791611700.0,
-      "fetched_at": 1792877330.277979,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1791611700.0
      },
      "AnrCHvfJUzMtos8DGjpT2XKurVPPYAVLDturASNwXcd4": {
@@ -2678,8 +2676,8 @@
      },
      "AscPffyZxMnHHFHqQWawtcrmasgUzCJtwyu6oS6CQD2R": {
       "busy_until": 1792787100.0,
-      "cursor": 1792872900.0,
-      "fetched_at": 1792873678.1964195,
+      "cursor": 1792874400.0,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1792466700.0
      },
      "BCiyK7LarB1yUbGngmQGJq9CQawiTDQ1i65HDnfhiqM5": {
@@ -2690,8 +2688,8 @@
      },
      "BUMh6YebpBvAh4by4oTGJUvzQ9CvH6dqPgrZvXFDMwC1": {
       "busy_until": 1792856700.0,
-      "cursor": 1792872000.0,
-      "fetched_at": 1792873678.1964195,
+      "cursor": 1792880100.0,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1792293900.0
      },
      "BoW9h5GBqdNR55fKE3VHdzNgPLANzmYKY1eiqmx1DRLZ": {
@@ -2708,14 +2706,14 @@
      },
      "CEXh16Ug4DRAXhxk62B7qgV6Qpwfq9SHfocuSEgB6ggT": {
       "busy_until": 1792882500.0,
-      "cursor": 1792872900.0,
-      "fetched_at": 1792873678.1964195,
+      "cursor": 1792880100.0,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1792293900.0
      },
      "CR5dTgvTddGAqDjP8dGHTL51N6PKRaXqxFBp9FQ5PrKn": {
       "busy_until": 1791939300.0,
       "cursor": 1792825800.0,
-      "fetched_at": 1792877330.277979,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1791577500.0
      },
      "CwaEjWuUHn9v1ETy3iMHn9QV5pvbodNrJDovQMsPSv1R": {
@@ -2727,13 +2725,13 @@
      "Cx1SFBFC6M4FW68bSGKfQgWKY4w1E4fqcAeiesLrHJ4f": {
       "busy_until": 0.0,
       "cursor": 1791687300.0,
-      "fetched_at": 1792873678.1964195,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1791687300.0
      },
      "CyJwKnLiiY4fmiwqMCSWFSHxo7T9Ubshgs2uRAuJCrk5": {
       "busy_until": 1792866000.0,
-      "cursor": 1792876500.0,
-      "fetched_at": 1792877330.277979,
+      "cursor": 1792880100.0,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1791581400.0
      },
      "D3vzKTEJntE3wSu4QaPd79e2bnifnHggVDVewu1ukkAJ": {
@@ -2768,20 +2766,20 @@
      },
      "Ds6CaQYBQL7GjDATf9CVH189S9ef1mz7dkTrSoV7RWEM": {
       "busy_until": 1792857600.0,
-      "cursor": 1792871700.0,
-      "fetched_at": 1792873678.1964195,
+      "cursor": 1792878600.0,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1792725900.0
      },
      "EFUomuhEoy5JcJQiPqJML9RNZaFCwyfwSBZhjdGrV6HT": {
       "busy_until": 0.0,
       "cursor": 1792551900.0,
-      "fetched_at": 1792873678.1964195,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1792551900.0
      },
      "EzJV2yGpbS3VM5qWmgqYQ4GPVi77LdhwgFhAy6u4ts1U": {
       "busy_until": 1792878900.0,
-      "cursor": 1792872600.0,
-      "fetched_at": 1792873678.1964195,
+      "cursor": 1792880100.0,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1792207500.0
      },
      "FCHzyHzgvcMjKuTNKjP9HBFta75XAmewToyKJ5LT8Rje": {
@@ -2804,8 +2802,8 @@
      },
      "Fe7bpDYCs74GqiCUF14HwgUMToPKV1d9mDYVX5BTohFr": {
       "busy_until": 1792886100.0,
-      "cursor": 1792876500.0,
-      "fetched_at": 1792877330.277979,
+      "cursor": 1792880100.0,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1791663300.0
      },
      "Fk5MuGv2H3Qpt6AxdhS2KHgDL2os424BvfEoqFNTdv9Y": {
@@ -2816,14 +2814,14 @@
      },
      "FnzKY6x7entQ1eR3D225dQyT7ybfka4PskBMQhb8L3CC": {
       "busy_until": 1792866300.0,
-      "cursor": 1792872900.0,
-      "fetched_at": 1792873678.1964195,
+      "cursor": 1792880100.0,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1792553100.0
      },
      "FpyosQzp5ijfrxqqBVNm67rfam7VsbVNAm7PUf8Yvt1c": {
       "busy_until": 1792872300.0,
-      "cursor": 1792872900.0,
-      "fetched_at": 1792873678.1964195,
+      "cursor": 1792880100.0,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1792207500.0
      },
      "GKVfZiv4EUNViMRfUejEn5QJN29oXGCyk7FY2iUv3bGi": {
@@ -2834,38 +2832,38 @@
      },
      "GLL3CzybpSCLZdoACf8QUM5YrKVwyA65kQ2RcTsJxxzV": {
       "busy_until": 1792859700.0,
-      "cursor": 1792876500.0,
-      "fetched_at": 1792877330.277979,
+      "cursor": 1792880100.0,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1791688500.0
      },
      "GLN7Dr7AsP9GRxAjxiVBk9Rnwyn74ar2R3BuGk8ZxQn1": {
-      "busy_until": 1792873200.0,
-      "cursor": 1792872900.0,
-      "fetched_at": 1792873678.1964195,
+      "busy_until": 1792887900.0,
+      "cursor": 1792880100.0,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1792293900.0
      },
      "GS1bQcY4W3ScfJMo5Ch9c1xggBUqNpvjoWY7Yc7pJGdL": {
       "busy_until": 1792774800.0,
-      "cursor": 1792868400.0,
-      "fetched_at": 1792873678.1964195,
+      "cursor": 1792878300.0,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1792639500.0
      },
      "HMzvsEEmtzHhvZNw9uwbaG85HCTmFnkbhzUx16cy7ca3": {
       "busy_until": 1792869300.0,
-      "cursor": 1792876500.0,
-      "fetched_at": 1792877330.277979,
+      "cursor": 1792880100.0,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1791581400.0
      },
      "HQ1xV7yV3x3kY5kmHv3BCMBAigBE7FqxmHwFkVc6fXvt": {
       "busy_until": 1792872900.0,
-      "cursor": 1792862700.0,
-      "fetched_at": 1792873678.1964195,
+      "cursor": 1792878300.0,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1792207500.0
      },
      "HRMcDD9XawGTXH6QkBZs1mtiwyjTfg4bDMrL5DcjwXnb": {
-      "busy_until": 1792869600.0,
-      "cursor": 1792872900.0,
-      "fetched_at": 1792873678.1964195,
+      "busy_until": 1792887900.0,
+      "cursor": 1792879800.0,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1792466700.0
      },
      "HvYfFr8nm6bn9V93TDDMgqWwS2D2LsMn1Y3rDCToqeAB": {
@@ -2881,21 +2879,21 @@
       "first_bar": 1792812300.0
      },
      "YQ4NNeQxHAtdcB8ohx21eJ9U8eTzxNRvGNHkRaA4Pnw": {
-      "busy_until": 1792875600.0,
-      "cursor": 1792872900.0,
-      "fetched_at": 1792873678.1964195,
+      "busy_until": 1792890300.0,
+      "cursor": 1792880100.0,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1792725900.0
      },
      "cb4GFRgEitfu5qtxfRMiqzsaVPwgbD3HEor4cs2jFpn": {
       "busy_until": 1792883700.0,
-      "cursor": 1792876500.0,
-      "fetched_at": 1792877330.277979,
+      "cursor": 1792879800.0,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1791688500.0
      },
      "p977G14fUkDL3AoH97MAmqQ4V7Ecav5AZKhtPn21EHC": {
       "busy_until": 1792880400.0,
-      "cursor": 1792872900.0,
-      "fetched_at": 1792873678.1964195,
+      "cursor": 1792879200.0,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1792639500.0
      }
     }
@@ -2906,12 +2904,12 @@
    "size_factor": 1.0,
    "status": "retired",
    "verdict": {
-    "at": 1792877330.277979,
+    "at": 1792880852.7371702,
     "decision": "fail",
     "n": 211,
     "reason": "211 trades (74 from the out-of-sample replay) over 15.8 days: mean net -5.68% [-7.94, -3.13] (86 at real-trading execution: -5.06% vs -3.93% at the registered execution) (-5.93% at measured pool fees) (-6.44% at Jupiter-measured impact, 75 trades), excess over random entries -0.84% [-2.91, +0.96]",
     "stats": {
-     "days": 15.79,
+     "days": 15.84,
      "excess": -0.008372313785646908,
      "excess_hi": 0.009575233361626138,
      "excess_lo": -0.029099676015522446,
@@ -2932,7 +2930,7 @@
   "dip~drop=0.03~hold_bars=24": {
    "costs_version": "2026-10-10-hourly-observed",
    "data": {
-    "fetch_skipped": 33,
+    "fetch_skipped": 34,
     "pools": {
      "261jSeTokAquP254HbWiXmvJb3MUA19VAmv5XbjxXjqh": {
       "busy_until": 1792588500.0,
@@ -2942,8 +2940,8 @@
      },
      "2B8tftZ5ww8TREMr3pgkgERLNjJyJxEAPWMENViGMsL4": {
       "busy_until": 1792880400.0,
-      "cursor": 1792876500.0,
-      "fetched_at": 1792877330.277979,
+      "cursor": 1792880100.0,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1791582900.0
      },
      "2U5kdozDrdgYzyGRNbTdBejGLYEeRt1FkERQmyPbV85P": {
@@ -2954,44 +2952,44 @@
      },
      "2aEWsofKAiPyoTEdsSWVDL5paCmb9GvK9Dtg5w8UhHgj": {
       "busy_until": 1792726800.0,
-      "cursor": 1792816500.0,
-      "fetched_at": 1792873678.1964195,
+      "cursor": 1792878600.0,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1792380300.0
      },
      "2sA5714M6Bst4zdPxS5TRfPPEAz1pCAmDYhGGatFrAZW": {
-      "busy_until": 1792876200.0,
-      "cursor": 1792872300.0,
-      "fetched_at": 1792873678.1964195,
+      "busy_until": 1792884300.0,
+      "cursor": 1792880100.0,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1792466700.0
      },
      "3ENsvQnHuHtQzMBxpDG4pkxwbBnzJvFcz2yyCfxC9QNH": {
-      "busy_until": 1792876800.0,
-      "cursor": 1792872900.0,
-      "fetched_at": 1792873678.1964195,
+      "busy_until": 1792886700.0,
+      "cursor": 1792880100.0,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1792466700.0
      },
      "3NBq9zynLPDQQDvYf8xiMbWywQfKZD7m7fyprY524efq": {
       "busy_until": 1792843500.0,
-      "cursor": 1792866300.0,
-      "fetched_at": 1792877330.277979,
+      "cursor": 1792878600.0,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1791582900.0
      },
      "3f5N5Sq1Rz6aGySeuwSG466UuoNpisFZY221QyynsYPu": {
       "busy_until": 0.0,
       "cursor": 1792470600.0,
-      "fetched_at": 1792873678.1964195,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1792470600.0
      },
      "3p3yajJRqwrvgNs3M1UDVDXVUriZjZ8vE8bdpnpvkNRJ": {
       "busy_until": 1792873800.0,
-      "cursor": 1792872300.0,
-      "fetched_at": 1792873678.1964195,
+      "cursor": 1792878000.0,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1792380300.0
      },
      "4JAnKFddd5fFTk5PxDj3PpTWJuTEfSWQEjZJcgKQ9KwW": {
       "busy_until": 1792865100.0,
-      "cursor": 1792876500.0,
-      "fetched_at": 1792877330.277979,
+      "cursor": 1792880100.0,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1791582900.0
      },
      "4MWjp1aBQqE9Y6iC5cd3NrVvWWcHsN2LgpjWYMDK7u7E": {
@@ -3002,26 +3000,26 @@
      },
      "4R8CiMnJWDNoes3fQi1ccPFJygPXazaHaWpHrN3rZeNj": {
       "busy_until": 1792880100.0,
-      "cursor": 1792876500.0,
-      "fetched_at": 1792877330.277979,
+      "cursor": 1792880100.0,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1791663300.0
      },
      "4SMPAuRkMTMFiMnW1oDcDQdi54CC9R4of9xtr4phiYiG": {
-      "busy_until": 1792870200.0,
-      "cursor": 1792872900.0,
-      "fetched_at": 1792873678.1964195,
+      "busy_until": 1792882800.0,
+      "cursor": 1792880100.0,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1792725900.0
      },
      "4qxSqMh6iEdbdvtMp8r5MK2psAGKNk57PfGeVo2VhczQ": {
       "busy_until": 1792865100.0,
-      "cursor": 1792875000.0,
-      "fetched_at": 1792877330.277979,
+      "cursor": 1792880100.0,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1791663000.0
      },
      "51Fk2LMfAz85d2w5ZqGdtmHgEJvStK1j8WDb9WB3YYK3": {
       "busy_until": 1792862700.0,
       "cursor": 1792872600.0,
-      "fetched_at": 1792873678.1964195,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1792725000.0
      },
      "54q8E1sqsfVBgytXso1xUGS3WRovFAJTfou5XKLFpnp1": {
@@ -3032,14 +3030,14 @@
      },
      "5E3dXLXGwmTDCokA51WYYaKttjFZBwqCoyUHBUi5gt2m": {
       "busy_until": 1792872000.0,
-      "cursor": 1792872900.0,
-      "fetched_at": 1792873678.1964195,
+      "cursor": 1792880100.0,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1792725900.0
      },
      "5Jj7H9v191CXQWS6uk6XrsydmYo5isjDWqLyCUPqm1dX": {
       "busy_until": 1792713300.0,
       "cursor": 1792864800.0,
-      "fetched_at": 1792873678.1964195,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1792466100.0
      },
      "5XH4eWypoE3wita96WjAnbQBJxYAjpk6bkJADu17UsiH": {
@@ -3051,19 +3049,19 @@
      "5qL4fEq9pBczu8xVpJox3FEDUyP9qyMB6iEK6xPo9kPM": {
       "busy_until": 0.0,
       "cursor": 1792215000.0,
-      "fetched_at": 1792873678.1964195,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1792215000.0
      },
      "65GHmCbyRME3XwKjTqDB7pMJw2gvj2LZryfWKczoAqFR": {
       "busy_until": 1792591200.0,
       "cursor": 1792830000.0,
-      "fetched_at": 1792877330.277979,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1791582900.0
      },
      "6DNxwecbtdNNstpB5tdnxZsfGe3HmsNgEUZhdue4b1PH": {
-      "busy_until": 1792878300.0,
-      "cursor": 1792872900.0,
-      "fetched_at": 1792873678.1964195,
+      "busy_until": 1792887000.0,
+      "cursor": 1792880100.0,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1792639500.0
      },
      "6FBnZzRtdMrjxEPdLK4UGP9Xm2hsYwLY3xp6EWB1e2md": {
@@ -3080,20 +3078,20 @@
      },
      "6QyYdc6jgeKnfP1FWhiexMYq3JQ3sidSYoubjWUTo3rm": {
       "busy_until": 1792883100.0,
-      "cursor": 1792876500.0,
-      "fetched_at": 1792877330.277979,
+      "cursor": 1792880100.0,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1791582900.0
      },
      "6aXb1e6uTMsz77zhncRYFe7AugzBxxcUnhCodhd3odag": {
       "busy_until": 1792870800.0,
-      "cursor": 1792872000.0,
-      "fetched_at": 1792873678.1964195,
+      "cursor": 1792876500.0,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1792380300.0
      },
      "6f1HD3hodH3A8zHSL4ddA5yB6TjGYpidwiZVHJJRBn5M": {
       "busy_until": 1792862700.0,
-      "cursor": 1792870800.0,
-      "fetched_at": 1792873678.1964195,
+      "cursor": 1792876500.0,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1792380300.0
      },
      "6iep3EgqksbZwgzMBCyAJtiVtVYkCgL9BnPBEwLR8AGQ": {
@@ -3104,26 +3102,26 @@
      },
      "6qUUCwD9fyRafora8XVmdApQBxCkbUiZTMkcYD47rWsS": {
       "busy_until": 1792863600.0,
-      "cursor": 1792875300.0,
-      "fetched_at": 1792877330.277979,
+      "cursor": 1792879800.0,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1791663300.0
      },
      "745ATaSSWxvry5qt1XVv9eXuG884hDvNJfvA2o82dNBi": {
-      "busy_until": 1792874700.0,
-      "cursor": 1792875900.0,
-      "fetched_at": 1792877330.277979,
+      "busy_until": 1792885500.0,
+      "cursor": 1792880100.0,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1791582900.0
      },
      "7ix8yMJsoCYsXgGjRjx7zPCQumGiBVotNUYSoMYuJPy2": {
       "busy_until": 1792777800.0,
-      "cursor": 1792864800.0,
-      "fetched_at": 1792873678.1964195,
+      "cursor": 1792880100.0,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1792293900.0
      },
      "7kMxqvCqLbHCXDy25oVX7Bx44Z3ud6SYZBK2jhJpRLsf": {
       "busy_until": 0.0,
       "cursor": 1792214700.0,
-      "fetched_at": 1792873678.1964195,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1792214700.0
      },
      "7mHdMhMnEpXSjF6hoj2wxRnzkSE1KwePq5UErjwnrLs7": {
@@ -3146,8 +3144,8 @@
      },
      "867dKvaCcyRrUDP66bqNXbujXfjaxsNB9wTpc4CmBdAD": {
       "busy_until": 1792877700.0,
-      "cursor": 1792876500.0,
-      "fetched_at": 1792877330.277979,
+      "cursor": 1792879800.0,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1791582900.0
      },
      "89DxSaK1YZx8TbPapMSSEgkEdhYuhYBo26BytgELrJBd": {
@@ -3158,14 +3156,14 @@
      },
      "8JoQRQ4oAXNuQSTcComuUAAgF3ViJ7e3escwatMncZ3H": {
       "busy_until": 1792648200.0,
-      "cursor": 1792871400.0,
-      "fetched_at": 1792873678.1964195,
+      "cursor": 1792879500.0,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1792293900.0
      },
      "8ewuF2o8ACro7fqWepZ3tKhkbBjndZU4Ldk9scRPw83d": {
       "busy_until": 1792881300.0,
-      "cursor": 1792876500.0,
-      "fetched_at": 1792877330.277979,
+      "cursor": 1792880100.0,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1791582900.0
      },
      "8iSy6UUmgDqXsVAKL8tJyRUXSTLdMwPuC6QXW5j3fhjA": {
@@ -3182,8 +3180,8 @@
      },
      "9d6fbbtAGjM6eFHo4NpsPrDgnwhZNdetgewHmupZTVjV": {
       "busy_until": 1792864200.0,
-      "cursor": 1792875900.0,
-      "fetched_at": 1792877330.277979,
+      "cursor": 1792877100.0,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1791663300.0
      },
      "9dsiuydk5EFRCLk6VEywY95Nn3jjGbdWNijuACf1PXuA": {
@@ -3201,7 +3199,7 @@
      "A7nWJWGUjNyWbVNPA5RrvLoF37j3ovdh8DKdgxYefcdk": {
       "busy_until": 1792869900.0,
       "cursor": 1792875000.0,
-      "fetched_at": 1792877330.277979,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1791582900.0
      },
      "ABqXgS5c78P8Nix49kqsBTNQjAmMAhCBH2mvjq1zqQZ2": {
@@ -3211,21 +3209,21 @@
       "first_bar": 1792293900.0
      },
      "AJE7eWHJMBjvwib78dGwS8iZxb7bGx7NXLZVXX6xMHn6": {
-      "busy_until": 1792872600.0,
-      "cursor": 1792872600.0,
-      "fetched_at": 1792873678.1964195,
+      "busy_until": 1792880100.0,
+      "cursor": 1792879800.0,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1792293900.0
      },
      "ARcvd2GiVSmz7oR2ozpe3KzVBadsVrEav5DdnVJ8sjhK": {
       "busy_until": 1792875900.0,
-      "cursor": 1792872900.0,
-      "fetched_at": 1792873678.1964195,
+      "cursor": 1792879500.0,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1791774900.0
      },
      "AZgECLWq2Xd7KfjKVt6jFuJTWmFxqBuhAA4PXKDMwVcr": {
       "busy_until": 0.0,
       "cursor": 1791611700.0,
-      "fetched_at": 1792877330.277979,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1791611700.0
      },
      "AnrCHvfJUzMtos8DGjpT2XKurVPPYAVLDturASNwXcd4": {
@@ -3236,8 +3234,8 @@
      },
      "AscPffyZxMnHHFHqQWawtcrmasgUzCJtwyu6oS6CQD2R": {
       "busy_until": 1792874700.0,
-      "cursor": 1792872900.0,
-      "fetched_at": 1792873678.1964195,
+      "cursor": 1792874400.0,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1792466700.0
      },
      "BCiyK7LarB1yUbGngmQGJq9CQawiTDQ1i65HDnfhiqM5": {
@@ -3247,9 +3245,9 @@
       "first_bar": 1792121100.0
      },
      "BUMh6YebpBvAh4by4oTGJUvzQ9CvH6dqPgrZvXFDMwC1": {
-      "busy_until": 1792863000.0,
-      "cursor": 1792872000.0,
-      "fetched_at": 1792873678.1964195,
+      "busy_until": 1792883100.0,
+      "cursor": 1792880100.0,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1792293900.0
      },
      "BoW9h5GBqdNR55fKE3VHdzNgPLANzmYKY1eiqmx1DRLZ": {
@@ -3266,14 +3264,14 @@
      },
      "CEXh16Ug4DRAXhxk62B7qgV6Qpwfq9SHfocuSEgB6ggT": {
       "busy_until": 1792878300.0,
-      "cursor": 1792872900.0,
-      "fetched_at": 1792873678.1964195,
+      "cursor": 1792880100.0,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1792293900.0
      },
      "CR5dTgvTddGAqDjP8dGHTL51N6PKRaXqxFBp9FQ5PrKn": {
       "busy_until": 1792045200.0,
       "cursor": 1792825800.0,
-      "fetched_at": 1792877330.277979,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1791577500.0
      },
      "CwaEjWuUHn9v1ETy3iMHn9QV5pvbodNrJDovQMsPSv1R": {
@@ -3285,13 +3283,13 @@
      "Cx1SFBFC6M4FW68bSGKfQgWKY4w1E4fqcAeiesLrHJ4f": {
       "busy_until": 0.0,
       "cursor": 1791687300.0,
-      "fetched_at": 1792873678.1964195,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1791687300.0
      },
      "CyJwKnLiiY4fmiwqMCSWFSHxo7T9Ubshgs2uRAuJCrk5": {
       "busy_until": 1792876800.0,
-      "cursor": 1792876500.0,
-      "fetched_at": 1792877330.277979,
+      "cursor": 1792880100.0,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1791582900.0
      },
      "D3vzKTEJntE3wSu4QaPd79e2bnifnHggVDVewu1ukkAJ": {
@@ -3325,21 +3323,21 @@
       "first_bar": 1792207500.0
      },
      "Ds6CaQYBQL7GjDATf9CVH189S9ef1mz7dkTrSoV7RWEM": {
-      "busy_until": 1792848000.0,
-      "cursor": 1792871700.0,
-      "fetched_at": 1792873678.1964195,
+      "busy_until": 1792883400.0,
+      "cursor": 1792878600.0,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1792725900.0
      },
      "EFUomuhEoy5JcJQiPqJML9RNZaFCwyfwSBZhjdGrV6HT": {
       "busy_until": 0.0,
       "cursor": 1792551900.0,
-      "fetched_at": 1792873678.1964195,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1792551900.0
      },
      "EzJV2yGpbS3VM5qWmgqYQ4GPVi77LdhwgFhAy6u4ts1U": {
       "busy_until": 1792866900.0,
-      "cursor": 1792872600.0,
-      "fetched_at": 1792873678.1964195,
+      "cursor": 1792880100.0,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1792207500.0
      },
      "FCHzyHzgvcMjKuTNKjP9HBFta75XAmewToyKJ5LT8Rje": {
@@ -3361,9 +3359,9 @@
       "first_bar": 1792812300.0
      },
      "Fe7bpDYCs74GqiCUF14HwgUMToPKV1d9mDYVX5BTohFr": {
-      "busy_until": 1792875000.0,
-      "cursor": 1792876500.0,
-      "fetched_at": 1792877330.277979,
+      "busy_until": 1792884000.0,
+      "cursor": 1792880100.0,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1791663300.0
      },
      "Fk5MuGv2H3Qpt6AxdhS2KHgDL2os424BvfEoqFNTdv9Y": {
@@ -3374,14 +3372,14 @@
      },
      "FnzKY6x7entQ1eR3D225dQyT7ybfka4PskBMQhb8L3CC": {
       "busy_until": 1792858200.0,
-      "cursor": 1792872900.0,
-      "fetched_at": 1792873678.1964195,
+      "cursor": 1792880100.0,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1792553100.0
      },
      "FpyosQzp5ijfrxqqBVNm67rfam7VsbVNAm7PUf8Yvt1c": {
-      "busy_until": 1792862100.0,
-      "cursor": 1792872900.0,
-      "fetched_at": 1792873678.1964195,
+      "busy_until": 1792885500.0,
+      "cursor": 1792880100.0,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1792207500.0
      },
      "GKVfZiv4EUNViMRfUejEn5QJN29oXGCyk7FY2iUv3bGi": {
@@ -3391,39 +3389,39 @@
       "first_bar": 1792121100.0
      },
      "GLL3CzybpSCLZdoACf8QUM5YrKVwyA65kQ2RcTsJxxzV": {
-      "busy_until": 1792875300.0,
-      "cursor": 1792876500.0,
-      "fetched_at": 1792877330.277979,
+      "busy_until": 1792884900.0,
+      "cursor": 1792880100.0,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1791688500.0
      },
      "GLN7Dr7AsP9GRxAjxiVBk9Rnwyn74ar2R3BuGk8ZxQn1": {
       "busy_until": 1792879800.0,
-      "cursor": 1792872900.0,
-      "fetched_at": 1792873678.1964195,
+      "cursor": 1792879800.0,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1792293900.0
      },
      "GS1bQcY4W3ScfJMo5Ch9c1xggBUqNpvjoWY7Yc7pJGdL": {
       "busy_until": 1792767600.0,
-      "cursor": 1792868400.0,
-      "fetched_at": 1792873678.1964195,
+      "cursor": 1792878300.0,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1792639500.0
      },
      "HMzvsEEmtzHhvZNw9uwbaG85HCTmFnkbhzUx16cy7ca3": {
       "busy_until": 1792876500.0,
-      "cursor": 1792876500.0,
-      "fetched_at": 1792877330.277979,
+      "cursor": 1792880100.0,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1791582900.0
      },
      "HQ1xV7yV3x3kY5kmHv3BCMBAigBE7FqxmHwFkVc6fXvt": {
       "busy_until": 1792865700.0,
-      "cursor": 1792862700.0,
-      "fetched_at": 1792873678.1964195,
+      "cursor": 1792878300.0,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1792207500.0
      },
      "HRMcDD9XawGTXH6QkBZs1mtiwyjTfg4bDMrL5DcjwXnb": {
       "busy_until": 1792876800.0,
-      "cursor": 1792872900.0,
-      "fetched_at": 1792873678.1964195,
+      "cursor": 1792876800.0,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1792466700.0
      },
      "HvYfFr8nm6bn9V93TDDMgqWwS2D2LsMn1Y3rDCToqeAB": {
@@ -3439,21 +3437,21 @@
       "first_bar": 1792812300.0
      },
      "YQ4NNeQxHAtdcB8ohx21eJ9U8eTzxNRvGNHkRaA4Pnw": {
-      "busy_until": 1792875900.0,
-      "cursor": 1792872900.0,
-      "fetched_at": 1792873678.1964195,
+      "busy_until": 1792884600.0,
+      "cursor": 1792880100.0,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1792725900.0
      },
      "cb4GFRgEitfu5qtxfRMiqzsaVPwgbD3HEor4cs2jFpn": {
       "busy_until": 1792878600.0,
-      "cursor": 1792876500.0,
-      "fetched_at": 1792877330.277979,
+      "cursor": 1792879800.0,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1791688500.0
      },
      "p977G14fUkDL3AoH97MAmqQ4V7Ecav5AZKhtPn21EHC": {
       "busy_until": 1792873800.0,
-      "cursor": 1792872900.0,
-      "fetched_at": 1792873678.1964195,
+      "cursor": 1792879200.0,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1792639500.0
      }
     }
@@ -3464,12 +3462,12 @@
    "size_factor": 1.0,
    "status": "retired",
    "verdict": {
-    "at": 1792877330.277979,
+    "at": 1792880852.7371702,
     "decision": "fail",
     "n": 209,
     "reason": "209 trades over 15.0 days: mean net -2.40% [-4.16, +0.20] (112 at real-trading execution: -2.16% vs -1.83% at the registered execution) (-3.11% at measured pool fees), excess over random entries +0.96% [-1.00, +3.49]",
     "stats": {
-     "days": 14.97,
+     "days": 15.02,
      "excess": 0.0095890019068282,
      "excess_hi": 0.03489169189008338,
      "excess_lo": -0.00997124623739358,
@@ -3488,7 +3486,7 @@
   "dip~drop=0.03~hold_bars=48": {
    "costs_version": "2026-10-10-hourly-observed",
    "data": {
-    "fetch_skipped": 33,
+    "fetch_skipped": 34,
     "pools": {
      "261jSeTokAquP254HbWiXmvJb3MUA19VAmv5XbjxXjqh": {
       "busy_until": 1792595700.0,
@@ -3498,8 +3496,8 @@
      },
      "2B8tftZ5ww8TREMr3pgkgERLNjJyJxEAPWMENViGMsL4": {
       "busy_until": 1792887600.0,
-      "cursor": 1792876500.0,
-      "fetched_at": 1792877330.277979,
+      "cursor": 1792880100.0,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1791582900.0
      },
      "2U5kdozDrdgYzyGRNbTdBejGLYEeRt1FkERQmyPbV85P": {
@@ -3510,44 +3508,44 @@
      },
      "2aEWsofKAiPyoTEdsSWVDL5paCmb9GvK9Dtg5w8UhHgj": {
       "busy_until": 1792734000.0,
-      "cursor": 1792816500.0,
-      "fetched_at": 1792873678.1964195,
+      "cursor": 1792878600.0,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1792380300.0
      },
      "2sA5714M6Bst4zdPxS5TRfPPEAz1pCAmDYhGGatFrAZW": {
-      "busy_until": 1792875600.0,
-      "cursor": 1792872300.0,
-      "fetched_at": 1792873678.1964195,
+      "busy_until": 1792891500.0,
+      "cursor": 1792880100.0,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1792466700.0
      },
      "3ENsvQnHuHtQzMBxpDG4pkxwbBnzJvFcz2yyCfxC9QNH": {
-      "busy_until": 1792871100.0,
-      "cursor": 1792872900.0,
-      "fetched_at": 1792873678.1964195,
+      "busy_until": 1792888500.0,
+      "cursor": 1792880100.0,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1792466700.0
      },
      "3NBq9zynLPDQQDvYf8xiMbWywQfKZD7m7fyprY524efq": {
       "busy_until": 1792850700.0,
-      "cursor": 1792866300.0,
-      "fetched_at": 1792877330.277979,
+      "cursor": 1792878600.0,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1791582900.0
      },
      "3f5N5Sq1Rz6aGySeuwSG466UuoNpisFZY221QyynsYPu": {
       "busy_until": 0.0,
       "cursor": 1792470600.0,
-      "fetched_at": 1792873678.1964195,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1792470600.0
      },
      "3p3yajJRqwrvgNs3M1UDVDXVUriZjZ8vE8bdpnpvkNRJ": {
       "busy_until": 1792881000.0,
-      "cursor": 1792872300.0,
-      "fetched_at": 1792873678.1964195,
+      "cursor": 1792878000.0,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1792380300.0
      },
      "4JAnKFddd5fFTk5PxDj3PpTWJuTEfSWQEjZJcgKQ9KwW": {
       "busy_until": 1792863000.0,
-      "cursor": 1792876500.0,
-      "fetched_at": 1792877330.277979,
+      "cursor": 1792880100.0,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1791582900.0
      },
      "4MWjp1aBQqE9Y6iC5cd3NrVvWWcHsN2LgpjWYMDK7u7E": {
@@ -3558,26 +3556,26 @@
      },
      "4R8CiMnJWDNoes3fQi1ccPFJygPXazaHaWpHrN3rZeNj": {
       "busy_until": 1792887300.0,
-      "cursor": 1792876500.0,
-      "fetched_at": 1792877330.277979,
+      "cursor": 1792880100.0,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1791663300.0
      },
      "4SMPAuRkMTMFiMnW1oDcDQdi54CC9R4of9xtr4phiYiG": {
-      "busy_until": 1792877400.0,
-      "cursor": 1792872900.0,
-      "fetched_at": 1792873678.1964195,
+      "busy_until": 1792892700.0,
+      "cursor": 1792880100.0,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1792725900.0
      },
      "4qxSqMh6iEdbdvtMp8r5MK2psAGKNk57PfGeVo2VhczQ": {
       "busy_until": 1792872300.0,
-      "cursor": 1792875000.0,
-      "fetched_at": 1792877330.277979,
+      "cursor": 1792880100.0,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1791663000.0
      },
      "51Fk2LMfAz85d2w5ZqGdtmHgEJvStK1j8WDb9WB3YYK3": {
       "busy_until": 1792869900.0,
       "cursor": 1792872600.0,
-      "fetched_at": 1792873678.1964195,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1792725000.0
      },
      "54q8E1sqsfVBgytXso1xUGS3WRovFAJTfou5XKLFpnp1": {
@@ -3588,14 +3586,14 @@
      },
      "5E3dXLXGwmTDCokA51WYYaKttjFZBwqCoyUHBUi5gt2m": {
       "busy_until": 1792883700.0,
-      "cursor": 1792872900.0,
-      "fetched_at": 1792873678.1964195,
+      "cursor": 1792880100.0,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1792725900.0
      },
      "5Jj7H9v191CXQWS6uk6XrsydmYo5isjDWqLyCUPqm1dX": {
       "busy_until": 1792720500.0,
       "cursor": 1792864800.0,
-      "fetched_at": 1792873678.1964195,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1792466100.0
      },
      "5XH4eWypoE3wita96WjAnbQBJxYAjpk6bkJADu17UsiH": {
@@ -3607,19 +3605,19 @@
      "5qL4fEq9pBczu8xVpJox3FEDUyP9qyMB6iEK6xPo9kPM": {
       "busy_until": 0.0,
       "cursor": 1792215000.0,
-      "fetched_at": 1792873678.1964195,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1792215000.0
      },
      "65GHmCbyRME3XwKjTqDB7pMJw2gvj2LZryfWKczoAqFR": {
       "busy_until": 1792598400.0,
       "cursor": 1792830000.0,
-      "fetched_at": 1792877330.277979,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1791582900.0
      },
      "6DNxwecbtdNNstpB5tdnxZsfGe3HmsNgEUZhdue4b1PH": {
       "busy_until": 1792885500.0,
-      "cursor": 1792872900.0,
-      "fetched_at": 1792873678.1964195,
+      "cursor": 1792880100.0,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1792639500.0
      },
      "6FBnZzRtdMrjxEPdLK4UGP9Xm2hsYwLY3xp6EWB1e2md": {
@@ -3636,20 +3634,20 @@
      },
      "6QyYdc6jgeKnfP1FWhiexMYq3JQ3sidSYoubjWUTo3rm": {
       "busy_until": 1792890300.0,
-      "cursor": 1792876500.0,
-      "fetched_at": 1792877330.277979,
+      "cursor": 1792880100.0,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1791582900.0
      },
      "6aXb1e6uTMsz77zhncRYFe7AugzBxxcUnhCodhd3odag": {
       "busy_until": 1792877100.0,
-      "cursor": 1792872000.0,
-      "fetched_at": 1792873678.1964195,
+      "cursor": 1792877100.0,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1792380300.0
      },
      "6f1HD3hodH3A8zHSL4ddA5yB6TjGYpidwiZVHJJRBn5M": {
       "busy_until": 1792869900.0,
-      "cursor": 1792870800.0,
-      "fetched_at": 1792873678.1964195,
+      "cursor": 1792876500.0,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1792380300.0
      },
      "6iep3EgqksbZwgzMBCyAJtiVtVYkCgL9BnPBEwLR8AGQ": {
@@ -3660,26 +3658,26 @@
      },
      "6qUUCwD9fyRafora8XVmdApQBxCkbUiZTMkcYD47rWsS": {
       "busy_until": 1792870800.0,
-      "cursor": 1792875300.0,
-      "fetched_at": 1792877330.277979,
+      "cursor": 1792879800.0,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1791663300.0
      },
      "745ATaSSWxvry5qt1XVv9eXuG884hDvNJfvA2o82dNBi": {
       "busy_until": 1792881900.0,
-      "cursor": 1792875900.0,
-      "fetched_at": 1792877330.277979,
+      "cursor": 1792880100.0,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1791582900.0
      },
      "7ix8yMJsoCYsXgGjRjx7zPCQumGiBVotNUYSoMYuJPy2": {
       "busy_until": 1792777500.0,
-      "cursor": 1792864800.0,
-      "fetched_at": 1792873678.1964195,
+      "cursor": 1792880100.0,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1792293900.0
      },
      "7kMxqvCqLbHCXDy25oVX7Bx44Z3ud6SYZBK2jhJpRLsf": {
       "busy_until": 0.0,
       "cursor": 1792214700.0,
-      "fetched_at": 1792873678.1964195,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1792214700.0
      },
      "7mHdMhMnEpXSjF6hoj2wxRnzkSE1KwePq5UErjwnrLs7": {
@@ -3702,8 +3700,8 @@
      },
      "867dKvaCcyRrUDP66bqNXbujXfjaxsNB9wTpc4CmBdAD": {
       "busy_until": 1792875900.0,
-      "cursor": 1792876500.0,
-      "fetched_at": 1792877330.277979,
+      "cursor": 1792879800.0,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1791582900.0
      },
      "89DxSaK1YZx8TbPapMSSEgkEdhYuhYBo26BytgELrJBd": {
@@ -3714,14 +3712,14 @@
      },
      "8JoQRQ4oAXNuQSTcComuUAAgF3ViJ7e3escwatMncZ3H": {
       "busy_until": 1792655400.0,
-      "cursor": 1792871400.0,
-      "fetched_at": 1792873678.1964195,
+      "cursor": 1792879500.0,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1792293900.0
      },
      "8ewuF2o8ACro7fqWepZ3tKhkbBjndZU4Ldk9scRPw83d": {
       "busy_until": 1792885500.0,
-      "cursor": 1792876500.0,
-      "fetched_at": 1792877330.277979,
+      "cursor": 1792880100.0,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1791582900.0
      },
      "8iSy6UUmgDqXsVAKL8tJyRUXSTLdMwPuC6QXW5j3fhjA": {
@@ -3738,8 +3736,8 @@
      },
      "9d6fbbtAGjM6eFHo4NpsPrDgnwhZNdetgewHmupZTVjV": {
       "busy_until": 1792871400.0,
-      "cursor": 1792875900.0,
-      "fetched_at": 1792877330.277979,
+      "cursor": 1792877100.0,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1791663300.0
      },
      "9dsiuydk5EFRCLk6VEywY95Nn3jjGbdWNijuACf1PXuA": {
@@ -3757,7 +3755,7 @@
      "A7nWJWGUjNyWbVNPA5RrvLoF37j3ovdh8DKdgxYefcdk": {
       "busy_until": 1792877100.0,
       "cursor": 1792875000.0,
-      "fetched_at": 1792877330.277979,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1791582900.0
      },
      "ABqXgS5c78P8Nix49kqsBTNQjAmMAhCBH2mvjq1zqQZ2": {
@@ -3768,20 +3766,20 @@
      },
      "AJE7eWHJMBjvwib78dGwS8iZxb7bGx7NXLZVXX6xMHn6": {
       "busy_until": 1792883700.0,
-      "cursor": 1792872900.0,
-      "fetched_at": 1792873678.1964195,
+      "cursor": 1792879800.0,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1792293900.0
      },
      "ARcvd2GiVSmz7oR2ozpe3KzVBadsVrEav5DdnVJ8sjhK": {
       "busy_until": 1792884000.0,
-      "cursor": 1792872900.0,
-      "fetched_at": 1792873678.1964195,
+      "cursor": 1792879500.0,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1791774900.0
      },
      "AZgECLWq2Xd7KfjKVt6jFuJTWmFxqBuhAA4PXKDMwVcr": {
       "busy_until": 0.0,
       "cursor": 1791611700.0,
-      "fetched_at": 1792877330.277979,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1791611700.0
      },
      "AnrCHvfJUzMtos8DGjpT2XKurVPPYAVLDturASNwXcd4": {
@@ -3792,8 +3790,8 @@
      },
      "AscPffyZxMnHHFHqQWawtcrmasgUzCJtwyu6oS6CQD2R": {
       "busy_until": 1792881900.0,
-      "cursor": 1792872900.0,
-      "fetched_at": 1792873678.1964195,
+      "cursor": 1792874400.0,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1792466700.0
      },
      "BCiyK7LarB1yUbGngmQGJq9CQawiTDQ1i65HDnfhiqM5": {
@@ -3803,9 +3801,9 @@
       "first_bar": 1792121100.0
      },
      "BUMh6YebpBvAh4by4oTGJUvzQ9CvH6dqPgrZvXFDMwC1": {
-      "busy_until": 1792862700.0,
-      "cursor": 1792872000.0,
-      "fetched_at": 1792873678.1964195,
+      "busy_until": 1792890300.0,
+      "cursor": 1792880100.0,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1792293900.0
      },
      "BoW9h5GBqdNR55fKE3VHdzNgPLANzmYKY1eiqmx1DRLZ": {
@@ -3821,15 +3819,15 @@
       "first_bar": 1792812300.0
      },
      "CEXh16Ug4DRAXhxk62B7qgV6Qpwfq9SHfocuSEgB6ggT": {
-      "busy_until": 1792876800.0,
-      "cursor": 1792872900.0,
-      "fetched_at": 1792873678.1964195,
+      "busy_until": 1792891500.0,
+      "cursor": 1792880100.0,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1792293900.0
      },
      "CR5dTgvTddGAqDjP8dGHTL51N6PKRaXqxFBp9FQ5PrKn": {
       "busy_until": 1792052400.0,
       "cursor": 1792825800.0,
-      "fetched_at": 1792877330.277979,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1791577500.0
      },
      "CwaEjWuUHn9v1ETy3iMHn9QV5pvbodNrJDovQMsPSv1R": {
@@ -3841,13 +3839,13 @@
      "Cx1SFBFC6M4FW68bSGKfQgWKY4w1E4fqcAeiesLrHJ4f": {
       "busy_until": 0.0,
       "cursor": 1791687300.0,
-      "fetched_at": 1792873678.1964195,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1791687300.0
      },
      "CyJwKnLiiY4fmiwqMCSWFSHxo7T9Ubshgs2uRAuJCrk5": {
       "busy_until": 1792884000.0,
-      "cursor": 1792876500.0,
-      "fetched_at": 1792877330.277979,
+      "cursor": 1792880100.0,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1791582900.0
      },
      "D3vzKTEJntE3wSu4QaPd79e2bnifnHggVDVewu1ukkAJ": {
@@ -3881,21 +3879,21 @@
       "first_bar": 1792207500.0
      },
      "Ds6CaQYBQL7GjDATf9CVH189S9ef1mz7dkTrSoV7RWEM": {
-      "busy_until": 1792855200.0,
-      "cursor": 1792871700.0,
-      "fetched_at": 1792873678.1964195,
+      "busy_until": 1792890600.0,
+      "cursor": 1792878600.0,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1792725900.0
      },
      "EFUomuhEoy5JcJQiPqJML9RNZaFCwyfwSBZhjdGrV6HT": {
       "busy_until": 0.0,
       "cursor": 1792551900.0,
-      "fetched_at": 1792873678.1964195,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1792551900.0
      },
      "EzJV2yGpbS3VM5qWmgqYQ4GPVi77LdhwgFhAy6u4ts1U": {
       "busy_until": 1792878900.0,
-      "cursor": 1792872600.0,
-      "fetched_at": 1792873678.1964195,
+      "cursor": 1792880100.0,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1792207500.0
      },
      "FCHzyHzgvcMjKuTNKjP9HBFta75XAmewToyKJ5LT8Rje": {
@@ -3918,8 +3916,8 @@
      },
      "Fe7bpDYCs74GqiCUF14HwgUMToPKV1d9mDYVX5BTohFr": {
       "busy_until": 1792882200.0,
-      "cursor": 1792876500.0,
-      "fetched_at": 1792877330.277979,
+      "cursor": 1792880100.0,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1791663300.0
      },
      "Fk5MuGv2H3Qpt6AxdhS2KHgDL2os424BvfEoqFNTdv9Y": {
@@ -3930,14 +3928,14 @@
      },
      "FnzKY6x7entQ1eR3D225dQyT7ybfka4PskBMQhb8L3CC": {
       "busy_until": 1792865400.0,
-      "cursor": 1792872900.0,
-      "fetched_at": 1792873678.1964195,
+      "cursor": 1792880100.0,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1792553100.0
      },
      "FpyosQzp5ijfrxqqBVNm67rfam7VsbVNAm7PUf8Yvt1c": {
-      "busy_until": 1792869300.0,
-      "cursor": 1792872900.0,
-      "fetched_at": 1792873678.1964195,
+      "busy_until": 1792892700.0,
+      "cursor": 1792880100.0,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1792207500.0
      },
      "GKVfZiv4EUNViMRfUejEn5QJN29oXGCyk7FY2iUv3bGi": {
@@ -3947,39 +3945,39 @@
       "first_bar": 1792121100.0
      },
      "GLL3CzybpSCLZdoACf8QUM5YrKVwyA65kQ2RcTsJxxzV": {
-      "busy_until": 1792874100.0,
-      "cursor": 1792876500.0,
-      "fetched_at": 1792877330.277979,
+      "busy_until": 1792892100.0,
+      "cursor": 1792880100.0,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1791688500.0
      },
      "GLN7Dr7AsP9GRxAjxiVBk9Rnwyn74ar2R3BuGk8ZxQn1": {
-      "busy_until": 1792877700.0,
-      "cursor": 1792872900.0,
-      "fetched_at": 1792873678.1964195,
+      "busy_until": 1792892400.0,
+      "cursor": 1792880100.0,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1792293900.0
      },
      "GS1bQcY4W3ScfJMo5Ch9c1xggBUqNpvjoWY7Yc7pJGdL": {
       "busy_until": 1792774800.0,
-      "cursor": 1792868400.0,
-      "fetched_at": 1792873678.1964195,
+      "cursor": 1792878300.0,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1792639500.0
      },
      "HMzvsEEmtzHhvZNw9uwbaG85HCTmFnkbhzUx16cy7ca3": {
       "busy_until": 1792883700.0,
-      "cursor": 1792876500.0,
-      "fetched_at": 1792877330.277979,
+      "cursor": 1792880100.0,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1791582900.0
      },
      "HQ1xV7yV3x3kY5kmHv3BCMBAigBE7FqxmHwFkVc6fXvt": {
-      "busy_until": 1792863900.0,
-      "cursor": 1792862700.0,
-      "fetched_at": 1792873678.1964195,
+      "busy_until": 1792878600.0,
+      "cursor": 1792878300.0,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1792207500.0
      },
      "HRMcDD9XawGTXH6QkBZs1mtiwyjTfg4bDMrL5DcjwXnb": {
       "busy_until": 1792884000.0,
-      "cursor": 1792872900.0,
-      "fetched_at": 1792873678.1964195,
+      "cursor": 1792879800.0,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1792466700.0
      },
      "HvYfFr8nm6bn9V93TDDMgqWwS2D2LsMn1Y3rDCToqeAB": {
@@ -3995,21 +3993,21 @@
       "first_bar": 1792812300.0
      },
      "YQ4NNeQxHAtdcB8ohx21eJ9U8eTzxNRvGNHkRaA4Pnw": {
-      "busy_until": 1792875600.0,
-      "cursor": 1792872900.0,
-      "fetched_at": 1792873678.1964195,
+      "busy_until": 1792890300.0,
+      "cursor": 1792880100.0,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1792725900.0
      },
      "cb4GFRgEitfu5qtxfRMiqzsaVPwgbD3HEor4cs2jFpn": {
       "busy_until": 1792883700.0,
-      "cursor": 1792876500.0,
-      "fetched_at": 1792877330.277979,
+      "cursor": 1792879800.0,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1791688500.0
      },
      "p977G14fUkDL3AoH97MAmqQ4V7Ecav5AZKhtPn21EHC": {
       "busy_until": 1792872900.0,
-      "cursor": 1792872900.0,
-      "fetched_at": 1792873678.1964195,
+      "cursor": 1792879200.0,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1792639500.0
      }
     }
@@ -4020,12 +4018,12 @@
    "size_factor": 1.0,
    "status": "retired",
    "verdict": {
-    "at": 1792877330.277979,
+    "at": 1792880852.7371702,
     "decision": "fail",
     "n": 213,
     "reason": "213 trades over 15.0 days: mean net -5.00% [-7.34, -2.64] (151 at real-trading execution: -5.63% vs -4.27% at the registered execution) (-5.80% at measured pool fees), excess over random entries -0.29% [-4.22, +2.63]",
     "stats": {
-     "days": 14.97,
+     "days": 15.02,
      "excess": -0.0029244136547566797,
      "excess_hi": 0.02633085825841104,
      "excess_lo": -0.04219136775072985,
@@ -4044,7 +4042,7 @@
   "dip~drop=0.03~hold_bars=96": {
    "costs_version": "2026-10-10-hourly-observed",
    "data": {
-    "fetch_skipped": 33,
+    "fetch_skipped": 34,
     "pools": {
      "261jSeTokAquP254HbWiXmvJb3MUA19VAmv5XbjxXjqh": {
       "busy_until": 1792610100.0,
@@ -4054,8 +4052,8 @@
      },
      "2B8tftZ5ww8TREMr3pgkgERLNjJyJxEAPWMENViGMsL4": {
       "busy_until": 1792902000.0,
-      "cursor": 1792876500.0,
-      "fetched_at": 1792877330.277979,
+      "cursor": 1792880100.0,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1791582900.0
      },
      "2U5kdozDrdgYzyGRNbTdBejGLYEeRt1FkERQmyPbV85P": {
@@ -4066,44 +4064,44 @@
      },
      "2aEWsofKAiPyoTEdsSWVDL5paCmb9GvK9Dtg5w8UhHgj": {
       "busy_until": 1792727100.0,
-      "cursor": 1792816500.0,
-      "fetched_at": 1792873678.1964195,
+      "cursor": 1792878600.0,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1792380300.0
      },
      "2sA5714M6Bst4zdPxS5TRfPPEAz1pCAmDYhGGatFrAZW": {
       "busy_until": 1792890000.0,
-      "cursor": 1792872300.0,
-      "fetched_at": 1792873678.1964195,
+      "cursor": 1792880100.0,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1792466700.0
      },
      "3ENsvQnHuHtQzMBxpDG4pkxwbBnzJvFcz2yyCfxC9QNH": {
-      "busy_until": 1792870800.0,
-      "cursor": 1792872900.0,
-      "fetched_at": 1792873678.1964195,
+      "busy_until": 1792902900.0,
+      "cursor": 1792880100.0,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1792466700.0
      },
      "3NBq9zynLPDQQDvYf8xiMbWywQfKZD7m7fyprY524efq": {
       "busy_until": 1792865100.0,
-      "cursor": 1792866300.0,
-      "fetched_at": 1792877330.277979,
+      "cursor": 1792878600.0,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1791582900.0
      },
      "3f5N5Sq1Rz6aGySeuwSG466UuoNpisFZY221QyynsYPu": {
       "busy_until": 0.0,
       "cursor": 1792470600.0,
-      "fetched_at": 1792873678.1964195,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1792470600.0
      },
      "3p3yajJRqwrvgNs3M1UDVDXVUriZjZ8vE8bdpnpvkNRJ": {
       "busy_until": 1792895400.0,
-      "cursor": 1792872300.0,
-      "fetched_at": 1792873678.1964195,
+      "cursor": 1792878000.0,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1792380300.0
      },
      "4JAnKFddd5fFTk5PxDj3PpTWJuTEfSWQEjZJcgKQ9KwW": {
       "busy_until": 1792861200.0,
-      "cursor": 1792876500.0,
-      "fetched_at": 1792877330.277979,
+      "cursor": 1792880100.0,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1791582900.0
      },
      "4MWjp1aBQqE9Y6iC5cd3NrVvWWcHsN2LgpjWYMDK7u7E": {
@@ -4114,26 +4112,26 @@
      },
      "4R8CiMnJWDNoes3fQi1ccPFJygPXazaHaWpHrN3rZeNj": {
       "busy_until": 1792901700.0,
-      "cursor": 1792876500.0,
-      "fetched_at": 1792877330.277979,
+      "cursor": 1792880100.0,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1791663300.0
      },
      "4SMPAuRkMTMFiMnW1oDcDQdi54CC9R4of9xtr4phiYiG": {
-      "busy_until": 1792877100.0,
-      "cursor": 1792872900.0,
-      "fetched_at": 1792873678.1964195,
+      "busy_until": 1792907100.0,
+      "cursor": 1792880100.0,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1792725900.0
      },
      "4qxSqMh6iEdbdvtMp8r5MK2psAGKNk57PfGeVo2VhczQ": {
       "busy_until": 1792863300.0,
-      "cursor": 1792875000.0,
-      "fetched_at": 1792877330.277979,
+      "cursor": 1792880100.0,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1791663000.0
      },
      "51Fk2LMfAz85d2w5ZqGdtmHgEJvStK1j8WDb9WB3YYK3": {
       "busy_until": 1792884300.0,
       "cursor": 1792872600.0,
-      "fetched_at": 1792873678.1964195,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1792725000.0
      },
      "54q8E1sqsfVBgytXso1xUGS3WRovFAJTfou5XKLFpnp1": {
@@ -4144,14 +4142,14 @@
      },
      "5E3dXLXGwmTDCokA51WYYaKttjFZBwqCoyUHBUi5gt2m": {
       "busy_until": 1792876800.0,
-      "cursor": 1792872900.0,
-      "fetched_at": 1792873678.1964195,
+      "cursor": 1792880100.0,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1792725900.0
      },
      "5Jj7H9v191CXQWS6uk6XrsydmYo5isjDWqLyCUPqm1dX": {
       "busy_until": 1792734900.0,
       "cursor": 1792864800.0,
-      "fetched_at": 1792873678.1964195,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1792466100.0
      },
      "5XH4eWypoE3wita96WjAnbQBJxYAjpk6bkJADu17UsiH": {
@@ -4163,19 +4161,19 @@
      "5qL4fEq9pBczu8xVpJox3FEDUyP9qyMB6iEK6xPo9kPM": {
       "busy_until": 0.0,
       "cursor": 1792215000.0,
-      "fetched_at": 1792873678.1964195,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1792215000.0
      },
      "65GHmCbyRME3XwKjTqDB7pMJw2gvj2LZryfWKczoAqFR": {
       "busy_until": 1792612800.0,
       "cursor": 1792830000.0,
-      "fetched_at": 1792877330.277979,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1791582900.0
      },
      "6DNxwecbtdNNstpB5tdnxZsfGe3HmsNgEUZhdue4b1PH": {
       "busy_until": 1792889100.0,
-      "cursor": 1792872900.0,
-      "fetched_at": 1792873678.1964195,
+      "cursor": 1792880100.0,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1792639500.0
      },
      "6FBnZzRtdMrjxEPdLK4UGP9Xm2hsYwLY3xp6EWB1e2md": {
@@ -4192,20 +4190,20 @@
      },
      "6QyYdc6jgeKnfP1FWhiexMYq3JQ3sidSYoubjWUTo3rm": {
       "busy_until": 1792904700.0,
-      "cursor": 1792876500.0,
-      "fetched_at": 1792877330.277979,
+      "cursor": 1792880100.0,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1791582900.0
      },
      "6aXb1e6uTMsz77zhncRYFe7AugzBxxcUnhCodhd3odag": {
       "busy_until": 1792869900.0,
-      "cursor": 1792872000.0,
-      "fetched_at": 1792873678.1964195,
+      "cursor": 1792876500.0,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1792380300.0
      },
      "6f1HD3hodH3A8zHSL4ddA5yB6TjGYpidwiZVHJJRBn5M": {
       "busy_until": 1792884300.0,
-      "cursor": 1792870800.0,
-      "fetched_at": 1792873678.1964195,
+      "cursor": 1792879500.0,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1792380300.0
      },
      "6iep3EgqksbZwgzMBCyAJtiVtVYkCgL9BnPBEwLR8AGQ": {
@@ -4216,26 +4214,26 @@
      },
      "6qUUCwD9fyRafora8XVmdApQBxCkbUiZTMkcYD47rWsS": {
       "busy_until": 1792875600.0,
-      "cursor": 1792875300.0,
-      "fetched_at": 1792877330.277979,
+      "cursor": 1792879800.0,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1791663300.0
      },
      "745ATaSSWxvry5qt1XVv9eXuG884hDvNJfvA2o82dNBi": {
       "busy_until": 1792896300.0,
-      "cursor": 1792875900.0,
-      "fetched_at": 1792877330.277979,
+      "cursor": 1792880100.0,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1791582900.0
      },
      "7ix8yMJsoCYsXgGjRjx7zPCQumGiBVotNUYSoMYuJPy2": {
       "busy_until": 1792791900.0,
-      "cursor": 1792864800.0,
-      "fetched_at": 1792873678.1964195,
+      "cursor": 1792880100.0,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1792293900.0
      },
      "7kMxqvCqLbHCXDy25oVX7Bx44Z3ud6SYZBK2jhJpRLsf": {
       "busy_until": 0.0,
       "cursor": 1792214700.0,
-      "fetched_at": 1792873678.1964195,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1792214700.0
      },
      "7mHdMhMnEpXSjF6hoj2wxRnzkSE1KwePq5UErjwnrLs7": {
@@ -4258,8 +4256,8 @@
      },
      "867dKvaCcyRrUDP66bqNXbujXfjaxsNB9wTpc4CmBdAD": {
       "busy_until": 1792890300.0,
-      "cursor": 1792876500.0,
-      "fetched_at": 1792877330.277979,
+      "cursor": 1792880100.0,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1791582900.0
      },
      "89DxSaK1YZx8TbPapMSSEgkEdhYuhYBo26BytgELrJBd": {
@@ -4270,14 +4268,14 @@
      },
      "8JoQRQ4oAXNuQSTcComuUAAgF3ViJ7e3escwatMncZ3H": {
       "busy_until": 1792669800.0,
-      "cursor": 1792871400.0,
-      "fetched_at": 1792873678.1964195,
+      "cursor": 1792879500.0,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1792293900.0
      },
      "8ewuF2o8ACro7fqWepZ3tKhkbBjndZU4Ldk9scRPw83d": {
       "busy_until": 1792895400.0,
-      "cursor": 1792876500.0,
-      "fetched_at": 1792877330.277979,
+      "cursor": 1792880100.0,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1791582900.0
      },
      "8iSy6UUmgDqXsVAKL8tJyRUXSTLdMwPuC6QXW5j3fhjA": {
@@ -4294,8 +4292,8 @@
      },
      "9d6fbbtAGjM6eFHo4NpsPrDgnwhZNdetgewHmupZTVjV": {
       "busy_until": 1792868100.0,
-      "cursor": 1792875900.0,
-      "fetched_at": 1792877330.277979,
+      "cursor": 1792877100.0,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1791663300.0
      },
      "9dsiuydk5EFRCLk6VEywY95Nn3jjGbdWNijuACf1PXuA": {
@@ -4313,7 +4311,7 @@
      "A7nWJWGUjNyWbVNPA5RrvLoF37j3ovdh8DKdgxYefcdk": {
       "busy_until": 1792891500.0,
       "cursor": 1792875000.0,
-      "fetched_at": 1792877330.277979,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1791582900.0
      },
      "ABqXgS5c78P8Nix49kqsBTNQjAmMAhCBH2mvjq1zqQZ2": {
@@ -4324,20 +4322,20 @@
      },
      "AJE7eWHJMBjvwib78dGwS8iZxb7bGx7NXLZVXX6xMHn6": {
       "busy_until": 1792896900.0,
-      "cursor": 1792872900.0,
-      "fetched_at": 1792873678.1964195,
+      "cursor": 1792879800.0,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1792293900.0
      },
      "ARcvd2GiVSmz7oR2ozpe3KzVBadsVrEav5DdnVJ8sjhK": {
       "busy_until": 1792897500.0,
-      "cursor": 1792872900.0,
-      "fetched_at": 1792873678.1964195,
+      "cursor": 1792879500.0,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1791774900.0
      },
      "AZgECLWq2Xd7KfjKVt6jFuJTWmFxqBuhAA4PXKDMwVcr": {
       "busy_until": 0.0,
       "cursor": 1791611700.0,
-      "fetched_at": 1792877330.277979,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1791611700.0
      },
      "AnrCHvfJUzMtos8DGjpT2XKurVPPYAVLDturASNwXcd4": {
@@ -4348,8 +4346,8 @@
      },
      "AscPffyZxMnHHFHqQWawtcrmasgUzCJtwyu6oS6CQD2R": {
       "busy_until": 1792896300.0,
-      "cursor": 1792872900.0,
-      "fetched_at": 1792873678.1964195,
+      "cursor": 1792874400.0,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1792466700.0
      },
      "BCiyK7LarB1yUbGngmQGJq9CQawiTDQ1i65HDnfhiqM5": {
@@ -4360,8 +4358,8 @@
      },
      "BUMh6YebpBvAh4by4oTGJUvzQ9CvH6dqPgrZvXFDMwC1": {
       "busy_until": 1792877100.0,
-      "cursor": 1792872000.0,
-      "fetched_at": 1792873678.1964195,
+      "cursor": 1792880100.0,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1792293900.0
      },
      "BoW9h5GBqdNR55fKE3VHdzNgPLANzmYKY1eiqmx1DRLZ": {
@@ -4378,14 +4376,14 @@
      },
      "CEXh16Ug4DRAXhxk62B7qgV6Qpwfq9SHfocuSEgB6ggT": {
       "busy_until": 1792890900.0,
-      "cursor": 1792872900.0,
-      "fetched_at": 1792873678.1964195,
+      "cursor": 1792880100.0,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1792293900.0
      },
      "CR5dTgvTddGAqDjP8dGHTL51N6PKRaXqxFBp9FQ5PrKn": {
       "busy_until": 1792066800.0,
       "cursor": 1792825800.0,
-      "fetched_at": 1792877330.277979,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1791577500.0
      },
      "CwaEjWuUHn9v1ETy3iMHn9QV5pvbodNrJDovQMsPSv1R": {
@@ -4397,13 +4395,13 @@
      "Cx1SFBFC6M4FW68bSGKfQgWKY4w1E4fqcAeiesLrHJ4f": {
       "busy_until": 0.0,
       "cursor": 1791687300.0,
-      "fetched_at": 1792873678.1964195,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1791687300.0
      },
      "CyJwKnLiiY4fmiwqMCSWFSHxo7T9Ubshgs2uRAuJCrk5": {
       "busy_until": 1792890600.0,
-      "cursor": 1792876500.0,
-      "fetched_at": 1792877330.277979,
+      "cursor": 1792880100.0,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1791582900.0
      },
      "D3vzKTEJntE3wSu4QaPd79e2bnifnHggVDVewu1ukkAJ": {
@@ -4437,21 +4435,21 @@
       "first_bar": 1792207500.0
      },
      "Ds6CaQYBQL7GjDATf9CVH189S9ef1mz7dkTrSoV7RWEM": {
-      "busy_until": 1792845000.0,
-      "cursor": 1792871700.0,
-      "fetched_at": 1792873678.1964195,
+      "busy_until": 1792905000.0,
+      "cursor": 1792878600.0,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1792725900.0
      },
      "EFUomuhEoy5JcJQiPqJML9RNZaFCwyfwSBZhjdGrV6HT": {
       "busy_until": 0.0,
       "cursor": 1792551900.0,
-      "fetched_at": 1792873678.1964195,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1792551900.0
      },
      "EzJV2yGpbS3VM5qWmgqYQ4GPVi77LdhwgFhAy6u4ts1U": {
       "busy_until": 1792878600.0,
-      "cursor": 1792872600.0,
-      "fetched_at": 1792873678.1964195,
+      "cursor": 1792880100.0,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1792207500.0
      },
      "FCHzyHzgvcMjKuTNKjP9HBFta75XAmewToyKJ5LT8Rje": {
@@ -4473,9 +4471,9 @@
       "first_bar": 1792812300.0
      },
      "Fe7bpDYCs74GqiCUF14HwgUMToPKV1d9mDYVX5BTohFr": {
-      "busy_until": 1792877100.0,
-      "cursor": 1792876500.0,
-      "fetched_at": 1792877330.277979,
+      "busy_until": 1792906200.0,
+      "cursor": 1792880100.0,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1791663300.0
      },
      "Fk5MuGv2H3Qpt6AxdhS2KHgDL2os424BvfEoqFNTdv9Y": {
@@ -4486,14 +4484,14 @@
      },
      "FnzKY6x7entQ1eR3D225dQyT7ybfka4PskBMQhb8L3CC": {
       "busy_until": 1792884000.0,
-      "cursor": 1792872900.0,
-      "fetched_at": 1792873678.1964195,
+      "cursor": 1792880100.0,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1792553100.0
      },
      "FpyosQzp5ijfrxqqBVNm67rfam7VsbVNAm7PUf8Yvt1c": {
-      "busy_until": 1792875600.0,
-      "cursor": 1792872900.0,
-      "fetched_at": 1792873678.1964195,
+      "busy_until": 1792907100.0,
+      "cursor": 1792880100.0,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1792207500.0
      },
      "GKVfZiv4EUNViMRfUejEn5QJN29oXGCyk7FY2iUv3bGi": {
@@ -4504,38 +4502,38 @@
      },
      "GLL3CzybpSCLZdoACf8QUM5YrKVwyA65kQ2RcTsJxxzV": {
       "busy_until": 1792896900.0,
-      "cursor": 1792876500.0,
-      "fetched_at": 1792877330.277979,
+      "cursor": 1792880100.0,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1791688500.0
      },
      "GLN7Dr7AsP9GRxAjxiVBk9Rnwyn74ar2R3BuGk8ZxQn1": {
       "busy_until": 1792886400.0,
-      "cursor": 1792872900.0,
-      "fetched_at": 1792873678.1964195,
+      "cursor": 1792880100.0,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1792293900.0
      },
      "GS1bQcY4W3ScfJMo5Ch9c1xggBUqNpvjoWY7Yc7pJGdL": {
       "busy_until": 1792789200.0,
-      "cursor": 1792868400.0,
-      "fetched_at": 1792873678.1964195,
+      "cursor": 1792878300.0,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1792639500.0
      },
      "HMzvsEEmtzHhvZNw9uwbaG85HCTmFnkbhzUx16cy7ca3": {
       "busy_until": 1792881600.0,
-      "cursor": 1792876500.0,
-      "fetched_at": 1792877330.277979,
+      "cursor": 1792880100.0,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1791582900.0
      },
      "HQ1xV7yV3x3kY5kmHv3BCMBAigBE7FqxmHwFkVc6fXvt": {
       "busy_until": 1792878300.0,
-      "cursor": 1792862700.0,
-      "fetched_at": 1792873678.1964195,
+      "cursor": 1792878300.0,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1792207500.0
      },
      "HRMcDD9XawGTXH6QkBZs1mtiwyjTfg4bDMrL5DcjwXnb": {
       "busy_until": 1792898400.0,
-      "cursor": 1792872900.0,
-      "fetched_at": 1792873678.1964195,
+      "cursor": 1792879800.0,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1792466700.0
      },
      "HvYfFr8nm6bn9V93TDDMgqWwS2D2LsMn1Y3rDCToqeAB": {
@@ -4551,21 +4549,21 @@
       "first_bar": 1792812300.0
      },
      "YQ4NNeQxHAtdcB8ohx21eJ9U8eTzxNRvGNHkRaA4Pnw": {
-      "busy_until": 1792872000.0,
-      "cursor": 1792872900.0,
-      "fetched_at": 1792873678.1964195,
+      "busy_until": 1792903800.0,
+      "cursor": 1792880100.0,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1792725900.0
      },
      "cb4GFRgEitfu5qtxfRMiqzsaVPwgbD3HEor4cs2jFpn": {
       "busy_until": 1792892700.0,
-      "cursor": 1792876500.0,
-      "fetched_at": 1792877330.277979,
+      "cursor": 1792879800.0,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1791688500.0
      },
      "p977G14fUkDL3AoH97MAmqQ4V7Ecav5AZKhtPn21EHC": {
       "busy_until": 1792872600.0,
-      "cursor": 1792872900.0,
-      "fetched_at": 1792873678.1964195,
+      "cursor": 1792879200.0,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1792639500.0
      }
     }
@@ -4576,12 +4574,12 @@
    "size_factor": 1.0,
    "status": "retired",
    "verdict": {
-    "at": 1792877330.277979,
+    "at": 1792880852.7371702,
     "decision": "fail",
     "n": 223,
     "reason": "223 trades over 15.0 days: mean net -1.93% [-9.24, +13.27] (187 at real-trading execution: -1.44% vs -0.56% at the registered execution) (-2.60% at measured pool fees), excess over random entries +4.87% [-1.48, +16.06]",
     "stats": {
-     "days": 14.97,
+     "days": 15.02,
      "excess": 0.04871458584702782,
      "excess_hi": 0.16062658215311504,
      "excess_lo": -0.01483539301398708,
@@ -4600,7 +4598,7 @@
   "dip~drop=0.05~hold_bars=24": {
    "costs_version": "2026-10-10-hourly-observed",
    "data": {
-    "fetch_skipped": 33,
+    "fetch_skipped": 34,
     "pools": {
      "261jSeTokAquP254HbWiXmvJb3MUA19VAmv5XbjxXjqh": {
       "busy_until": 1792588500.0,
@@ -4610,8 +4608,8 @@
      },
      "2B8tftZ5ww8TREMr3pgkgERLNjJyJxEAPWMENViGMsL4": {
       "busy_until": 1792881000.0,
-      "cursor": 1792876500.0,
-      "fetched_at": 1792877330.277979,
+      "cursor": 1792880100.0,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1791582900.0
      },
      "2U5kdozDrdgYzyGRNbTdBejGLYEeRt1FkERQmyPbV85P": {
@@ -4622,44 +4620,44 @@
      },
      "2aEWsofKAiPyoTEdsSWVDL5paCmb9GvK9Dtg5w8UhHgj": {
       "busy_until": 1792726800.0,
-      "cursor": 1792816500.0,
-      "fetched_at": 1792873678.1964195,
+      "cursor": 1792878600.0,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1792380300.0
      },
      "2sA5714M6Bst4zdPxS5TRfPPEAz1pCAmDYhGGatFrAZW": {
-      "busy_until": 1792869000.0,
-      "cursor": 1792869000.0,
-      "fetched_at": 1792873678.1964195,
+      "busy_until": 1792876500.0,
+      "cursor": 1792880100.0,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1792466700.0
      },
      "3ENsvQnHuHtQzMBxpDG4pkxwbBnzJvFcz2yyCfxC9QNH": {
-      "busy_until": 1792869600.0,
-      "cursor": 1792872900.0,
-      "fetched_at": 1792873678.1964195,
+      "busy_until": 1792886700.0,
+      "cursor": 1792880100.0,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1792466700.0
      },
      "3NBq9zynLPDQQDvYf8xiMbWywQfKZD7m7fyprY524efq": {
       "busy_until": 1792641900.0,
-      "cursor": 1792866300.0,
-      "fetched_at": 1792877330.277979,
+      "cursor": 1792878600.0,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1791582900.0
      },
      "3f5N5Sq1Rz6aGySeuwSG466UuoNpisFZY221QyynsYPu": {
       "busy_until": 0.0,
       "cursor": 1792470600.0,
-      "fetched_at": 1792873678.1964195,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1792470600.0
      },
      "3p3yajJRqwrvgNs3M1UDVDXVUriZjZ8vE8bdpnpvkNRJ": {
       "busy_until": 1792874400.0,
-      "cursor": 1792872300.0,
-      "fetched_at": 1792873678.1964195,
+      "cursor": 1792878000.0,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1792380300.0
      },
      "4JAnKFddd5fFTk5PxDj3PpTWJuTEfSWQEjZJcgKQ9KwW": {
       "busy_until": 1792858800.0,
-      "cursor": 1792876500.0,
-      "fetched_at": 1792877330.277979,
+      "cursor": 1792880100.0,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1791582900.0
      },
      "4MWjp1aBQqE9Y6iC5cd3NrVvWWcHsN2LgpjWYMDK7u7E": {
@@ -4670,26 +4668,26 @@
      },
      "4R8CiMnJWDNoes3fQi1ccPFJygPXazaHaWpHrN3rZeNj": {
       "busy_until": 1792880100.0,
-      "cursor": 1792876500.0,
-      "fetched_at": 1792877330.277979,
+      "cursor": 1792880100.0,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1791663300.0
      },
      "4SMPAuRkMTMFiMnW1oDcDQdi54CC9R4of9xtr4phiYiG": {
-      "busy_until": 1792870200.0,
-      "cursor": 1792872900.0,
-      "fetched_at": 1792873678.1964195,
+      "busy_until": 1792885500.0,
+      "cursor": 1792880100.0,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1792725900.0
      },
      "4qxSqMh6iEdbdvtMp8r5MK2psAGKNk57PfGeVo2VhczQ": {
       "busy_until": 1792866300.0,
-      "cursor": 1792875000.0,
-      "fetched_at": 1792877330.277979,
+      "cursor": 1792880100.0,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1791663000.0
      },
      "51Fk2LMfAz85d2w5ZqGdtmHgEJvStK1j8WDb9WB3YYK3": {
       "busy_until": 1792862700.0,
       "cursor": 1792872600.0,
-      "fetched_at": 1792873678.1964195,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1792725000.0
      },
      "54q8E1sqsfVBgytXso1xUGS3WRovFAJTfou5XKLFpnp1": {
@@ -4700,14 +4698,14 @@
      },
      "5E3dXLXGwmTDCokA51WYYaKttjFZBwqCoyUHBUi5gt2m": {
       "busy_until": 1792872300.0,
-      "cursor": 1792872900.0,
-      "fetched_at": 1792873678.1964195,
+      "cursor": 1792880100.0,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1792725900.0
      },
      "5Jj7H9v191CXQWS6uk6XrsydmYo5isjDWqLyCUPqm1dX": {
       "busy_until": 1792715100.0,
       "cursor": 1792864800.0,
-      "fetched_at": 1792873678.1964195,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1792466100.0
      },
      "5XH4eWypoE3wita96WjAnbQBJxYAjpk6bkJADu17UsiH": {
@@ -4719,19 +4717,19 @@
      "5qL4fEq9pBczu8xVpJox3FEDUyP9qyMB6iEK6xPo9kPM": {
       "busy_until": 0.0,
       "cursor": 1792215000.0,
-      "fetched_at": 1792873678.1964195,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1792215000.0
      },
      "65GHmCbyRME3XwKjTqDB7pMJw2gvj2LZryfWKczoAqFR": {
       "busy_until": 1792469400.0,
       "cursor": 1792830000.0,
-      "fetched_at": 1792877330.277979,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1791582900.0
      },
      "6DNxwecbtdNNstpB5tdnxZsfGe3HmsNgEUZhdue4b1PH": {
       "busy_until": 1792878300.0,
-      "cursor": 1792872900.0,
-      "fetched_at": 1792873678.1964195,
+      "cursor": 1792880100.0,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1792639500.0
      },
      "6FBnZzRtdMrjxEPdLK4UGP9Xm2hsYwLY3xp6EWB1e2md": {
@@ -4748,20 +4746,20 @@
      },
      "6QyYdc6jgeKnfP1FWhiexMYq3JQ3sidSYoubjWUTo3rm": {
       "busy_until": 1792883100.0,
-      "cursor": 1792876500.0,
-      "fetched_at": 1792877330.277979,
+      "cursor": 1792880100.0,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1791582900.0
      },
      "6aXb1e6uTMsz77zhncRYFe7AugzBxxcUnhCodhd3odag": {
       "busy_until": 1792872000.0,
-      "cursor": 1792872000.0,
-      "fetched_at": 1792873678.1964195,
+      "cursor": 1792879200.0,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1792380300.0
      },
      "6f1HD3hodH3A8zHSL4ddA5yB6TjGYpidwiZVHJJRBn5M": {
       "busy_until": 1792773900.0,
-      "cursor": 1792870800.0,
-      "fetched_at": 1792873678.1964195,
+      "cursor": 1792879500.0,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1792380300.0
      },
      "6iep3EgqksbZwgzMBCyAJtiVtVYkCgL9BnPBEwLR8AGQ": {
@@ -4772,26 +4770,26 @@
      },
      "6qUUCwD9fyRafora8XVmdApQBxCkbUiZTMkcYD47rWsS": {
       "busy_until": 1792863900.0,
-      "cursor": 1792875300.0,
-      "fetched_at": 1792877330.277979,
+      "cursor": 1792879800.0,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1791663300.0
      },
      "745ATaSSWxvry5qt1XVv9eXuG884hDvNJfvA2o82dNBi": {
-      "busy_until": 1792859700.0,
-      "cursor": 1792875900.0,
-      "fetched_at": 1792877330.277979,
+      "busy_until": 1792885500.0,
+      "cursor": 1792880100.0,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1791582900.0
      },
      "7ix8yMJsoCYsXgGjRjx7zPCQumGiBVotNUYSoMYuJPy2": {
       "busy_until": 1792777800.0,
-      "cursor": 1792864800.0,
-      "fetched_at": 1792873678.1964195,
+      "cursor": 1792880100.0,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1792293900.0
      },
      "7kMxqvCqLbHCXDy25oVX7Bx44Z3ud6SYZBK2jhJpRLsf": {
       "busy_until": 0.0,
       "cursor": 1792214700.0,
-      "fetched_at": 1792873678.1964195,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1792214700.0
      },
      "7mHdMhMnEpXSjF6hoj2wxRnzkSE1KwePq5UErjwnrLs7": {
@@ -4814,8 +4812,8 @@
      },
      "867dKvaCcyRrUDP66bqNXbujXfjaxsNB9wTpc4CmBdAD": {
       "busy_until": 1792869000.0,
-      "cursor": 1792876500.0,
-      "fetched_at": 1792877330.277979,
+      "cursor": 1792880100.0,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1791582900.0
      },
      "89DxSaK1YZx8TbPapMSSEgkEdhYuhYBo26BytgELrJBd": {
@@ -4826,14 +4824,14 @@
      },
      "8JoQRQ4oAXNuQSTcComuUAAgF3ViJ7e3escwatMncZ3H": {
       "busy_until": 1792476600.0,
-      "cursor": 1792871400.0,
-      "fetched_at": 1792873678.1964195,
+      "cursor": 1792879500.0,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1792293900.0
      },
      "8ewuF2o8ACro7fqWepZ3tKhkbBjndZU4Ldk9scRPw83d": {
       "busy_until": 1792881600.0,
-      "cursor": 1792876500.0,
-      "fetched_at": 1792877330.277979,
+      "cursor": 1792880100.0,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1791582900.0
      },
      "8iSy6UUmgDqXsVAKL8tJyRUXSTLdMwPuC6QXW5j3fhjA": {
@@ -4850,8 +4848,8 @@
      },
      "9d6fbbtAGjM6eFHo4NpsPrDgnwhZNdetgewHmupZTVjV": {
       "busy_until": 1792866000.0,
-      "cursor": 1792875900.0,
-      "fetched_at": 1792877330.277979,
+      "cursor": 1792877100.0,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1791663300.0
      },
      "9dsiuydk5EFRCLk6VEywY95Nn3jjGbdWNijuACf1PXuA": {
@@ -4869,7 +4867,7 @@
      "A7nWJWGUjNyWbVNPA5RrvLoF37j3ovdh8DKdgxYefcdk": {
       "busy_until": 1792869900.0,
       "cursor": 1792875000.0,
-      "fetched_at": 1792877330.277979,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1791582900.0
      },
      "ABqXgS5c78P8Nix49kqsBTNQjAmMAhCBH2mvjq1zqQZ2": {
@@ -4879,21 +4877,21 @@
       "first_bar": 1792293900.0
      },
      "AJE7eWHJMBjvwib78dGwS8iZxb7bGx7NXLZVXX6xMHn6": {
-      "busy_until": 1792872600.0,
-      "cursor": 1792872600.0,
-      "fetched_at": 1792873678.1964195,
+      "busy_until": 1792880100.0,
+      "cursor": 1792879800.0,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1792293900.0
      },
      "ARcvd2GiVSmz7oR2ozpe3KzVBadsVrEav5DdnVJ8sjhK": {
       "busy_until": 1792875900.0,
-      "cursor": 1792872900.0,
-      "fetched_at": 1792873678.1964195,
+      "cursor": 1792879500.0,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1791774900.0
      },
      "AZgECLWq2Xd7KfjKVt6jFuJTWmFxqBuhAA4PXKDMwVcr": {
       "busy_until": 0.0,
       "cursor": 1791611700.0,
-      "fetched_at": 1792877330.277979,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1791611700.0
      },
      "AnrCHvfJUzMtos8DGjpT2XKurVPPYAVLDturASNwXcd4": {
@@ -4904,8 +4902,8 @@
      },
      "AscPffyZxMnHHFHqQWawtcrmasgUzCJtwyu6oS6CQD2R": {
       "busy_until": 1792779900.0,
-      "cursor": 1792872900.0,
-      "fetched_at": 1792873678.1964195,
+      "cursor": 1792874400.0,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1792466700.0
      },
      "BCiyK7LarB1yUbGngmQGJq9CQawiTDQ1i65HDnfhiqM5": {
@@ -4916,8 +4914,8 @@
      },
      "BUMh6YebpBvAh4by4oTGJUvzQ9CvH6dqPgrZvXFDMwC1": {
       "busy_until": 1792860000.0,
-      "cursor": 1792872000.0,
-      "fetched_at": 1792873678.1964195,
+      "cursor": 1792880100.0,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1792293900.0
      },
      "BoW9h5GBqdNR55fKE3VHdzNgPLANzmYKY1eiqmx1DRLZ": {
@@ -4933,15 +4931,15 @@
       "first_bar": 1792812300.0
      },
      "CEXh16Ug4DRAXhxk62B7qgV6Qpwfq9SHfocuSEgB6ggT": {
-      "busy_until": 1792873200.0,
-      "cursor": 1792872900.0,
-      "fetched_at": 1792873678.1964195,
+      "busy_until": 1792880700.0,
+      "cursor": 1792880100.0,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1792293900.0
      },
      "CR5dTgvTddGAqDjP8dGHTL51N6PKRaXqxFBp9FQ5PrKn": {
       "busy_until": 1791932100.0,
       "cursor": 1792825800.0,
-      "fetched_at": 1792877330.277979,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1791577500.0
      },
      "CwaEjWuUHn9v1ETy3iMHn9QV5pvbodNrJDovQMsPSv1R": {
@@ -4953,13 +4951,13 @@
      "Cx1SFBFC6M4FW68bSGKfQgWKY4w1E4fqcAeiesLrHJ4f": {
       "busy_until": 0.0,
       "cursor": 1791687300.0,
-      "fetched_at": 1792873678.1964195,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1791687300.0
      },
      "CyJwKnLiiY4fmiwqMCSWFSHxo7T9Ubshgs2uRAuJCrk5": {
       "busy_until": 1792869600.0,
-      "cursor": 1792876500.0,
-      "fetched_at": 1792877330.277979,
+      "cursor": 1792880100.0,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1791582900.0
      },
      "D3vzKTEJntE3wSu4QaPd79e2bnifnHggVDVewu1ukkAJ": {
@@ -4994,20 +4992,20 @@
      },
      "Ds6CaQYBQL7GjDATf9CVH189S9ef1mz7dkTrSoV7RWEM": {
       "busy_until": 1792850400.0,
-      "cursor": 1792871700.0,
-      "fetched_at": 1792873678.1964195,
+      "cursor": 1792878600.0,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1792725900.0
      },
      "EFUomuhEoy5JcJQiPqJML9RNZaFCwyfwSBZhjdGrV6HT": {
       "busy_until": 0.0,
       "cursor": 1792551900.0,
-      "fetched_at": 1792873678.1964195,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1792551900.0
      },
      "EzJV2yGpbS3VM5qWmgqYQ4GPVi77LdhwgFhAy6u4ts1U": {
       "busy_until": 1792871400.0,
-      "cursor": 1792872600.0,
-      "fetched_at": 1792873678.1964195,
+      "cursor": 1792880100.0,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1792207500.0
      },
      "FCHzyHzgvcMjKuTNKjP9HBFta75XAmewToyKJ5LT8Rje": {
@@ -5030,8 +5028,8 @@
      },
      "Fe7bpDYCs74GqiCUF14HwgUMToPKV1d9mDYVX5BTohFr": {
       "busy_until": 1792878900.0,
-      "cursor": 1792876500.0,
-      "fetched_at": 1792877330.277979,
+      "cursor": 1792880100.0,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1791663300.0
      },
      "Fk5MuGv2H3Qpt6AxdhS2KHgDL2os424BvfEoqFNTdv9Y": {
@@ -5042,14 +5040,14 @@
      },
      "FnzKY6x7entQ1eR3D225dQyT7ybfka4PskBMQhb8L3CC": {
       "busy_until": 1792859100.0,
-      "cursor": 1792872900.0,
-      "fetched_at": 1792873678.1964195,
+      "cursor": 1792880100.0,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1792553100.0
      },
      "FpyosQzp5ijfrxqqBVNm67rfam7VsbVNAm7PUf8Yvt1c": {
       "busy_until": 1792865100.0,
-      "cursor": 1792872900.0,
-      "fetched_at": 1792873678.1964195,
+      "cursor": 1792880100.0,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1792207500.0
      },
      "GKVfZiv4EUNViMRfUejEn5QJN29oXGCyk7FY2iUv3bGi": {
@@ -5060,38 +5058,38 @@
      },
      "GLL3CzybpSCLZdoACf8QUM5YrKVwyA65kQ2RcTsJxxzV": {
       "busy_until": 1792863900.0,
-      "cursor": 1792876500.0,
-      "fetched_at": 1792877330.277979,
+      "cursor": 1792880100.0,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1791688500.0
      },
      "GLN7Dr7AsP9GRxAjxiVBk9Rnwyn74ar2R3BuGk8ZxQn1": {
-      "busy_until": 1792873500.0,
-      "cursor": 1792872900.0,
-      "fetched_at": 1792873678.1964195,
+      "busy_until": 1792881000.0,
+      "cursor": 1792880100.0,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1792293900.0
      },
      "GS1bQcY4W3ScfJMo5Ch9c1xggBUqNpvjoWY7Yc7pJGdL": {
       "busy_until": 1792767600.0,
-      "cursor": 1792868400.0,
-      "fetched_at": 1792873678.1964195,
+      "cursor": 1792878300.0,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1792639500.0
      },
      "HMzvsEEmtzHhvZNw9uwbaG85HCTmFnkbhzUx16cy7ca3": {
       "busy_until": 1792862100.0,
-      "cursor": 1792876500.0,
-      "fetched_at": 1792877330.277979,
+      "cursor": 1792880100.0,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1791582900.0
      },
      "HQ1xV7yV3x3kY5kmHv3BCMBAigBE7FqxmHwFkVc6fXvt": {
       "busy_until": 1792865700.0,
-      "cursor": 1792862700.0,
-      "fetched_at": 1792873678.1964195,
+      "cursor": 1792878300.0,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1792207500.0
      },
      "HRMcDD9XawGTXH6QkBZs1mtiwyjTfg4bDMrL5DcjwXnb": {
-      "busy_until": 1792869900.0,
-      "cursor": 1792872900.0,
-      "fetched_at": 1792873678.1964195,
+      "busy_until": 1792880700.0,
+      "cursor": 1792879800.0,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1792466700.0
      },
      "HvYfFr8nm6bn9V93TDDMgqWwS2D2LsMn1Y3rDCToqeAB": {
@@ -5107,21 +5105,21 @@
       "first_bar": 1792812300.0
      },
      "YQ4NNeQxHAtdcB8ohx21eJ9U8eTzxNRvGNHkRaA4Pnw": {
-      "busy_until": 1792868400.0,
-      "cursor": 1792872900.0,
-      "fetched_at": 1792873678.1964195,
+      "busy_until": 1792882800.0,
+      "cursor": 1792880100.0,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1792725900.0
      },
      "cb4GFRgEitfu5qtxfRMiqzsaVPwgbD3HEor4cs2jFpn": {
       "busy_until": 1792876500.0,
-      "cursor": 1792876500.0,
-      "fetched_at": 1792877330.277979,
+      "cursor": 1792879800.0,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1791688500.0
      },
      "p977G14fUkDL3AoH97MAmqQ4V7Ecav5AZKhtPn21EHC": {
       "busy_until": 1792866000.0,
-      "cursor": 1792872900.0,
-      "fetched_at": 1792873678.1964195,
+      "cursor": 1792879200.0,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1792639500.0
      }
     }
@@ -5132,12 +5130,12 @@
    "size_factor": 1.0,
    "status": "retired",
    "verdict": {
-    "at": 1792877330.277979,
+    "at": 1792880852.7371702,
     "decision": "fail",
     "n": 207,
     "reason": "207 trades over 15.0 days: mean net -3.01% [-4.64, -1.12] (130 at real-trading execution: -2.93% vs -2.07% at the registered execution) (-3.74% at measured pool fees), excess over random entries +0.47% [-1.38, +2.25]",
     "stats": {
-     "days": 14.97,
+     "days": 15.02,
      "excess": 0.004658212264536603,
      "excess_hi": 0.022506785139004223,
      "excess_lo": -0.013772145767022627,
@@ -5156,7 +5154,7 @@
   "dip~drop=0.05~hold_bars=96": {
    "costs_version": "2026-10-10-hourly-observed",
    "data": {
-    "fetch_skipped": 33,
+    "fetch_skipped": 34,
     "pools": {
      "261jSeTokAquP254HbWiXmvJb3MUA19VAmv5XbjxXjqh": {
       "busy_until": 1792610100.0,
@@ -5166,8 +5164,8 @@
      },
      "2B8tftZ5ww8TREMr3pgkgERLNjJyJxEAPWMENViGMsL4": {
       "busy_until": 1792902600.0,
-      "cursor": 1792876500.0,
-      "fetched_at": 1792877330.277979,
+      "cursor": 1792880100.0,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1791582900.0
      },
      "2U5kdozDrdgYzyGRNbTdBejGLYEeRt1FkERQmyPbV85P": {
@@ -5178,44 +5176,44 @@
      },
      "2aEWsofKAiPyoTEdsSWVDL5paCmb9GvK9Dtg5w8UhHgj": {
       "busy_until": 1792748400.0,
-      "cursor": 1792816500.0,
-      "fetched_at": 1792873678.1964195,
+      "cursor": 1792878600.0,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1792380300.0
      },
      "2sA5714M6Bst4zdPxS5TRfPPEAz1pCAmDYhGGatFrAZW": {
       "busy_until": 1792891800.0,
-      "cursor": 1792872300.0,
-      "fetched_at": 1792873678.1964195,
+      "cursor": 1792880100.0,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1792466700.0
      },
      "3ENsvQnHuHtQzMBxpDG4pkxwbBnzJvFcz2yyCfxC9QNH": {
       "busy_until": 1792883400.0,
-      "cursor": 1792872900.0,
-      "fetched_at": 1792873678.1964195,
+      "cursor": 1792880100.0,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1792466700.0
      },
      "3NBq9zynLPDQQDvYf8xiMbWywQfKZD7m7fyprY524efq": {
       "busy_until": 1792663500.0,
-      "cursor": 1792866300.0,
-      "fetched_at": 1792877330.277979,
+      "cursor": 1792878600.0,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1791582900.0
      },
      "3f5N5Sq1Rz6aGySeuwSG466UuoNpisFZY221QyynsYPu": {
       "busy_until": 0.0,
       "cursor": 1792470600.0,
-      "fetched_at": 1792873678.1964195,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1792470600.0
      },
      "3p3yajJRqwrvgNs3M1UDVDXVUriZjZ8vE8bdpnpvkNRJ": {
       "busy_until": 1792896000.0,
-      "cursor": 1792872300.0,
-      "fetched_at": 1792873678.1964195,
+      "cursor": 1792878000.0,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1792380300.0
      },
      "4JAnKFddd5fFTk5PxDj3PpTWJuTEfSWQEjZJcgKQ9KwW": {
       "busy_until": 1792864200.0,
-      "cursor": 1792876500.0,
-      "fetched_at": 1792877330.277979,
+      "cursor": 1792880100.0,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1791582900.0
      },
      "4MWjp1aBQqE9Y6iC5cd3NrVvWWcHsN2LgpjWYMDK7u7E": {
@@ -5226,26 +5224,26 @@
      },
      "4R8CiMnJWDNoes3fQi1ccPFJygPXazaHaWpHrN3rZeNj": {
       "busy_until": 1792901700.0,
-      "cursor": 1792876500.0,
-      "fetched_at": 1792877330.277979,
+      "cursor": 1792880100.0,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1791663300.0
      },
      "4SMPAuRkMTMFiMnW1oDcDQdi54CC9R4of9xtr4phiYiG": {
-      "busy_until": 1792877700.0,
-      "cursor": 1792872900.0,
-      "fetched_at": 1792873678.1964195,
+      "busy_until": 1792907100.0,
+      "cursor": 1792880100.0,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1792725900.0
      },
      "4qxSqMh6iEdbdvtMp8r5MK2psAGKNk57PfGeVo2VhczQ": {
       "busy_until": 1792887900.0,
-      "cursor": 1792875000.0,
-      "fetched_at": 1792877330.277979,
+      "cursor": 1792880100.0,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1791663000.0
      },
      "51Fk2LMfAz85d2w5ZqGdtmHgEJvStK1j8WDb9WB3YYK3": {
       "busy_until": 1792884300.0,
       "cursor": 1792872600.0,
-      "fetched_at": 1792873678.1964195,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1792725000.0
      },
      "54q8E1sqsfVBgytXso1xUGS3WRovFAJTfou5XKLFpnp1": {
@@ -5256,14 +5254,14 @@
      },
      "5E3dXLXGwmTDCokA51WYYaKttjFZBwqCoyUHBUi5gt2m": {
       "busy_until": 1792876800.0,
-      "cursor": 1792872900.0,
-      "fetched_at": 1792873678.1964195,
+      "cursor": 1792880100.0,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1792725900.0
      },
      "5Jj7H9v191CXQWS6uk6XrsydmYo5isjDWqLyCUPqm1dX": {
       "busy_until": 1792736700.0,
       "cursor": 1792864800.0,
-      "fetched_at": 1792873678.1964195,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1792466100.0
      },
      "5XH4eWypoE3wita96WjAnbQBJxYAjpk6bkJADu17UsiH": {
@@ -5275,19 +5273,19 @@
      "5qL4fEq9pBczu8xVpJox3FEDUyP9qyMB6iEK6xPo9kPM": {
       "busy_until": 0.0,
       "cursor": 1792215000.0,
-      "fetched_at": 1792873678.1964195,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1792215000.0
      },
      "65GHmCbyRME3XwKjTqDB7pMJw2gvj2LZryfWKczoAqFR": {
       "busy_until": 1792491000.0,
       "cursor": 1792830000.0,
-      "fetched_at": 1792877330.277979,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1791582900.0
      },
      "6DNxwecbtdNNstpB5tdnxZsfGe3HmsNgEUZhdue4b1PH": {
       "busy_until": 1792889100.0,
-      "cursor": 1792872900.0,
-      "fetched_at": 1792873678.1964195,
+      "cursor": 1792880100.0,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1792639500.0
      },
      "6FBnZzRtdMrjxEPdLK4UGP9Xm2hsYwLY3xp6EWB1e2md": {
@@ -5304,20 +5302,20 @@
      },
      "6QyYdc6jgeKnfP1FWhiexMYq3JQ3sidSYoubjWUTo3rm": {
       "busy_until": 1792880100.0,
-      "cursor": 1792876500.0,
-      "fetched_at": 1792877330.277979,
+      "cursor": 1792880100.0,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1791582900.0
      },
      "6aXb1e6uTMsz77zhncRYFe7AugzBxxcUnhCodhd3odag": {
       "busy_until": 1792870500.0,
-      "cursor": 1792872000.0,
-      "fetched_at": 1792873678.1964195,
+      "cursor": 1792879200.0,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1792380300.0
      },
      "6f1HD3hodH3A8zHSL4ddA5yB6TjGYpidwiZVHJJRBn5M": {
       "busy_until": 1792782000.0,
-      "cursor": 1792870800.0,
-      "fetched_at": 1792873678.1964195,
+      "cursor": 1792879500.0,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1792380300.0
      },
      "6iep3EgqksbZwgzMBCyAJtiVtVYkCgL9BnPBEwLR8AGQ": {
@@ -5328,26 +5326,26 @@
      },
      "6qUUCwD9fyRafora8XVmdApQBxCkbUiZTMkcYD47rWsS": {
       "busy_until": 1792875900.0,
-      "cursor": 1792875300.0,
-      "fetched_at": 1792877330.277979,
+      "cursor": 1792879800.0,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1791663300.0
      },
      "745ATaSSWxvry5qt1XVv9eXuG884hDvNJfvA2o82dNBi": {
-      "busy_until": 1792859400.0,
-      "cursor": 1792875900.0,
-      "fetched_at": 1792877330.277979,
+      "busy_until": 1792907100.0,
+      "cursor": 1792880100.0,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1791582900.0
      },
      "7ix8yMJsoCYsXgGjRjx7zPCQumGiBVotNUYSoMYuJPy2": {
       "busy_until": 1792791900.0,
-      "cursor": 1792864800.0,
-      "fetched_at": 1792873678.1964195,
+      "cursor": 1792880100.0,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1792293900.0
      },
      "7kMxqvCqLbHCXDy25oVX7Bx44Z3ud6SYZBK2jhJpRLsf": {
       "busy_until": 0.0,
       "cursor": 1792214700.0,
-      "fetched_at": 1792873678.1964195,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1792214700.0
      },
      "7mHdMhMnEpXSjF6hoj2wxRnzkSE1KwePq5UErjwnrLs7": {
@@ -5370,8 +5368,8 @@
      },
      "867dKvaCcyRrUDP66bqNXbujXfjaxsNB9wTpc4CmBdAD": {
       "busy_until": 1792890600.0,
-      "cursor": 1792876500.0,
-      "fetched_at": 1792877330.277979,
+      "cursor": 1792880100.0,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1791582900.0
      },
      "89DxSaK1YZx8TbPapMSSEgkEdhYuhYBo26BytgELrJBd": {
@@ -5382,14 +5380,14 @@
      },
      "8JoQRQ4oAXNuQSTcComuUAAgF3ViJ7e3escwatMncZ3H": {
       "busy_until": 1792478400.0,
-      "cursor": 1792871400.0,
-      "fetched_at": 1792873678.1964195,
+      "cursor": 1792879500.0,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1792293900.0
      },
      "8ewuF2o8ACro7fqWepZ3tKhkbBjndZU4Ldk9scRPw83d": {
       "busy_until": 1792895700.0,
-      "cursor": 1792876500.0,
-      "fetched_at": 1792877330.277979,
+      "cursor": 1792880100.0,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1791582900.0
      },
      "8iSy6UUmgDqXsVAKL8tJyRUXSTLdMwPuC6QXW5j3fhjA": {
@@ -5406,8 +5404,8 @@
      },
      "9d6fbbtAGjM6eFHo4NpsPrDgnwhZNdetgewHmupZTVjV": {
       "busy_until": 1792869300.0,
-      "cursor": 1792875900.0,
-      "fetched_at": 1792877330.277979,
+      "cursor": 1792877100.0,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1791663300.0
      },
      "9dsiuydk5EFRCLk6VEywY95Nn3jjGbdWNijuACf1PXuA": {
@@ -5425,7 +5423,7 @@
      "A7nWJWGUjNyWbVNPA5RrvLoF37j3ovdh8DKdgxYefcdk": {
       "busy_until": 1792891500.0,
       "cursor": 1792875000.0,
-      "fetched_at": 1792877330.277979,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1791582900.0
      },
      "ABqXgS5c78P8Nix49kqsBTNQjAmMAhCBH2mvjq1zqQZ2": {
@@ -5436,20 +5434,20 @@
      },
      "AJE7eWHJMBjvwib78dGwS8iZxb7bGx7NXLZVXX6xMHn6": {
       "busy_until": 1792883100.0,
-      "cursor": 1792872900.0,
-      "fetched_at": 1792873678.1964195,
+      "cursor": 1792879800.0,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1792293900.0
      },
      "ARcvd2GiVSmz7oR2ozpe3KzVBadsVrEav5DdnVJ8sjhK": {
       "busy_until": 1792897500.0,
-      "cursor": 1792872900.0,
-      "fetched_at": 1792873678.1964195,
+      "cursor": 1792879500.0,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1791774900.0
      },
      "AZgECLWq2Xd7KfjKVt6jFuJTWmFxqBuhAA4PXKDMwVcr": {
       "busy_until": 0.0,
       "cursor": 1791611700.0,
-      "fetched_at": 1792877330.277979,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1791611700.0
      },
      "AnrCHvfJUzMtos8DGjpT2XKurVPPYAVLDturASNwXcd4": {
@@ -5460,8 +5458,8 @@
      },
      "AscPffyZxMnHHFHqQWawtcrmasgUzCJtwyu6oS6CQD2R": {
       "busy_until": 1792801500.0,
-      "cursor": 1792872900.0,
-      "fetched_at": 1792873678.1964195,
+      "cursor": 1792874400.0,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1792466700.0
      },
      "BCiyK7LarB1yUbGngmQGJq9CQawiTDQ1i65HDnfhiqM5": {
@@ -5472,8 +5470,8 @@
      },
      "BUMh6YebpBvAh4by4oTGJUvzQ9CvH6dqPgrZvXFDMwC1": {
       "busy_until": 1792856400.0,
-      "cursor": 1792872000.0,
-      "fetched_at": 1792873678.1964195,
+      "cursor": 1792880100.0,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1792293900.0
      },
      "BoW9h5GBqdNR55fKE3VHdzNgPLANzmYKY1eiqmx1DRLZ": {
@@ -5490,14 +5488,14 @@
      },
      "CEXh16Ug4DRAXhxk62B7qgV6Qpwfq9SHfocuSEgB6ggT": {
       "busy_until": 1792881900.0,
-      "cursor": 1792872900.0,
-      "fetched_at": 1792873678.1964195,
+      "cursor": 1792880100.0,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1792293900.0
      },
      "CR5dTgvTddGAqDjP8dGHTL51N6PKRaXqxFBp9FQ5PrKn": {
       "busy_until": 1791953700.0,
       "cursor": 1792825800.0,
-      "fetched_at": 1792877330.277979,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1791577500.0
      },
      "CwaEjWuUHn9v1ETy3iMHn9QV5pvbodNrJDovQMsPSv1R": {
@@ -5509,13 +5507,13 @@
      "Cx1SFBFC6M4FW68bSGKfQgWKY4w1E4fqcAeiesLrHJ4f": {
       "busy_until": 0.0,
       "cursor": 1791687300.0,
-      "fetched_at": 1792873678.1964195,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1791687300.0
      },
      "CyJwKnLiiY4fmiwqMCSWFSHxo7T9Ubshgs2uRAuJCrk5": {
       "busy_until": 1792891200.0,
-      "cursor": 1792876500.0,
-      "fetched_at": 1792877330.277979,
+      "cursor": 1792880100.0,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1791582900.0
      },
      "D3vzKTEJntE3wSu4QaPd79e2bnifnHggVDVewu1ukkAJ": {
@@ -5550,20 +5548,20 @@
      },
      "Ds6CaQYBQL7GjDATf9CVH189S9ef1mz7dkTrSoV7RWEM": {
       "busy_until": 1792872000.0,
-      "cursor": 1792871700.0,
-      "fetched_at": 1792873678.1964195,
+      "cursor": 1792878600.0,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1792725900.0
      },
      "EFUomuhEoy5JcJQiPqJML9RNZaFCwyfwSBZhjdGrV6HT": {
       "busy_until": 0.0,
       "cursor": 1792551900.0,
-      "fetched_at": 1792873678.1964195,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1792551900.0
      },
      "EzJV2yGpbS3VM5qWmgqYQ4GPVi77LdhwgFhAy6u4ts1U": {
       "busy_until": 1792878600.0,
-      "cursor": 1792872600.0,
-      "fetched_at": 1792873678.1964195,
+      "cursor": 1792880100.0,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1792207500.0
      },
      "FCHzyHzgvcMjKuTNKjP9HBFta75XAmewToyKJ5LT8Rje": {
@@ -5586,8 +5584,8 @@
      },
      "Fe7bpDYCs74GqiCUF14HwgUMToPKV1d9mDYVX5BTohFr": {
       "busy_until": 1792900500.0,
-      "cursor": 1792876500.0,
-      "fetched_at": 1792877330.277979,
+      "cursor": 1792880100.0,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1791663300.0
      },
      "Fk5MuGv2H3Qpt6AxdhS2KHgDL2os424BvfEoqFNTdv9Y": {
@@ -5598,14 +5596,14 @@
      },
      "FnzKY6x7entQ1eR3D225dQyT7ybfka4PskBMQhb8L3CC": {
       "busy_until": 1792880700.0,
-      "cursor": 1792872900.0,
-      "fetched_at": 1792873678.1964195,
+      "cursor": 1792880100.0,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1792553100.0
      },
      "FpyosQzp5ijfrxqqBVNm67rfam7VsbVNAm7PUf8Yvt1c": {
       "busy_until": 1792886700.0,
-      "cursor": 1792872900.0,
-      "fetched_at": 1792873678.1964195,
+      "cursor": 1792880100.0,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1792207500.0
      },
      "GKVfZiv4EUNViMRfUejEn5QJN29oXGCyk7FY2iUv3bGi": {
@@ -5616,38 +5614,38 @@
      },
      "GLL3CzybpSCLZdoACf8QUM5YrKVwyA65kQ2RcTsJxxzV": {
       "busy_until": 1792874100.0,
-      "cursor": 1792876500.0,
-      "fetched_at": 1792877330.277979,
+      "cursor": 1792880100.0,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1791688500.0
      },
      "GLN7Dr7AsP9GRxAjxiVBk9Rnwyn74ar2R3BuGk8ZxQn1": {
       "busy_until": 1792887600.0,
-      "cursor": 1792872900.0,
-      "fetched_at": 1792873678.1964195,
+      "cursor": 1792880100.0,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1792293900.0
      },
      "GS1bQcY4W3ScfJMo5Ch9c1xggBUqNpvjoWY7Yc7pJGdL": {
       "busy_until": 1792789200.0,
-      "cursor": 1792868400.0,
-      "fetched_at": 1792873678.1964195,
+      "cursor": 1792878300.0,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1792639500.0
      },
      "HMzvsEEmtzHhvZNw9uwbaG85HCTmFnkbhzUx16cy7ca3": {
       "busy_until": 1792883700.0,
-      "cursor": 1792876500.0,
-      "fetched_at": 1792877330.277979,
+      "cursor": 1792880100.0,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1791582900.0
      },
      "HQ1xV7yV3x3kY5kmHv3BCMBAigBE7FqxmHwFkVc6fXvt": {
       "busy_until": 1792887300.0,
-      "cursor": 1792862700.0,
-      "fetched_at": 1792873678.1964195,
+      "cursor": 1792878300.0,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1792207500.0
      },
      "HRMcDD9XawGTXH6QkBZs1mtiwyjTfg4bDMrL5DcjwXnb": {
-      "busy_until": 1792869600.0,
-      "cursor": 1792872900.0,
-      "fetched_at": 1792873678.1964195,
+      "busy_until": 1792902300.0,
+      "cursor": 1792879800.0,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1792466700.0
      },
      "HvYfFr8nm6bn9V93TDDMgqWwS2D2LsMn1Y3rDCToqeAB": {
@@ -5663,21 +5661,21 @@
       "first_bar": 1792812300.0
      },
      "YQ4NNeQxHAtdcB8ohx21eJ9U8eTzxNRvGNHkRaA4Pnw": {
-      "busy_until": 1792872000.0,
-      "cursor": 1792872900.0,
-      "fetched_at": 1792873678.1964195,
+      "busy_until": 1792904400.0,
+      "cursor": 1792880100.0,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1792725900.0
      },
      "cb4GFRgEitfu5qtxfRMiqzsaVPwgbD3HEor4cs2jFpn": {
       "busy_until": 1792898100.0,
-      "cursor": 1792876500.0,
-      "fetched_at": 1792877330.277979,
+      "cursor": 1792879800.0,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1791688500.0
      },
      "p977G14fUkDL3AoH97MAmqQ4V7Ecav5AZKhtPn21EHC": {
       "busy_until": 1792880100.0,
-      "cursor": 1792872900.0,
-      "fetched_at": 1792873678.1964195,
+      "cursor": 1792879200.0,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1792639500.0
      }
     }
@@ -5688,12 +5686,12 @@
    "size_factor": 1.0,
    "status": "retired",
    "verdict": {
-    "at": 1792877330.277979,
+    "at": 1792880852.7371702,
     "decision": "fail",
     "n": 221,
     "reason": "221 trades over 15.0 days: mean net -2.62% [-10.04, +13.06] (190 at real-trading execution: -1.45% vs +0.30% at the registered execution) (-3.32% at measured pool fees), excess over random entries +4.06% [-2.84, +16.02]",
     "stats": {
-     "days": 14.97,
+     "days": 15.02,
      "excess": 0.040618504578393104,
      "excess_hi": 0.16019191821046133,
      "excess_lo": -0.028388596527733095,
@@ -5712,7 +5710,7 @@
   "dip~drop=0.08~hold_bars=24": {
    "costs_version": "2026-10-10-hourly-observed",
    "data": {
-    "fetch_skipped": 33,
+    "fetch_skipped": 34,
     "pools": {
      "261jSeTokAquP254HbWiXmvJb3MUA19VAmv5XbjxXjqh": {
       "busy_until": 1792588500.0,
@@ -5722,8 +5720,8 @@
      },
      "2B8tftZ5ww8TREMr3pgkgERLNjJyJxEAPWMENViGMsL4": {
       "busy_until": 1792861200.0,
-      "cursor": 1792876500.0,
-      "fetched_at": 1792877330.277979,
+      "cursor": 1792880100.0,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1791582900.0
      },
      "2U5kdozDrdgYzyGRNbTdBejGLYEeRt1FkERQmyPbV85P": {
@@ -5734,44 +5732,44 @@
      },
      "2aEWsofKAiPyoTEdsSWVDL5paCmb9GvK9Dtg5w8UhHgj": {
       "busy_until": 1792728300.0,
-      "cursor": 1792816500.0,
-      "fetched_at": 1792873678.1964195,
+      "cursor": 1792878600.0,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1792380300.0
      },
      "2sA5714M6Bst4zdPxS5TRfPPEAz1pCAmDYhGGatFrAZW": {
-      "busy_until": 1792869900.0,
-      "cursor": 1792872300.0,
-      "fetched_at": 1792873678.1964195,
+      "busy_until": 1792881000.0,
+      "cursor": 1792880100.0,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1792466700.0
      },
      "3ENsvQnHuHtQzMBxpDG4pkxwbBnzJvFcz2yyCfxC9QNH": {
-      "busy_until": 1792863600.0,
-      "cursor": 1792872900.0,
-      "fetched_at": 1792873678.1964195,
+      "busy_until": 1792887000.0,
+      "cursor": 1792880100.0,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1792466700.0
      },
      "3NBq9zynLPDQQDvYf8xiMbWywQfKZD7m7fyprY524efq": {
       "busy_until": 1792609800.0,
-      "cursor": 1792866300.0,
-      "fetched_at": 1792877330.277979,
+      "cursor": 1792878600.0,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1791582900.0
      },
      "3f5N5Sq1Rz6aGySeuwSG466UuoNpisFZY221QyynsYPu": {
       "busy_until": 0.0,
       "cursor": 1792470600.0,
-      "fetched_at": 1792873678.1964195,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1792470600.0
      },
      "3p3yajJRqwrvgNs3M1UDVDXVUriZjZ8vE8bdpnpvkNRJ": {
       "busy_until": 1792776900.0,
-      "cursor": 1792872300.0,
-      "fetched_at": 1792873678.1964195,
+      "cursor": 1792878000.0,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1792380300.0
      },
      "4JAnKFddd5fFTk5PxDj3PpTWJuTEfSWQEjZJcgKQ9KwW": {
       "busy_until": 1792859100.0,
-      "cursor": 1792876500.0,
-      "fetched_at": 1792877330.277979,
+      "cursor": 1792880100.0,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1791582900.0
      },
      "4MWjp1aBQqE9Y6iC5cd3NrVvWWcHsN2LgpjWYMDK7u7E": {
@@ -5781,27 +5779,27 @@
       "first_bar": 1791948300.0
      },
      "4R8CiMnJWDNoes3fQi1ccPFJygPXazaHaWpHrN3rZeNj": {
-      "busy_until": 1792842600.0,
-      "cursor": 1792876500.0,
-      "fetched_at": 1792877330.277979,
+      "busy_until": 1792884000.0,
+      "cursor": 1792880100.0,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1791663300.0
      },
      "4SMPAuRkMTMFiMnW1oDcDQdi54CC9R4of9xtr4phiYiG": {
       "busy_until": 1792855500.0,
-      "cursor": 1792872900.0,
-      "fetched_at": 1792873678.1964195,
+      "cursor": 1792880100.0,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1792725900.0
      },
      "4qxSqMh6iEdbdvtMp8r5MK2psAGKNk57PfGeVo2VhczQ": {
       "busy_until": 1792866600.0,
-      "cursor": 1792875000.0,
-      "fetched_at": 1792877330.277979,
+      "cursor": 1792880100.0,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1791663000.0
      },
      "51Fk2LMfAz85d2w5ZqGdtmHgEJvStK1j8WDb9WB3YYK3": {
       "busy_until": 1792785900.0,
       "cursor": 1792872600.0,
-      "fetched_at": 1792873678.1964195,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1792725000.0
      },
      "54q8E1sqsfVBgytXso1xUGS3WRovFAJTfou5XKLFpnp1": {
@@ -5812,14 +5810,14 @@
      },
      "5E3dXLXGwmTDCokA51WYYaKttjFZBwqCoyUHBUi5gt2m": {
       "busy_until": 1792862100.0,
-      "cursor": 1792872900.0,
-      "fetched_at": 1792873678.1964195,
+      "cursor": 1792880100.0,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1792725900.0
      },
      "5Jj7H9v191CXQWS6uk6XrsydmYo5isjDWqLyCUPqm1dX": {
       "busy_until": 1792570200.0,
       "cursor": 1792864800.0,
-      "fetched_at": 1792873678.1964195,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1792466100.0
      },
      "5XH4eWypoE3wita96WjAnbQBJxYAjpk6bkJADu17UsiH": {
@@ -5831,19 +5829,19 @@
      "5qL4fEq9pBczu8xVpJox3FEDUyP9qyMB6iEK6xPo9kPM": {
       "busy_until": 0.0,
       "cursor": 1792215000.0,
-      "fetched_at": 1792873678.1964195,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1792215000.0
      },
      "65GHmCbyRME3XwKjTqDB7pMJw2gvj2LZryfWKczoAqFR": {
       "busy_until": 1792469400.0,
       "cursor": 1792830000.0,
-      "fetched_at": 1792877330.277979,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1791582900.0
      },
      "6DNxwecbtdNNstpB5tdnxZsfGe3HmsNgEUZhdue4b1PH": {
       "busy_until": 1792867500.0,
-      "cursor": 1792872900.0,
-      "fetched_at": 1792873678.1964195,
+      "cursor": 1792880100.0,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1792639500.0
      },
      "6FBnZzRtdMrjxEPdLK4UGP9Xm2hsYwLY3xp6EWB1e2md": {
@@ -5860,20 +5858,20 @@
      },
      "6QyYdc6jgeKnfP1FWhiexMYq3JQ3sidSYoubjWUTo3rm": {
       "busy_until": 1792883400.0,
-      "cursor": 1792876500.0,
-      "fetched_at": 1792877330.277979,
+      "cursor": 1792880100.0,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1791582900.0
      },
      "6aXb1e6uTMsz77zhncRYFe7AugzBxxcUnhCodhd3odag": {
       "busy_until": 1792872000.0,
-      "cursor": 1792872000.0,
-      "fetched_at": 1792873678.1964195,
+      "cursor": 1792879200.0,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1792380300.0
      },
      "6f1HD3hodH3A8zHSL4ddA5yB6TjGYpidwiZVHJJRBn5M": {
       "busy_until": 1792763100.0,
-      "cursor": 1792870800.0,
-      "fetched_at": 1792873678.1964195,
+      "cursor": 1792879500.0,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1792380300.0
      },
      "6iep3EgqksbZwgzMBCyAJtiVtVYkCgL9BnPBEwLR8AGQ": {
@@ -5884,26 +5882,26 @@
      },
      "6qUUCwD9fyRafora8XVmdApQBxCkbUiZTMkcYD47rWsS": {
       "busy_until": 1792863900.0,
-      "cursor": 1792875300.0,
-      "fetched_at": 1792877330.277979,
+      "cursor": 1792879800.0,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1791663300.0
      },
      "745ATaSSWxvry5qt1XVv9eXuG884hDvNJfvA2o82dNBi": {
-      "busy_until": 1792861200.0,
-      "cursor": 1792875900.0,
-      "fetched_at": 1792877330.277979,
+      "busy_until": 1792885800.0,
+      "cursor": 1792880100.0,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1791582900.0
      },
      "7ix8yMJsoCYsXgGjRjx7zPCQumGiBVotNUYSoMYuJPy2": {
       "busy_until": 1792775100.0,
-      "cursor": 1792864800.0,
-      "fetched_at": 1792873678.1964195,
+      "cursor": 1792880100.0,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1792293900.0
      },
      "7kMxqvCqLbHCXDy25oVX7Bx44Z3ud6SYZBK2jhJpRLsf": {
       "busy_until": 0.0,
       "cursor": 1792214700.0,
-      "fetched_at": 1792873678.1964195,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1792214700.0
      },
      "7mHdMhMnEpXSjF6hoj2wxRnzkSE1KwePq5UErjwnrLs7": {
@@ -5926,8 +5924,8 @@
      },
      "867dKvaCcyRrUDP66bqNXbujXfjaxsNB9wTpc4CmBdAD": {
       "busy_until": 1792875300.0,
-      "cursor": 1792876500.0,
-      "fetched_at": 1792877330.277979,
+      "cursor": 1792880100.0,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1791582900.0
      },
      "89DxSaK1YZx8TbPapMSSEgkEdhYuhYBo26BytgELrJBd": {
@@ -5938,14 +5936,14 @@
      },
      "8JoQRQ4oAXNuQSTcComuUAAgF3ViJ7e3escwatMncZ3H": {
       "busy_until": 1792464300.0,
-      "cursor": 1792871400.0,
-      "fetched_at": 1792873678.1964195,
+      "cursor": 1792879500.0,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1792293900.0
      },
      "8ewuF2o8ACro7fqWepZ3tKhkbBjndZU4Ldk9scRPw83d": {
       "busy_until": 1792874100.0,
-      "cursor": 1792876500.0,
-      "fetched_at": 1792877330.277979,
+      "cursor": 1792880100.0,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1791582900.0
      },
      "8iSy6UUmgDqXsVAKL8tJyRUXSTLdMwPuC6QXW5j3fhjA": {
@@ -5962,8 +5960,8 @@
      },
      "9d6fbbtAGjM6eFHo4NpsPrDgnwhZNdetgewHmupZTVjV": {
       "busy_until": 1792853100.0,
-      "cursor": 1792875900.0,
-      "fetched_at": 1792877330.277979,
+      "cursor": 1792877100.0,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1791663300.0
      },
      "9dsiuydk5EFRCLk6VEywY95Nn3jjGbdWNijuACf1PXuA": {
@@ -5981,7 +5979,7 @@
      "A7nWJWGUjNyWbVNPA5RrvLoF37j3ovdh8DKdgxYefcdk": {
       "busy_until": 1792869900.0,
       "cursor": 1792875000.0,
-      "fetched_at": 1792877330.277979,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1791582900.0
      },
      "ABqXgS5c78P8Nix49kqsBTNQjAmMAhCBH2mvjq1zqQZ2": {
@@ -5992,20 +5990,20 @@
      },
      "AJE7eWHJMBjvwib78dGwS8iZxb7bGx7NXLZVXX6xMHn6": {
       "busy_until": 1792872600.0,
-      "cursor": 1792872900.0,
-      "fetched_at": 1792873678.1964195,
+      "cursor": 1792879800.0,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1792293900.0
      },
      "ARcvd2GiVSmz7oR2ozpe3KzVBadsVrEav5DdnVJ8sjhK": {
       "busy_until": 1792856700.0,
-      "cursor": 1792872900.0,
-      "fetched_at": 1792873678.1964195,
+      "cursor": 1792879500.0,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1791774900.0
      },
      "AZgECLWq2Xd7KfjKVt6jFuJTWmFxqBuhAA4PXKDMwVcr": {
       "busy_until": 0.0,
       "cursor": 1791611700.0,
-      "fetched_at": 1792877330.277979,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1791611700.0
      },
      "AnrCHvfJUzMtos8DGjpT2XKurVPPYAVLDturASNwXcd4": {
@@ -6016,8 +6014,8 @@
      },
      "AscPffyZxMnHHFHqQWawtcrmasgUzCJtwyu6oS6CQD2R": {
       "busy_until": 1792782900.0,
-      "cursor": 1792872900.0,
-      "fetched_at": 1792873678.1964195,
+      "cursor": 1792874400.0,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1792466700.0
      },
      "BCiyK7LarB1yUbGngmQGJq9CQawiTDQ1i65HDnfhiqM5": {
@@ -6028,8 +6026,8 @@
      },
      "BUMh6YebpBvAh4by4oTGJUvzQ9CvH6dqPgrZvXFDMwC1": {
       "busy_until": 1792716600.0,
-      "cursor": 1792872000.0,
-      "fetched_at": 1792873678.1964195,
+      "cursor": 1792880100.0,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1792293900.0
      },
      "BoW9h5GBqdNR55fKE3VHdzNgPLANzmYKY1eiqmx1DRLZ": {
@@ -6045,15 +6043,15 @@
       "first_bar": 1792812300.0
      },
      "CEXh16Ug4DRAXhxk62B7qgV6Qpwfq9SHfocuSEgB6ggT": {
-      "busy_until": 1792873500.0,
-      "cursor": 1792872900.0,
-      "fetched_at": 1792873678.1964195,
+      "busy_until": 1792882500.0,
+      "cursor": 1792880100.0,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1792293900.0
      },
      "CR5dTgvTddGAqDjP8dGHTL51N6PKRaXqxFBp9FQ5PrKn": {
       "busy_until": 1791932100.0,
       "cursor": 1792825800.0,
-      "fetched_at": 1792877330.277979,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1791577500.0
      },
      "CwaEjWuUHn9v1ETy3iMHn9QV5pvbodNrJDovQMsPSv1R": {
@@ -6065,13 +6063,13 @@
      "Cx1SFBFC6M4FW68bSGKfQgWKY4w1E4fqcAeiesLrHJ4f": {
       "busy_until": 0.0,
       "cursor": 1791687300.0,
-      "fetched_at": 1792873678.1964195,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1791687300.0
      },
      "CyJwKnLiiY4fmiwqMCSWFSHxo7T9Ubshgs2uRAuJCrk5": {
       "busy_until": 1792864800.0,
-      "cursor": 1792876500.0,
-      "fetched_at": 1792877330.277979,
+      "cursor": 1792880100.0,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1791582900.0
      },
      "D3vzKTEJntE3wSu4QaPd79e2bnifnHggVDVewu1ukkAJ": {
@@ -6106,20 +6104,20 @@
      },
      "Ds6CaQYBQL7GjDATf9CVH189S9ef1mz7dkTrSoV7RWEM": {
       "busy_until": 1792799400.0,
-      "cursor": 1792871700.0,
-      "fetched_at": 1792873678.1964195,
+      "cursor": 1792878600.0,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1792725900.0
      },
      "EFUomuhEoy5JcJQiPqJML9RNZaFCwyfwSBZhjdGrV6HT": {
       "busy_until": 0.0,
       "cursor": 1792551900.0,
-      "fetched_at": 1792873678.1964195,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1792551900.0
      },
      "EzJV2yGpbS3VM5qWmgqYQ4GPVi77LdhwgFhAy6u4ts1U": {
       "busy_until": 1792871700.0,
-      "cursor": 1792872600.0,
-      "fetched_at": 1792873678.1964195,
+      "cursor": 1792880100.0,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1792207500.0
      },
      "FCHzyHzgvcMjKuTNKjP9HBFta75XAmewToyKJ5LT8Rje": {
@@ -6142,8 +6140,8 @@
      },
      "Fe7bpDYCs74GqiCUF14HwgUMToPKV1d9mDYVX5BTohFr": {
       "busy_until": 1792865400.0,
-      "cursor": 1792876500.0,
-      "fetched_at": 1792877330.277979,
+      "cursor": 1792880100.0,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1791663300.0
      },
      "Fk5MuGv2H3Qpt6AxdhS2KHgDL2os424BvfEoqFNTdv9Y": {
@@ -6154,14 +6152,14 @@
      },
      "FnzKY6x7entQ1eR3D225dQyT7ybfka4PskBMQhb8L3CC": {
       "busy_until": 0.0,
-      "cursor": 1792872900.0,
-      "fetched_at": 1792873678.1964195,
+      "cursor": 1792880100.0,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1792553100.0
      },
      "FpyosQzp5ijfrxqqBVNm67rfam7VsbVNAm7PUf8Yvt1c": {
       "busy_until": 1792865100.0,
-      "cursor": 1792872900.0,
-      "fetched_at": 1792873678.1964195,
+      "cursor": 1792880100.0,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1792207500.0
      },
      "GKVfZiv4EUNViMRfUejEn5QJN29oXGCyk7FY2iUv3bGi": {
@@ -6172,38 +6170,38 @@
      },
      "GLL3CzybpSCLZdoACf8QUM5YrKVwyA65kQ2RcTsJxxzV": {
       "busy_until": 1792863900.0,
-      "cursor": 1792876500.0,
-      "fetched_at": 1792877330.277979,
+      "cursor": 1792880100.0,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1791688500.0
      },
      "GLN7Dr7AsP9GRxAjxiVBk9Rnwyn74ar2R3BuGk8ZxQn1": {
-      "busy_until": 1792873500.0,
-      "cursor": 1792872900.0,
-      "fetched_at": 1792873678.1964195,
+      "busy_until": 1792881000.0,
+      "cursor": 1792880100.0,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1792293900.0
      },
      "GS1bQcY4W3ScfJMo5Ch9c1xggBUqNpvjoWY7Yc7pJGdL": {
       "busy_until": 1792767600.0,
-      "cursor": 1792868400.0,
-      "fetched_at": 1792873678.1964195,
+      "cursor": 1792878300.0,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1792639500.0
      },
      "HMzvsEEmtzHhvZNw9uwbaG85HCTmFnkbhzUx16cy7ca3": {
       "busy_until": 1792810200.0,
-      "cursor": 1792876500.0,
-      "fetched_at": 1792877330.277979,
+      "cursor": 1792880100.0,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1791582900.0
      },
      "HQ1xV7yV3x3kY5kmHv3BCMBAigBE7FqxmHwFkVc6fXvt": {
       "busy_until": 1792865700.0,
-      "cursor": 1792862700.0,
-      "fetched_at": 1792873678.1964195,
+      "cursor": 1792878300.0,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1792207500.0
      },
      "HRMcDD9XawGTXH6QkBZs1mtiwyjTfg4bDMrL5DcjwXnb": {
-      "busy_until": 1792869900.0,
-      "cursor": 1792872900.0,
-      "fetched_at": 1792873678.1964195,
+      "busy_until": 1792880700.0,
+      "cursor": 1792879800.0,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1792466700.0
      },
      "HvYfFr8nm6bn9V93TDDMgqWwS2D2LsMn1Y3rDCToqeAB": {
@@ -6219,21 +6217,21 @@
       "first_bar": 1792812300.0
      },
      "YQ4NNeQxHAtdcB8ohx21eJ9U8eTzxNRvGNHkRaA4Pnw": {
-      "busy_until": 1792868400.0,
-      "cursor": 1792872900.0,
-      "fetched_at": 1792873678.1964195,
+      "busy_until": 1792882800.0,
+      "cursor": 1792880100.0,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1792725900.0
      },
      "cb4GFRgEitfu5qtxfRMiqzsaVPwgbD3HEor4cs2jFpn": {
       "busy_until": 1792860300.0,
-      "cursor": 1792876500.0,
-      "fetched_at": 1792877330.277979,
+      "cursor": 1792879800.0,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1791688500.0
      },
      "p977G14fUkDL3AoH97MAmqQ4V7Ecav5AZKhtPn21EHC": {
       "busy_until": 1792872300.0,
-      "cursor": 1792872900.0,
-      "fetched_at": 1792873678.1964195,
+      "cursor": 1792879200.0,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1792639500.0
      }
     }
@@ -6244,12 +6242,12 @@
    "size_factor": 1.0,
    "status": "retired",
    "verdict": {
-    "at": 1792877330.277979,
+    "at": 1792880852.7371702,
     "decision": "fail",
     "n": 206,
     "reason": "206 trades over 15.0 days: mean net -1.91% [-3.57, -0.14] (147 at real-trading execution: -1.77% vs +0.10% at the registered execution) (-2.65% at measured pool fees), excess over random entries +1.94% [-0.62, +4.37]",
     "stats": {
-     "days": 14.97,
+     "days": 15.02,
      "excess": 0.01935871719228227,
      "excess_hi": 0.04374055529805303,
      "excess_lo": -0.006155223452666132,
@@ -6268,7 +6266,7 @@
   "dip~drop=0.08~hold_bars=48": {
    "costs_version": "2026-10-10-hourly-observed",
    "data": {
-    "fetch_skipped": 33,
+    "fetch_skipped": 34,
     "pools": {
      "261jSeTokAquP254HbWiXmvJb3MUA19VAmv5XbjxXjqh": {
       "busy_until": 1792595700.0,
@@ -6278,8 +6276,8 @@
      },
      "2B8tftZ5ww8TREMr3pgkgERLNjJyJxEAPWMENViGMsL4": {
       "busy_until": 1792868400.0,
-      "cursor": 1792876500.0,
-      "fetched_at": 1792877330.277979,
+      "cursor": 1792880100.0,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1791582900.0
      },
      "2U5kdozDrdgYzyGRNbTdBejGLYEeRt1FkERQmyPbV85P": {
@@ -6290,44 +6288,44 @@
      },
      "2aEWsofKAiPyoTEdsSWVDL5paCmb9GvK9Dtg5w8UhHgj": {
       "busy_until": 1792735500.0,
-      "cursor": 1792816500.0,
-      "fetched_at": 1792873678.1964195,
+      "cursor": 1792878600.0,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1792380300.0
      },
      "2sA5714M6Bst4zdPxS5TRfPPEAz1pCAmDYhGGatFrAZW": {
       "busy_until": 1792877100.0,
-      "cursor": 1792872300.0,
-      "fetched_at": 1792873678.1964195,
+      "cursor": 1792880100.0,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1792466700.0
      },
      "3ENsvQnHuHtQzMBxpDG4pkxwbBnzJvFcz2yyCfxC9QNH": {
-      "busy_until": 1792870800.0,
-      "cursor": 1792872900.0,
-      "fetched_at": 1792873678.1964195,
+      "busy_until": 1792894200.0,
+      "cursor": 1792880100.0,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1792466700.0
      },
      "3NBq9zynLPDQQDvYf8xiMbWywQfKZD7m7fyprY524efq": {
       "busy_until": 1792617000.0,
-      "cursor": 1792866300.0,
-      "fetched_at": 1792877330.277979,
+      "cursor": 1792878600.0,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1791582900.0
      },
      "3f5N5Sq1Rz6aGySeuwSG466UuoNpisFZY221QyynsYPu": {
       "busy_until": 0.0,
       "cursor": 1792470600.0,
-      "fetched_at": 1792873678.1964195,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1792470600.0
      },
      "3p3yajJRqwrvgNs3M1UDVDXVUriZjZ8vE8bdpnpvkNRJ": {
       "busy_until": 1792784100.0,
-      "cursor": 1792872300.0,
-      "fetched_at": 1792873678.1964195,
+      "cursor": 1792878000.0,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1792380300.0
      },
      "4JAnKFddd5fFTk5PxDj3PpTWJuTEfSWQEjZJcgKQ9KwW": {
       "busy_until": 1792866300.0,
-      "cursor": 1792876500.0,
-      "fetched_at": 1792877330.277979,
+      "cursor": 1792880100.0,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1791582900.0
      },
      "4MWjp1aBQqE9Y6iC5cd3NrVvWWcHsN2LgpjWYMDK7u7E": {
@@ -6337,27 +6335,27 @@
       "first_bar": 1791948300.0
      },
      "4R8CiMnJWDNoes3fQi1ccPFJygPXazaHaWpHrN3rZeNj": {
-      "busy_until": 1792849800.0,
-      "cursor": 1792876500.0,
-      "fetched_at": 1792877330.277979,
+      "busy_until": 1792891200.0,
+      "cursor": 1792880100.0,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1791663300.0
      },
      "4SMPAuRkMTMFiMnW1oDcDQdi54CC9R4of9xtr4phiYiG": {
       "busy_until": 1792863900.0,
-      "cursor": 1792872900.0,
-      "fetched_at": 1792873678.1964195,
+      "cursor": 1792880100.0,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1792725900.0
      },
      "4qxSqMh6iEdbdvtMp8r5MK2psAGKNk57PfGeVo2VhczQ": {
       "busy_until": 1792873800.0,
-      "cursor": 1792875000.0,
-      "fetched_at": 1792877330.277979,
+      "cursor": 1792880100.0,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1791663000.0
      },
      "51Fk2LMfAz85d2w5ZqGdtmHgEJvStK1j8WDb9WB3YYK3": {
       "busy_until": 1792793100.0,
       "cursor": 1792872600.0,
-      "fetched_at": 1792873678.1964195,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1792725000.0
      },
      "54q8E1sqsfVBgytXso1xUGS3WRovFAJTfou5XKLFpnp1": {
@@ -6368,14 +6366,14 @@
      },
      "5E3dXLXGwmTDCokA51WYYaKttjFZBwqCoyUHBUi5gt2m": {
       "busy_until": 1792861200.0,
-      "cursor": 1792872900.0,
-      "fetched_at": 1792873678.1964195,
+      "cursor": 1792880100.0,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1792725900.0
      },
      "5Jj7H9v191CXQWS6uk6XrsydmYo5isjDWqLyCUPqm1dX": {
       "busy_until": 1792569900.0,
       "cursor": 1792864800.0,
-      "fetched_at": 1792873678.1964195,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1792466100.0
      },
      "5XH4eWypoE3wita96WjAnbQBJxYAjpk6bkJADu17UsiH": {
@@ -6387,19 +6385,19 @@
      "5qL4fEq9pBczu8xVpJox3FEDUyP9qyMB6iEK6xPo9kPM": {
       "busy_until": 0.0,
       "cursor": 1792215000.0,
-      "fetched_at": 1792873678.1964195,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1792215000.0
      },
      "65GHmCbyRME3XwKjTqDB7pMJw2gvj2LZryfWKczoAqFR": {
       "busy_until": 1792476600.0,
       "cursor": 1792830000.0,
-      "fetched_at": 1792877330.277979,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1791582900.0
      },
      "6DNxwecbtdNNstpB5tdnxZsfGe3HmsNgEUZhdue4b1PH": {
       "busy_until": 1792863600.0,
-      "cursor": 1792872900.0,
-      "fetched_at": 1792873678.1964195,
+      "cursor": 1792880100.0,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1792639500.0
      },
      "6FBnZzRtdMrjxEPdLK4UGP9Xm2hsYwLY3xp6EWB1e2md": {
@@ -6416,20 +6414,20 @@
      },
      "6QyYdc6jgeKnfP1FWhiexMYq3JQ3sidSYoubjWUTo3rm": {
       "busy_until": 1792880400.0,
-      "cursor": 1792876500.0,
-      "fetched_at": 1792877330.277979,
+      "cursor": 1792880100.0,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1791582900.0
      },
      "6aXb1e6uTMsz77zhncRYFe7AugzBxxcUnhCodhd3odag": {
       "busy_until": 1792869300.0,
-      "cursor": 1792872000.0,
-      "fetched_at": 1792873678.1964195,
+      "cursor": 1792879200.0,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1792380300.0
      },
      "6f1HD3hodH3A8zHSL4ddA5yB6TjGYpidwiZVHJJRBn5M": {
       "busy_until": 1792770300.0,
-      "cursor": 1792870800.0,
-      "fetched_at": 1792873678.1964195,
+      "cursor": 1792879500.0,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1792380300.0
      },
      "6iep3EgqksbZwgzMBCyAJtiVtVYkCgL9BnPBEwLR8AGQ": {
@@ -6440,26 +6438,26 @@
      },
      "6qUUCwD9fyRafora8XVmdApQBxCkbUiZTMkcYD47rWsS": {
       "busy_until": 1792862400.0,
-      "cursor": 1792875300.0,
-      "fetched_at": 1792877330.277979,
+      "cursor": 1792879800.0,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1791663300.0
      },
      "745ATaSSWxvry5qt1XVv9eXuG884hDvNJfvA2o82dNBi": {
-      "busy_until": 1792868400.0,
-      "cursor": 1792875900.0,
-      "fetched_at": 1792877330.277979,
+      "busy_until": 1792893000.0,
+      "cursor": 1792880100.0,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1791582900.0
      },
      "7ix8yMJsoCYsXgGjRjx7zPCQumGiBVotNUYSoMYuJPy2": {
       "busy_until": 1792782300.0,
-      "cursor": 1792864800.0,
-      "fetched_at": 1792873678.1964195,
+      "cursor": 1792880100.0,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1792293900.0
      },
      "7kMxqvCqLbHCXDy25oVX7Bx44Z3ud6SYZBK2jhJpRLsf": {
       "busy_until": 0.0,
       "cursor": 1792214700.0,
-      "fetched_at": 1792873678.1964195,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1792214700.0
      },
      "7mHdMhMnEpXSjF6hoj2wxRnzkSE1KwePq5UErjwnrLs7": {
@@ -6482,8 +6480,8 @@
      },
      "867dKvaCcyRrUDP66bqNXbujXfjaxsNB9wTpc4CmBdAD": {
       "busy_until": 1792882500.0,
-      "cursor": 1792876500.0,
-      "fetched_at": 1792877330.277979,
+      "cursor": 1792880100.0,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1791582900.0
      },
      "89DxSaK1YZx8TbPapMSSEgkEdhYuhYBo26BytgELrJBd": {
@@ -6494,14 +6492,14 @@
      },
      "8JoQRQ4oAXNuQSTcComuUAAgF3ViJ7e3escwatMncZ3H": {
       "busy_until": 1792464000.0,
-      "cursor": 1792871400.0,
-      "fetched_at": 1792873678.1964195,
+      "cursor": 1792879500.0,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1792293900.0
      },
      "8ewuF2o8ACro7fqWepZ3tKhkbBjndZU4Ldk9scRPw83d": {
       "busy_until": 1792887300.0,
-      "cursor": 1792876500.0,
-      "fetched_at": 1792877330.277979,
+      "cursor": 1792880100.0,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1791582900.0
      },
      "8iSy6UUmgDqXsVAKL8tJyRUXSTLdMwPuC6QXW5j3fhjA": {
@@ -6518,8 +6516,8 @@
      },
      "9d6fbbtAGjM6eFHo4NpsPrDgnwhZNdetgewHmupZTVjV": {
       "busy_until": 1792860300.0,
-      "cursor": 1792875900.0,
-      "fetched_at": 1792877330.277979,
+      "cursor": 1792877100.0,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1791663300.0
      },
      "9dsiuydk5EFRCLk6VEywY95Nn3jjGbdWNijuACf1PXuA": {
@@ -6537,7 +6535,7 @@
      "A7nWJWGUjNyWbVNPA5RrvLoF37j3ovdh8DKdgxYefcdk": {
       "busy_until": 1792877100.0,
       "cursor": 1792875000.0,
-      "fetched_at": 1792877330.277979,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1791582900.0
      },
      "ABqXgS5c78P8Nix49kqsBTNQjAmMAhCBH2mvjq1zqQZ2": {
@@ -6548,20 +6546,20 @@
      },
      "AJE7eWHJMBjvwib78dGwS8iZxb7bGx7NXLZVXX6xMHn6": {
       "busy_until": 1792879800.0,
-      "cursor": 1792872900.0,
-      "fetched_at": 1792873678.1964195,
+      "cursor": 1792879800.0,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1792293900.0
      },
      "ARcvd2GiVSmz7oR2ozpe3KzVBadsVrEav5DdnVJ8sjhK": {
       "busy_until": 1792863900.0,
-      "cursor": 1792872900.0,
-      "fetched_at": 1792873678.1964195,
+      "cursor": 1792879500.0,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1791774900.0
      },
      "AZgECLWq2Xd7KfjKVt6jFuJTWmFxqBuhAA4PXKDMwVcr": {
       "busy_until": 0.0,
       "cursor": 1791611700.0,
-      "fetched_at": 1792877330.277979,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1791611700.0
      },
      "AnrCHvfJUzMtos8DGjpT2XKurVPPYAVLDturASNwXcd4": {
@@ -6572,8 +6570,8 @@
      },
      "AscPffyZxMnHHFHqQWawtcrmasgUzCJtwyu6oS6CQD2R": {
       "busy_until": 1792790100.0,
-      "cursor": 1792872900.0,
-      "fetched_at": 1792873678.1964195,
+      "cursor": 1792874400.0,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1792466700.0
      },
      "BCiyK7LarB1yUbGngmQGJq9CQawiTDQ1i65HDnfhiqM5": {
@@ -6584,8 +6582,8 @@
      },
      "BUMh6YebpBvAh4by4oTGJUvzQ9CvH6dqPgrZvXFDMwC1": {
       "busy_until": 1792723800.0,
-      "cursor": 1792872000.0,
-      "fetched_at": 1792873678.1964195,
+      "cursor": 1792880100.0,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1792293900.0
      },
      "BoW9h5GBqdNR55fKE3VHdzNgPLANzmYKY1eiqmx1DRLZ": {
@@ -6602,14 +6600,14 @@
      },
      "CEXh16Ug4DRAXhxk62B7qgV6Qpwfq9SHfocuSEgB6ggT": {
       "busy_until": 1792885500.0,
-      "cursor": 1792872900.0,
-      "fetched_at": 1792873678.1964195,
+      "cursor": 1792880100.0,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1792293900.0
      },
      "CR5dTgvTddGAqDjP8dGHTL51N6PKRaXqxFBp9FQ5PrKn": {
       "busy_until": 1791939300.0,
       "cursor": 1792825800.0,
-      "fetched_at": 1792877330.277979,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1791577500.0
      },
      "CwaEjWuUHn9v1ETy3iMHn9QV5pvbodNrJDovQMsPSv1R": {
@@ -6621,13 +6619,13 @@
      "Cx1SFBFC6M4FW68bSGKfQgWKY4w1E4fqcAeiesLrHJ4f": {
       "busy_until": 0.0,
       "cursor": 1791687300.0,
-      "fetched_at": 1792873678.1964195,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1791687300.0
      },
      "CyJwKnLiiY4fmiwqMCSWFSHxo7T9Ubshgs2uRAuJCrk5": {
       "busy_until": 1792872000.0,
-      "cursor": 1792876500.0,
-      "fetched_at": 1792877330.277979,
+      "cursor": 1792880100.0,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1791582900.0
      },
      "D3vzKTEJntE3wSu4QaPd79e2bnifnHggVDVewu1ukkAJ": {
@@ -6662,20 +6660,20 @@
      },
      "Ds6CaQYBQL7GjDATf9CVH189S9ef1mz7dkTrSoV7RWEM": {
       "busy_until": 1792806600.0,
-      "cursor": 1792871700.0,
-      "fetched_at": 1792873678.1964195,
+      "cursor": 1792878600.0,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1792725900.0
      },
      "EFUomuhEoy5JcJQiPqJML9RNZaFCwyfwSBZhjdGrV6HT": {
       "busy_until": 0.0,
       "cursor": 1792551900.0,
-      "fetched_at": 1792873678.1964195,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1792551900.0
      },
      "EzJV2yGpbS3VM5qWmgqYQ4GPVi77LdhwgFhAy6u4ts1U": {
       "busy_until": 1792866000.0,
-      "cursor": 1792872600.0,
-      "fetched_at": 1792873678.1964195,
+      "cursor": 1792880100.0,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1792207500.0
      },
      "FCHzyHzgvcMjKuTNKjP9HBFta75XAmewToyKJ5LT8Rje": {
@@ -6698,8 +6696,8 @@
      },
      "Fe7bpDYCs74GqiCUF14HwgUMToPKV1d9mDYVX5BTohFr": {
       "busy_until": 1792872600.0,
-      "cursor": 1792876500.0,
-      "fetched_at": 1792877330.277979,
+      "cursor": 1792880100.0,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1791663300.0
      },
      "Fk5MuGv2H3Qpt6AxdhS2KHgDL2os424BvfEoqFNTdv9Y": {
@@ -6710,14 +6708,14 @@
      },
      "FnzKY6x7entQ1eR3D225dQyT7ybfka4PskBMQhb8L3CC": {
       "busy_until": 0.0,
-      "cursor": 1792872900.0,
-      "fetched_at": 1792873678.1964195,
+      "cursor": 1792880100.0,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1792553100.0
      },
      "FpyosQzp5ijfrxqqBVNm67rfam7VsbVNAm7PUf8Yvt1c": {
       "busy_until": 1792872300.0,
-      "cursor": 1792872900.0,
-      "fetched_at": 1792873678.1964195,
+      "cursor": 1792880100.0,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1792207500.0
      },
      "GKVfZiv4EUNViMRfUejEn5QJN29oXGCyk7FY2iUv3bGi": {
@@ -6728,38 +6726,38 @@
      },
      "GLL3CzybpSCLZdoACf8QUM5YrKVwyA65kQ2RcTsJxxzV": {
       "busy_until": 1792871100.0,
-      "cursor": 1792876500.0,
-      "fetched_at": 1792877330.277979,
+      "cursor": 1792880100.0,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1791688500.0
      },
      "GLN7Dr7AsP9GRxAjxiVBk9Rnwyn74ar2R3BuGk8ZxQn1": {
       "busy_until": 1792880700.0,
-      "cursor": 1792872900.0,
-      "fetched_at": 1792873678.1964195,
+      "cursor": 1792880100.0,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1792293900.0
      },
      "GS1bQcY4W3ScfJMo5Ch9c1xggBUqNpvjoWY7Yc7pJGdL": {
       "busy_until": 1792774800.0,
-      "cursor": 1792868400.0,
-      "fetched_at": 1792873678.1964195,
+      "cursor": 1792878300.0,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1792639500.0
      },
      "HMzvsEEmtzHhvZNw9uwbaG85HCTmFnkbhzUx16cy7ca3": {
       "busy_until": 1792817400.0,
-      "cursor": 1792876500.0,
-      "fetched_at": 1792877330.277979,
+      "cursor": 1792880100.0,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1791582900.0
      },
      "HQ1xV7yV3x3kY5kmHv3BCMBAigBE7FqxmHwFkVc6fXvt": {
       "busy_until": 1792872900.0,
-      "cursor": 1792862700.0,
-      "fetched_at": 1792873678.1964195,
+      "cursor": 1792878300.0,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1792207500.0
      },
      "HRMcDD9XawGTXH6QkBZs1mtiwyjTfg4bDMrL5DcjwXnb": {
-      "busy_until": 1792874100.0,
-      "cursor": 1792872900.0,
-      "fetched_at": 1792873678.1964195,
+      "busy_until": 1792890000.0,
+      "cursor": 1792879800.0,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1792466700.0
      },
      "HvYfFr8nm6bn9V93TDDMgqWwS2D2LsMn1Y3rDCToqeAB": {
@@ -6775,21 +6773,21 @@
       "first_bar": 1792812300.0
      },
      "YQ4NNeQxHAtdcB8ohx21eJ9U8eTzxNRvGNHkRaA4Pnw": {
-      "busy_until": 1792875600.0,
-      "cursor": 1792872900.0,
-      "fetched_at": 1792873678.1964195,
+      "busy_until": 1792890300.0,
+      "cursor": 1792880100.0,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1792725900.0
      },
      "cb4GFRgEitfu5qtxfRMiqzsaVPwgbD3HEor4cs2jFpn": {
       "busy_until": 1792867500.0,
-      "cursor": 1792876500.0,
-      "fetched_at": 1792877330.277979,
+      "cursor": 1792879800.0,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1791688500.0
      },
      "p977G14fUkDL3AoH97MAmqQ4V7Ecav5AZKhtPn21EHC": {
       "busy_until": 1792872000.0,
-      "cursor": 1792872900.0,
-      "fetched_at": 1792873678.1964195,
+      "cursor": 1792879200.0,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1792639500.0
      }
     }
@@ -6800,12 +6798,12 @@
    "size_factor": 1.0,
    "status": "retired",
    "verdict": {
-    "at": 1792877330.277979,
+    "at": 1792880852.7371702,
     "decision": "fail",
     "n": 213,
     "reason": "213 trades over 15.0 days: mean net -5.27% [-8.18, -2.49] (173 at real-trading execution: -5.39% vs -2.86% at the registered execution) (-6.13% at measured pool fees), excess over random entries -0.09% [-4.29, +2.77]",
     "stats": {
-     "days": 14.97,
+     "days": 15.02,
      "excess": -0.0008602442741954205,
      "excess_hi": 0.02772498874649417,
      "excess_lo": -0.042859191054909436,
@@ -6824,7 +6822,7 @@
   "dip~drop=0.08~hold_bars=96": {
    "costs_version": "2026-10-10-hourly-observed",
    "data": {
-    "fetch_skipped": 33,
+    "fetch_skipped": 34,
     "pools": {
      "261jSeTokAquP254HbWiXmvJb3MUA19VAmv5XbjxXjqh": {
       "busy_until": 1792610100.0,
@@ -6834,8 +6832,8 @@
      },
      "2B8tftZ5ww8TREMr3pgkgERLNjJyJxEAPWMENViGMsL4": {
       "busy_until": 1792882800.0,
-      "cursor": 1792876500.0,
-      "fetched_at": 1792877330.277979,
+      "cursor": 1792880100.0,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1791582900.0
      },
      "2U5kdozDrdgYzyGRNbTdBejGLYEeRt1FkERQmyPbV85P": {
@@ -6846,44 +6844,44 @@
      },
      "2aEWsofKAiPyoTEdsSWVDL5paCmb9GvK9Dtg5w8UhHgj": {
       "busy_until": 1792749900.0,
-      "cursor": 1792816500.0,
-      "fetched_at": 1792873678.1964195,
+      "cursor": 1792878600.0,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1792380300.0
      },
      "2sA5714M6Bst4zdPxS5TRfPPEAz1pCAmDYhGGatFrAZW": {
-      "busy_until": 1792869900.0,
-      "cursor": 1792872300.0,
-      "fetched_at": 1792873678.1964195,
+      "busy_until": 1792902600.0,
+      "cursor": 1792880100.0,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1792466700.0
      },
      "3ENsvQnHuHtQzMBxpDG4pkxwbBnzJvFcz2yyCfxC9QNH": {
       "busy_until": 1792885200.0,
-      "cursor": 1792872900.0,
-      "fetched_at": 1792873678.1964195,
+      "cursor": 1792880100.0,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1792466700.0
      },
      "3NBq9zynLPDQQDvYf8xiMbWywQfKZD7m7fyprY524efq": {
       "busy_until": 1792610700.0,
-      "cursor": 1792866300.0,
-      "fetched_at": 1792877330.277979,
+      "cursor": 1792878600.0,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1791582900.0
      },
      "3f5N5Sq1Rz6aGySeuwSG466UuoNpisFZY221QyynsYPu": {
       "busy_until": 0.0,
       "cursor": 1792470600.0,
-      "fetched_at": 1792873678.1964195,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1792470600.0
      },
      "3p3yajJRqwrvgNs3M1UDVDXVUriZjZ8vE8bdpnpvkNRJ": {
       "busy_until": 1792778700.0,
-      "cursor": 1792872300.0,
-      "fetched_at": 1792873678.1964195,
+      "cursor": 1792878000.0,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1792380300.0
      },
      "4JAnKFddd5fFTk5PxDj3PpTWJuTEfSWQEjZJcgKQ9KwW": {
       "busy_until": 1792880700.0,
-      "cursor": 1792876500.0,
-      "fetched_at": 1792877330.277979,
+      "cursor": 1792880100.0,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1791582900.0
      },
      "4MWjp1aBQqE9Y6iC5cd3NrVvWWcHsN2LgpjWYMDK7u7E": {
@@ -6893,27 +6891,27 @@
       "first_bar": 1791948300.0
      },
      "4R8CiMnJWDNoes3fQi1ccPFJygPXazaHaWpHrN3rZeNj": {
-      "busy_until": 1792864200.0,
-      "cursor": 1792876500.0,
-      "fetched_at": 1792877330.277979,
+      "busy_until": 1792905600.0,
+      "cursor": 1792880100.0,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1791663300.0
      },
      "4SMPAuRkMTMFiMnW1oDcDQdi54CC9R4of9xtr4phiYiG": {
       "busy_until": 1792862400.0,
-      "cursor": 1792872900.0,
-      "fetched_at": 1792873678.1964195,
+      "cursor": 1792880100.0,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1792725900.0
      },
      "4qxSqMh6iEdbdvtMp8r5MK2psAGKNk57PfGeVo2VhczQ": {
       "busy_until": 1792888200.0,
-      "cursor": 1792875000.0,
-      "fetched_at": 1792877330.277979,
+      "cursor": 1792880100.0,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1791663000.0
      },
      "51Fk2LMfAz85d2w5ZqGdtmHgEJvStK1j8WDb9WB3YYK3": {
       "busy_until": 1792807500.0,
       "cursor": 1792872600.0,
-      "fetched_at": 1792873678.1964195,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1792725000.0
      },
      "54q8E1sqsfVBgytXso1xUGS3WRovFAJTfou5XKLFpnp1": {
@@ -6924,14 +6922,14 @@
      },
      "5E3dXLXGwmTDCokA51WYYaKttjFZBwqCoyUHBUi5gt2m": {
       "busy_until": 1792883700.0,
-      "cursor": 1792872900.0,
-      "fetched_at": 1792873678.1964195,
+      "cursor": 1792880100.0,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1792725900.0
      },
      "5Jj7H9v191CXQWS6uk6XrsydmYo5isjDWqLyCUPqm1dX": {
       "busy_until": 1792584300.0,
       "cursor": 1792864800.0,
-      "fetched_at": 1792873678.1964195,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1792466100.0
      },
      "5XH4eWypoE3wita96WjAnbQBJxYAjpk6bkJADu17UsiH": {
@@ -6943,19 +6941,19 @@
      "5qL4fEq9pBczu8xVpJox3FEDUyP9qyMB6iEK6xPo9kPM": {
       "busy_until": 0.0,
       "cursor": 1792215000.0,
-      "fetched_at": 1792873678.1964195,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1792215000.0
      },
      "65GHmCbyRME3XwKjTqDB7pMJw2gvj2LZryfWKczoAqFR": {
       "busy_until": 1792491000.0,
       "cursor": 1792830000.0,
-      "fetched_at": 1792877330.277979,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1791582900.0
      },
      "6DNxwecbtdNNstpB5tdnxZsfGe3HmsNgEUZhdue4b1PH": {
       "busy_until": 1792889100.0,
-      "cursor": 1792872900.0,
-      "fetched_at": 1792873678.1964195,
+      "cursor": 1792880100.0,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1792639500.0
      },
      "6FBnZzRtdMrjxEPdLK4UGP9Xm2hsYwLY3xp6EWB1e2md": {
@@ -6972,20 +6970,20 @@
      },
      "6QyYdc6jgeKnfP1FWhiexMYq3JQ3sidSYoubjWUTo3rm": {
       "busy_until": 1792880100.0,
-      "cursor": 1792876500.0,
-      "fetched_at": 1792877330.277979,
+      "cursor": 1792880100.0,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1791582900.0
      },
      "6aXb1e6uTMsz77zhncRYFe7AugzBxxcUnhCodhd3odag": {
       "busy_until": 1792870500.0,
-      "cursor": 1792872000.0,
-      "fetched_at": 1792873678.1964195,
+      "cursor": 1792879200.0,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1792380300.0
      },
      "6f1HD3hodH3A8zHSL4ddA5yB6TjGYpidwiZVHJJRBn5M": {
       "busy_until": 1792784700.0,
-      "cursor": 1792870800.0,
-      "fetched_at": 1792873678.1964195,
+      "cursor": 1792879500.0,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1792380300.0
      },
      "6iep3EgqksbZwgzMBCyAJtiVtVYkCgL9BnPBEwLR8AGQ": {
@@ -6996,26 +6994,26 @@
      },
      "6qUUCwD9fyRafora8XVmdApQBxCkbUiZTMkcYD47rWsS": {
       "busy_until": 1792876800.0,
-      "cursor": 1792875300.0,
-      "fetched_at": 1792877330.277979,
+      "cursor": 1792879800.0,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1791663300.0
      },
      "745ATaSSWxvry5qt1XVv9eXuG884hDvNJfvA2o82dNBi": {
-      "busy_until": 1792859400.0,
-      "cursor": 1792875900.0,
-      "fetched_at": 1792877330.277979,
+      "busy_until": 1792907400.0,
+      "cursor": 1792880100.0,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1791582900.0
      },
      "7ix8yMJsoCYsXgGjRjx7zPCQumGiBVotNUYSoMYuJPy2": {
       "busy_until": 1792796700.0,
-      "cursor": 1792864800.0,
-      "fetched_at": 1792873678.1964195,
+      "cursor": 1792880100.0,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1792293900.0
      },
      "7kMxqvCqLbHCXDy25oVX7Bx44Z3ud6SYZBK2jhJpRLsf": {
       "busy_until": 0.0,
       "cursor": 1792214700.0,
-      "fetched_at": 1792873678.1964195,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1792214700.0
      },
      "7mHdMhMnEpXSjF6hoj2wxRnzkSE1KwePq5UErjwnrLs7": {
@@ -7038,8 +7036,8 @@
      },
      "867dKvaCcyRrUDP66bqNXbujXfjaxsNB9wTpc4CmBdAD": {
       "busy_until": 1792896900.0,
-      "cursor": 1792876500.0,
-      "fetched_at": 1792877330.277979,
+      "cursor": 1792880100.0,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1791582900.0
      },
      "89DxSaK1YZx8TbPapMSSEgkEdhYuhYBo26BytgELrJBd": {
@@ -7050,14 +7048,14 @@
      },
      "8JoQRQ4oAXNuQSTcComuUAAgF3ViJ7e3escwatMncZ3H": {
       "busy_until": 1792478400.0,
-      "cursor": 1792871400.0,
-      "fetched_at": 1792873678.1964195,
+      "cursor": 1792879500.0,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1792293900.0
      },
      "8ewuF2o8ACro7fqWepZ3tKhkbBjndZU4Ldk9scRPw83d": {
       "busy_until": 1792895700.0,
-      "cursor": 1792876500.0,
-      "fetched_at": 1792877330.277979,
+      "cursor": 1792880100.0,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1791582900.0
      },
      "8iSy6UUmgDqXsVAKL8tJyRUXSTLdMwPuC6QXW5j3fhjA": {
@@ -7074,8 +7072,8 @@
      },
      "9d6fbbtAGjM6eFHo4NpsPrDgnwhZNdetgewHmupZTVjV": {
       "busy_until": 1792874700.0,
-      "cursor": 1792875900.0,
-      "fetched_at": 1792877330.277979,
+      "cursor": 1792877100.0,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1791663300.0
      },
      "9dsiuydk5EFRCLk6VEywY95Nn3jjGbdWNijuACf1PXuA": {
@@ -7093,7 +7091,7 @@
      "A7nWJWGUjNyWbVNPA5RrvLoF37j3ovdh8DKdgxYefcdk": {
       "busy_until": 1792891500.0,
       "cursor": 1792875000.0,
-      "fetched_at": 1792877330.277979,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1791582900.0
      },
      "ABqXgS5c78P8Nix49kqsBTNQjAmMAhCBH2mvjq1zqQZ2": {
@@ -7104,20 +7102,20 @@
      },
      "AJE7eWHJMBjvwib78dGwS8iZxb7bGx7NXLZVXX6xMHn6": {
       "busy_until": 1792884600.0,
-      "cursor": 1792872900.0,
-      "fetched_at": 1792873678.1964195,
+      "cursor": 1792879800.0,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1792293900.0
      },
      "ARcvd2GiVSmz7oR2ozpe3KzVBadsVrEav5DdnVJ8sjhK": {
       "busy_until": 1792867500.0,
-      "cursor": 1792872900.0,
-      "fetched_at": 1792873678.1964195,
+      "cursor": 1792879500.0,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1791774900.0
      },
      "AZgECLWq2Xd7KfjKVt6jFuJTWmFxqBuhAA4PXKDMwVcr": {
       "busy_until": 0.0,
       "cursor": 1791611700.0,
-      "fetched_at": 1792877330.277979,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1791611700.0
      },
      "AnrCHvfJUzMtos8DGjpT2XKurVPPYAVLDturASNwXcd4": {
@@ -7128,8 +7126,8 @@
      },
      "AscPffyZxMnHHFHqQWawtcrmasgUzCJtwyu6oS6CQD2R": {
       "busy_until": 1792804500.0,
-      "cursor": 1792872900.0,
-      "fetched_at": 1792873678.1964195,
+      "cursor": 1792874400.0,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1792466700.0
      },
      "BCiyK7LarB1yUbGngmQGJq9CQawiTDQ1i65HDnfhiqM5": {
@@ -7140,8 +7138,8 @@
      },
      "BUMh6YebpBvAh4by4oTGJUvzQ9CvH6dqPgrZvXFDMwC1": {
       "busy_until": 1792738200.0,
-      "cursor": 1792872000.0,
-      "fetched_at": 1792873678.1964195,
+      "cursor": 1792880100.0,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1792293900.0
      },
      "BoW9h5GBqdNR55fKE3VHdzNgPLANzmYKY1eiqmx1DRLZ": {
@@ -7158,14 +7156,14 @@
      },
      "CEXh16Ug4DRAXhxk62B7qgV6Qpwfq9SHfocuSEgB6ggT": {
       "busy_until": 1792881900.0,
-      "cursor": 1792872900.0,
-      "fetched_at": 1792873678.1964195,
+      "cursor": 1792880100.0,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1792293900.0
      },
      "CR5dTgvTddGAqDjP8dGHTL51N6PKRaXqxFBp9FQ5PrKn": {
       "busy_until": 1791953700.0,
       "cursor": 1792825800.0,
-      "fetched_at": 1792877330.277979,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1791577500.0
      },
      "CwaEjWuUHn9v1ETy3iMHn9QV5pvbodNrJDovQMsPSv1R": {
@@ -7177,13 +7175,13 @@
      "Cx1SFBFC6M4FW68bSGKfQgWKY4w1E4fqcAeiesLrHJ4f": {
       "busy_until": 0.0,
       "cursor": 1791687300.0,
-      "fetched_at": 1792873678.1964195,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1791687300.0
      },
      "CyJwKnLiiY4fmiwqMCSWFSHxo7T9Ubshgs2uRAuJCrk5": {
       "busy_until": 1792861500.0,
-      "cursor": 1792876500.0,
-      "fetched_at": 1792877330.277979,
+      "cursor": 1792880100.0,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1791582900.0
      },
      "D3vzKTEJntE3wSu4QaPd79e2bnifnHggVDVewu1ukkAJ": {
@@ -7218,20 +7216,20 @@
      },
      "Ds6CaQYBQL7GjDATf9CVH189S9ef1mz7dkTrSoV7RWEM": {
       "busy_until": 1792821000.0,
-      "cursor": 1792871700.0,
-      "fetched_at": 1792873678.1964195,
+      "cursor": 1792878600.0,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1792725900.0
      },
      "EFUomuhEoy5JcJQiPqJML9RNZaFCwyfwSBZhjdGrV6HT": {
       "busy_until": 0.0,
       "cursor": 1792551900.0,
-      "fetched_at": 1792873678.1964195,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1792551900.0
      },
      "EzJV2yGpbS3VM5qWmgqYQ4GPVi77LdhwgFhAy6u4ts1U": {
       "busy_until": 1792880400.0,
-      "cursor": 1792872600.0,
-      "fetched_at": 1792873678.1964195,
+      "cursor": 1792880100.0,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1792207500.0
      },
      "FCHzyHzgvcMjKuTNKjP9HBFta75XAmewToyKJ5LT8Rje": {
@@ -7254,8 +7252,8 @@
      },
      "Fe7bpDYCs74GqiCUF14HwgUMToPKV1d9mDYVX5BTohFr": {
       "busy_until": 1792871100.0,
-      "cursor": 1792876500.0,
-      "fetched_at": 1792877330.277979,
+      "cursor": 1792880100.0,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1791663300.0
      },
      "Fk5MuGv2H3Qpt6AxdhS2KHgDL2os424BvfEoqFNTdv9Y": {
@@ -7266,14 +7264,14 @@
      },
      "FnzKY6x7entQ1eR3D225dQyT7ybfka4PskBMQhb8L3CC": {
       "busy_until": 0.0,
-      "cursor": 1792872900.0,
-      "fetched_at": 1792873678.1964195,
+      "cursor": 1792880100.0,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1792553100.0
      },
      "FpyosQzp5ijfrxqqBVNm67rfam7VsbVNAm7PUf8Yvt1c": {
       "busy_until": 1792886700.0,
-      "cursor": 1792872900.0,
-      "fetched_at": 1792873678.1964195,
+      "cursor": 1792880100.0,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1792207500.0
      },
      "GKVfZiv4EUNViMRfUejEn5QJN29oXGCyk7FY2iUv3bGi": {
@@ -7284,38 +7282,38 @@
      },
      "GLL3CzybpSCLZdoACf8QUM5YrKVwyA65kQ2RcTsJxxzV": {
       "busy_until": 1792885500.0,
-      "cursor": 1792876500.0,
-      "fetched_at": 1792877330.277979,
+      "cursor": 1792880100.0,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1791688500.0
      },
      "GLN7Dr7AsP9GRxAjxiVBk9Rnwyn74ar2R3BuGk8ZxQn1": {
       "busy_until": 1792895100.0,
-      "cursor": 1792872900.0,
-      "fetched_at": 1792873678.1964195,
+      "cursor": 1792880100.0,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1792293900.0
      },
      "GS1bQcY4W3ScfJMo5Ch9c1xggBUqNpvjoWY7Yc7pJGdL": {
       "busy_until": 1792789200.0,
-      "cursor": 1792868400.0,
-      "fetched_at": 1792873678.1964195,
+      "cursor": 1792878300.0,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1792639500.0
      },
      "HMzvsEEmtzHhvZNw9uwbaG85HCTmFnkbhzUx16cy7ca3": {
       "busy_until": 1792831800.0,
-      "cursor": 1792876500.0,
-      "fetched_at": 1792877330.277979,
+      "cursor": 1792880100.0,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1791582900.0
      },
      "HQ1xV7yV3x3kY5kmHv3BCMBAigBE7FqxmHwFkVc6fXvt": {
       "busy_until": 1792887300.0,
-      "cursor": 1792862700.0,
-      "fetched_at": 1792873678.1964195,
+      "cursor": 1792878300.0,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1792207500.0
      },
      "HRMcDD9XawGTXH6QkBZs1mtiwyjTfg4bDMrL5DcjwXnb": {
       "busy_until": 1792888500.0,
-      "cursor": 1792872900.0,
-      "fetched_at": 1792873678.1964195,
+      "cursor": 1792879800.0,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1792466700.0
      },
      "HvYfFr8nm6bn9V93TDDMgqWwS2D2LsMn1Y3rDCToqeAB": {
@@ -7332,20 +7330,20 @@
      },
      "YQ4NNeQxHAtdcB8ohx21eJ9U8eTzxNRvGNHkRaA4Pnw": {
       "busy_until": 1792877400.0,
-      "cursor": 1792872900.0,
-      "fetched_at": 1792873678.1964195,
+      "cursor": 1792880100.0,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1792725900.0
      },
      "cb4GFRgEitfu5qtxfRMiqzsaVPwgbD3HEor4cs2jFpn": {
       "busy_until": 1792881900.0,
-      "cursor": 1792876500.0,
-      "fetched_at": 1792877330.277979,
+      "cursor": 1792879800.0,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1791688500.0
      },
      "p977G14fUkDL3AoH97MAmqQ4V7Ecav5AZKhtPn21EHC": {
       "busy_until": 1792886400.0,
-      "cursor": 1792872900.0,
-      "fetched_at": 1792873678.1964195,
+      "cursor": 1792879200.0,
+      "fetched_at": 1792880852.7371702,
       "first_bar": 1792639500.0
      }
     }
@@ -7356,12 +7354,12 @@
    "size_factor": 1.0,
    "status": "retired",
    "verdict": {
-    "at": 1792877330.277979,
+    "at": 1792880852.7371702,
     "decision": "fail",
     "n": 224,
     "reason": "224 trades over 15.0 days: mean net -2.98% [-11.87, +12.36] (198 at real-trading execution: -2.04% vs +1.02% at the registered execution) (-3.69% at measured pool fees), excess over random entries +3.28% [-3.98, +13.32]",
     "stats": {
-     "days": 14.97,
+     "days": 15.02,
      "excess": 0.03283275671125471,
      "excess_hi": 0.13319495480663607,
      "excess_lo": -0.03977083212105042,
@@ -7393,7 +7391,7 @@
    "status": "halted",
    "status_before_halt": "paper",
    "verdict": {
-    "at": 1792877330.277979,
+    "at": 1792880852.7371702,
     "decision": "pending",
     "n": 0,
     "reason": "0 interval(s); scored after 2027-04-10 (registered)",
@@ -7411,7 +7409,7 @@
    "size_factor": 1.0,
    "status": "paper",
    "verdict": {
-    "at": 1792877330.277979,
+    "at": 1792880852.7371702,
     "decision": "pending",
     "n": 0,
     "reason": "0 closed legs, basket P&L $+0.00 on $200 of JLP; the registered verdict is `jlp_paper.py evaluate --final` after 2027-01-08",
@@ -7440,14 +7438,14 @@
   },
   "us_capit": {
    "data": {
-    "done_hour": 498019
+    "done_hour": 498020
    },
    "errors": 0,
    "registered_at": 1791692533.5285056,
    "size_factor": 1.0,
    "status": "paper",
    "verdict": {
-    "at": 1792877330.277979,
+    "at": 1792880852.7371702,
     "decision": "pending",
     "n": 0,
     "reason": "0 trade(s); scored after 2027-10-11 (registered)",
@@ -7458,14 +7456,14 @@
   },
   "us_capit_fast": {
    "data": {
-    "done_hour": 498020
+    "done_hour": 498021
    },
    "errors": 0,
    "registered_at": 1791750065.6922815,
    "size_factor": 1.0,
    "status": "paper",
    "verdict": {
-    "at": 1792877330.277979,
+    "at": 1792880852.7371702,
     "decision": "pending",
     "n": 0,
     "reason": "0 trade(s); scored after 2027-10-11 (registered)",
@@ -7476,14 +7474,14 @@
   },
   "us_capit~wide": {
    "data": {
-    "done_hour": 498019
+    "done_hour": 498020
    },
    "errors": 0,
    "registered_at": 1791753680.9391794,
    "size_factor": 1.0,
    "status": "paper",
    "verdict": {
-    "at": 1792877330.277979,
+    "at": 1792880852.7371702,
     "decision": "pending",
     "n": 0,
     "reason": "0 trade(s); scored after 2027-10-11 (registered)",
@@ -7494,14 +7492,14 @@
   },
   "us_volspike": {
    "data": {
-    "done_hour": 498019
+    "done_hour": 498020
    },
    "errors": 0,
    "registered_at": 1791692533.5285056,
    "size_factor": 1.0,
    "status": "paper",
    "verdict": {
-    "at": 1792877330.277979,
+    "at": 1792880852.7371702,
     "decision": "pending",
     "n": 0,
     "reason": "0 trade(s); scored after 2027-10-11 (registered)",
@@ -7520,7 +7518,7 @@
    "size_factor": 1.0,
    "status": "paper",
    "verdict": {
-    "at": 1792877330.277979,
+    "at": 1792880852.7371702,
     "decision": "pending",
     "n": 1,
     "reason": "1 complete week(s); scored at 52 weeks (registered)",
@@ -7531,7 +7529,7 @@
   },
   "wick_bounce": {
    "data": {
-    "done_hour": 498020,
+    "done_hour": 498021,
     "exec": {},
     "exec_pending": {}
    },
@@ -7540,7 +7538,7 @@
    "size_factor": 1.0,
    "status": "paper",
    "verdict": {
-    "at": 1792877330.277979,
+    "at": 1792880852.7371702,
     "decision": "pending",
     "n": 0,
     "reason": "0 trade(s); scored after 2027-10-11 (registered)",
@@ -7559,7 +7557,7 @@
    "size_factor": 1.0,
    "status": "paper",
    "verdict": {
-    "at": 1792877330.277979,
+    "at": 1792880852.7371702,
     "decision": "pending",
     "n": 1,
     "reason": "1 complete week(s); scored at 52 weeks (registered)",
