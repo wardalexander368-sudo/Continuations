@@ -1,0 +1,52 @@
+{
+  "appended_buy_sell_counts": {
+    "1": 40
+  },
+  "appended_mode_counts": {
+    "paper": 40
+  },
+  "appended_rows": 40,
+  "appended_shadow_rows": 40,
+  "appended_strategy_counts": {
+    "dip~drop=0.03~hold_bars=96": 12,
+    "dip~drop=0.05~hold_bars=96": 9,
+    "dip~drop=0.08~hold_bars=48": 13,
+    "dip~drop=0.08~hold_bars=96": 6
+  },
+  "base": "ed68abdcd9beab6083022246956d9a74a25f6d8f",
+  "box_data_branch_advertised": false,
+  "cache_manifest_mtime_utc": "2026-10-13T01:29:43.579322+00:00",
+  "cache_manifest_sha256": "dc9fc1a691933ef97584f61b8b62f95724d50157e22a00800b3796a40992d4e7",
+  "cache_scope": "Manifest-only hash comparison; 21-coin retrospective cache ends Oct10 exclusive; no full rehash or download.",
+  "checked_at_utc": "2026-10-13T18:11:46.951144+00:00",
+  "fresh": "4e58a88fe96228f2bce1d2c0cf302ceb9aa0d40c",
+  "new_buyer_social_or_executable_crash_cohort_acquired": false,
+  "new_ledger_sha256": "a0f75599a4df2ac5755fc99fb868c5051c6b490c2d98a7c2b85f1bbe92bdc4b7",
+  "new_rows": 1624,
+  "old_ledger_sha256": "0fba6ffd5fc1142e353be8c67c6bc879484505273834f54c57f4a71331880521",
+  "old_prefix_unchanged": true,
+  "old_rows": 1584,
+  "remote_ref_scope": "Exact main/box-data refs only at current bounded read; deployed server/account state unknown.",
+  "report_sha256": "6a5596c5a51f3713efc955878b8a54b99b5ab13b4ce51f289df0afe47a8f22a4",
+  "report_timestamp": "2026-10-13 17:23 UTC",
+  "runtime_sources": [
+    {
+      "path": "tartar/autotrade/box.py",
+      "same_as_executed_base": true,
+      "sha256": "68a97c86809a393730b147f84d247eb2b8d334b7630aeccf4c2218bfcee8bbd7"
+    },
+    {
+      "path": "tartar/autotrade/alpaca.py",
+      "same_as_executed_base": true,
+      "sha256": "38c522f66cb144ebcc75677a801dd2a1a67ec9589decfe80a10133d3c52e837d"
+    },
+    {
+      "path": "tartar/autotrade/strategies/coinbase_pattern.py",
+      "same_as_executed_base": true,
+      "sha256": "fc621f5caf915c3c953607224057d24b0a19f9247c41da5b0ed540330d12fed6"
+    }
+  ],
+  "saved_report_US_open_closed": 0,
+  "saved_report_gate": "0/3 days,0/8 trades; no priced random-entry control",
+  "scope": "Public saved main aggregates; no broker fill/account PnL completeness inferred."
+}
